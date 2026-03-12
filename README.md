@@ -74,20 +74,25 @@ Fichiers créés/modifiés :
 - 🗺️ **LocationPicker Interactif** : Autour de moi (GPS), Adresse manuelle (Nominatim), Carte Interactive (`react-leaflet`).
 
 
-## Comment tout lancer
-bash
+## Lancer le projet
 
-Terminal 1 — Backend API
-cdc:\hetic\V0.1
-python-muvicornbackend.main:app--reload--port8000
+### Backend API
+```bash
+cd V0.1
+python -m uvicorn backend.main:app --reload --port 8000
+```
 
-Terminal 2 — Frontend React
-cdc:\hetic\V0.1\frontend
-npmrundev
+### Frontend React
+```bash
+cd V0.1/frontend
+npm run dev
+```
 
-Terminal 3 — Streamlit (optionnel, toujours fonctionnel)
-cdc:\hetic\V0.1
-python-mstreamlitrunapp.py
+### Interface Streamlit (optionnelle)
+```bash
+cd V0.1
+python -m streamlit run app.py
+```
 
 - **React** : [http://localhost:5173](http://localhost:5173/)
 - **FastAPI docs** : http://localhost:8000/docs
