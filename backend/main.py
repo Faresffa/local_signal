@@ -116,7 +116,7 @@ def get_restaurants(
 @app.get("/api/restaurant/{restaurant_id}")
 def get_restaurant(restaurant_id: str):
     """Retourne les détails d'un restaurant par son ID."""
-    restaurants = search_nearby(48.8566, 2.3522)
+    restaurants = search_nearby(48.8520, 2.4222)
     resto = next((r for r in restaurants if r.get("id") == restaurant_id), None)
     if not resto:
         return {"error": "Restaurant non trouvé"}

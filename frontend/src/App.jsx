@@ -4,7 +4,8 @@ import { fetchRestaurants, createReservation } from "./api";
 import {
   Search, MapPin, Users, UtensilsCrossed, Sparkles,
   Wallet, ChevronLeft, CalendarClock, User, Mail,
-  CheckCircle2, Info, Navigation
+  CheckCircle2, Info, Navigation, Clock, MessageSquare,
+  Star, Eye
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -18,8 +19,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-const TYPES = ["Italienne", "Japonaise", "Française", "Végétarienne", "Asiatique"];
-const AMBIANCES = ["Cosy", "Familial", "Romantique", "Moderne", "Rustique"];
+const TYPES = ["Française", "Italienne", "Indonésienne", "Thaïlandaise", "Brasserie", "Bistrot", "Street Food"];
+const AMBIANCES = ["Exotique", "Chic", "Convivial", "Familial", "Écologique", "Décontracté", "Populaire", "Moderne", "Champêtre", "Rustique"];
 const ALLERGENES = ["Sans gluten", "Vegan", "Végétarien", "Halal"];
 
 // ===== Images base64 helper =====
@@ -47,7 +48,7 @@ function Stars({ rating }) {
 // =========================================================================
 // RESTAURANT CARD
 // =========================================================================
-function RestaurantCard({ r, onReserve, compact = false, showScores = true }) {
+function RestaurantCard({ r, onReserve, onDetail, compact = false, showScores = true }) {
   return (
     <div className={`resto-card ${compact ? 'compact' : ''}`}>
       <div className="resto-card-image-wrapper">
@@ -75,6 +76,22 @@ function RestaurantCard({ r, onReserve, compact = false, showScores = true }) {
         </div>
         {showScores && r.rating && <Stars rating={r.rating} />}
 
+        <p className="card-address">
+          <MapPin size={13} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />
+          {r.address}
+        </p>
+
+        {r.horaires && r.horaires.length > 0 && (
+          <div className="card-horaires">
+            <Clock size={13} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />
+            {r.horaires.map((h, i) => (
+              <span key={i} className="horaire-slot">
+                {h.start || h[0]} - {h.end || h[1]}{i < r.horaires.length - 1 ? " · " : ""}
+              </span>
+            ))}
+          </div>
+        )}
+
         {r.dietary_options && r.dietary_options.length > 0 && (
           <div className="dietary-tags">
             {r.dietary_options.map(tag => (
@@ -90,13 +107,18 @@ function RestaurantCard({ r, onReserve, compact = false, showScores = true }) {
           </div>
         )}
       </div>
-      {r.reservation && (
-        <div className="card-actions">
+      <div className="card-actions">
+        {onDetail && (
+          <button className="btn-detail" onClick={() => onDetail(r)}>
+            <Eye size={14} style={{ marginRight: 4 }} /> Voir les détails
+          </button>
+        )}
+        {r.reservation && (
           <button className="btn-reserve" onClick={() => onReserve(r)}>
             Réserver une table
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -104,7 +126,7 @@ function RestaurantCard({ r, onReserve, compact = false, showScores = true }) {
 // =========================================================================
 // HOME PAGE
 // =========================================================================
-function HomePage({ onStart, onReserve }) {
+function HomePage({ onStart, onReserve, onDetail }) {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [geoError, setGeoError] = useState(false);
@@ -118,11 +140,11 @@ function HomePage({ onStart, onReserve }) {
         },
         (err) => {
           setGeoError(true);
-          fetchRecs(48.8566, 2.3522); // Fallback Paris
+          fetchRecs(48.8520, 2.4222); // Fallback Paris
         }
       );
     } else {
-      fetchRecs(48.8566, 2.3522);
+      fetchRecs(48.8520, 2.4222);
     }
   }, []);
 
@@ -166,7 +188,7 @@ function HomePage({ onStart, onReserve }) {
           <div className="loader" style={{ marginTop: "3rem" }}></div>
         ) : (
           <div className="recs-grid">
-            {restaurants.map(r => <RestaurantCard key={r.id} r={r} onReserve={onReserve} showScores={false} />)}
+            {restaurants.map(r => <RestaurantCard key={r.id} r={r} onReserve={onReserve} onDetail={onDetail} showScores={false} />)}
           </div>
         )}
       </div>
@@ -180,7 +202,7 @@ function HomePage({ onStart, onReserve }) {
 function LocationPicker({ onLocationSelect }) {
   const [mode, setMode] = useState("auto"); // auto, address, map
   const [address, setAddress] = useState("");
-  const [mapPosition, setMapPosition] = useState([48.8566, 2.3522]); // Paris
+  const [mapPosition, setMapPosition] = useState([48.8520, 2.4222]); // Paris
   const [geoError, setGeoError] = useState("");
 
   const handleAutoLocation = () => {
@@ -393,7 +415,7 @@ function SearchPage({ onSearch }) {
 // =========================================================================
 // RESULTS PAGE
 // =========================================================================
-function ResultsPage({ criteria, onReserve, onBack }) {
+function ResultsPage({ criteria, onReserve, onDetail, onBack }) {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -438,10 +460,139 @@ function ResultsPage({ criteria, onReserve, onBack }) {
         ) : (
           <div className="results-grid">
             {restaurants.map((r) => (
-              <RestaurantCard key={r.id} r={r} onReserve={onReserve} />
+              <RestaurantCard key={r.id} r={r} onReserve={onReserve} onDetail={onDetail} />
             ))}
           </div>
         )}
+      </div>
+    </>
+  );
+}
+
+// =========================================================================
+// DETAIL PAGE
+// =========================================================================
+function DetailPage({ restaurant, onBack, onReserve }) {
+  const horaires = restaurant.horaires || [];
+  const reviews = restaurant.reviews || [];
+
+  return (
+    <>
+      <header className="header">
+        <img src="/localsignal-logo-header.png" alt="Local Signal" className="header-logo" />
+      </header>
+      <div className="detail-page">
+        <button className="btn-back" onClick={onBack}>
+          <ChevronLeft size={18} /> Retour
+        </button>
+
+        <div className="detail-hero">
+          <img
+            src={`/resto${(parseInt(restaurant.id.split("_")[1]) % 5) + 1}.jpg`}
+            alt={restaurant.name}
+            className="detail-hero-img"
+            onError={(e) => { e.target.src = "/localsignal-logo-header.png"; }}
+          />
+          <div className="detail-hero-overlay">
+            <h1 className="detail-name">{restaurant.name}</h1>
+            <div className="detail-type-badge">{restaurant.type}</div>
+          </div>
+        </div>
+
+        <div className="detail-content">
+          <div className="detail-info-grid">
+            <div className="detail-info-card">
+              <div className="detail-info-label"><Star size={14} /> Note</div>
+              <div className="detail-info-value">
+                {restaurant.rating && <Stars rating={restaurant.rating} />}
+              </div>
+            </div>
+            <div className="detail-info-card">
+              <div className="detail-info-label"><Wallet size={14} /> Prix moyen</div>
+              <div className="detail-info-value">{restaurant.price}€ / pers</div>
+            </div>
+            <div className="detail-info-card">
+              <div className="detail-info-label"><Sparkles size={14} /> Ambiance</div>
+              <div className="detail-info-value">{restaurant.ambiance}</div>
+            </div>
+            <div className="detail-info-card">
+              <div className="detail-info-label"><MapPin size={14} /> Adresse</div>
+              <div className="detail-info-value" style={{ fontSize: "0.85rem" }}>{restaurant.address}</div>
+            </div>
+          </div>
+
+          {restaurant.scoring && (
+            <div className="detail-section">
+              <h3 className="detail-section-title">Scores Local Signal</h3>
+              <div className="detail-scores-grid">
+                <div className="detail-score-item">
+                  <span className="score-label">Score final</span>
+                  <span className="score-value-big">{(restaurant.scoring.score_final || 0).toFixed(1)}/100</span>
+                </div>
+                <div className="detail-score-item">
+                  <span className="score-label">Proximité utilisateur</span>
+                  <span className="score-value">{((restaurant.scoring.score_geo_user || 0) * 100).toFixed(0)}%</span>
+                </div>
+                <div className="detail-score-item">
+                  <span className="score-label">Proximité touristique</span>
+                  <span className="score-value">{((restaurant.scoring.score_geo_tourist || 0) * 100).toFixed(0)}%</span>
+                </div>
+                <div className="detail-score-item">
+                  <span className="score-label">Langue</span>
+                  <span className="score-value">{restaurant.scoring.score_language ? "Adapté" : "Non traduit"}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {horaires.length > 0 && (
+            <div className="detail-section">
+              <h3 className="detail-section-title"><Clock size={16} /> Horaires d'ouverture</h3>
+              <div className="detail-horaires">
+                {horaires.map((h, i) => (
+                  <div key={i} className="detail-horaire-slot">
+                    <span className="horaire-label">{i === 0 ? "Service 1" : `Service ${i + 1}`}</span>
+                    <span className="horaire-time">{h.start || h[0]} — {h.end || h[1]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {restaurant.dietary_options && restaurant.dietary_options.length > 0 && (
+            <div className="detail-section">
+              <h3 className="detail-section-title"><Info size={16} /> Options alimentaires</h3>
+              <div className="dietary-tags">
+                {restaurant.dietary_options.map(tag => (
+                  <span key={tag} className="diet-tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {reviews.length > 0 && (
+            <div className="detail-section">
+              <h3 className="detail-section-title"><MessageSquare size={16} /> Avis clients ({reviews.length})</h3>
+              <div className="detail-reviews">
+                {reviews.map((rev, i) => (
+                  <div key={i} className="review-card">
+                    <div className="review-header">
+                      <span className="review-stars">{"★".repeat(rev.stars)}{"☆".repeat(5 - rev.stars)}</span>
+                      <span className="review-lang">{rev.lang?.toUpperCase()}</span>
+                    </div>
+                    <p className="review-text">"{rev.text}"</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {restaurant.reservation && (
+            <button className="btn-confirm" onClick={() => onReserve(restaurant)} style={{ marginTop: "1.5rem", width: "100%" }}>
+              <CalendarClock size={16} style={{ marginRight: 8 }} /> Réserver une table
+            </button>
+          )}
+        </div>
       </div>
     </>
   );
@@ -605,6 +756,13 @@ function App() {
   const [page, setPage] = useState("home");
   const [criteria, setCriteria] = useState({});
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [previousPage, setPreviousPage] = useState("results");
+
+  const goToDetail = (r, from) => {
+    setSelectedRestaurant(r);
+    setPreviousPage(from || "results");
+    setPage("detail");
+  };
 
   if (page === "home") {
     return (
@@ -614,6 +772,7 @@ function App() {
           setSelectedRestaurant(r);
           setPage("reservation");
         }}
+        onDetail={(r) => goToDetail(r, "home")}
       />
     );
   }
@@ -638,6 +797,20 @@ function App() {
           setSelectedRestaurant(r);
           setPage("reservation");
         }}
+        onDetail={(r) => goToDetail(r, "results")}
+      />
+    );
+  }
+
+  if (page === "detail" && selectedRestaurant) {
+    return (
+      <DetailPage
+        restaurant={selectedRestaurant}
+        onBack={() => setPage(previousPage)}
+        onReserve={(r) => {
+          setSelectedRestaurant(r);
+          setPage("reservation");
+        }}
       />
     );
   }
@@ -646,7 +819,7 @@ function App() {
     return (
       <ReservationPage
         restaurant={selectedRestaurant}
-        onBack={() => setPage("results")}
+        onBack={() => setPage(previousPage)}
       />
     );
   }
