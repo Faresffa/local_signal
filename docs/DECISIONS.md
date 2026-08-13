@@ -1,0 +1,823 @@
+# Journal des décisions — Local Signal
+
+Chaque décision structurante du projet, avec **le raisonnement qui y a mené**.
+Objectif : pouvoir reprendre le projet dans 6 mois, ou le défendre devant un jury,
+sans avoir à redécouvrir pourquoi telle chose a été faite.
+
+**Format :** contexte → problème → décision → conséquences. Une entrée par décision.
+Ne jamais supprimer une entrée : si une décision est annulée, ajouter une nouvelle
+entrée qui la remplace et marquer l'ancienne comme `SUPERSÉDÉE`.
+
+---
+
+## D-001 — Le paradoxe de l'invisibilité devient la contrainte n°1
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Le README énonce la thèse du projet : *« Le problème n'est pas le manque de
+restaurants authentiques, c'est le manque de visibilité. »*
+
+### Problème identifié
+Le scoring initial notait un restaurant à 45 % sur des signaux dérivés de ses avis
+(20 % langue + 25 % étoiles). Or `score_language` retournait `0` quand la liste
+d'avis était vide, et `score_stars` retournait `0` sans note.
+
+**Conséquence : un restaurant invisible — donc sans avis — finissait dernier du
+classement. L'algorithme punissait exactement les restaurants que le projet
+prétendait sauver.** Personne n'y avait pensé ; c'est apparu en relisant le README
+en regard du code.
+
+### Décision
+Toute évolution du scoring est désormais soumise à ce test :
+
+> *Ce critère fonctionne-t-il pour un restaurant qui a 0 avis et pas de site web ?*
+
+Si non, il ne peut pas être un critère majeur.
+
+### Conséquences
+- Justifie l'orientation vers le **signal menu** (D-004) : c'est le seul signal
+  disponible pour un restaurant totalement invisible.
+- Impose le **lissage bayésien** du score de langue (D-003) : l'absence de preuve
+  doit produire de l'*incertitude*, pas un score nul.
+- Devient l'argument central du mémoire : la contribution n'est pas « un algorithme
+  de recommandation de plus », c'est « un algorithme qui fonctionne malgré
+  l'absence de données de popularité ».
+
+---
+
+## D-002 — Le critère géo-touristique est inversé
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+`score_geo_tourist` pesait 0.30 — le poids le plus élevé de la formule — et
+attribuait **plus** de points aux restaurants **proches** d'un site touristique.
+
+### Problème identifié
+Contradiction frontale avec l'intention du produit : le critère le plus lourd
+récompensait la proximité aux zones à forte densité d'attrape-touristes.
+
+### Décision
+Inverser le critère : la proximité à un site touristique majeur devient une
+**pénalité**, pas une récompense.
+
+### Justification (à reprendre telle quelle dans le mémoire)
+Ce n'est pas une intuition, c'est un argument économique.
+
+Un restaurant adossé à un monument joue un **jeu à un coup** : ses clients ne
+reviendront jamais. Il n'a donc aucune incitation économique à la qualité — sa
+réputation auprès d'un client donné n'a pas de valeur future.
+
+Un restaurant de quartier vit de ses **habitués** : la relation est répétée, la
+qualité devient sa condition de survie.
+
+**L'authenticité corrèle avec le taux de retour des clients, et la distance aux
+sites touristiques en est un proxy mesurable.**
+
+### Conséquences
+- Implémenté comme une **pénalité de zone** (rayon court autour des sites majeurs),
+  pas comme une récompense linéaire à l'éloignement — sinon l'algorithme
+  recommanderait des zones industrielles.
+- Le rayon est un paramètre nommé dans `config.py`, marqué *à calibrer sur le jeu
+  labellisé* (cf. D-006).
+
+---
+
+## D-003 — Score de langue continu, avec lissage bayésien
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+`score_language` était **binaire** : `1` si plus de 50 % des avis étaient dans la
+langue cible, `0` sinon. Il pesait 20 % du score final.
+
+### Problème identifié
+Deux défauts distincts :
+
+1. **Effet de seuil.** Un restaurant à 49 % d'avis locaux et un à 0 % obtenaient
+   le même score. 20 % de la note basculait d'un coup sur une frontière arbitraire.
+2. **Faux positifs sur faible volume.** Un restaurant avec 2 avis, tous deux en
+   français, obtenait le score maximal — alors que c'est une preuve très faible.
+
+### Décision
+Passer à un ratio continu **lissé vers un a priori**, pondéré par le volume de preuves :
+
+```
+score_langue = (n_locaux + α × prior) / (n_total + α)     avec α ≈ 5
+```
+
+| Cas | Ancien score | Nouveau score |
+|---|---|---|
+| 2 avis / 2 locaux | 1.00 | 0.50 |
+| 45 avis / 40 locaux | 1.00 | 0.86 |
+| 0 avis | 0.00 | = prior (neutre) |
+
+### Conséquences
+- Répond directement à D-001 : un restaurant sans avis n'est plus **puni**,
+  il est **incertain**.
+- Produit gratuitement une **valeur de confiance** (le volume de preuves), qui
+  permet d'afficher « score provisoire » plutôt que de simuler une précision
+  qu'on n'a pas.
+- Pour le mémoire : ouvre un développement sur la gestion de l'incertitude.
+
+---
+
+## D-004 — Le scan de carte comme signal principal et comme actif
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Recherche d'un apport IA qui ne soit pas décoratif.
+
+### Décision
+**L'utilisateur photographie la carte affichée en vitrine ; un modèle de vision
+évalue l'authenticité du menu en quelques secondes.**
+
+Signaux extraits de la carte, par ordre de force :
+1. **Cohérence culinaire** — nombre de cuisines distinctes. Pizza + pâtes + burger
+   + paëlla = piège. Un vrai restaurant fait une chose.
+2. **Amplitude** — 12 plats = vraie cuisine ; 80 plats = congélateur.
+3. **Spécificité lexicale** — noms vernaculaires conservés (« Ayam bakar kecap »)
+   vs traduction générique (« Poulet grillé sauce soja »). Un menu qui garde ses
+   termes d'origine s'adresse à des gens qui les connaissent.
+4. **Nombre de langues** — carte en 4 langues avec photos des plats = signal
+   touristique fort.
+5. **Formules « menu touriste »** — « entrée + plat + dessert + vin, 19,90 € ».
+
+### Pourquoi ce choix plutôt qu'un autre
+Trois fonctions en un seul geste :
+- **Produit** : répond à l'utilisateur à l'instant exact où il hésite, debout devant
+  le restaurant.
+- **Donnée** : les restaurants authentiques n'ont pas de site web — c'est *pour ça*
+  qu'ils sont invisibles. On ne peut pas scraper ce qui n'existe pas. Les
+  utilisateurs deviennent les collecteurs.
+- **Recherche** : démontre qu'on peut scorer un restaurant **sans aucun avis**,
+  ce qui est la réponse directe à D-001.
+
+### Conséquences
+- La base de menus structurés devient **l'actif du projet** (D-005).
+- `menu_score` est implémenté dès maintenant sur données simulées, pour que la
+  structure du moteur soit correcte avant l'arrivée du pipeline de scan.
+
+---
+
+## D-005 — Ne pas construire le produit sur Google Places
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Le projet n'est pas qu'un mémoire : il est destiné à être poursuivi comme produit.
+Le code initial contient des clients Google Places / Google Reviews, désactivés.
+
+### Problème identifié
+1. **Juridique.** Les CGU de Google Places interdisent le stockage durable de leurs
+   données et la constitution d'une base concurrente. « Une base de données de tous
+   les restaurants » alimentée par Google est une impasse pour un produit.
+2. **Stratégique.** Google possède les avis et les notes ; ce terrain est perdu
+   d'avance. En revanche **personne ne possède une base de menus structurés et
+   labellisés en authenticité**.
+
+### Décision
+- Référentiel de lieux : **OpenStreetMap / Overpass** (libre, tags `cuisine=` déjà
+  présents).
+- Menus : **scan utilisateur** + sites officiels quand ils existent.
+- Le code Google reste désactivé (`USE_MOCK_DATA = True`), utilisable au mieux pour
+  s'amorcer, jamais comme socle.
+
+### Conséquences
+L'avantage concurrentiel du projet est la base de menus, et elle se construit par
+l'usage. Toute décision produit qui l'enrichit est prioritaire.
+
+---
+
+## D-006 — Aucune pondération arbitraire
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Les poids initiaux (0.30 / 0.25 / 0.20 / 0.25) n'avaient aucune justification.
+
+### Problème identifié
+*« Pourquoi 0.30 ? »* est la première question d'un jury, et il n'y avait pas de
+réponse. Sans vérité terrain, toute pondération est indéfendable et l'ensemble du
+mémoire repose sur du sable.
+
+### Décision
+1. Toute constante numérique du scoring est un **paramètre nommé** dans `config.py`,
+   accompagné d'un commentaire indiquant son statut (`à calibrer` / `dérivé des
+   labels` / `justifié par …`).
+2. Les poids définitifs seront **dérivés du jeu labellisé**, pas choisis à la main.
+3. Évaluation obligatoire : `precision@10` sur le jeu labellisé, **comparée au top 10
+   de Google par note**. L'écart mesuré est le résultat principal du mémoire.
+
+### Conséquences
+Bloque la finalisation du scoring tant que la vérité terrain n'existe pas.
+Les valeurs actuelles sont explicitement provisoires.
+
+---
+
+## D-007 — Les étoiles sortent du scoring
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+`score_stars` pesait 25 % du score final.
+
+### Problème identifié
+Trois raisons cumulatives :
+1. **Contradiction affichée.** Le README dit explicitement que l'objectif *n'est pas*
+   de recommander les meilleurs restaurants selon les notes.
+2. **Pouvoir discriminant nul.** Toutes les valeurs du jeu de données sont comprises
+   entre 3.8 et 4.8 — le critère ajoute du bruit tassé, pas de l'information.
+3. **Dépendance à la popularité.** Viole D-001.
+
+### Décision
+La note moyenne reste **affichée** comme information à l'utilisateur, mais
+**ne participe plus au classement**.
+
+---
+
+## D-008 — Séparation stricte statique / dynamique
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+La formule initiale mélangeait dans une seule moyenne pondérée deux natures de
+critères : des propriétés du restaurant (langue des avis, étoiles, position vs
+sites touristiques) et une propriété de la requête (distance à l'utilisateur).
+
+### Problème identifié
+Mélanger les deux empêche de précalculer quoi que ce soit : tout doit être recalculé
+à chaque requête, pour chaque restaurant. Ça ne tient pas à l'échelle d'une base
+nationale, et ça n'a pas de sens conceptuellement — la distance à l'utilisateur ne
+dit rien sur l'authenticité d'un restaurant.
+
+### Décision
+Deux scores distincts.
+
+**Local Signal — statique, précalculé, stocké en base.** *Ce qu'est le restaurant :*
+signal menu, signal avis, anomalie de prix, pénalité zone touristique.
+Recalculé en batch (mensuel).
+
+**Pertinence — dynamique, calculée à la requête.** *Ce qui convient à l'utilisateur
+maintenant :* distance, ouverture, budget, cuisine, contraintes alimentaires.
+
+Classement final = filtrage dur sur la pertinence, puis tri sur le Local Signal
+pondéré par la distance.
+
+### Conséquences
+- L'app mobile ne fait qu'une requête géo + un filtre : elle reste instantanée même
+  avec 50 000 restaurants.
+- **Règle :** ne jamais recalculer un signal statique dans le chemin d'une requête
+  utilisateur.
+
+---
+
+## D-009 — Le score n'est pas affiché par défaut
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+L'interface initiale (Streamlit et React) affiche « Score : 87.3/100 » et le détail
+des sous-scores sur chaque carte de restaurant.
+
+### Problème identifié
+L'utilisateur cible est un voyageur qui a faim. Il veut une liste de restaurants,
+pas un tableau de bord. Il n'est pas censé connaître l'algorithme — et un score
+numérique brut demande une interprétation qu'il n'a pas.
+
+### Décision
+- **Par défaut : aucun score visible.**
+- Derrière un « pourquoi ? » : une explication en **langage naturel**, générée.
+  Ex. *« 92 % des avis sont en indonésien, la carte propose 11 plats tous
+  indonésiens, prix 30 % sous la moyenne du quartier. »*
+
+### Conséquences
+- L'explicabilité n'est pas cosmétique : côté produit c'est ce qui crée la confiance,
+  côté mémoire c'est un chapitre sur l'IA explicable (XAI).
+- Quand la confiance est faible (D-003), afficher « score provisoire » plutôt qu'un
+  chiffre net.
+
+---
+
+## D-010 — Expo / React Native pour le mobile
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Le projet vise une interface web **et** une application mobile, dans le même dépôt.
+
+### Décision
+**Expo / React Native.**
+
+### Justification
+- Réutilise React et une partie de la logique JS déjà écrite pour le web.
+- Un seul langage sur les deux plateformes — décisif pour un projet mené en solo.
+- Build iOS + Android sans Mac.
+- Accès caméra trivial, ce qui est déterminant : le scan de carte (D-004) est la
+  fonctionnalité centrale.
+
+### Alternatives écartées
+- **Flutter** — bon rendu natif, mais impose Dart : deux langages et deux codebases
+  à maintenir en plus du backend Python.
+- **PWA** — le moins de travail, mais accès caméra limité, et rendu moins convaincant
+  en soutenance.
+
+---
+
+## D-011 — Réorganisation en monorepo
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Le dépôt était à plat : `app.py`, `config.py`, `scoring/`, `filters/`, `api/`,
+`data/`, `db/`, `backend/`, `frontend/`, `assets/` tous au même niveau. Impossible
+de savoir en un coup d'œil ce qui relève du backend, du web, ou de l'historique —
+et aucune place pour l'application mobile.
+
+### Décision
+Trois espaces de premier niveau, plus la documentation :
+
+```
+backend/    tout le Python (main, config, core/, ingestion/, db/, data/, tests/)
+apps/       web/ (React+Vite) et mobile/ (Expo)
+docs/       DECISIONS.md, methodologie/, data/
+legacy/     streamlit_app.py — première version, gelée
+```
+
+`core/` regroupe le métier (scoring, filtres), `ingestion/` les sources de données
+(Google désactivé, à terme OSM et scan de menus).
+
+### Changements induits
+- **Imports** : absolus enracinés sur `backend`
+  (`from backend.core.scoring.engine import ...`). Les deux hacks `sys.path` de
+  `main.py` et `seed.py` sont supprimés. Tout se lance depuis la racine.
+- **`DB_PATH`** devient un chemin absolu ancré sur la racine du dépôt : la base ne
+  dépend plus du répertoire d'où la commande est lancée.
+- **`.gitignore` créé.** `local_signal.db` et 18 fichiers `.pyc` étaient versionnés —
+  sortis du suivi. Une base de dev versionnée génère des conflits systématiques et
+  transportait 39 consultations et 3 réservations de test.
+- **Bug d'images corrigé.** `getImageUrl` construisait
+  `http://localhost:8000/static/...` alors que le backend ne monte aucun
+  `StaticFiles` : **toutes les images du front React étaient cassées**. Les visuels
+  sont désormais servis depuis `apps/web/public/`. Les chemins de `mock_data.py`
+  passent de `assets/resto1.jpg` à `resto1.jpg`, chaque interface résolvant selon
+  son contexte (Streamlit via `config.ASSETS_DIR`).
+
+### Vérification
+`python -m backend.tests.test_scoring` s'exécute, `backend.main:app` s'importe
+avec ses 10 routes, `legacy/streamlit_app.py` et `backend/db/seed.py` compilent.
+
+### Non fait volontairement
+`packages/shared/` n'est pas créé : tant que `apps/mobile` n'existe pas, il n'y a
+aucune duplication à factoriser. Créer l'abstraction avant le besoin coûterait de
+la configuration de workspace pour rien.
+
+---
+
+## D-012 — Un signal indisponible voit son poids redistribué, il ne vaut pas zéro
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Le Local Signal agrège quatre signaux (menu, langue, prix, zone touristique).
+Certains ne sont pas toujours calculables : pas de carte scannée, pas assez de
+restaurants comparables dans le voisinage pour établir une médiane de prix.
+
+### Problème identifié
+Le réflexe naturel — noter `0.0` un signal manquant — **reproduit exactement le
+défaut que D-001 identifie**. Un restaurant peu documenté serait mécaniquement mal
+noté, non pas parce qu'il est mauvais, mais parce qu'on ne sait rien de lui. Or les
+restaurants sur lesquels on sait le moins sont précisément ceux que le projet veut
+révéler.
+
+### Décision
+Un signal indisponible retourne `None`, et **son poids est redistribué
+proportionnellement sur les signaux disponibles**.
+
+```
+local_signal = Σ(valeur × poids) / Σ(poids des signaux disponibles)
+```
+
+L'incertitude est portée par une valeur séparée, `confidence`, et **jamais par le
+score lui-même**.
+
+> Un restaurant sur lequel on a peu d'information est **INCERTAIN**, pas **MAUVAIS**.
+
+### Conséquences
+- `menu_score` et `price_score` retournent `{"score": None, "available": False}`
+  plutôt que `0.0`.
+- Le même principe s'applique à l'intérieur du signal menu : si `dish_count` est
+  inconnu mais que les cuisines sont identifiées, la moyenne ne porte que sur les
+  sous-signaux calculables.
+- Le score de langue échappe à ce mécanisme : grâce au lissage bayésien (D-003) il
+  est **toujours** calculable et retombe sur l'a priori en l'absence d'avis.
+- L'interface affiche « score provisoire » quand `confidence` est faible (D-009).
+
+### Vérification
+Test d'invariant : un restaurant sans avis obtient un Local Signal **supérieur** à
+un restaurant dont les 20 avis sont tous en langue étrangère, tout en ayant une
+**confiance inférieure**. C'est la traduction opérationnelle de D-001.
+
+---
+
+## D-013 — Refonte du moteur de scoring (mise en œuvre de D-001 à D-012)
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Ce qui a été implémenté
+
+| Module | Changement |
+|---|---|
+| `geo_score.py` | `score_geo_tourist` → `score_tourist_zone`, **inversé** en pénalité de zone (D-002) |
+| `language_score.py` | binaire → **continu avec lissage bayésien**, + `language_confidence` (D-003) |
+| `menu_score.py` | **nouveau** — cohérence culinaire, amplitude, spécificité lexicale, langues (D-004) |
+| `price_score.py` | **nouveau** — anomalie vs médiane du voisinage à cuisine comparable |
+| `stars_score.py` | conservé mais **sorti du classement** (D-007) |
+| `engine.py` | scindé en `compute_local_signal` (statique) / `compute_relevance` (dynamique) + `explain` (D-008, D-009) |
+| `config.py` | pondérations remplacées, chaque constante porte son statut de calibration (D-006) |
+
+### Effet mesuré sur le jeu mocké
+
+Utilisateur positionné à Montreuil, mêmes 10 restaurants.
+
+**Avant** — classement piloté par la proximité aux monuments :
+```
+1. L'Indonésie 70.9     2. Maison Montreau 70.4     3. Le Grand Angle 70.0
+```
+
+**Après** — Le Grand Angle (42 plats, 3 cuisines, carte en 4 langues, formule
+« menu touriste ») passe de la 3ᵉ à la **dernière** place :
+```
+1. Délice de Montreuil 89.6     9. Le Grand Angle 53.6     10. Peppe Pizzeria 51.7
+```
+
+Cas intéressant : **L'Indonésie reste 4ᵉ malgré un score de zone touristique de
+0.07** (elle jouxte le Théâtre de la Girandole). Son excellente carte compense la
+pénalité de zone. C'est le comportement recherché — la proximité d'un monument est
+un indice, pas une condamnation.
+
+### Compatibilité
+`score_all_restaurants` reste exposé comme alias de `rank_restaurants`, et le dict
+`scoring` conserve les clés `score_geo_tourist`, `score_geo_user`, `score_language`,
+`score_stars` pour ne pas casser les interfaces existantes. **À retirer** une fois
+les fronts migrés vers `local_signal` / `signals` / `reasons`.
+
+### Rappel
+Les pondérations restent **provisoires** (D-006). Elles seront dérivées du jeu
+labellisé selon `docs/methodologie/evaluation.md`. Aucun chiffre de cette entrée ne
+doit être présenté comme un résultat validé.
+
+---
+
+## D-014 — Le modèle observe, il ne juge pas
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Mise en œuvre du scan de carte (D-004). Deux conceptions possibles : demander au
+LLM une note d'authenticité, ou lui demander des observations factuelles et
+calculer la note nous-mêmes.
+
+### Problème identifié
+Un LLM à qui l'on demande directement « ce restaurant est-il authentique ? »
+produit un chiffre :
+- **non reproductible** — deux appels sur la même image peuvent diverger ;
+- **inexplicable** — impossible de justifier pourquoi 72 et pas 65 ;
+- **incalibrable** — on ne peut pas l'ajuster sur un jeu labellisé sans réécrire
+  le prompt et relancer toute l'inférence.
+
+En soutenance, la question « comment savez-vous que ce 72 est juste ? » n'aurait
+pas de réponse.
+
+### Décision
+Le prompt demande **uniquement des observations vérifiables** : nombre de plats,
+cuisines identifiées, langues de rédaction, part de noms vernaculaires, présence
+d'une formule touristique, présence de photos de plats.
+
+Le score est ensuite calculé par `menu_score.py`, du code déterministe.
+
+### Conséquences
+- **Reproductible** — mêmes observations, même score, toujours.
+- **Auditable** — chaque point s'explique (D-009).
+- **Calibrable** — les seuils s'ajustent sur le jeu labellisé (D-006) sans
+  toucher au prompt ni relancer d'appel facturé.
+- Le prompt système fait partie de la méthode : toute modification doit être
+  consignée ici, au même titre qu'une pondération.
+- Nouveau signal capté au passage : `has_dish_photos`. Une carte illustrée
+  s'adresse à un client qui ne sait pas lire les intitulés — donc pas au quartier.
+
+### Implémentation
+`backend/ingestion/menu_scan/` — `schema.py` (contrat Pydantic),
+`client.py` (appel vision), endpoint `POST /api/menu/scan`.
+Modèle : `claude-opus-5`, sortie structurée validée par schéma.
+Une photo illisible retourne `None`, jamais `0.0` (D-012).
+
+---
+
+## D-015 — Suppression de l'interface Streamlit
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+`legacy/streamlit_app.py` (456 lignes) était la première version de l'interface.
+
+### Décision
+Supprimée. Le projet ne portera que **deux interfaces** : web (React) et mobile
+(Expo). `streamlit` et `pandas` sortent de `requirements.txt`.
+
+### Justification
+Une troisième interface à maintenir sans utilisateur, qui dupliquait la logique
+d'affichage et consommait directement le moteur au lieu de passer par l'API.
+Elle affichait par ailleurs les scores en clair sur chaque carte, ce qui
+contredit D-009. Le code reste récupérable dans l'historique Git.
+
+---
+
+## D-016 — Secrets par variable d'environnement uniquement
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+`backend/config.py` contenait `GOOGLE_API_KEY = ""` en dur, et le fichier est
+versionné. L'ajout du scan de carte introduit une seconde clé, facturée à l'usage.
+
+### Problème identifié
+Le premier réflexe au moment de faire marcher une intégration est de coller la
+clé dans le fichier de configuration. Ici, ça la publie sur GitHub — et une clé
+d'API facturée à l'usage qui fuite est exploitée en quelques heures.
+
+### Décision
+`ANTHROPIC_API_KEY` et `GOOGLE_API_KEY` sont lues **exclusivement** via
+`os.environ.get()`. Aucune valeur par défaut, aucun secret dans le dépôt.
+`.env` est ignoré par Git (D-011).
+
+En l'absence de clé, `analyze_menu_image` lève une `RuntimeError` explicite, que
+l'API traduit en HTTP 503 — une erreur de déploiement, pas de requête.
+
+---
+
+## D-017 — Fournisseur de vision interchangeable, Groq par défaut
+
+**Date :** 2026-08-13 · **Statut :** actif · **Supersède partiellement** D-014 (choix du modèle)
+
+### Contexte
+Le scan de carte était implémenté directement sur l'API Anthropic. Coût mesuré :
+≈ 3,6 centimes par scan (≈ 5,40 € pour les 150 cartes du jeu labellisé, ≈ 36 €
+pour 1 000 scans mensuels).
+
+### Décision
+**Groq par défaut** (`meta-llama/llama-4-scout-17b-16e-instruct`), Claude conservé
+comme alternative, derrière une interface commune (`providers/base.py`).
+
+### Justification
+Le coût n'est pas l'argument déterminant — à l'échelle du projet, l'écart se
+compte en euros. Deux raisons réelles :
+
+1. **Latence.** L'utilisateur est debout devant le restaurant, il attend une
+   réponse. C'est un critère produit, pas une optimisation.
+2. **Indépendance fournisseur.** Un produit destiné à durer ne doit pas être
+   couplé à une seule API de vision.
+
+**Pourquoi une abstraction plutôt qu'une substitution :** la vraie question
+n'est pas le prix mais *un modèle plus léger lit-il correctement une carte
+photographiée de travers, avec des reflets, parfois manuscrite ?* C'est une
+question empirique. Garder les deux fournisseurs derrière une interface permet de
+la trancher sur le jeu labellisé — et **le comparatif de précision d'extraction
+devient un résultat du mémoire**, pour un coût de mesure d'environ 5 €.
+
+### Conséquences
+- `VISION_PROVIDER` (variable d'environnement) choisit le défaut ; le paramètre
+  `?provider=` de `POST /api/menu/scan` force un fournisseur pour le comparatif.
+- Groq ne supporte pas de message `system` séparé sur ses modèles vision : les
+  instructions et le schéma JSON attendu vont dans le tour utilisateur.
+- Groq ne garantit pas la conformité au schéma comme le fait la sortie structurée
+  d'Anthropic. La validation Pydantic est donc **obligatoire côté Python** : une
+  réponse hors schéma dégrade en `readable=False` plutôt que de lever (D-012).
+- `temperature=0.0` sur Groq : il s'agit d'extraction factuelle, la variabilité
+  n'a aucune valeur ici et nuirait à la reproductibilité (D-014).
+
+### Vérification
+Clé absente → `RuntimeError` explicite (HTTP 503). Fournisseur inconnu →
+`ValueError`. Réponse JSON hors schéma → `readable=False`, signal `None`,
+poids redistribué. Aucun de ces cas ne fait planter l'API.
+
+---
+
+## D-018 — Supabase pour la base, l'authentification et le stockage
+
+**Date :** 2026-08-13 · **Statut :** actif (à mettre en œuvre en phase 4)
+
+### Contexte
+Trois besoins arrivaient séparément : PostgreSQL + PostGIS pour les requêtes
+géographiques, une authentification pour les réservations, un stockage pour les
+photos de cartes scannées.
+
+### Décision
+**Supabase**, qui couvre les trois.
+
+### Justification
+Une solution d'authentification seule (Clerk, Auth0) laisserait à installer un
+Postgres et un stockage de fichiers à côté. Supabase fournit :
+
+| Besoin | Apport |
+|---|---|
+| Base | PostgreSQL managé, extension PostGIS disponible |
+| Auth | Email, OAuth Google/Apple, SDK Expo officiel |
+| Stockage | Buckets pour les photos de cartes |
+
+**On n'écrit pas son propre système d'authentification.** Hachage, réinitialisation
+de mot de passe, vérification d'email, sessions, rotation de tokens : chacun est
+une faille potentielle et aucun n'apporte quoi que ce soit au mémoire.
+
+### Conséquences
+- `db/seed.py` stocke des mots de passe en clair (`"hash_alice"`) — à supprimer
+  lors de la migration, pas à corriger.
+- L'authentification n'est **pas bloquante** pour une démo : recherche,
+  consultation et scan restent anonymes. Elle ne devient nécessaire que pour les
+  réservations et l'attribution des scans à leurs contributeurs.
+- Mise en œuvre en phase 4. Tant que le projet tourne en local sur données
+  mockées, l'installer serait de la complexité prématurée.
+
+---
+
+## D-019 — Le signal « langue des avis » n'est pas durable
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Question posée : peut-on récupérer davantage d'avis via Google ?
+
+### Constat
+**Non.** L'API Google Places plafonne à **5 avis par lieu**, quel que soit le
+niveau de facturation — c'est une limite produit, pas un quota. Scraper Google
+Maps violerait les CGU et exposerait juridiquement le projet dès qu'il devient un
+produit (cf. D-005).
+
+### Conséquences
+- Le score de langue (D-003) repose sur un échantillon minuscule. Le lissage
+  bayésien le reflète honnêtement, mais ne crée pas d'information absente.
+- **Pour le mémoire :** relever le ratio de langue à la main sur les ~150
+  restaurants du jeu labellisé. Lire des pages publiques et en tirer une
+  statistique agrégée, sans redistribuer le contenu, est un usage académique
+  légitime. Quelques heures de travail.
+- **Pour le produit :** le signal langue ne peut pas être un pilier. Les signaux
+  durables sont **menu, anomalie de prix, zone touristique** — tous calculables
+  sans aucun avis. C'est déjà la pondération en place (D-013), et c'est une
+  raison de fond supplémentaire de la conserver.
+- À terme, la seule source d'avis propre serait celle du projet lui-même
+  (tables `reviews` déjà présentes). Problème d'amorçage classique, hors périmètre
+  du mémoire.
+
+---
+
+## D-020 — Données réelles : OSM remplace les mocks
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Décision
+Import du Quartier latin depuis OpenStreetMap via Overpass :
+**468 restaurants réels** avec nom, coordonnées, cuisine, adresse, site web,
+horaires — plus **47 sites touristiques** de la même zone.
+
+Le schéma SQLite est refait pour porter trois natures d'information distinctes :
+faits OSM (réimportables), Local Signal (recalculable en batch), vérité terrain
+(produite par recherche documentaire).
+
+**Règle d'import :** `ON CONFLICT DO UPDATE` ne met à jour que les faits OSM.
+Les colonnes `label`, `label_sources` et `human_validated` en sont volontairement
+absentes — un réimport ne doit jamais effacer un travail de labellisation.
+
+### Conséquence immédiate : deux constats de calibration
+
+**1. La pénalité de zone touristique ne discrimine plus rien ici.**
+Sur 468 restaurants, **aucun** n'est hors zone touristique (`tourist_zone = 1.0`).
+Valeurs observées : min 0.00, médiane 0.20, max 0.55.
+
+Explication : le Quartier latin compte 47 monuments sur ~1,5 km². Avec un rayon
+de 500 m (`TOURIST_ZONE_RADIUS`), *tout* est dans la zone d'au moins un site. Le
+critère ne sépare plus deux classes, il produit un dégradé continu de « plus ou
+moins central ».
+
+C'est un vrai résultat de calibration, pas un bug. Deux pistes, à trancher sur le
+jeu labellisé (D-006) :
+- réduire fortement le rayon en zone dense ;
+- remplacer « distance au site le plus proche » par une mesure de **densité de
+  monuments** dans un rayon donné — plus fidèle à l'intuition d'origine (D-002).
+
+**2. Deux signaux sur quatre sont indisponibles.**
+`menu` (aucune carte scannée) et `price` (OSM ne porte pas le prix de façon
+fiable) sont absents ; `language` retombe sur son a priori faute d'avis. La
+redistribution des poids (D-012) fonctionne comme prévu — mais **le classement
+actuel repose de fait sur un seul signal**.
+
+> **Les scores en base ne sont pas encore interprétables.** Ils prouvent que le
+> pipeline tourne de bout en bout sur des données réelles, rien de plus. Ne pas
+> les présenter comme un résultat.
+
+### Ce qui débloque la suite
+Le signal menu est le plus lourd (0.40) et le seul disponible sans avis. Le
+remplir sur la zone d'évaluation est donc prioritaire — c'est ce qui rendra les
+scores discriminants.
+
+---
+
+## D-021 — Amorçage des menus par l'API Google Places Photos
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Google Maps héberge des milliers de photos de cartes postées par les clients.
+La question posée : peut-on s'en servir pour amorcer le signal menu, plutôt
+qu'attendre que des utilisateurs scannent ?
+
+### Ce qui a été écarté
+**Le scraping automatisé de Google Maps.** Trois raisons, dans l'ordre
+d'importance :
+
+1. Il suppose de contourner la détection de robots — Google la fait évoluer en
+   permanence, donc le système casserait sans prévenir.
+2. Une base construite dessus n'est ni publiable, ni finançable, ni défendable
+   pour un projet qui continue après le mémoire.
+3. Les photos appartiennent à leurs auteurs.
+
+### Décision
+Utiliser l'**API Place Photos** (Places API New), qui expose officiellement les
+mêmes photos. Payante et limitée, mais sanctionnée et stable.
+
+**Pipeline en deux temps, pour une raison de coût :**
+
+| Étape | Ce qui tourne | Pourquoi |
+|---|---|---|
+| **Tri** | un appel court par photo : « est-ce une carte ? » → OUI/NON | ~2 s pour rejeter une photo de plat |
+| **Extraction** | l'analyse complète, sur la seule photo retenue | ~6 s, une fois par restaurant |
+
+Sans ce tri, il faudrait lancer l'extraction complète sur chaque photo de chaque
+restaurant : dix fois le coût et le temps pour le même résultat.
+
+**Ce qui est stocké :** uniquement les observations dérivées (nombre de plats,
+cuisines, langues, ratio vernaculaire). **Jamais les photos** — elles sont
+analysées en mémoire puis jetées.
+
+### Limite assumée, à écrire dans le mémoire
+Les restaurants très photographiés sont les plus fréquentés, donc plutôt les
+touristiques. Cette source amorce mieux la classe « piège » que la classe
+« local » — un biais qu'il faut mesurer, pas ignorer.
+
+C'est précisément ce que le scan utilisateur corrige : il atteint les
+restaurants que personne ne photographie. Formulation défendable :
+*« le signal menu est amorcé via l'API sur la zone d'évaluation ; en production
+il est alimenté par les scans utilisateurs, qui couvrent les établissements
+absents des plateformes. »*
+
+### Implémentation
+`backend/ingestion/google/places_photos.py` (recherche `place_id`, liste et
+téléchargement des photos) et `backend/ingestion/menu_scan/harvest.py`
+(orchestration tri → extraction → base). Nécessite `GOOGLE_API_KEY` avec
+« Places API (New) » activée **et la facturation configurée** — l'endpoint
+Photos est facturé.
+
+---
+
+## D-022 — Jetons de design partagés entre le web et le mobile
+
+**Date :** 2026-08-13 · **Statut :** actif
+
+### Contexte
+Le front web et l'app mobile définissaient chacun leurs couleurs. Mesure faite
+avant correction : `#c1121f`, `#fffbf3` et `#6f6961` étaient écrits en dur des
+deux côtés, indépendamment, et le web portait en plus trois couleurs que le
+mobile ignorait.
+
+### Problème identifié
+Cette divergence n'est pas hypothétique, elle est **mécanique** : deux fichiers
+sans lien évoluent séparément. Chaque retouche d'un côté creuse l'écart, et
+personne ne s'en aperçoit avant de comparer les deux écrans côte à côte.
+
+### Décision
+`packages/shared/tokens.js` devient la **source unique** : couleurs, espacements,
+rayons, typographie, ombres.
+
+- Le **mobile** l'importe directement — `theme.js` ne fait plus que réexporter.
+- Le **web** consomme `tokens.css`, généré par `node packages/shared/build-css.js`.
+
+`tokens.css` est généré et ne doit jamais être édité à la main.
+
+C'est la création de `packages/shared` que CLAUDE.md §7 différait « jusqu'à ce
+que la duplication devienne réelle ». Elle l'est devenue.
+
+### Sur les références visuelles
+Les conventions retenues — carte photo dominante, filtres en pastilles, bouton
+de réservation proéminent — sont celles du secteur de la réservation de
+restaurant. Ce sont des **conventions d'usage**, pas l'identité d'un acteur
+particulier. La palette reste celle du projet (rouge profond, crème).
+
+Copier la direction artistique d'un concurrent serait juridiquement discutable
+et stratégiquement absurde : l'objectif est de construire une marque.
+
+### Conséquences
+- **Aucune couleur ni espacement en dur** dans `apps/web` ou `apps/mobile`.
+- Modifier une valeur : `tokens.js`, puis relancer `build-css.js`.
+- 12 valeurs hexadécimales du web remplacées par des variables ; il en reste 19,
+  spécifiques à des composants, à tokeniser au fil des retouches.

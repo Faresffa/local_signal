@@ -1,0 +1,64 @@
+/* GÉNÉRÉ par packages/shared/build-css.js — NE PAS ÉDITER À LA MAIN.
+ * Modifier packages/shared/tokens.js puis relancer le script.
+ * Garantit que le web et le mobile partagent les mêmes valeurs (D-022). */
+
+:root {
+  /* color */
+  --color-brand: #c1121f;
+  --color-brand-dark: #8d0c17;
+  --color-brand-light: #f8e6e7;
+  --color-background: #fffbf3;
+  --color-surface: #ffffff;
+  --color-surface-alt: #faf6ee;
+  --color-border: #e8e0d3;
+  --color-border-strong: #d5c9b6;
+  --color-text: #1c1a17;
+  --color-text-muted: #6f6961;
+  --color-text-faint: #8b857c;
+  --color-text-inverse: #ffffff;
+  --color-local: #2d6a4f;
+  --color-local-soft: #e7f2ec;
+  --color-mixed: #b8860b;
+  --color-mixed-soft: #fdf4e0;
+  --color-tourist: #c1121f;
+  --color-tourist-soft: #f8e6e7;
+
+  /* spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* fontSize */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-xxl: 28px;
+  --font-size-display: 34px;
+
+  /* fontWeight */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* lineHeight */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.65;
+
+  /* shadow */
+  --shadow-card: 0 1px 3px rgba(28, 26, 23, 0.06);
+  --shadow-raised: 0 4px 16px rgba(28, 26, 23, 0.10);
+
+}

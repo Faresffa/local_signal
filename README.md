@@ -5,10 +5,10 @@ Cela passe évidemment par la nourriture et les restaurants que fréquentent ré
 
 Pourtant, dans la plupart des destinations touristiques, les voyageurs se retrouvent souvent dans des restaurants chers, standardisés et pensés avant tout pour les touristes.
 
-Le problème n’est pas le manque de restaurants authentiques.
+Le problème n'est pas le manque de restaurants authentiques.
 Le problème est **le manque de visibilité**.
 
-Les restaurants de quartier indépendants sont souvent éclipsés par des établissements très visibles, optimisés pour attirer les touristes et mis en avant par les plateformes classiques. Résultat : les voyageurs n’ont **aucun repère fiable pour distinguer un vrai restaurant local d’un attrape-touriste**.
+Les restaurants de quartier indépendants sont souvent éclipsés par des établissements très visibles, optimisés pour attirer les touristes et mis en avant par les plateformes classiques. Résultat : les voyageurs n'ont **aucun repère fiable pour distinguer un vrai restaurant local d'un attrape-touriste**.
 
 ## Notre vision
 
@@ -16,84 +16,156 @@ Ce projet vise à créer une plateforme qui aide les voyageurs à découvrir **d
 
 Au lieu de mettre en avant les établissements les plus visibles ou les mieux référencés, la plateforme cherche à révéler les lieux qui font réellement partie de la vie locale.
 
-## Ce que propose l’application
+## Ce que propose l'application
 
-L’utilisateur peut rechercher des restaurants en fonction de :
+L'utilisateur peut rechercher des restaurants en fonction de :
 
 * sa ville ou de son itinéraire de la journée
-* l’ambiance recherchée (cantine, restaurant de quartier, calme ou animé)
+* l'ambiance recherchée (cantine, restaurant de quartier, calme ou animé)
 * son budget
 * le nombre de personnes
 * le type de cuisine
 
-L’application propose ensuite des restaurants qui :
+L'application propose ensuite des restaurants qui :
 
 * se trouvent sur son trajet ou à proximité
-* correspondent à l’ambiance recherchée
+* correspondent à l'ambiance recherchée
 * sont **réellement fréquentés par les locaux**
 
-L’objectif n’est pas de recommander “les meilleurs restaurants” selon des notes ou des classements, mais **les restaurants les plus authentiques et les plus adaptés à un moment précis**.
+L'objectif n'est pas de recommander "les meilleurs restaurants" selon des notes ou des classements, mais **les restaurants les plus authentiques et les plus adaptés à un moment précis**.
 
 ## Objectif du projet
 
-À terme, l’ambition est de construire un outil de découverte qui reconnecte les voyageurs avec **la vraie vie culinaire des villes qu’ils visitent**, tout en redonnant de la visibilité aux restaurants indépendants qui font vivre les quartiers.
+À terme, l'ambition est de construire un outil de découverte qui reconnecte les voyageurs avec **la vraie vie culinaire des villes qu'ils visitent**, tout en redonnant de la visibilité aux restaurants indépendants qui font vivre les quartiers.
 
-## Architécture du projet 
+---
 
-### **1. ⭐ Score Étoiles (4ème critère de scoring)**
+## Question de recherche
 
-Formule : `Score = (GéoTourist×0.30 + GéoUser×0.25 + Langue×0.20 + Étoiles×0.25) × 100`
+> Peut-on mesurer automatiquement l'authenticité locale d'un restaurant,
+> **sans se reposer sur sa popularité** ?
 
-Fichiers créés/modifiés :
+C'est la contrainte centrale du projet. Un restaurant invisible a peu ou pas d'avis :
+tout critère fondé sur le volume d'avis ou la notoriété disqualifie mécaniquement les
+restaurants que le projet veut mettre en avant.
 
-- **stars_score.py** — nouveau module
-- **engine.py** — maj 4 critères
-- **config.py** — pondérations rebalancées
-- **mock_data.py** — ratings 3.8–4.8 ajoutés
+C'est ce qui oriente l'ensemble de l'architecture — voir [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
-### **2. 🔌 Backend FastAPI**
+## L'apport IA — le scan de carte
 
-- **backend/main.py** — 6 endpoints REST avec CORS
-- Commande : `python -m uvicorn backend.main:app --reload --port 8000`
-- Doc API auto : `http://localhost:8000/docs`
+L'utilisateur **photographie la carte affichée en vitrine** ; un modèle de vision
+évalue l'authenticité du menu : cohérence culinaire, amplitude, spécificité
+lexicale, nombre de langues, présence de formules « menu touriste ».
 
-### **3. ⚛️ Frontend React et UX Avancée**
+Trois fonctions en un seul geste :
 
-- **App.jsx** — 4 pages (Splash → Search → Results → Reservation)
-- **index.css** — Design premium (Inter, gradients, animations)
-- **api.js** — Client API
-- Commande : `cd frontend && npm run dev`
+- **Produit** — répond à l'utilisateur à l'instant exact où il hésite, devant le restaurant.
+- **Donnée** — les restaurants authentiques n'ont pas de site web, c'est *pour ça*
+  qu'ils sont invisibles. Les utilisateurs deviennent les collecteurs.
+- **Recherche** — démontre qu'on peut scorer un restaurant sans aucun avis.
 
-**Nouveautés UX, Géolocalisation & Accueil :**
+## Architecture du scoring
 
-- 🏠 **Home Page "Futuriste" & Dynamique** : Fini la barre de chargement basique. L'accueil est un véritable *Dashboard Premium* (Dark theme, glow effects, animations fluides).
-- 📍 **Demande Geolocation au lancement** : Dès l'ouverture, l'app demande la position pour afficher des recommandations locales pertinentes, avant même la première recherche.
-- 💡 **Recommandations sans Score (Pur Local)** : Comme demandé, la page d'accueil affiche uniquement des suggestions basées sur la localisation, sans afficher de calculs ou de points (les scores restent réservés à la vue de recherche experte).
-- 🛡️ **Filtres Allergènes** : Exclusion intelligente via le backend (ex: "Végétarien").
-- 🎨 **Zéro Emojis** : Interface 100% propre (librairie `Lucide-React`).
-- 🗺️ **LocationPicker Interactif** : Autour de moi (GPS), Adresse manuelle (Nominatim), Carte Interactive (`react-leaflet`).
+Deux scores de nature distincte, jamais mélangés :
 
+**Local Signal** — statique, précalculé, stocké en base. *Ce qu'est le restaurant :*
+signal menu, signal avis, anomalie de prix, pénalité zone touristique.
+
+**Pertinence** — dynamique, calculée à la requête. *Ce qui convient à l'utilisateur
+maintenant :* distance, ouverture, budget, cuisine, contraintes alimentaires.
+
+> Les pondérations actuelles sont **provisoires**. Elles seront dérivées du jeu
+> labellisé, pas choisies à la main — voir [`docs/methodologie/evaluation.md`](docs/methodologie/evaluation.md).
+
+## Structure du dépôt
+
+```
+backend/               API FastAPI, moteur de scoring, base de données
+  core/scoring/        calcul des scores
+  ingestion/osm/       OpenStreetMap — référentiel des lieux
+  ingestion/google/    Places Photos — amorçage des menus
+  ingestion/menu_scan/ vision : extraction et récolte
+  db/  data/  tests/
+
+apps/
+  web/                 interface web — React + Vite
+  mobile/              application mobile — Expo
+
+packages/shared/       jetons de design — source unique web + mobile
+
+docs/
+  CONVENTIONS.md       règles d'ingénierie
+  DECISIONS.md         journal des décisions, avec le raisonnement
+  ROADMAP.md           plan, données, auth, base, hébergement
+  methodologie/        protocole d'évaluation
+  data/                jeu labellisé (vérité terrain)
+```
 
 ## Lancer le projet
 
-### Backend API
+Toutes les commandes se lancent **depuis la racine du dépôt**.
+
+### Installation
+
 ```bash
-cd V0.1
+pip install -r requirements.txt
+```
+
+```bash
+cd apps/web && npm install
+```
+
+Copier `.env.example` en `.env` et y renseigner les clés (voir
+[docs/CONVENTIONS.md §7](docs/CONVENTIONS.md)).
+
+### Backend API
+
+```bash
 python -m uvicorn backend.main:app --reload --port 8000
 ```
 
-### Frontend React
+### Interface web
+
 ```bash
-cd V0.1/frontend
-npm run dev
+cd apps/web && npm run dev
 ```
 
-### Interface Streamlit (optionnelle)
+### Application mobile
+
 ```bash
-cd V0.1
-python -m streamlit run app.py
+cd apps/mobile && npm start
 ```
 
-- **React** : [http://localhost:5173](http://localhost:5173/)
-- **FastAPI docs** : http://localhost:8000/docs
-- **Streamlit** : [http://localhost:8501](http://localhost:8501/)
+### Données
+
+Importer et scorer une zone depuis OpenStreetMap :
+
+```bash
+python -m backend.ingestion.osm.load quartier-latin
+```
+
+Amorcer le signal menu depuis les photos Google Places :
+
+```bash
+python -m backend.ingestion.menu_scan.harvest quartier-latin --limit 20
+```
+
+### Tests
+
+```bash
+python -m backend.tests.test_scoring
+```
+
+| | |
+|---|---|
+| Interface web | http://localhost:5173 |
+| Documentation API | http://localhost:8000/docs |
+| Scan de carte | `POST /api/menu/scan` (multipart `image`) |
+
+## Documentation
+
+- [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) — règles d'ingénierie, structure, secrets, sources autorisées
+- [`docs/DECISIONS.md`](docs/DECISIONS.md) — journal des décisions et leur raisonnement
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — plan, données, authentification, hébergement
+- [`docs/methodologie/evaluation.md`](docs/methodologie/evaluation.md) — protocole d'évaluation
+- [`docs/data/README.md`](docs/data/README.md) — constitution de la vérité terrain

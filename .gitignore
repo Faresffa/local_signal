@@ -1,0 +1,59 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+
+# ---------- Secrets ----------
+.env
+.env.*
+!.env.example
+
+# ---------- Base de données locale ----------
+# La base de dev ne doit pas être versionnée : elle contient des données de test
+# et génère des conflits systématiques. Voir docs/DECISIONS.md (D-011).
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# ---------- Node / JS ----------
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# ---------- Expo / React Native ----------
+.expo/
+.expo-shared/
+*.jks
+*.p12
+*.mobileprovision
+
+# ---------- Éditeurs / OS ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Expo / React Native
+.expo/
+dist/
+web-build/
+
+# Skills tierces — reinstallables via `npx skills add`, le lockfile suffit
+.agents/
+.claude/skills/
+
+# Fichiers outils d assistants — locaux, hors du depot
+.claude/
+CLAUDE.md
+AGENTS.md
+skills-lock.json
