@@ -52,3 +52,15 @@ export async function scanMenu(uri) {
 
   return request("/api/menu/scan", { method: "POST", body: form });
 }
+
+/**
+ * URL de la photo d'un restaurant (D-025).
+ *
+ * L'endpoint répond 404 quand aucune photo n'est connue : c'est un cas normal.
+ * Le composant Image gère l'échec via `onError` et bascule sur son visuel de
+ * repli, plutôt que de vérifier l'existence au préalable — ce qui doublerait
+ * le nombre de requêtes pour chaque vignette.
+ */
+export function photoUrl(restaurantId) {
+  return `${API_BASE}/api/restaurant/${encodeURIComponent(restaurantId)}/photo`;
+}

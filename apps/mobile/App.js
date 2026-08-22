@@ -1,18 +1,25 @@
 // Local Signal — application mobile (Expo / React Native).
 //
-// Deux écrans, navigation par onglets manuelle : tant qu'il n'y a que deux
-// destinations, react-navigation serait une dépendance sans contrepartie.
-// À adopter dès qu'un troisième écran ou une pile de navigation apparaît.
+// Trois écrans, navigation par onglets manuelle.
+//
+// SUR react-navigation : la roadmap prévoyait de l'adopter « dès qu'un
+// troisième écran apparaîtra ». Il apparaît ici — mais ces trois écrans sont
+// des destinations parallèles, sans pile ni retour arrière imbriqué. Une barre
+// d'onglets manuelle les couvre exactement. react-navigation deviendra
+// justifié quand un écran en empilera un autre : la fiche restaurant détaillée,
+// prévue en phase 3, sera ce déclencheur.
 
 import { useState } from "react";
 import { Pressable, SafeAreaView, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import NearbyScreen from "./src/NearbyScreen";
 import ScanScreen from "./src/ScanScreen";
+import SearchScreen from "./src/SearchScreen";
 import { colors, spacing } from "./src/theme";
 
 const TABS = [
   { key: "nearby", label: "Autour de moi", Screen: NearbyScreen },
+  { key: "search", label: "Rechercher", Screen: SearchScreen },
   { key: "scan", label: "Scanner", Screen: ScanScreen },
 ];
 

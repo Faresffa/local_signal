@@ -821,3 +821,419 @@ et stratégiquement absurde : l'objectif est de construire une marque.
 - Modifier une valeur : `tokens.js`, puis relancer `build-css.js`.
 - 12 valeurs hexadécimales du web remplacées par des variables ; il en reste 19,
   spécifiques à des composants, à tokeniser au fil des retouches.
+
+---
+
+## D-023 — Récolte des cartes sur le web, en complément de D-021
+
+**Date :** 2026-08-21 · **Statut :** actif
+
+### Contexte
+Le signal menu pèse le plus lourd du Local Signal (0,40) parce qu'il est le seul
+calculable sans avis (D-001, D-004). Or à ce jour **aucune carte n'est en base** :
+la table `menus` est vide, et les 736 restaurants importés ont tous une confiance
+de 0,15 et des scores massivement ex æquo. Le moteur fonctionne, mais il n'a
+qu'un signal discriminant sur quatre — la pénalité de zone touristique.
+
+La question posée : peut-on amorcer ce signal sans attendre les scans
+utilisateurs, et sans le coût de l'API Google Places Photos (D-021) ?
+
+### Ce qui a été vérifié avant de décider
+
+**L'API Google Places n'expose aucun champ menu.** La référence des champs
+(`developers.google.com/maps/documentation/places/web-service/data-fields`)
+liste plus de cent champs sur quatre paliers tarifaires, jusqu'aux attributs
+« sert du vin » ou « options végétariennes ». Aucun ne concerne la carte.
+
+La rubrique « Menu » visible dans l'application Google Maps est construite par
+Google à partir de robots d'indexation et de partenaires de données. Elle n'est
+pas exposée par l'API, et les restaurateurs eux-mêmes ne peuvent pas l'éditer.
+
+L'API `FoodMenus` existe, mais dans **Google Business Profile** : elle exige
+d'être propriétaire ou gestionnaire de la fiche. Inapplicable à des
+établissements tiers.
+
+**Conclusion :** la seule source de carte accessible sans coût et sans clé est
+le site du restaurant lui-même — c'est-à-dire exactement là où Google va
+chercher la sienne.
+
+### Décision
+Ajouter une voie de récolte web, `backend/ingestion/web/`, en **complément** de
+D-021 et non en remplacement.
+
+| Étape | Ce qui tourne | Coût |
+|---|---|---|
+| **Résolution** | tag OSM `website:menu`, sinon lien « carte » sur la page d'accueil | nul |
+| **Récupération** | texte de la page HTML ou du PDF | nul |
+| **Filtre** | détection de prix — une page sans prix ne contient pas de plats | nul |
+| **Extraction** | observations factuelles par le modèle, sur du texte | ~1 appel |
+| **Score** | `menu_score.py`, inchangé | nul |
+
+Le tag `website:menu` est désormais capturé à l'ingestion OSM (colonne
+`restaurants.menu_url`).
+
+**Le modèle reçoit du texte, pas une image.** Une carte publiée sur le web est
+déjà textuelle ; la faire transiter par un modèle de vision coûterait davantage
+et perdrait de l'information. Même schéma de sortie (`MenuAnalysis`), même
+principe : le modèle observe, il ne juge pas (D-014).
+
+**`--dry-run` mesure la couverture sans consommer un seul appel.** À lancer en
+premier, systématiquement.
+
+### Résultats mesurés — Quartier latin, 468 restaurants
+
+| | |
+|---|---|
+| Avec un site web ou un tag menu | 155 (33 %) |
+| Sans lien de carte identifiable | 78 |
+| Récupération en échec (404, 403, PDF scanné) | 12 |
+| Page récupérée mais **sans aucun prix** | 36 |
+| **Cartes réellement exploitables** | **29 (6,2 % de la zone)** |
+
+Les 9 tags `website:menu` de la zone se sont révélés décevants : trois pointent
+vers des URL mortes (404), un vers un site protégé (403), un vers un PDF scanné
+sans couche texte. Le crawl du site officiel produit davantage.
+
+### Le résultat négatif, qui est le plus utile
+**36 pages sur 65 récupérées ne contiennent pas la liste des plats.** Les sites
+de restaurants modernes affichent leur carte en JavaScript, la déportent dans un
+PDF derrière un second clic, ou se contentent de la décrire en prose. Deux cas
+observés : une page « cartes » remplie de `Lorem ipsum`, une page « menu » qui
+présente la cuisine du chef et renvoie vers « Voir la carte ».
+
+C'est la raison du filtre par détection de prix : sans lui, chacune de ces pages
+coûtait un appel au modèle pour s'entendre répondre « ce n'est pas une carte ».
+
+**Ce résultat vaut mieux qu'une affirmation.** Il démontre empiriquement ce que
+D-004 posait comme hypothèse : la carte d'un restaurant n'est pas récupérable à
+distance de façon fiable. Le scan en vitrine n'est pas une commodité de produit,
+c'est la seule voie d'accès à la donnée. Formulation défendable :
+*« la récolte web couvre 6 % de la zone d'évaluation ; 55 % des pages de carte
+atteintes ne contiennent pas la liste des plats. »*
+
+### Le biais, identique à celui de D-021
+Cette voie ne trouve que des restaurants ayant une présence web. Or l'absence de
+site est précisément ce qui rend invisibles les établissements que le projet
+cherche à révéler (D-001). Elle amorce donc mieux la classe « piège » que la
+classe « local » — **exactement le même biais que D-021**, par un autre chemin.
+
+La provenance est enregistrée (`menus.provider` vaut `web-osm` ou `web-crawl`,
+`menus.source_url` porte l'URL) afin que l'écart de score entre voies soit
+mesurable et rapportable. Un biais mesuré est un résultat ; un biais ignoré est
+une faute de méthode.
+
+### Pourquoi D-021 n'est pas supersédée
+Les deux voies ont des biais **complémentaires**, pas identiques : D-021 atteint
+les restaurants très photographiés, D-023 les restaurants ayant un site. Aucune
+des deux n'atteint le restaurant de quartier invisible — seul le scan
+utilisateur y parvient (D-004).
+
+D-021 n'a par ailleurs **jamais été exécutée** : elle attendait une clé Google.
+La déclarer supersédée sur la foi d'un résultat qu'on n'a pas mesuré serait
+prématuré. Les deux voies restent disponibles ; leur comparaison sur le jeu
+labellisé est un résultat à produire.
+
+### Conséquences
+- Nouveau module `backend/ingestion/web/` — `menu_finder`, `fetcher`, `harvest_web`
+- Nouveau `backend/ingestion/menu_scan/text_client.py` et `providers/text.py`,
+  pendants textuels de `client.py` et des providers de vision
+- Colonnes ajoutées : `restaurants.menu_url`, `menus.source_url`
+- `db/models.py` porte désormais une migration : `CREATE TABLE IF NOT EXISTS`
+  ne modifie pas une table existante, une base antérieure resterait incomplète
+- Dépendances : `beautifulsoup4`, `pypdf`
+- `GROQ_TEXT_MODEL` par défaut identique au modèle de vision, pour ne pas
+  ajouter une variable à isoler lors de la calibration (D-006)
+
+### Contrainte d'exploitation à connaître
+Le tier gratuit Groq plafonne à **8 000 tokens par minute**, et le quota compte
+l'entrée **plus le budget de sortie réservé**, pas consommé. D'où deux réglages
+non négociables sur ce tier : `--workers 2` au maximum, et un budget de sortie
+de 4 500 tokens. Au-delà, les appels sont rejetés en 413 avant même de tourner.
+
+### Effet mesuré sur le classement — et l'alerte qui en découle
+
+Après récolte de 25 cartes sur les 468 restaurants du Quartier latin :
+
+| | Avec carte (25) | Sans carte (443) |
+|---|---|---|
+| Confiance | 0,55 | 0,15 |
+| Local Signal moyen | **60,8** | **40,7** |
+
+**Les 12 premiers du classement sont les 12 restaurants qui ont une carte.**
+Sans exception. Le signal menu pesant 0,40 et les cartes récoltées obtenant un
+score moyen de 0,83, tout restaurant qui en possède une devance mécaniquement
+tous ceux dont le poids est redistribué (D-012).
+
+Or les restaurants qui ont une carte en ligne sont **ceux qui ont un site web**.
+La récolte web, appliquée telle quelle au classement, **inverse donc l'intention
+du produit** : elle propulse en tête les établissements web-visibles, c'est-à-dire
+exactement ceux que D-001 cherche à ne pas privilégier.
+
+Ce n'est pas un défaut d'implémentation, c'est la conséquence arithmétique de la
+redistribution de poids quand la disponibilité du signal est **corrélée à la
+variable mesurée**. D-012 protège du faux zéro, il ne protège pas de ce biais-là.
+
+**Conséquences à traiter avant toute mise en avant du classement :**
+
+1. Ne jamais comparer deux Local Signal de confiances différentes sans en tenir
+   compte. 60,8 à confiance 0,55 et 40,7 à confiance 0,15 ne sont pas
+   commensurables.
+2. La confiance doit peser dans le classement affiché, ou être montrée à
+   l'utilisateur — elle ne peut pas rester une colonne interne.
+3. La calibration sur le jeu labellisé (D-006) doit être menée **séparément par
+   régime de disponibilité**, sinon elle apprendra ce biais au lieu de le corriger.
+
+C'est la démonstration chiffrée que l'amorçage ne remplace pas le scan
+utilisateur (D-004) : tant que la couverture menu est corrélée à la visibilité
+web, elle dégrade le classement au lieu de l'améliorer.
+
+---
+
+## D-024 — Langue de la carte : véhiculaire, pas « étrangère »
+
+**Date :** 2026-08-21 · **Statut :** actif
+
+### Contexte
+`score_languages` ne comptait que le **nombre** de langues d'une carte, jamais
+lesquelles. Une carte en une seule langue obtenait 1,0, quelle que soit cette
+langue.
+
+### Problème identifié
+Constaté sur les données réelles récoltées par D-023 : *Indonesia* et *Bian Bian
+Nouilles*, dont les cartes sont rédigées **uniquement en anglais**, obtenaient le
+score de langue maximal — au même titre qu'un bistrot francophone.
+
+Or au Quartier latin, une carte exclusivement en anglais est l'un des signaux
+d'attrape-touristes les plus forts qui soient. Elle ne s'adresse ni au quartier,
+ni à une communauté : elle s'adresse au passage international.
+
+`config.TARGET_LANGUAGE = "fr"` existait déjà, mais n'était consommé que par le
+score des **avis** (`language_score.py`). Le score de la carte l'ignorait.
+
+### Le piège écarté
+La correction naïve — pénaliser toute carte sans français — **retournerait le
+produit contre son objectif**.
+
+Une carte rédigée uniquement en chinois, en vietnamien ou en arabe s'adresse à
+une clientèle de diaspora installée. C'est un signal **local fort**, exactement
+le type d'établissement que D-001 cherche à révéler. La pénaliser reviendrait à
+écarter mécaniquement les restaurants communautaires, qui comptent parmi les
+plus authentiques d'un quartier.
+
+Le critère n'est donc pas « absence de la langue locale », mais **substitution de
+la langue locale par une langue véhiculaire**.
+
+### Décision
+Introduire la notion de langue véhiculaire — celle qu'on emploie pour être
+compris d'un étranger de passage, et non d'une communauté installée.
+
+```
+LINGUA_FRANCA_LANGUAGES = {"en"}   # à étendre selon la zone d'étude
+LINGUA_FRANCA_PENALTY   = 0.5      # à calibrer (D-006)
+```
+
+La pénalité s'applique **uniquement** si la langue locale est absente **et**
+qu'une langue véhiculaire est présente. Quand les deux coexistent (`['fr','en']`),
+le nombre de langues joue déjà son rôle : pénaliser en plus compterait deux fois
+le même fait.
+
+Les codes sont normalisés (casse, codes à 3 lettres) avant comparaison — le
+modèle ne renvoie pas toujours des ISO 639-1 stricts.
+
+### Comportement obtenu
+
+| Carte | Score langue | Lecture |
+|---|---|---|
+| `['fr']` | 1,00 | bistrot de quartier |
+| `['zh']` | 1,00 | restaurant de diaspora — **non pénalisé** |
+| `['en']` | 0,50 | s'adresse au passage international |
+| `['fr','en']` | 0,75 | pénalisé par le nombre seulement |
+| `['en','zh']` | 0,375 | diaspora + véhiculaire |
+| `['en','es','it']` | 0,25 | ciblage touristique assumé |
+| `[]` | `None` | indisponible, pas 0,0 (D-012) |
+
+### Effet mesuré
+*Indonesia* — carte indonésienne cohérente, 21 plats, entièrement vernaculaire,
+mais rédigée en anglais seul — passe de la **4ᵉ à la 9ᵉ place** du Quartier latin
+(68,85 → 65,32).
+
+Le reste de son score demeure élevé, et c'est voulu : la carte reste cohérente et
+resserrée. Seul le fait qu'elle s'adresse à l'anglophone de passage est désormais
+compté.
+
+### Conséquences
+- `LINGUA_FRANCA_LANGUAGES` est **dépendant de la zone**. À Barcelone, l'espagnol
+  serait local et le catalan vernaculaire ; à Bruxelles, la question se pose pour
+  deux langues locales. Le jour où une zone hors de France est ajoutée, cette
+  constante doit devenir un paramètre de zone, pas une globale.
+- 6 invariants ajoutés à `backend/tests/test_scoring.py`, dont celui qui protège
+  explicitement le cas diaspora — c'est la régression la plus coûteuse possible
+  pour ce projet, elle doit rester gardée par un test.
+- `menu_score.py` importe désormais `config`, comme les quatre autres scorers.
+- La colonne `menus.menu_score` devient un instantané daté : le score effectif
+  est recalculé depuis `observations_json` à chaque batch. C'est la propriété
+  recherchée par D-014 — recalibrer sans relancer une seule inférence.
+
+---
+
+## D-025 — Photos de restaurants par l'API Google Places
+
+**Date :** 2026-08-21 · **Statut :** actif · **Régime de démonstration assumé**
+
+### Contexte
+Les fiches et les vignettes s'affichaient sans image, ou pire : la fiche détail
+tirait un visuel au hasard parmi cinq (`/resto1..5.jpg`) selon l'identifiant du
+restaurant. Montrer la photo d'un autre établissement est indéfendable dans un
+projet dont le sujet est précisément l'authenticité.
+
+### Ce qui a été mesuré avant de décider
+**OpenStreetMap ne porte aucune photo.** Sur les 468 restaurants du Quartier
+latin, interrogation d'Overpass :
+
+| Tag | Nombre |
+|---|---|
+| `image` | 0 |
+| `wikimedia_commons` | 0 |
+| `photo` | 0 |
+| `wikidata` | 9 |
+
+La voie libre est donc fermée. Restent l'API Google Places, ou rien.
+
+### Décision
+Utiliser **Place Photos** (Places API New), et n'afficher **que la première
+photo** de la fiche.
+
+**Pipeline en deux temps, pour une raison de quota :**
+
+| Étape | Quand | Coût |
+|---|---|---|
+| **Résolution** — `place_id` puis nom de ressource de la 1re photo | une fois par restaurant, script dédié | 2 appels |
+| **Affichage** — téléchargement de l'image | à l'affichage | 1 appel |
+
+Résoudre à l'affichage aurait signifié 2 × 50 appels par page de résultats : le
+quota gratuit mensuel serait consommé en une vingtaine de recherches. Le
+`place_id` et le nom de ressource sont des **identifiants**, pas du contenu :
+les conserver en base ne pose aucune difficulté.
+
+`backend/ingestion/google/seed_photos.py` saute d'office les restaurants déjà
+résolus — une relance ne re-facture rien.
+
+### Coût réel
+Chaque SKU offre **1 000 requêtes par mois** (Text Search, Place Details, Place
+Photos). Une zone de moins de 500 restaurants tient donc intégralement dans le
+quota gratuit, résolution comprise.
+
+### Le point qui doit rester explicite
+
+**Les CGU Google interdisent la mise en cache durable des photos, et
+celles-ci appartiennent à leurs auteurs (D-021).**
+
+Le projet fonctionne néanmoins en régime « cache local » : les images sont
+téléchargées une fois et servies depuis le disque. C'est un choix **de
+démonstration**, pris en connaissance de cause, pour que l'application reste
+fluide sans consommer un appel par vignette.
+
+Les garde-fous qui maintiennent ce choix réversible :
+
+- `config.PHOTO_CACHE_ENABLED` — **un seul réglage** sépare les deux régimes.
+  À `false`, chaque affichage relaie l'image sans jamais l'écrire ; aucun autre
+  fichier ne change. C'est la condition pour que la mise en conformité reste une
+  décision d'une ligne, et non une réécriture.
+- Le dossier `.photo-cache/` est **hors du dépôt et gitignoré** — la copie reste
+  un fichier de travail local, jamais une redistribution.
+- `photo_cache.purge()` vide le cache en une commande, pour que le retour à la
+  conformité ne dépende pas d'une opération manuelle qu'on oublie.
+- L'en-tête `X-Photo-Source: Google Places` accompagne chaque réponse.
+
+**À faire avant toute mise en ligne :** repasser `PHOTO_CACHE_ENABLED` à `false`,
+purger le cache, et afficher l'attribution de l'auteur dans l'interface —
+l'en-tête HTTP ne s'y substitue pas.
+
+### Conséquences
+- Colonnes ajoutées : `restaurants.google_place_id`, `restaurants.photo_ref`
+- Nouveau `backend/ingestion/google/photo_cache.py` — seul module au courant du
+  régime en vigueur ; ses appelants l'ignorent
+- Nouveau `backend/ingestion/google/seed_photos.py` — `--dry-run` chiffre le
+  coût sans consommer un appel
+- Nouvel endpoint `GET /api/restaurant/{id}/photo`
+- **404 en l'absence de photo est un cas normal**, pas une anomalie : les
+  interfaces basculent sur leur visuel de repli via `onError`, ce qui évite une
+  requête de vérification par vignette
+- Le tirage aléatoire `/resto1..5.jpg` de la fiche détail est supprimé
+
+---
+
+## D-026 — Textes partagés, recherche sur mobile, points de départ explicites
+
+**Date :** 2026-08-21 · **Statut :** actif
+
+### Contexte
+Trois défauts constatés en utilisant réellement les interfaces.
+
+**1. Les textes ne disaient rien du projet.** L'accueil web annonçait
+« Trouvez la table parfaite, n'importe où » et « des recommandations
+personnalisées selon votre profil » — le discours exact de n'importe quelle
+plateforme de réservation, c'est-à-dire précisément celui contre lequel le
+projet se construit. Rien n'y évoquait l'invisibilité des restaurants de
+quartier, ni le refus de classer par popularité.
+
+**2. Le mobile n'avait aucune recherche.** Un seul mode d'accès, « autour de
+moi », entièrement dépendant du GPS. Un utilisateur hors de la zone relevée
+n'avait aucun moyen d'explorer quoi que ce soit.
+
+**3. Choisir un point de départ supposait de deviner la zone couverte.** La
+base ne contient qu'une zone. Saisir une adresse au hasard renvoie une liste
+vide — l'application paraît cassée alors qu'elle répond correctement.
+
+### Décision
+
+**`packages/shared/content.js`** — pendant de `tokens.js` (D-022) pour les
+textes. Web et mobile lisent la même source : deux interfaces qui décrivent le
+produit différemment donnent l'impression de deux produits.
+
+Le fichier porte sa règle d'écriture, sous forme de trois interdits :
+
+1. Ne jamais promettre « les meilleurs » — le projet ne classe pas la qualité,
+   il mesure l'ancrage local.
+2. Ne jamais s'appuyer sur les notes ou le nombre d'avis — D-007 les a sorties
+   du scoring, le vocabulaire doit suivre.
+3. Ne jamais annoncer une certitude que le scoring n'a pas : tant que le jeu
+   labellisé n'existe pas (D-006), le registre est celui de l'indice, pas du
+   verdict.
+
+Exemple du glissement obtenu :
+
+> ~~Trouvez la table parfaite, n'importe où.~~
+> **Mangez là où mangent les habitants.**
+> *Les bonnes adresses de quartier ne sont pas mal notées — elles sont
+> invisibles. Local Signal les fait remonter sans se fier à leur popularité.*
+
+**`apps/mobile/src/SearchScreen.js`** — troisième écran, avec les trois modes
+du web : position GPS, adresse saisie avec suggestions, lieu du Quartier latin
+en accès direct.
+
+**Points de départ explicites** — six lieux du Quartier latin (Place Maubert,
+Panthéon, rue Mouffetard, Saint-Michel, Odéon, Jardin des Plantes), tous à
+l'intérieur de la zone relevée, proposés en un geste sur les deux interfaces.
+
+**Suggestions d'adresse biaisées sur la zone** — Nominatim est interrogé avec
+un `viewbox` sur le Quartier latin, **sans `bounded=1`** : les résultats de la
+zone remontent en tête, mais une adresse ailleurs reste trouvable. Restreindre
+durement serait un mur, pas une aide — et empêcherait le projet de fonctionner
+dès qu'une autre zone sera relevée.
+
+### Sur react-navigation
+La roadmap prévoyait de l'adopter « dès qu'un troisième écran apparaîtra ». Il
+apparaît ici, et la décision est de **ne pas** l'adopter encore : ces trois
+écrans sont des destinations parallèles, sans pile ni retour imbriqué. Une barre
+d'onglets manuelle les couvre exactement. Le vrai déclencheur sera la fiche
+restaurant détaillée, qui empilera un écran sur un autre (phase 3).
+
+### Conséquences
+- `packages/shared/content.js` — textes, lieux de démonstration, position de repli
+- La position de repli n'est plus dupliquée : web et mobile lisent la même valeur.
+  Elle l'était, et rien n'empêchait les deux copies de diverger.
+- Trois onglets sur mobile : Autour de moi · Rechercher · Scanner
+- Nouvelle classe CSS `.address-suggestions` dans `apps/web/src/App.css`
+- Les textes ne sont plus écrits en dur dans les composants : toute retouche
+  éditoriale se fait à un seul endroit, et s'applique aux deux plateformes

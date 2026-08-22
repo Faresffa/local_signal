@@ -38,6 +38,16 @@ VISION_PROVIDER = os.environ.get("VISION_PROVIDER", "groq")  # "groq" | "claude"
 GROQ_VISION_MODEL = "qwen/qwen3.6-27b"
 CLAUDE_VISION_MODEL = "claude-opus-5"
 
+# Récolte web (D-023) : la carte arrive déjà en texte, la traiter par un modèle
+# de vision serait inutilement coûteux.
+#
+# Volontairement le MÊME modèle que la vision : les observations des deux voies
+# alimentent le même scorer et le même jeu labellisé. Deux modèles différents
+# ajouteraient une variable à isoler lors de la calibration (D-006) sans
+# bénéfice démontré. Surchargeable par variable d'environnement, le catalogue
+# Groq évoluant plus vite que ce fichier.
+GROQ_TEXT_MODEL = os.environ.get("GROQ_TEXT_MODEL", GROQ_VISION_MODEL)
+
 MENU_SCAN_MAX_IMAGE_MB = 5  # refus au-delà, avant tout appel facturé
 
 # =============================================================================
@@ -129,3 +139,29 @@ DB_PATH = str(ROOT_DIR / "local_signal.db")
 # Assets (images de démonstration)
 # =============================================================================
 ASSETS_DIR = ROOT_DIR / "backend" / "data" / "assets"
+
+# =============================================================================
+# Photos de restaurants — Google Places (D-025)
+# =============================================================================
+# LE DRAPEAU QUI COMPTE.
+#
+# True  : les photos sont téléchargées une fois et servies depuis le disque.
+#         Rapide, gratuit à l'affichage — mais les CGU Google interdisent la
+#         mise en cache durable, et les photos appartiennent à leurs auteurs.
+#         Choix ASSUMÉ pour la démonstration, pas pour une mise en ligne.
+# False : chaque affichage relaie l'image depuis l'API, sans jamais l'écrire.
+#         Conforme, mais consomme un appel facturé par vignette affichée.
+#
+# Le reste du code est identique dans les deux cas : basculer se fait ici,
+# et nulle part ailleurs. C'est la condition pour que « on verra plus tard »
+# reste une décision d'une ligne plutôt qu'une réécriture.
+PHOTO_CACHE_ENABLED = os.environ.get("PHOTO_CACHE_ENABLED", "true").lower() == "true"
+
+# Hors du dépôt et gitignoré : le cache ne doit jamais être versionné ni
+# redistribué — c'est ce qui le maintient dans le registre « copie locale de
+# travail » et non « republication ».
+PHOTO_CACHE_DIR = ROOT_DIR / ".photo-cache"
+
+# Largeur demandée à l'API. 800 px suffit pour une vignette et une fiche ;
+# au-delà on paie le même prix pour des octets que personne ne regarde.
+PHOTO_MAX_WIDTH = 800

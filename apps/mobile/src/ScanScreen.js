@@ -22,6 +22,7 @@ import * as ImagePicker from "expo-image-picker";
 
 import { scanMenu } from "./api";
 import { colors, radius, spacing } from "./theme";
+import { copy } from "../../../packages/shared/content.js";
 
 // Seuils d'affichage — PROVISOIRES, à caler sur le jeu labellisé (D-006).
 const SEUIL_LOCAL = 0.70;
@@ -114,9 +115,9 @@ export default function ScanScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Scanner une carte</Text>
+      <Text style={styles.title}>{copy.scanTitle}</Text>
       <Text style={styles.subtitle}>
-        Photographiez la carte affichée en vitrine. Aucun avis n'est nécessaire.
+        {copy.scanSubtitle}
       </Text>
 
       <View style={styles.actions}>

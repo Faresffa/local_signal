@@ -1,1 +1,41 @@
 /* App.css — empty, all styles in index.css */
+/* ===== Suggestions d'adresse (D-026) ===== */
+/* Liste déroulante sous le champ de recherche. Fond opaque et bordure nette :
+   elle se superpose au formulaire, elle doit s'en détacher sans ambiguïté. */
+.address-suggestions {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 4px;
+  border: 1px solid var(--border, #e8e0d3);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--surface, #ffffff);
+  box-shadow: 0 4px 16px rgba(28, 26, 23, 0.1);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.address-suggestions li + li {
+  border-top: 1px solid var(--border, #e8e0d3);
+}
+
+.address-suggestions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--text, #1c1a17);
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.address-suggestions button:hover,
+.address-suggestions button:focus-visible {
+  background: var(--surface-alt, #faf6ee);
+  color: var(--brand, #c1121f);
+}
