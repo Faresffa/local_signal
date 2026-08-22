@@ -84,6 +84,7 @@ backend/               API FastAPI, moteur de scoring, base de données
   core/scoring/        calcul des scores
   ingestion/osm/       OpenStreetMap — référentiel des lieux
   ingestion/google/    Places Photos — amorçage des menus
+  ingestion/web/       cartes publiées en ligne — amorçage gratuit
   ingestion/menu_scan/ vision : extraction et récolte
   db/  data/  tests/
 
@@ -144,7 +145,42 @@ Importer et scorer une zone depuis OpenStreetMap :
 python -m backend.ingestion.osm.load quartier-latin
 ```
 
-Amorcer le signal menu depuis les photos Google Places :
+Amorcer le signal menu depuis le web — gratuit, sans clé Google (D-023).
+Mesurer d'abord la couverture, sans consommer un seul appel au modèle :
+
+```bash
+python -m backend.ingestion.web.harvest_web quartier-latin --dry-run
+```
+
+Puis extraire et scorer les cartes retenues :
+
+```bash
+python -m backend.ingestion.web.harvest_web quartier-latin
+```
+
+> Sur le tier gratuit Groq (8 000 tokens/minute), ne pas dépasser
+> `--workers 2` : au-delà, les appels sont rejetés avant de tourner.
+
+Associer à chaque restaurant sa photo Google Places (D-025). Chiffrer le coût
+d'abord, sans consommer un seul appel :
+
+```bash
+python -m backend.ingestion.google.seed_photos quartier-latin --dry-run
+```
+
+```bash
+python -m backend.ingestion.google.seed_photos quartier-latin --limit 60
+```
+
+> Chaque SKU Google offre 1 000 requêtes par mois. Le script saute les
+> restaurants déjà résolus : une relance ne re-facture rien.
+>
+> Les images sont conservées en local (`.photo-cache/`, gitignoré) pour la
+> démonstration. **Avant toute mise en ligne**, repasser `PHOTO_CACHE_ENABLED`
+> à `false` et purger le cache — voir D-025.
+
+Amorcer le signal menu depuis les photos Google Places — **facturé**, nécessite
+`GOOGLE_API_KEY` et la facturation activée (D-021) :
 
 ```bash
 python -m backend.ingestion.menu_scan.harvest quartier-latin --limit 20

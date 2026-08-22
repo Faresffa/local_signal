@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import { fetchRestaurants, createReservation } from "./api";
+import { fetchRestaurants, createReservation, photoUrl } from "./api";
+import { copy, demoPlaces, fallbackLocation } from "../../../packages/shared/content.js";
 import {
   Search, MapPin, Users, UtensilsCrossed, Sparkles,
   Wallet, ChevronLeft, CalendarClock, User, Mail,
@@ -18,6 +19,22 @@ L.Icon.Default.mergeOptions({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
+
+/**
+ * Position de repli, utilisée quand la géolocalisation est refusée, indisponible,
+ * ou qu'elle pointe hors des zones relevées.
+ *
+ * Définie dans packages/shared/content.js et partagée avec le mobile (D-026) :
+ * les deux interfaces doivent retomber au même endroit, sinon la démonstration
+ * ne montre pas la même chose selon l'écran.
+ *
+ * Les coordonnées précédentes (48.8520, 2.4222) étaient commentées « Paris »
+ * mais désignaient Montreuil — à 6 km, soit hors du rayon de recherche.
+ */
+const FALLBACK_LOCATION = fallbackLocation;
+
+/** Au-delà, on cesse d'attendre la géolocalisation et on affiche la zone de repli. */
+const GEOLOCATION_TIMEOUT_MS = 7000;
 
 const TYPES = ["Française", "Italienne", "Indonésienne", "Thaïlandaise", "Brasserie", "Bistrot", "Street Food"];
 const AMBIANCES = ["Exotique", "Chic", "Convivial", "Familial", "Écologique", "Décontracté", "Populaire", "Moderne", "Champêtre", "Rustique"];
@@ -44,7 +61,7 @@ function WhySection({ scoring }) {
 
   return (
     <div className="detail-section">
-      <h3 className="detail-section-title">Pourquoi ce restaurant</h3>
+      <h3 className="detail-section-title">{copy.whyTitle}</h3>
 
       <ul className="why-list">
         {reasons.map((r, i) => (
@@ -53,7 +70,7 @@ function WhySection({ scoring }) {
       </ul>
 
       <button className="why-toggle" onClick={() => setOpen((o) => !o)}>
-        {open ? "Masquer le détail" : "Voir le détail du calcul"}
+        {open ? copy.whyToggleClose : copy.whyToggleOpen}
       </button>
 
       {open && (
@@ -107,6 +124,29 @@ function Stars({ rating }) {
   );
 }
 
+/**
+ * Ligne d'information sous le nom : cuisine, ambiance, prix.
+ *
+ * Ne conserve que les champs renseignés. Les restaurants viennent
+ * d'OpenStreetMap, qui porte la cuisine mais presque jamais le prix, et jamais
+ * l'ambiance. Rendre les trois inconditionnellement produisait « · · €/pers ».
+ */
+function cuisineOf(r) {
+  // OSM sépare les cuisines multiples par « ; » — on garde la principale.
+  const raw = (r.cuisine || r.type || "").split(";")[0].trim();
+  return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : "";
+}
+
+function metaLine(r) {
+  return [
+    cuisineOf(r),
+    r.ambiance,
+    r.price != null && `${r.price}€/pers`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 // =========================================================================
 // RESTAURANT CARD
 // =========================================================================
@@ -114,10 +154,20 @@ function RestaurantCard({ r, onReserve, onDetail, compact = false, showScores = 
   return (
     <div className={`resto-card ${compact ? 'compact' : ''}`}>
       <div className="resto-card-image-wrapper">
+        {/* Photo Google Places quand elle existe (D-025), sinon le visuel de
+            repli. L'endpoint répond 404 en l'absence de photo : `onError`
+            traite ce cas, ce qui évite une requête de vérification préalable.
+            Le garde `data-fallback` empêche la boucle si le repli lui-même
+            échoue à charger. */}
         <img
-          src={getImageUrl(r.image)}
+          src={r.image ? getImageUrl(r.image) : photoUrl(r.id)}
           alt={r.name}
-          onError={(e) => { e.target.src = "/localsignal-logo-header.png"; }}
+          loading="lazy"
+          onError={(e) => {
+            if (e.target.dataset.fallback) return;
+            e.target.dataset.fallback = "1";
+            e.target.src = "/localsignal-logo-header.png";
+          }}
         />
         {r.reservation && (
           <span className="badge-reservation">
@@ -130,15 +180,17 @@ function RestaurantCard({ r, onReserve, onDetail, compact = false, showScores = 
             accessible sur la fiche, derrière « pourquoi ? ». */}
         {showScores && r.scoring?.confidence < 0.4 && (
           <span className="score-badge score-badge--provisional">
-            Évaluation provisoire
+            {copy.provisional}
           </span>
         )}
       </div>
       <div className="card-body">
         <h3>{r.name}</h3>
-        <div className="card-meta">
-          {r.type} · {r.ambiance} · {r.price}€/pers
-        </div>
+        {/* On n'affiche que les champs réellement renseignés. OpenStreetMap ne
+            porte ni prix ni ambiance de façon fiable : afficher « · · €/pers »
+            avec des valeurs vides donne l'impression d'une application cassée
+            alors que la donnée n'existe simplement pas (D-012, appliqué à l'UI). */}
+        {metaLine(r) && <div className="card-meta">{metaLine(r)}</div>}
         {showScores && r.rating && <Stars rating={r.rating} />}
 
         <p className="card-address">
@@ -194,29 +246,64 @@ function HomePage({ onStart, onReserve, onDetail }) {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [geoError, setGeoError] = useState(false);
+  const [usedPosition, setUsedPosition] = useState(null);
 
   useEffect(() => {
-    // Demander la localisation
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          fetchRecs(pos.coords.latitude, pos.coords.longitude);
-        },
-        () => {
-          setGeoError(true);
-          fetchRecs(48.8520, 2.4222); // Fallback Paris
-        }
-      );
-    } else {
-      fetchRecs(48.8520, 2.4222);
+    if (!("geolocation" in navigator)) {
+      setGeoError(true);
+      fetchRecs(FALLBACK_LOCATION.lat, FALLBACK_LOCATION.lng);
+      return;
     }
+
+    // `getCurrentPosition` n'appelle NI le succès NI l'erreur tant que
+    // l'utilisateur laisse la demande d'autorisation en suspens — et certains
+    // environnements ne la présentent jamais. Sans garde-fou, l'écran reste
+    // indéfiniment en chargement, ce qui se lit comme une application plantée.
+    let settled = false;
+    const resolveOnce = (lat, lng, failed) => {
+      if (settled) return;
+      settled = true;
+      if (failed) setGeoError(true);
+      fetchRecs(lat, lng);
+    };
+
+    const timer = setTimeout(
+      () => resolveOnce(FALLBACK_LOCATION.lat, FALLBACK_LOCATION.lng, true),
+      GEOLOCATION_TIMEOUT_MS + 1000
+    );
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        clearTimeout(timer);
+        resolveOnce(pos.coords.latitude, pos.coords.longitude, false);
+      },
+      () => {
+        clearTimeout(timer);
+        resolveOnce(FALLBACK_LOCATION.lat, FALLBACK_LOCATION.lng, true);
+      },
+      { timeout: GEOLOCATION_TIMEOUT_MS, maximumAge: 60000 }
+    );
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Déclarée en `function` (et non en `const`) pour être hoistée : l'effet
   // ci-dessus l'appelle avant sa position dans le fichier.
   async function fetchRecs(lat, lng) {
+    setUsedPosition({ lat, lng });
     try {
-      const data = await fetchRestaurants({ lat, lng });
+      let data = await fetchRestaurants({ lat, lng });
+
+      // La géolocalisation peut parfaitement fonctionner et ne rien remonter :
+      // la base ne couvre que la zone d'évaluation. Zéro résultat n'est pas une
+      // panne, c'est une absence de données — on le dit et on bascule sur la
+      // zone de démonstration, plutôt que d'afficher une page vide.
+      if (!data.restaurants?.length) {
+        data = await fetchRestaurants(FALLBACK_LOCATION);
+        setUsedPosition({ lat: FALLBACK_LOCATION.lat, lng: FALLBACK_LOCATION.lng });
+        setGeoError(true);
+      }
+
       setRestaurants(data.restaurants?.slice(0, 4) || []);
       setLoading(false);
     } catch {
@@ -228,26 +315,40 @@ function HomePage({ onStart, onReserve, onDetail }) {
     <div className="home-page">
       <div className="hero-section">
         <img src="/localsignal-logo-header.png" alt="Local Signal" className="hero-logo" />
-        <h1 className="hero-title">Trouvez la table parfaite, n'importe où.</h1>
-        <p className="hero-subtitle">Des recommandations personnalisées selon votre profil, la langue et la distance.</p>
+        <h1 className="hero-title">{copy.heroTitle}</h1>
+        <p className="hero-subtitle">{copy.heroSubtitle}</p>
         <button className="btn-start" onClick={onStart}>
           <Search size={18} style={{ marginRight: 8, display: "inline-block", verticalAlign: "text-bottom" }} />
-          Rechercher un restaurant
+          {copy.heroCta}
         </button>
       </div>
 
       <div className="recommendations-section">
         <div className="recommendations-header">
           <h2 className="section-title" style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "0.2rem", color: "var(--text)" }}>
-            Recommandations pour vous
+            {copy.recommendationsTitle}
           </h2>
-          {!geoError ? (
-            <p className="location-hint" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <MapPin size={12} /> Basé sur votre position actuelle
-            </p>
-          ) : (
-            <p className="error-text hint-text" style={{ marginTop: 0 }}>Position inconnue (Paris par défaut)</p>
-          )}
+          <p className="location-hint" style={{ marginTop: 0, marginBottom: 4 }}>
+            {copy.recommendationsHint}
+          </p>
+          {/* La position réellement utilisée est affichée, coordonnées comprises.
+              Sans cela, impossible de distinguer « la géolocalisation a marché »
+              de « on est retombé sur le repli » — or les deux ne donnent pas les
+              mêmes résultats du tout. */}
+          <p
+            className={geoError ? "error-text hint-text" : "location-hint"}
+            style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: 0 }}
+          >
+            <MapPin size={12} />
+            {geoError
+              ? `Aucun résultat près de vous — affichage de ${FALLBACK_LOCATION.label}`
+              : "Votre position actuelle"}
+            {usedPosition && (
+              <span style={{ opacity: 0.65 }}>
+                ({usedPosition.lat.toFixed(4)}, {usedPosition.lng.toFixed(4)})
+              </span>
+            )}
+          </p>
         </div>
 
         {loading ? (
@@ -268,30 +369,58 @@ function HomePage({ onStart, onReserve, onDetail }) {
 function LocationPicker({ onLocationSelect }) {
   const [mode, setMode] = useState("auto"); // auto, address, map
   const [address, setAddress] = useState("");
-  const [mapPosition, setMapPosition] = useState([48.8520, 2.4222]); // Paris
+  const [mapPosition, setMapPosition] = useState([FALLBACK_LOCATION.lat, FALLBACK_LOCATION.lng]);
   const [geoError, setGeoError] = useState("");
+  const [picked, setPicked] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+
+  /** Remonte la position au parent ET l'affiche — les deux, jamais l'un sans l'autre. */
+  const select = (lat, lng, label) => {
+    setPicked({ lat, lng, label });
+    onLocationSelect({ lat, lng });
+  };
 
   const handleAutoLocation = () => {
     setGeoError("");
     setMode("auto");
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => onLocationSelect({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        (err) => setGeoError("Impossible d'obtenir la position. Veuillez utiliser une adresse.")
+        (pos) => select(pos.coords.latitude, pos.coords.longitude, "Votre position actuelle"),
+        () => setGeoError("Impossible d'obtenir la position. Veuillez utiliser une adresse."),
       );
     } else {
       setGeoError("La géolocalisation n'est pas supportée par votre navigateur.");
     }
   };
 
+  /**
+   * Interroge Nominatim, en privilégiant le Quartier latin.
+   *
+   * `viewbox` sans `bounded=1` : les résultats de la zone remontent en tête,
+   * mais une adresse ailleurs reste trouvable. Restreindre durement
+   * empêcherait de chercher hors zone — or l'application doit pouvoir
+   * fonctionner ailleurs dès que d'autres zones seront relevées.
+   */
+  const queryNominatim = async (text, limit) => {
+    const viewbox = "2.3380,48.8535,2.3560,48.8400"; // Quartier latin
+    const url =
+      `https://nominatim.openstreetmap.org/search?format=json&limit=${limit}` +
+      `&viewbox=${viewbox}&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url);
+    return res.json();
+  };
+
+  const shortLabel = (item) =>
+    item.display_name?.split(",").slice(0, 3).join(",").trim() || address;
+
   const geocodeAddress = async () => {
     if (!address) return;
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
-      const data = await res.json();
+      const data = await queryNominatim(address, 1);
       if (data && data.length > 0) {
-        onLocationSelect({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
-        setGeoError("Adresse trouvée !");
+        setSuggestions([]);
+        select(parseFloat(data[0].lat), parseFloat(data[0].lon), shortLabel(data[0]));
+        setGeoError("");
       } else {
         setGeoError("Adresse introuvable.");
       }
@@ -300,12 +429,35 @@ function LocationPicker({ onLocationSelect }) {
     }
   };
 
+  // Suggestions au fil de la frappe. Nominatim est un service communautaire :
+  // 400 ms de pause avant d'interroger, et jamais en dessous de 3 caractères.
+  useEffect(() => {
+    if (mode !== "address" || address.trim().length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const data = await queryNominatim(address, 5);
+        if (!cancelled) setSuggestions(Array.isArray(data) ? data : []);
+      } catch {
+        if (!cancelled) setSuggestions([]);
+      }
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [address, mode]);
+
   // Composant pour capter les clics sur la carte Leaflet
   function MapEvents() {
     useMapEvents({
       click(e) {
         setMapPosition([e.latlng.lat, e.latlng.lng]);
-        onLocationSelect({ lat: e.latlng.lat, lng: e.latlng.lng });
+        select(e.latlng.lat, e.latlng.lng, "Point choisi sur la carte");
       },
     });
     return null;
@@ -313,6 +465,22 @@ function LocationPicker({ onLocationSelect }) {
 
   return (
     <div className="location-picker">
+      {/* Confirmation explicite de la position retenue. Sans elle, aucun des
+          trois modes ne donne le moindre retour : on clique, il ne se passe
+          rien de visible, et on ne sait pas si la position a été prise en
+          compte — ni laquelle sert réellement à la recherche. */}
+      {picked && (
+        <p className="location-hint" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+          <CheckCircle2 size={14} color="var(--color-local, #2d6a4f)" />
+          <span>
+            Position retenue : <strong>{picked.label}</strong>{" "}
+            <span style={{ opacity: 0.65 }}>
+              ({picked.lat.toFixed(4)}, {picked.lng.toFixed(4)})
+            </span>
+          </span>
+        </p>
+      )}
+
       <div className="location-tabs">
         <button className={`tab-btn ${mode === "auto" ? "active" : ""}`} onClick={handleAutoLocation}>
           <Navigation size={16} /> Autour de moi
@@ -327,23 +495,71 @@ function LocationPicker({ onLocationSelect }) {
 
       {mode === "auto" && (
         <div className="location-content">
-          <p className="location-hint">Nous utilisons votre position actuelle pour trouver les meilleurs restaurants à proximité.</p>
+          <p className="location-hint">{copy.locationAutoHint}</p>
           {geoError && <p className="error-text">{geoError}</p>}
         </div>
       )}
 
       {mode === "address" && (
-        <div className="location-content flex-row">
-          <input
-            type="text"
-            placeholder="Ex: 15 Rue de Rivoli, Paris"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="input-address"
-          />
-          <button className="btn-secondary" onClick={geocodeAddress}>Chercher</button>
+        <div className="location-content">
+          <div className="flex-row">
+            <input
+              type="text"
+              placeholder="Ex : 15 rue de la Huchette, Paris"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && geocodeAddress()}
+              className="input-address"
+            />
+            <button className="btn-secondary" onClick={geocodeAddress}>Chercher</button>
+          </div>
+
+          {suggestions.length > 0 && (
+            <ul className="address-suggestions">
+              {suggestions.map((s) => (
+                <li key={s.place_id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAddress(shortLabel(s));
+                      setSuggestions([]);
+                      setGeoError("");
+                      select(parseFloat(s.lat), parseFloat(s.lon), shortLabel(s));
+                    }}
+                  >
+                    <MapPin size={13} /> {shortLabel(s)}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {geoError && <p className="error-text hint-text">{geoError}</p>}
         </div>
       )}
+
+      {/* Accès direct aux lieux du Quartier latin.
+          Saisir une adresse suppose de savoir laquelle est couverte : la base
+          ne contient qu'une zone, et une adresse prise au hasard renvoie une
+          liste vide. Ces raccourcis retirent cette devinette — utile pour la
+          démonstration, utile aussi pour un visiteur qui ne connaît pas Paris. */}
+      <div className="location-content" style={{ paddingTop: 4 }}>
+        <p className="location-hint" style={{ marginBottom: 6 }}>
+          <strong>{copy.locationDemoLabel}</strong> — {copy.locationDemoHint}
+        </p>
+        <div className="pills-row" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {demoPlaces.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              className={`pill ${picked?.label === p.label ? "active" : ""}`}
+              onClick={() => select(p.lat, p.lng, p.label)}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {mode === "address" && geoError && <p className="error-text hint-text">{geoError}</p>}
 
@@ -393,7 +609,8 @@ function SearchPage({ onSearch }) {
         <img src="/localsignal-logo-header.png" alt="Local Signal" className="header-logo" />
       </header>
       <div className="search-page">
-        <h2 className="page-title">Trouvez une table</h2>
+        <h2 className="page-title">{copy.searchTitle}</h2>
+        <p className="page-subtitle">{copy.searchSubtitle}</p>
 
         <div className="filter-section">
           <label className="section-title"><MapPin size={16} /> Où êtes-vous ?</label>
@@ -471,7 +688,7 @@ function SearchPage({ onSearch }) {
 
         <button className="btn-search" onClick={handleSearch}>
           <Search size={18} style={{ marginRight: 8 }} />
-          Afficher les résultats
+          {copy.searchCta}
         </button>
       </div>
     </>
@@ -506,7 +723,7 @@ function ResultsPage({ criteria, onReserve, onDetail, onBack }) {
         </button>
 
         <div className="results-header">
-          <h2 className="page-title" style={{ marginBottom: 0 }}>Restaurants trouvés</h2>
+          <h2 className="page-title" style={{ marginBottom: 0 }}>{copy.resultsTitle}</h2>
           {!loading && (
             <span className="results-count">{restaurants.length} résultat{restaurants.length > 1 ? "s" : ""}</span>
           )}
@@ -552,39 +769,88 @@ function DetailPage({ restaurant, onBack, onReserve }) {
           <ChevronLeft size={18} /> Retour
         </button>
 
+        {/* La photo réelle du restaurant (D-025), et non plus un visuel tiré au
+            hasard parmi cinq selon l'identifiant : montrer l'image d'un autre
+            établissement est indéfendable dans un projet dont le sujet est
+            l'authenticité. Faute de photo, le visuel de repli — neutre et
+            assumé — vaut mieux qu'une illustration trompeuse. */}
         <div className="detail-hero">
           <img
-            src={`/resto${(parseInt(restaurant.id.split("_")[1]) % 5) + 1}.jpg`}
+            src={photoUrl(restaurant.id)}
             alt={restaurant.name}
             className="detail-hero-img"
-            onError={(e) => { e.target.src = "/localsignal-logo-header.png"; }}
+            onError={(e) => {
+              if (e.target.dataset.fallback) return;
+              e.target.dataset.fallback = "1";
+              e.target.src = "/localsignal-logo-header.png";
+            }}
           />
           <div className="detail-hero-overlay">
             <h1 className="detail-name">{restaurant.name}</h1>
-            <div className="detail-type-badge">{restaurant.type}</div>
+            {cuisineOf(restaurant) && (
+              <div className="detail-type-badge">{cuisineOf(restaurant)}</div>
+            )}
           </div>
         </div>
 
         <div className="detail-content">
+          {/* Chaque encadré n'est rendu que si sa donnée existe. Les faits
+              viennent d'OpenStreetMap : la cuisine et l'adresse y sont souvent
+              présentes, la note et l'ambiance jamais, le prix presque jamais.
+              Quatre cadres vides donnaient l'impression d'une fiche cassée. */}
           <div className="detail-info-grid">
-            <div className="detail-info-card">
-              <div className="detail-info-label"><Star size={14} /> Note</div>
-              <div className="detail-info-value">
-                {restaurant.rating && <Stars rating={restaurant.rating} />}
+            {restaurant.rating != null && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><Star size={14} /> Note</div>
+                <div className="detail-info-value"><Stars rating={restaurant.rating} /></div>
               </div>
-            </div>
-            <div className="detail-info-card">
-              <div className="detail-info-label"><Wallet size={14} /> Prix moyen</div>
-              <div className="detail-info-value">{restaurant.price}€ / pers</div>
-            </div>
-            <div className="detail-info-card">
-              <div className="detail-info-label"><Sparkles size={14} /> Ambiance</div>
-              <div className="detail-info-value">{restaurant.ambiance}</div>
-            </div>
-            <div className="detail-info-card">
-              <div className="detail-info-label"><MapPin size={14} /> Adresse</div>
-              <div className="detail-info-value" style={{ fontSize: "0.85rem" }}>{restaurant.address}</div>
-            </div>
+            )}
+            {restaurant.price != null && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><Wallet size={14} /> Prix moyen</div>
+                <div className="detail-info-value">{restaurant.price}€ / pers</div>
+              </div>
+            )}
+            {cuisineOf(restaurant) && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><UtensilsCrossed size={14} /> Cuisine</div>
+                <div className="detail-info-value">{cuisineOf(restaurant)}</div>
+              </div>
+            )}
+            {restaurant.ambiance && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><Sparkles size={14} /> Ambiance</div>
+                <div className="detail-info-value">{restaurant.ambiance}</div>
+              </div>
+            )}
+            {restaurant.address && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><MapPin size={14} /> Adresse</div>
+                <div className="detail-info-value" style={{ fontSize: "0.85rem" }}>{restaurant.address}</div>
+              </div>
+            )}
+            {restaurant.opening_hours && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><Clock size={14} /> Horaires</div>
+                <div className="detail-info-value" style={{ fontSize: "0.85rem" }}>{restaurant.opening_hours}</div>
+              </div>
+            )}
+            {restaurant.scoring?.relevance?.distance_m != null && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><Navigation size={14} /> Distance</div>
+                <div className="detail-info-value">
+                  {restaurant.scoring.relevance.distance_m < 1000
+                    ? `${restaurant.scoring.relevance.distance_m} m`
+                    : `${(restaurant.scoring.relevance.distance_m / 1000).toFixed(1)} km`}
+                </div>
+              </div>
+            )}
+            {restaurant.phone && (
+              <div className="detail-info-card">
+                <div className="detail-info-label"><MessageSquare size={14} /> Téléphone</div>
+                <div className="detail-info-value" style={{ fontSize: "0.85rem" }}>{restaurant.phone}</div>
+              </div>
+            )}
           </div>
 
           {restaurant.scoring && (

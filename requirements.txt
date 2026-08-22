@@ -1,5 +1,7 @@
 requests>=2.31.0
 langdetect>=1.0.9
+beautifulsoup4>=4.12.0  # recolte web des cartes (D-023) : extraction du texte HTML
+pypdf>=5.0.0            # recolte web des cartes (D-023) : cartes publiees en PDF
 fastapi>=0.109.0
 uvicorn>=0.27.0
 groq>=0.36.0

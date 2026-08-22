@@ -111,6 +111,15 @@ def _parse(payload: dict, zone: str) -> list[dict]:
             "website": tags.get("website") or tags.get("contact:website", ""),
             "phone": tags.get("phone") or tags.get("contact:phone", ""),
             "opening_hours": tags.get("opening_hours", ""),
+            # URL de carte déclarée dans OSM (D-023). Rare — environ 3 % des
+            # restaurants — mais c'est la seule source de menu à la fois
+            # gratuite, licite et directement exploitable. `website:menu` est
+            # le tag de fait ; les deux autres sont des variantes marginales.
+            "menu_url": (
+                tags.get("website:menu")
+                or tags.get("menu:url")
+                or tags.get("url:menu", "")
+            ),
             # Signaux exploitables directement par le scoring :
             "outdoor_seating": tags.get("outdoor_seating", ""),
             "takeaway": tags.get("takeaway", ""),

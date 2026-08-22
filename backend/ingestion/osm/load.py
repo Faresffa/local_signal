@@ -35,8 +35,8 @@ def import_zone(zone: str) -> int:
         cursor.execute("""
             INSERT INTO restaurants (
                 id, osm_type, osm_id, name, lat, lng, cuisine, address, city,
-                zone, website, phone, opening_hours, price
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                zone, website, menu_url, phone, opening_hours, price
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 name = excluded.name,
                 lat = excluded.lat,
@@ -45,12 +45,13 @@ def import_zone(zone: str) -> int:
                 address = excluded.address,
                 city = excluded.city,
                 website = excluded.website,
+                menu_url = excluded.menu_url,
                 phone = excluded.phone,
                 opening_hours = excluded.opening_hours
         """, (
             r["id"], r["osm_type"], r["osm_id"], r["name"], r["lat"], r["lng"],
             r["cuisine"], r["address"], r["city"], r["zone"],
-            r["website"], r["phone"], r["opening_hours"], r["price"],
+            r["website"], r["menu_url"], r["phone"], r["opening_hours"], r["price"],
         ))
 
     conn.commit()
@@ -191,17 +192,30 @@ def score_zone(zone: str) -> int:
 
 
 def main():
-    zone = sys.argv[1] if len(sys.argv) > 1 else "quartier-latin"
+    args = [a for a in sys.argv[1:] if not a.startswith("-")]
+    flags = {a for a in sys.argv[1:] if a.startswith("-")}
+
+    zone = args[0] if args else "quartier-latin"
     if zone not in ZONES:
         print(f"Zone inconnue : '{zone}'. Disponibles : {', '.join(ZONES)}")
         raise SystemExit(1)
 
     init_db()
-    n = import_zone(zone)
-    load_tourist_sites(zone)
-    scored = score_zone(zone)
 
-    print(f"\n[OK] {n} restaurants importés, {scored} scorés pour '{zone}'.")
+    # `--score-only` recalcule à partir de ce qui est déjà en base, sans toucher
+    # au réseau. Indispensable après une récolte de cartes (D-023) : le score
+    # change, pas les faits OSM. Sans ce mode, un simple recalcul dépendait de
+    # la disponibilité d'Overpass — un 504 de leur côté empêchait de scorer des
+    # données pourtant déjà locales.
+    if "--score-only" in flags:
+        scored = score_zone(zone)
+        print(f"\n[OK] {scored} restaurants rescorés pour '{zone}' (sans appel réseau).")
+    else:
+        n = import_zone(zone)
+        load_tourist_sites(zone)
+        scored = score_zone(zone)
+        print(f"\n[OK] {n} restaurants importés, {scored} scorés pour '{zone}'.")
+
     print("     Les scores sont PROVISOIRES tant que les pondérations ne sont")
     print("     pas calibrées sur le jeu labellisé (D-006).")
 

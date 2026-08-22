@@ -13,7 +13,7 @@ from backend import config
 from backend.core.scoring.engine import compute_local_signal, rank_restaurants
 from backend.core.scoring.geo_score import score_tourist_zone
 from backend.core.scoring.language_score import score_language
-from backend.core.scoring.menu_score import score_menu
+from backend.core.scoring.menu_score import score_languages, score_menu
 from backend.data.mock_data import MOCK_RESTAURANTS
 from backend.data.mock_tourist_sites import TOURIST_SITES
 
@@ -148,6 +148,46 @@ check(
 check(
     all(k not in proche for k in ("proximity", "distance_m")),
     "le Local Signal ne contient aucune donnee dependant de l'utilisateur",
+)
+
+
+# =============================================================================
+print("\n[D-024] Langue de la carte : vehiculaire vs vernaculaire")
+# =============================================================================
+
+fr_seul = score_languages(["fr"])
+en_seul = score_languages(["en"])
+zh_seul = score_languages(["zh"])
+fr_en = score_languages(["fr", "en"])
+en_zh = score_languages(["en", "zh"])
+
+check(
+    en_seul < fr_seul,
+    "une carte en anglais seul est penalisee face au francais seul",
+    f"({en_seul} vs {fr_seul})",
+)
+check(
+    zh_seul == fr_seul,
+    "une carte en langue de diaspora n'est PAS penalisee (D-001)",
+    f"(zh={zh_seul}, fr={fr_seul})",
+)
+check(
+    en_zh < zh_seul,
+    "ajouter l'anglais a une carte de diaspora la penalise",
+    f"({en_zh} vs {zh_seul})",
+)
+check(
+    fr_en > en_seul,
+    "garder le francais attenue la penalite de l'anglais",
+    f"({fr_en} vs {en_seul})",
+)
+check(
+    score_languages(["FR"]) == score_languages(["fr"]) == score_languages(["fra"]),
+    "la casse et les codes a 3 lettres sont normalises",
+)
+check(
+    score_languages([]) is None,
+    "aucune langue relevee = signal indisponible, pas 0.0 (D-012)",
 )
 
 

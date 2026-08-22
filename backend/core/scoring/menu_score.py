@@ -37,6 +37,21 @@ LANGUAGE_COUNT_MAX = 5      # carte en 5 langues = ciblage touristique assumé
 TOURIST_MENU_PENALTY = 0.25 # retrait forfaitaire si formule « menu touriste »
 DISH_PHOTOS_PENALTY = 0.15  # retrait forfaitaire si la carte affiche des photos
 
+# Langues véhiculaires — celles qu'on emploie pour être compris d'un étranger de
+# passage, et non d'une communauté installée. L'anglais seul aujourd'hui ; à
+# étendre si la zone d'étude change (l'espagnol à Barcelone, par exemple).
+#
+# Distinction essentielle : une langue véhiculaire n'est pas « une langue
+# étrangère ». Le chinois ou le vietnamien sur une carte parisienne s'adressent
+# à une diaspora — c'est un signal local, pas touristique. Voir score_languages.
+LINGUA_FRANCA_LANGUAGES = {"en"}
+
+# Retrait appliqué quand la langue locale est ABSENTE et qu'une langue
+# véhiculaire est présente. À calibrer (D-006) : 0.5 est un point de départ,
+# choisi pour que la carte anglais-seul passe de 1.0 à 0.5 — pénalisée
+# nettement, mais pas disqualifiée, l'observation pouvant être imparfaite.
+LINGUA_FRANCA_PENALTY = 0.5
+
 # Pondérations internes au signal menu — à calibrer (D-006)
 W_COHERENCE = 0.35
 W_BREADTH = 0.25
@@ -92,23 +107,63 @@ def score_vernacular(vernacular_ratio: float) -> float:
     return max(0.0, min(1.0, vernacular_ratio))
 
 
-def score_languages(languages: list[str]) -> float:
+def score_languages(languages: list[str], target_lang: str = None) -> float:
     """
-    Nombre de langues dans lesquelles la carte est rédigée.
+    Langues dans lesquelles la carte est rédigée : combien, et lesquelles.
 
-    Une carte en quatre langues avec photos des plats ne s'adresse pas au quartier.
-    C'est l'un des signaux d'attrape-touristes les plus fiables dans le monde réel.
+    DEUX EFFETS DISTINCTS, à ne pas confondre.
 
-    1 langue → 1.0 ; LANGUAGE_COUNT_MAX ou plus → 0.0
+    1. LE NOMBRE. Une carte en quatre langues ne s'adresse pas au quartier.
+       1 langue → 1.0 ; LANGUAGE_COUNT_MAX ou plus → 0.0.
+
+    2. L'ORIENTATION. Compter les langues sans regarder LESQUELLES notait au
+       maximum une carte rédigée uniquement en anglais — or au Quartier latin,
+       c'est l'un des signaux d'attrape-touristes les plus forts qui soient.
+
+    LE PIÈGE À NE PAS TOMBER DEDANS : « absence de français » n'est PAS le
+    critère. Une carte uniquement en chinois ou en vietnamien s'adresse à une
+    clientèle de diaspora — c'est un signal LOCAL fort, précisément le type
+    d'établissement que le projet cherche à révéler (D-001). Pénaliser toute
+    carte non francophone retournerait le produit contre son objectif.
+
+    Le signal touristique est spécifiquement l'usage d'une langue VÉHICULAIRE
+    à la place de la langue locale : une carte en anglais sans français, à
+    Paris, ne vise ni le quartier ni une communauté — elle vise le passage
+    international.
+
+    La pénalité ne s'applique donc QUE si la langue locale est absente ET
+    qu'une langue véhiculaire est présente. Quand les deux coexistent
+    (`['fr', 'en']`), le nombre de langues joue déjà son rôle : pénaliser en
+    plus reviendrait à compter deux fois le même fait.
+
+    Args:
+        languages:   codes ISO 639-1 relevés sur la carte
+        target_lang: langue locale attendue (défaut: config.TARGET_LANGUAGE)
     """
-    n = len(languages or [])
+    from backend import config
+
+    if target_lang is None:
+        target_lang = config.TARGET_LANGUAGE
+
+    codes = {str(c).strip().lower()[:2] for c in (languages or []) if c}
+    n = len(codes)
     if n == 0:
         return None
+
     if n <= 1:
-        return 1.0
-    if n >= LANGUAGE_COUNT_MAX:
-        return 0.0
-    return 1.0 - (n - 1) / (LANGUAGE_COUNT_MAX - 1)
+        score = 1.0
+    elif n >= LANGUAGE_COUNT_MAX:
+        score = 0.0
+    else:
+        score = 1.0 - (n - 1) / (LANGUAGE_COUNT_MAX - 1)
+
+    local_absent = target_lang.lower()[:2] not in codes
+    vehicular_present = bool(codes & LINGUA_FRANCA_LANGUAGES)
+
+    if local_absent and vehicular_present:
+        score *= 1.0 - LINGUA_FRANCA_PENALTY
+
+    return round(max(0.0, min(1.0, score)), 4)
 
 
 def score_menu(menu: dict | None) -> dict:

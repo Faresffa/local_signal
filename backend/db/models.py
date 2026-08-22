@@ -50,6 +50,7 @@ def init_db():
             city TEXT,
             zone TEXT,
             website TEXT,
+            menu_url TEXT,          -- tag OSM website:menu, quand il existe (D-023)
             phone TEXT,
             opening_hours TEXT,
             price REAL,
@@ -130,5 +131,35 @@ def init_db():
         )
     """)
 
+    _migrate(cursor)
+
     conn.commit()
     conn.close()
+
+
+def _migrate(cursor) -> None:
+    """
+    Ajoute les colonnes apparues après la création initiale de la base.
+
+    `CREATE TABLE IF NOT EXISTS` ne touche pas une table déjà présente : sans
+    ceci, une base créée avant l'ajout d'une colonne resterait incomplète et
+    échouerait à l'insertion. SQLite n'ayant pas d'`ADD COLUMN IF NOT EXISTS`,
+    on lit le schéma existant et on ne pose que ce qui manque.
+    """
+    additions = {
+        "restaurants": {
+            "menu_url": "TEXT",           # D-023
+            "google_place_id": "TEXT",    # D-025 — identifiant, cachable sans réserve
+            "photo_ref": "TEXT",          # D-025 — nom de ressource de la 1re photo
+        },
+        "menus": {
+            "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit
+        },
+    }
+
+    for table, columns in additions.items():
+        cursor.execute(f"PRAGMA table_info({table})")
+        existing = {row[1] for row in cursor.fetchall()}
+        for column, sql_type in columns.items():
+            if column not in existing:
+                cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {sql_type}")

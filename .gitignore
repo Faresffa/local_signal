@@ -57,3 +57,9 @@ web-build/
 CLAUDE.md
 AGENTS.md
 skills-lock.json
+
+# Sauvegarde locale avant retrogradation de SDK — ne pas versionner
+.backup-sdk57/
+
+# Photos Google mises en cache pour la demonstration (D-025) — jamais versionnees
+.photo-cache/
