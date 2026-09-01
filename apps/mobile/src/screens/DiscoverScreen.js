@@ -36,7 +36,7 @@ function Carte({ item, onOpen, isDark, index }) {
   const colors = useColors();
   const v = verdict(item.local_signal, item.confidence);
   const dist = distance(item.distance_m);
-  const raison = item.reasons?.[0];
+  const raison = item.scoring?.reasons?.[0];
 
   // Entrée échelonnée : les cartes arrivent dans l'ordre de lecture plutôt que
   // d'un bloc. Le décalage est plafonné pour que le bas de la première page ne

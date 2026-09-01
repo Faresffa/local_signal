@@ -6,7 +6,7 @@
 # pertinence (distance, filtres) est évaluée à la requête. C'est ce qui permet
 # de rester instantané sur une base nationale.
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -14,7 +14,7 @@ from typing import Optional
 from backend import config
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.scoring.engine import explain
-from backend.core.scoring.geo_score import score_geo_user
+from backend.core.scoring.geo_score import haversine, score_geo_user
 from backend.core.scoring.menu_score import score_menu
 from backend.ingestion.menu_scan.client import analyze_menu_image
 from backend.db.models import init_db
@@ -98,43 +98,146 @@ def list_restaurants(
         ]
 
     # --- Classement : Local Signal modulé par la proximité (D-008) ---
-    beta = config.RANKING_WEIGHT_PROXIMITY
     for r in restaurants:
-        proximity = score_geo_user(r["lat"], r["lng"], lat, lng)
-        local = r.get("local_signal") or 0.0
-        r["proximity"] = round(proximity, 4)
-        r["score_final"] = round(local * (1 - beta) + proximity * 100 * beta, 2)
+        r["scoring"] = _build_scoring(r, lat, lng)
 
-        # Explications en langage naturel (D-009). Le score chiffré n'est pas
-        # affiché par défaut : l'interface montre ces phrases, et le détail
-        # seulement derrière un « pourquoi ? ».
-        r["reasons"] = explain(
-            {
-                "local_signal": local,
-                "confidence": r.get("confidence") or 0.0,
-                "signals": r.get("signals") or {},
-            },
-            {"proximity": proximity, "distance_m": r.get("distance_m")},
-        )
-
+        # Libelle francais de la cuisine : l'interface ne doit jamais avoir a
+        # traduire une etiquette OpenStreetMap elle-meme.
         r["cuisine_label"] = cuisine_label(r.get("cuisine"))
 
-    restaurants.sort(key=lambda r: r["score_final"], reverse=True)
+    restaurants.sort(key=lambda r: r["scoring"]["score_final"], reverse=True)
 
     return {"count": len(restaurants), "restaurants": restaurants[:limit]}
 
 
+def _build_scoring(restaurant: dict, user_lat: float, user_lng: float) -> dict:
+    """
+    Assemble le bloc `scoring` attendu par les interfaces.
+
+    MÊME FORME que `engine.rank_restaurants` — c'est le contrat unique, et les
+    tests portent dessus. Cet endpoint le produisait auparavant à plat
+    (`local_signal`, `score_final` à la racine, aucune `reasons`), ce qui ne
+    correspondait à rien de ce que le front consommait : d'où des fiches
+    entièrement vides côté web et mobile.
+
+    La différence avec `rank_restaurants` est délibérée et tient à D-008 : le
+    Local Signal n'est PAS recalculé ici, il est lu tel quel en base. Seules la
+    pertinence et l'explication — toutes deux dépendantes de l'utilisateur —
+    sont produites à la requête.
+    """
+    beta = config.RANKING_WEIGHT_PROXIMITY
+
+    signals = restaurant.get("signals") or {}
+    local = {
+        "local_signal": restaurant.get("local_signal") or 0.0,
+        "confidence": restaurant.get("confidence") or 0.0,
+        "signals": signals,
+    }
+    relevance = {
+        "proximity": round(
+            score_geo_user(restaurant["lat"], restaurant["lng"], user_lat, user_lng), 4
+        ),
+        "distance_m": round(
+            haversine(restaurant["lat"], restaurant["lng"], user_lat, user_lng)
+        ),
+    }
+
+    final = local["local_signal"] * (1 - beta) + relevance["proximity"] * 100 * beta
+
+    return {
+        "score_final": round(final, 2),
+        "local_signal": local["local_signal"],
+        "confidence": local["confidence"],
+        "signals": signals,
+        "relevance": relevance,
+        # `explain` tolère un signal absent : il produit alors « information
+        # limitée » plutôt que de lever (D-012).
+        "reasons": explain(local, relevance) if signals else [],
+    }
+
+
 @app.get("/api/restaurant/{restaurant_id}")
-def get_restaurant(restaurant_id: str):
-    """Détail d'un restaurant, avec sa dernière carte scannée si elle existe."""
+def get_restaurant(
+    restaurant_id: str,
+    lat: Optional[float] = Query(None, description="Latitude de l'utilisateur"),
+    lng: Optional[float] = Query(None, description="Longitude de l'utilisateur"),
+):
+    """
+    Détail d'un restaurant, avec sa dernière carte scannée si elle existe.
+
+    `lat`/`lng` sont facultatifs : sans eux, le bloc `scoring` est renvoyé sans
+    distance ni proximité — le Local Signal, lui, ne dépend pas de qui regarde
+    (D-008), donc la fiche reste utile même consultée hors contexte.
+    """
     resto = repo.get_restaurant(restaurant_id)
     if not resto:
         raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+
+    if lat is not None and lng is not None:
+        resto["scoring"] = _build_scoring(resto, lat, lng)
+    else:
+        signals = resto.get("signals") or {}
+        local = {
+            "local_signal": resto.get("local_signal") or 0.0,
+            "confidence": resto.get("confidence") or 0.0,
+            "signals": signals,
+        }
+        relevance = {"proximity": None, "distance_m": None}
+        resto["scoring"] = {
+            "score_final": None,
+            **local,
+            "relevance": relevance,
+            "reasons": explain(local, relevance) if signals else [],
+        }
 
     resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
     resto["menu"] = repo.get_latest_menu(restaurant_id)
     repo.log_consultation(restaurant_id, resto["name"], resto.get("local_signal"))
     return resto
+
+
+@app.get("/api/restaurant/{restaurant_id}/photo")
+def get_restaurant_photo(restaurant_id: str):
+    """
+    Photo du restaurant (D-025).
+
+    Sert l'image telle que la fournit Google Places. Le régime — cache local ou
+    relais direct — est décidé par `config.PHOTO_CACHE_ENABLED` et n'est connu
+    que de `photo_cache` : cet endpoint est identique dans les deux cas.
+
+    Retourne 404 si le restaurant n'a pas de photo connue. C'est un cas normal,
+    pas une anomalie : toutes les fiches Google n'ont pas d'image, et les
+    interfaces doivent simplement afficher leur visuel de repli.
+    """
+    resto = repo.get_restaurant(restaurant_id)
+    if not resto:
+        raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+
+    photo_ref = (resto.get("photo_ref") or "").strip()
+    if not photo_ref:
+        raise HTTPException(status_code=404, detail="Aucune photo pour ce restaurant.")
+
+    from backend.ingestion.google import photo_cache
+    from backend.ingestion.google.places_photos import PlacesError
+
+    try:
+        data = photo_cache.read(restaurant_id, photo_ref)
+    except PlacesError as e:
+        # Quota atteint ou clé invalide : l'interface doit afficher son repli,
+        # pas une erreur serveur. On ne casse jamais une page pour une vignette.
+        raise HTTPException(status_code=404, detail=str(e)) from e
+
+    return Response(
+        content=data,
+        media_type="image/jpeg",
+        headers={
+            # Les photos Google exigent l'attribution de leur auteur. L'en-tête
+            # ne la remplace pas — les interfaces doivent l'afficher — mais il
+            # garde la trace de la provenance au plus près de la donnée.
+            "X-Photo-Source": "Google Places",
+            "Cache-Control": "public, max-age=86400",
+        },
+    )
 
 
 @app.get("/api/cuisines")

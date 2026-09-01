@@ -72,3 +72,15 @@ export async function scanMenu(file, provider) {
   const query = provider ? `?provider=${encodeURIComponent(provider)}` : "";
   return request(`/api/menu/scan${query}`, { method: "POST", body: form });
 }
+
+/**
+ * URL de la photo d'un restaurant (D-025).
+ *
+ * L'endpoint répond 404 quand aucune photo n'est connue — c'est un cas normal,
+ * pas une anomalie. Les composants s'appuient sur `onError` pour retomber sur
+ * le visuel de repli plutôt que de tester l'existence au préalable, ce qui
+ * doublerait le nombre de requêtes.
+ */
+export function photoUrl(restaurantId) {
+  return `${API_BASE}/api/restaurant/${encodeURIComponent(restaurantId)}/photo`;
+}

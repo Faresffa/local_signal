@@ -18,8 +18,8 @@ consignées dans [`DECISIONS.md`](DECISIONS.md) ; ici on trouve **le plan**.
 | Interface web | ✅ Migrée sur le nouveau format, explication « pourquoi ? » |
 | App mobile | ✅ Expo initialisé — écrans Scanner et Autour de moi |
 | Vérité terrain | ❌ **Bloquant** — rien ne peut être calibré sans elle |
-| Données réelles | ❌ 10 restaurants mockés |
-| Authentification | ❌ Tables `users` créées, aucun endpoint |
+| Données réelles | ✅ 736 restaurants OSM (Quartier latin + Montreuil) |
+| Authentification | ❌ Aucune table, aucun endpoint — tout est à faire |
 | Hébergement | ❌ Tout en local |
 
 ---
@@ -76,7 +76,7 @@ deux signaux d'un coup.
 
 | | Modèle | Rôle |
 |---|---|---|
-| **Défaut** | Groq — `llama-4-scout` | latence (l'utilisateur attend, debout devant le resto) et coût |
+| **Défaut** | Groq — `qwen/qwen3.6-27b` | latence (l'utilisateur attend, debout devant le resto) et coût |
 | Alternative | `claude-opus-5` | référence de qualité, pour le comparatif d'extraction |
 
 `VISION_PROVIDER` choisit le défaut ; `POST /api/menu/scan?provider=claude`
@@ -158,9 +158,12 @@ et migrer serait de la complexité prématurée.
 
 ## 5. Authentification
 
-Les tables `users` et `reviews` existent, aucun endpoint ne les expose, et
-`db/seed.py` stocke des mots de passe en clair (`"hash_alice"`). À reprendre
-entièrement.
+Les tables `users` et `reviews` **n'existent plus** : le schéma refondu par
+D-020 ne porte que `restaurants`, `menus`, `tourist_sites`, `reservations` et
+`consultations`. `db/seed.py` — qui stockait des mots de passe en clair
+(`"hash_alice"`) — n'a donc plus de table à alimenter.
+
+Rien n'est à défaire : tout est à construire, et directement sur Supabase.
 
 ### Recommandation : **Supabase**
 

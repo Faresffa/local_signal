@@ -116,22 +116,31 @@ def save_menu_scan(
     observations: dict,
     menu_score: float | None,
     readable: bool,
+    source_url: str | None = None,
 ) -> int:
     """
     Enregistre un scan de carte.
 
     Chaque scan enrichit la base de menus — le seul avantage concurrentiel
     défendable du projet (CLAUDE.md §3).
+
+    Args:
+        source_url: provenance de la carte pour une récolte web (D-023).
+            Reste None pour un scan utilisateur, dont la photo n'est jamais
+            conservée. Permet de mesurer le biais de la voie web en comparant
+            les scores par provenance — sans cette colonne, le biais existe
+            quand même mais devient invérifiable.
     """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO menus (restaurant_id, provider, observations_json, menu_score, readable)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO menus (restaurant_id, provider, observations_json,
+                           menu_score, readable, source_url)
+        VALUES (?, ?, ?, ?, ?, ?)
     """, (
         restaurant_id, provider,
         json.dumps(observations, ensure_ascii=False),
-        menu_score, int(readable),
+        menu_score, int(readable), source_url,
     ))
     conn.commit()
     scan_id = cursor.lastrowid

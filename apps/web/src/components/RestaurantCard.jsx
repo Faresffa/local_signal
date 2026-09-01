@@ -20,7 +20,9 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
 
   const v = verdict(restaurant.local_signal, restaurant.confidence);
   const dist = distance(restaurant.distance_m);
-  const reason = restaurant.reasons?.[0];
+  // Les explications vivent dans le bloc `scoring`, forme unique produite par
+  // `rank_restaurants` et servie telle quelle par l'API.
+  const reason = restaurant.scoring?.reasons?.[0];
 
   return (
     <article className="card reveal" ref={ref}>

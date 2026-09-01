@@ -64,7 +64,7 @@ export default function DetailScreen({ restaurant, onBack, onReserve }) {
   const v = verdict(full.local_signal, full.confidence);
   const horaires = hours(full.opening_hours);
   const dist = distance(full.distance_m);
-  const raisons = full.reasons ?? [];
+  const raisons = full.scoring?.reasons ?? [];
   const signals = full.signals ?? {};
 
   return (
