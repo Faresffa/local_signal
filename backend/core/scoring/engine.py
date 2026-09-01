@@ -202,7 +202,7 @@ def explain(local: dict, relevance: dict) -> list[str]:
         pct = round(lang["value"] * 100)
         reasons.append(f"Environ {pct}% des avis sont en langue locale ({n} avis).")
     else:
-        reasons.append("Aucun avis disponible — évaluation fondée sur les autres signaux.")
+        reasons.append("Aucun avis disponible. Évaluation fondée sur les autres signaux.")
 
     price = s["price"]
     if price["available"]:
@@ -216,7 +216,7 @@ def explain(local: dict, relevance: dict) -> list[str]:
         reasons.append("Situé dans une zone touristique très fréquentée.")
 
     if local["confidence"] < 0.4:
-        reasons.append("Information limitée — score provisoire.")
+        reasons.append("Information limitée, score provisoire.")
 
     return reasons
 

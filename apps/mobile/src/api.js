@@ -1,46 +1,68 @@
-// Client API mobile.
+// apps/mobile/src/api.js
 //
-// Vocation à être factorisé avec apps/web/src/api.js dans packages/shared/
-// quand la duplication deviendra réelle (cf. CLAUDE.md §7).
+// Client API. Miroir de apps/web/src/api.js : à factoriser dans
+// packages/shared quand la duplication deviendra coûteuse.
 //
-// ATTENTION : sur un téléphone physique, "localhost" désigne le téléphone,
-// pas la machine de développement. Renseigner EXPO_PUBLIC_API_BASE avec
-// l'IP locale de la machine, par exemple http://192.168.1.20:8000
+// ATTENTION : sur un téléphone physique, "localhost" désigne le téléphone et
+// non la machine de développement. Renseigner EXPO_PUBLIC_API_BASE avec l'IP
+// locale de la machine, par exemple http://192.168.1.20:8000
 const API_BASE = process.env.EXPO_PUBLIC_API_BASE ?? "http://localhost:8000";
 
 async function request(path, options) {
   const res = await fetch(`${API_BASE}${path}`, options);
+
   if (!res.ok) {
     let detail = `Erreur ${res.status}`;
     try {
       const body = await res.json();
       if (body?.detail) detail = body.detail;
     } catch {
-      // réponse non-JSON : message générique
+      // Réponse non JSON : on garde le message générique.
     }
     throw new Error(detail);
   }
+
   return res.json();
 }
 
-export async function fetchRestaurants({ lat, lng, budgetMin, budgetMax } = {}) {
-  const query = new URLSearchParams({
-    lat: lat ?? 48.8566,
-    lng: lng ?? 2.3522,
-    budget_min: budgetMin ?? 0,
-    budget_max: budgetMax ?? 200,
-  });
+/**
+ * Restaurants autour d'un point.
+ *
+ * `lat` et `lng` sont obligatoires côté serveur : pas de coordonnées par
+ * défaut, le projet doit fonctionner dans n'importe quelle ville.
+ */
+export async function fetchRestaurants({
+  lat, lng, radius = 2000, cuisines, limit = 30,
+}) {
+  const query = new URLSearchParams({ lat, lng, radius, limit });
+  if (cuisines?.length) query.set("cuisines", cuisines.join(","));
   return request(`/api/restaurants?${query}`);
 }
 
+export async function fetchRestaurant(id) {
+  return request(`/api/restaurant/${encodeURIComponent(id)}`);
+}
+
+/** Cuisines réellement présentes en base, pour alimenter les filtres. */
+export async function fetchCuisines(zone) {
+  const query = zone ? `?zone=${encodeURIComponent(zone)}` : "";
+  return request(`/api/cuisines${query}`);
+}
+
+export async function createReservation(reservation) {
+  return request("/api/reservations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reservation),
+  });
+}
+
 /**
- * Envoie la photo d'une carte au backend pour analyse.
+ * Envoie la photo d'une carte au serveur pour analyse.
  *
- * C'est la fonctionnalité centrale de l'app : l'utilisateur est devant le
- * restaurant, il photographie la carte en vitrine, il obtient une réponse
- * sans qu'aucun avis ne soit nécessaire (D-004, D-001).
- *
- * @param {string} uri  URI locale de la photo (fourni par expo-image-picker)
+ * Fonctionnalité centrale de l'application : l'utilisateur est devant le
+ * restaurant, il photographie la carte en vitrine, il obtient une réponse sans
+ * qu'aucun avis ne soit nécessaire (D-004, D-001).
  */
 export async function scanMenu(uri) {
   const name = uri.split("/").pop() || "menu.jpg";

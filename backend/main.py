@@ -12,6 +12,8 @@ from pydantic import BaseModel
 from typing import Optional
 
 from backend import config
+from backend.core.cuisines import label as cuisine_label, options as cuisine_options
+from backend.core.scoring.engine import explain
 from backend.core.scoring.geo_score import score_geo_user
 from backend.core.scoring.menu_score import score_menu
 from backend.ingestion.menu_scan.client import analyze_menu_image
@@ -103,6 +105,20 @@ def list_restaurants(
         r["proximity"] = round(proximity, 4)
         r["score_final"] = round(local * (1 - beta) + proximity * 100 * beta, 2)
 
+        # Explications en langage naturel (D-009). Le score chiffré n'est pas
+        # affiché par défaut : l'interface montre ces phrases, et le détail
+        # seulement derrière un « pourquoi ? ».
+        r["reasons"] = explain(
+            {
+                "local_signal": local,
+                "confidence": r.get("confidence") or 0.0,
+                "signals": r.get("signals") or {},
+            },
+            {"proximity": proximity, "distance_m": r.get("distance_m")},
+        )
+
+        r["cuisine_label"] = cuisine_label(r.get("cuisine"))
+
     restaurants.sort(key=lambda r: r["score_final"], reverse=True)
 
     return {"count": len(restaurants), "restaurants": restaurants[:limit]}
@@ -115,9 +131,21 @@ def get_restaurant(restaurant_id: str):
     if not resto:
         raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
 
+    resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
     resto["menu"] = repo.get_latest_menu(restaurant_id)
     repo.log_consultation(restaurant_id, resto["name"], resto.get("local_signal"))
     return resto
+
+
+@app.get("/api/cuisines")
+def list_cuisines(zone: Optional[str] = Query(None, description="Filtrer par zone")):
+    """
+    Cuisines réellement présentes en base, avec leur libellé français.
+
+    Alimente les filtres de l'interface : on ne propose jamais un filtre qui ne
+    renverrait aucun résultat.
+    """
+    return cuisine_options([r.get("cuisine") for r in repo.get_restaurants(zone)])
 
 
 @app.get("/api/stats")

@@ -1,27 +1,33 @@
-/* GÉNÉRÉ par packages/shared/build-css.js — NE PAS ÉDITER À LA MAIN.
+/* GÉNÉRÉ par packages/shared/build-css.js. NE PAS ÉDITER À LA MAIN.
  * Modifier packages/shared/tokens.js puis relancer le script.
  * Garantit que le web et le mobile partagent les mêmes valeurs (D-022). */
 
 :root {
   /* color */
   --color-brand: #c1121f;
+  --color-brand-hover: #a50f1a;
   --color-brand-dark: #8d0c17;
-  --color-brand-light: #f8e6e7;
+  --color-brand-soft: #fdecec;
+  --color-on-brand: #ffffff;
   --color-background: #fffbf3;
   --color-surface: #ffffff;
   --color-surface-alt: #faf6ee;
+  --color-surface-sunken: #f3ece0;
   --color-border: #e8e0d3;
   --color-border-strong: #d5c9b6;
   --color-text: #1c1a17;
   --color-text-muted: #6f6961;
-  --color-text-faint: #8b857c;
+  --color-text-faint: #989186;
   --color-text-inverse: #ffffff;
   --color-local: #2d6a4f;
   --color-local-soft: #e7f2ec;
-  --color-mixed: #b8860b;
-  --color-mixed-soft: #fdf4e0;
+  --color-mixed: #a8760a;
+  --color-mixed-soft: #fdf3e0;
   --color-tourist: #c1121f;
-  --color-tourist-soft: #f8e6e7;
+  --color-tourist-soft: #fdecec;
+  --color-overlay: rgba(28, 26, 23, 0.55);
+  --color-skeleton: #efe7da;
+  --color-skeleton-sheen: #f8f3ea;
 
   /* spacing */
   --spacing-xs: 4px;
@@ -30,6 +36,7 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   --spacing-xxl: 48px;
+  --spacing-xxxl: 72px;
 
   /* radius */
   --radius-sm: 8px;
@@ -44,7 +51,8 @@
   --font-size-lg: 18px;
   --font-size-xl: 22px;
   --font-size-xxl: 28px;
-  --font-size-display: 34px;
+  --font-size-display: 38px;
+  --font-size-display-lg: 52px;
 
   /* fontWeight */
   --font-weight-regular: 400;
@@ -53,12 +61,77 @@
   --font-weight-bold: 700;
 
   /* lineHeight */
-  --line-height-tight: 1.25;
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.3;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.65;
 
   /* shadow */
-  --shadow-card: 0 1px 3px rgba(28, 26, 23, 0.06);
-  --shadow-raised: 0 4px 16px rgba(28, 26, 23, 0.10);
+  --shadow-card: 0 1px 2px rgba(60, 48, 32, 0.06);
+  --shadow-raised: 0 6px 20px rgba(60, 48, 32, 0.10);
+  --shadow-overlay: 0 18px 48px rgba(60, 48, 32, 0.18);
 
+  /* motion */
+  --motion-fast: 140ms;
+  --motion-base: 220ms;
+  --motion-slow: 380ms;
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-brand: #e8505f;
+    --color-brand-hover: #f0616f;
+    --color-brand-dark: #c1121f;
+    --color-brand-soft: #3a1e21;
+    --color-on-brand: #1a1210;
+    --color-background: #191614;
+    --color-surface: #211d1a;
+    --color-surface-alt: #272220;
+    --color-surface-sunken: #151211;
+    --color-border: #332d29;
+    --color-border-strong: #463e38;
+    --color-text: #f5efe6;
+    --color-text-muted: #a9a096;
+    --color-text-faint: #7d746a;
+    --color-text-inverse: #1c1a17;
+    --color-local: #5fbf92;
+    --color-local-soft: #1b2f26;
+    --color-mixed: #d9a441;
+    --color-mixed-soft: #332818;
+    --color-tourist: #e8505f;
+    --color-tourist-soft: #3a1e21;
+    --color-overlay: rgba(10, 8, 7, 0.7);
+    --color-skeleton: #2a2522;
+    --color-skeleton-sheen: #332d29;
+  }
+}
+
+[data-theme='dark'] {
+  --color-brand: #e8505f;
+  --color-brand-hover: #f0616f;
+  --color-brand-dark: #c1121f;
+  --color-brand-soft: #3a1e21;
+  --color-on-brand: #1a1210;
+  --color-background: #191614;
+  --color-surface: #211d1a;
+  --color-surface-alt: #272220;
+  --color-surface-sunken: #151211;
+  --color-border: #332d29;
+  --color-border-strong: #463e38;
+  --color-text: #f5efe6;
+  --color-text-muted: #a9a096;
+  --color-text-faint: #7d746a;
+  --color-text-inverse: #1c1a17;
+  --color-local: #5fbf92;
+  --color-local-soft: #1b2f26;
+  --color-mixed: #d9a441;
+  --color-mixed-soft: #332818;
+  --color-tourist: #e8505f;
+  --color-tourist-soft: #3a1e21;
+  --color-overlay: rgba(10, 8, 7, 0.7);
+  --color-skeleton: #2a2522;
+  --color-skeleton-sheen: #332d29;
 }

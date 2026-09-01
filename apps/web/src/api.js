@@ -1,42 +1,53 @@
-// Client API — partagé de fait avec l'app mobile (à factoriser dans
-// packages/shared/ quand la duplication deviendra réelle).
+// apps/web/src/api.js
 //
-// L'URL de l'API vient de l'environnement : en dur, elle casse au premier
-// déploiement (voir docs/ROADMAP.md §6).
+// Client API. Partagé de fait avec l'app mobile : à factoriser dans
+// packages/shared quand la duplication deviendra coûteuse.
+//
+// L'URL vient de l'environnement. En dur, elle casse au premier déploiement.
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 
 async function request(path, options) {
   const res = await fetch(`${API_BASE}${path}`, options);
+
   if (!res.ok) {
     let detail = `Erreur ${res.status}`;
     try {
       const body = await res.json();
       if (body?.detail) detail = body.detail;
     } catch {
-      // réponse non-JSON : on garde le message générique
+      // Réponse non JSON : on garde le message générique.
     }
     throw new Error(detail);
   }
+
   return res.json();
 }
 
-export async function fetchRestaurants(params = {}) {
-  const query = new URLSearchParams({
-    lat: params.lat ?? 48.8566,
-    lng: params.lng ?? 2.3522,
-    budget_min: params.budgetMin ?? 0,
-    budget_max: params.budgetMax ?? 200,
-    ...(params.lieu && { lieu: params.lieu }),
-    ...(params.types?.length && { types: params.types.join(",") }),
-    ...(params.ambiances?.length && { ambiances: params.ambiances.join(",") }),
-    ...(params.allergenes?.length && { allergenes: params.allergenes.join(",") }),
-  });
+/**
+ * Restaurants autour d'un point.
+ *
+ * `lat` et `lng` sont obligatoires côté serveur : pas de coordonnées par
+ * défaut, le projet doit fonctionner dans n'importe quelle ville.
+ */
+export async function fetchRestaurants({
+  lat, lng, radius = 2000, cuisines, budgetMin, budgetMax, limit = 24,
+}) {
+  const query = new URLSearchParams({ lat, lng, radius, limit });
+  if (cuisines?.length) query.set("cuisines", cuisines.join(","));
+  if (budgetMin != null) query.set("budget_min", budgetMin);
+  if (budgetMax != null) query.set("budget_max", budgetMax);
 
   return request(`/api/restaurants?${query}`);
 }
 
 export async function fetchRestaurant(id) {
-  return request(`/api/restaurant/${id}`);
+  return request(`/api/restaurant/${encodeURIComponent(id)}`);
+}
+
+/** Cuisines réellement présentes en base, pour alimenter les filtres. */
+export async function fetchCuisines(zone) {
+  const query = zone ? `?zone=${encodeURIComponent(zone)}` : "";
+  return request(`/api/cuisines${query}`);
 }
 
 export async function createReservation(reservation) {
@@ -50,11 +61,9 @@ export async function createReservation(reservation) {
 /**
  * Analyse la photo d'une carte de restaurant.
  *
- * Fonctionnalité centrale du projet : elle permet de scorer un restaurant
- * sans aucun avis (docs/DECISIONS.md — D-004, D-001).
- *
- * @param {File|Blob} file    photo de la carte
- * @param {string}    [provider]  'groq' ou 'claude' — pour le comparatif (D-017)
+ * Fonctionnalité centrale du projet côté mobile. Exposée ici aussi : le web
+ * peut recevoir un fichier déposé, même si le geste naturel reste l'appareil
+ * photo du téléphone.
  */
 export async function scanMenu(file, provider) {
   const form = new FormData();
