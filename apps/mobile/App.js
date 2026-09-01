@@ -7,9 +7,9 @@
 // Le thème suit le réglage système, comme le web. Toutes les couleurs viennent
 // de packages/shared : les deux interfaces ne peuvent pas diverger (D-022).
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  Pressable, SafeAreaView, StatusBar, StyleSheet, Text,
+  Animated, Pressable, SafeAreaView, StatusBar, StyleSheet, Text,
   useColorScheme, View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -19,6 +19,47 @@ import DiscoverScreen from "./src/screens/DiscoverScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
 import { spacing, useColors } from "./src/theme";
+
+// Transition d'écran.
+//
+// Composant à part, et volontairement remonté à chaque changement de `key` :
+// il naît avec une valeur animée neuve à 0. On ne réinitialise jamais une
+// valeur existante pour rejouer l'animation — sous react-native-web, remettre
+// à zéro une valeur déjà pilotée par le driver natif la laisse bloquée là, et
+// l'écran reste invisible. Remonter le composant est la seule façon fiable de
+// repartir.
+function Transition({ decalage, duree, children }) {
+  const progress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.timing(progress, {
+      toValue: 1,
+      duration: duree,
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [progress, duree]);
+
+  return (
+    <Animated.View
+      style={{
+        flex: 1,
+        opacity: progress,
+        transform: [
+          {
+            translateX: progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [decalage, 0],
+            }),
+          },
+        ],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
 
 const ONGLETS = [
   { key: "discover", label: "Découvrir", icon: "compass" },
@@ -62,11 +103,18 @@ export default function App() {
     <ScanScreen />
   );
 
+  // Le mouvement dit ce qui vient de se passer : un écran empilé glisse depuis
+  // la droite (on s'enfonce dans une pile), un changement d'onglet se substitue
+  // en fondu (on se déplace latéralement).
+  const cle = stack ? `${stack.screen}-${stack.restaurant.id}` : tab;
+
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
 
-      <View style={{ flex: 1 }}>{contenu}</View>
+      <Transition key={cle} decalage={stack ? 34 : 0} duree={stack ? 260 : 200}>
+        {contenu}
+      </Transition>
 
       {!stack && (
         <View

@@ -83,13 +83,15 @@ export default function Discover({ onOpen }) {
   return (
     <>
       <section className="search">
-        <h1 className="search__title">Mangez là où mangent les habitants</h1>
-        <p className="search__lede">
+        <h1 className="search__title enter" style={{ "--enter-delay": "60ms" }}>
+          Mangez là où mangent <em>les habitants</em>
+        </h1>
+        <p className="search__lede enter" style={{ "--enter-delay": "170ms" }}>
           Les vrais restaurants de quartier sont rarement les plus visibles.
           Local Signal les fait remonter.
         </p>
 
-        <div className="searchbar">
+        <div className="searchbar enter" style={{ "--enter-delay": "280ms" }}>
           <div className="field">
             <label className="field__label" htmlFor="lieu">Où</label>
             <input
@@ -140,7 +142,12 @@ export default function Discover({ onOpen }) {
 
       {/* Filtres rapides, en complément du sélecteur. */}
       {cuisineOptions.length > 0 && (
-        <div className="chips" role="group" aria-label="Filtres de cuisine">
+        <div
+          className="chips enter"
+          style={{ "--enter-delay": "380ms" }}
+          role="group"
+          aria-label="Filtres de cuisine"
+        >
           <button
             className="chip"
             aria-pressed={cuisine === null}

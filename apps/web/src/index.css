@@ -101,9 +101,17 @@ img { display: block; max-width: 100%; }
   height: 68px;
   display: flex;
   align-items: center;
-  background: color-mix(in srgb, var(--color-background) 88%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-background) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--motion-base) var(--motion-ease),
+              background var(--motion-base) var(--motion-ease);
+}
+/* La barre ne se dessine qu'une fois la page défilée : au repos elle se fond
+   dans le fond, ce qui laisse la respiration au titre. */
+.nav.is-stuck {
+  border-bottom-color: var(--color-border);
+  background: color-mix(in srgb, var(--color-background) 86%, transparent);
 }
 
 .nav__inner {
@@ -165,35 +173,70 @@ img { display: block; max-width: 100%; }
    En-tête de recherche
    ========================================================================== */
 
-.search { padding-block: var(--spacing-xl) var(--spacing-lg); }
+.search {
+  position: relative;
+  padding-block: var(--spacing-xxl) var(--spacing-lg);
+}
+
+/* Halo chaud derrière le titre : donne une profondeur au fond crème, qui
+   sinon reste une surface plate. Purement décoratif, hors du flux. */
+.search::before {
+  content: "";
+  position: absolute;
+  inset: -18% -30% 30% -10%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(52% 60% at 18% 22%,
+      color-mix(in srgb, var(--color-brand) 13%, transparent) 0%,
+      transparent 70%),
+    radial-gradient(46% 52% at 78% 8%,
+      color-mix(in srgb, var(--color-mixed) 11%, transparent) 0%,
+      transparent 72%);
+  filter: blur(6px);
+}
 
 .search__title {
-  font-size: var(--font-size-display);
-  max-width: 16ch;
+  font-size: clamp(2.4rem, 7vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  max-width: 15ch;
+  text-wrap: balance;
 }
-@media (min-width: 900px) {
-  .search__title { font-size: var(--font-size-display-lg); }
+
+/* Le second membre du titre passe en creux : la hiérarchie vient du contraste,
+   pas d'une taille encore plus grande. */
+.search__title em {
+  font-style: normal;
+  color: var(--color-brand);
 }
 
 .search__lede {
-  margin-top: var(--spacing-sm);
+  margin-top: var(--spacing-md);
   color: var(--color-text-muted);
-  max-width: 46ch;
-  font-size: var(--font-size-lg);
+  max-width: 42ch;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: var(--line-height-relaxed);
 }
 
 /* Barre de recherche : lieu, cuisine, distance, sur une ligne au desktop
    et empilée au mobile. */
 .searchbar {
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
   display: grid;
   gap: var(--spacing-sm);
   grid-template-columns: 1fr;
-  padding: var(--spacing-sm);
+  padding: 10px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-raised), var(--shadow-inset);
+  transition: box-shadow var(--motion-base) var(--motion-ease),
+              transform var(--motion-base) var(--motion-ease);
+}
+.searchbar:focus-within {
+  box-shadow: var(--shadow-float), var(--shadow-inset);
+  transform: translateY(-2px);
 }
 @media (min-width: 820px) {
   .searchbar { grid-template-columns: 1.4fr 1fr 1fr auto; align-items: end; }
@@ -231,13 +274,22 @@ img { display: block; max-width: 100%; }
   border-radius: var(--radius-md);
   transition: background var(--motion-fast) var(--motion-ease),
               border-color var(--motion-fast) var(--motion-ease),
-              transform var(--motion-fast) var(--motion-ease);
+              box-shadow var(--motion-base) var(--motion-ease),
+              transform var(--motion-fast) var(--motion-spring);
 }
-.btn:active { transform: translateY(1px); }
+.btn:active { transform: translateY(1px) scale(0.985); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.btn--primary { background: var(--color-brand); color: var(--color-on-brand); }
-.btn--primary:hover:not(:disabled) { background: var(--color-brand-hover); }
+.btn--primary {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-brand) 30%, transparent);
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-brand-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--color-brand) 38%, transparent);
+}
 
 .btn--ghost {
   border: 1px solid var(--color-border-strong);
@@ -275,20 +327,31 @@ img { display: block; max-width: 100%; }
 
 .chip {
   flex-shrink: 0;
-  padding: 8px 16px;
+  padding: 9px 17px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
-  transition: all var(--motion-fast) var(--motion-ease);
+  transition: background var(--motion-fast) var(--motion-ease),
+              border-color var(--motion-fast) var(--motion-ease),
+              color var(--motion-fast) var(--motion-ease),
+              transform var(--motion-fast) var(--motion-spring),
+              box-shadow var(--motion-fast) var(--motion-ease);
 }
-.chip:hover { border-color: var(--color-text-faint); color: var(--color-text); }
+.chip:hover {
+  border-color: var(--color-text-faint);
+  color: var(--color-text);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.chip:active { transform: translateY(0); }
 .chip[aria-pressed="true"] {
   background: var(--color-brand);
   border-color: var(--color-brand);
   color: var(--color-on-brand);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-brand) 32%, transparent);
 }
 
 /* ==========================================================================
@@ -306,11 +369,11 @@ img { display: block; max-width: 100%; }
 
 .grid {
   display: grid;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl) var(--spacing-lg);
   grid-template-columns: 1fr;
 }
 @media (min-width: 680px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1020px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 
 /* ==========================================================================
    Carte restaurant
@@ -323,22 +386,40 @@ img { display: block; max-width: 100%; }
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-subtle);
   transition: transform var(--motion-base) var(--motion-ease),
               box-shadow var(--motion-base) var(--motion-ease),
               border-color var(--motion-base) var(--motion-ease);
 }
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-raised);
-  border-color: var(--color-border-strong);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-float);
+  border-color: transparent;
 }
 
 .card__media {
   position: relative;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--color-skeleton);
 }
+
+/* Voile sombre en pied de visuel : sans lui, la pastille de distance et le
+   verdict flottent sur un fond clair et deviennent illisibles. */
+.card__media::after {
+  content: "";
+  position: absolute;
+  inset: 40% 0 0 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(28, 26, 23, 0.42)
+  );
+  opacity: 0;
+  transition: opacity var(--motion-base) var(--motion-ease);
+}
+.card:hover .card__media::after { opacity: 1; }
 .card__media img {
   width: 100%; height: 100%;
   object-fit: cover;
@@ -348,22 +429,42 @@ img { display: block; max-width: 100%; }
 
 .card__distance {
   position: absolute;
-  left: 12px; bottom: 12px;
-  padding: 5px 11px;
+  left: 14px; bottom: 14px;
+  z-index: 1;
+  padding: 6px 13px;
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow: var(--shadow-card);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
 }
 
-.card__body { padding: var(--spacing-md); display: grid; gap: 7px; flex: 1; }
+/* Le verdict remonte sur le visuel : c'est l'information la plus distinctive
+   de la carte, elle ne doit pas se noyer dans le pied. */
+.card__verdict {
+  position: absolute;
+  right: 14px; top: 14px;
+  z-index: 1;
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow: var(--shadow-card);
+}
+
+.card__body {
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+  display: grid;
+  gap: 7px;
+  flex: 1;
+  align-content: start;
+}
 
 .card__name {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: -0.015em;
+  font-family: "Outfit Variable", sans-serif;
+  font-size: 1.22rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .card__meta {
@@ -416,24 +517,56 @@ img { display: block; max-width: 100%; }
    la cuisine. Voir components/CuisineVisual.jsx. */
 
 .visual {
+  position: relative;
   width: 100%;
   height: 100%;
   display: grid;
   place-items: center;
-  color: hsl(var(--visual-hue) 48% 36% / 0.62);
+  overflow: hidden;
+  color: hsl(var(--visual-hue) 60% 96% / 0.9);
   background:
     radial-gradient(
-      120% 90% at 30% 10%,
-      hsl(var(--visual-hue) 52% 92%) 0%,
-      hsl(var(--visual-hue) 38% 86%) 55%,
-      hsl(var(--visual-hue) 30% 80%) 100%
+      130% 100% at 26% 8%,
+      hsl(var(--visual-hue) 62% 62%) 0%,
+      hsl(var(--visual-hue) 54% 50%) 48%,
+      hsl(var(--visual-hue) 48% 40%) 100%
     );
   transition: transform var(--motion-slow) var(--motion-ease);
 }
 
+/* Trame diagonale très légère : casse l'aplat sans devenir un motif.
+   C'est ce qui distingue un bloc de couleur assumé d'une image manquante. */
+.visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.9) 0 1px,
+    transparent 1px 11px
+  );
+}
+
+/* Lueur haute, comme une lumière rasante sur une surface mate. */
+.visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    70% 55% at 22% 0%,
+    rgba(255, 255, 255, 0.28) 0%,
+    transparent 62%
+  );
+}
+
+.visual > svg { position: relative; z-index: 1; }
+
 [data-theme="dark"] .visual,
 :root:not([data-theme="light"]) .visual {
-  color: hsl(var(--visual-hue) 55% 78% / 0.62);
+  color: hsl(var(--visual-hue) 55% 88% / 0.85);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -450,10 +583,10 @@ img { display: block; max-width: 100%; }
 [data-theme="dark"] .visual {
   background:
     radial-gradient(
-      120% 90% at 30% 10%,
-      hsl(var(--visual-hue) 34% 38%) 0%,
-      hsl(var(--visual-hue) 28% 30%) 55%,
-      hsl(var(--visual-hue) 24% 24%) 100%
+      130% 100% at 26% 8%,
+      hsl(var(--visual-hue) 44% 40%) 0%,
+      hsl(var(--visual-hue) 38% 31%) 48%,
+      hsl(var(--visual-hue) 32% 24%) 100%
     );
 }
 
@@ -654,13 +787,49 @@ img { display: block; max-width: 100%; }
    Révélation à l'entrée dans le viewport
    ========================================================================== */
 
+/* Révélation au défilement, avec un léger dépassement qui donne de la matière. */
 .reveal {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(22px) scale(0.985);
   transition: opacity var(--motion-slow) var(--motion-ease),
-              transform var(--motion-slow) var(--motion-ease);
+              transform var(--motion-slow) var(--motion-spring);
 }
 .reveal.is-visible { opacity: 1; transform: none; }
+
+/* Chorégraphie d'entrée : les éléments du haut de page se composent au
+   chargement, dans l'ordre de lecture. Sans cela la page apparaît d'un bloc et
+   paraît figée avant même la première interaction. */
+@keyframes enter {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Le contenu est visible par défaut. L'opacité nulle n'est posée que dans le
+   bloc @supports ci-dessous, et uniquement avec une durée littérale : si un
+   jeton manquait, le raccourci `animation` tomberait en silence et le texte
+   resterait invisible. Cette erreur est arrivée une fois, elle ne doit pas
+   pouvoir se reproduire. */
+.enter { animation-delay: var(--enter-delay, 0ms); }
+
+@supports (animation-timeline: auto) {
+  .enter {
+    opacity: 0;
+    animation-name: enter;
+    animation-duration: 700ms;
+    animation-timing-function: var(--motion-spring, ease-out);
+    animation-fill-mode: forwards;
+  }
+}
+
+/* Le halo du hero arrive plus lentement et sans déplacement : il installe
+   l'ambiance, il ne doit pas attirer l'oeil. */
+@keyframes haze {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.search::before {
+  animation: haze 1.2s ease-out forwards;
+}
 
 /* ==========================================================================
    Pied de page

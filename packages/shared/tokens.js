@@ -134,18 +134,28 @@ export const tokens = {
   },
 
   // Ombres teintées vers le fond, jamais du noir pur sur du clair.
+  // Profondeur par paliers. Les ombres sont teintées vers le brun du fond,
+  // jamais du noir pur, qui grise les surfaces crème.
   shadow: {
-    card: "0 1px 2px rgba(60, 48, 32, 0.06)",
-    raised: "0 6px 20px rgba(60, 48, 32, 0.10)",
-    overlay: "0 18px 48px rgba(60, 48, 32, 0.18)",
+    subtle: "0 1px 2px rgba(60, 48, 32, 0.05)",
+    card: "0 2px 8px rgba(60, 48, 32, 0.07), 0 1px 2px rgba(60, 48, 32, 0.05)",
+    raised: "0 12px 32px rgba(60, 48, 32, 0.13), 0 3px 8px rgba(60, 48, 32, 0.07)",
+    float: "0 24px 60px rgba(60, 48, 32, 0.16), 0 6px 16px rgba(60, 48, 32, 0.08)",
+    inset: "inset 0 1px 0 rgba(255, 255, 255, 0.6)",
   },
 
   // Une seule courbe d'accélération pour tout le produit.
+  // Deux courbes seulement. `ease` pour les changements d'état, `spring` pour
+  // les entrées : un léger dépassement donne la sensation de matière, sans
+  // rebond appuyé qui ferait gadget.
   motion: {
-    fast: "140ms",
-    base: "220ms",
-    slow: "380ms",
+    instant: "90ms",
+    fast: "160ms",
+    base: "260ms",
+    slow: "440ms",
+    slower: "700ms",
     ease: "cubic-bezier(0.16, 1, 0.3, 1)",
+    spring: "cubic-bezier(0.34, 1.4, 0.5, 1)",
   },
 };
 

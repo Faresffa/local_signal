@@ -7,8 +7,9 @@
 // seul avis ne soit nécessaire. C'est la réponse au paradoxe de l'invisibilité
 // (D-001), et ce qui justifie une application native plutôt qu'un site.
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   ActivityIndicator, Image, Pressable, ScrollView,
   StyleSheet, Text, View,
 } from "react-native";
@@ -95,6 +96,30 @@ export default function ScanScreen() {
     }
   }
 
+  // Le résultat se révèle au lieu d'apparaître : après six secondes d'attente,
+  // une apparition brutale se lit comme un rechargement d'écran plutôt que
+  // comme une réponse. La révélation dit « voilà ce que j'ai trouvé ».
+  const reveal = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!result) { reveal.setValue(0); return; }
+    const animation = Animated.timing(reveal, {
+      toValue: 1,
+      duration: 480,
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [result, reveal]);
+
+  const styleReveal = {
+    opacity: reveal,
+    transform: [
+      { translateY: reveal.interpolate({ inputRange: [0, 1], outputRange: [22, 0] }) },
+      { scale: reveal.interpolate({ inputRange: [0, 1], outputRange: [0.97, 1] }) },
+    ],
+  };
+
   const score = result?.menu_score;
   const v = score != null ? verdictMenu(score) : null;
   const raisons = result ? explications(result.observations, result.details) : [];
@@ -147,17 +172,19 @@ export default function ScanScreen() {
       )}
 
       {result && !result.readable && (
-        <View style={[s.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Animated.View
+          style={[s.card, styleReveal, { backgroundColor: colors.surface, borderColor: colors.border }]}
+        >
           <Text style={[s.cardTitle, { color: colors.text }]}>Carte illisible</Text>
           <Text style={[s.body, { color: colors.textMuted }]}>{result.notes}</Text>
           <Text style={[s.body, { color: colors.textMuted, marginTop: 6 }]}>
             Rapprochez-vous, évitez les reflets et cadrez la carte entière.
           </Text>
-        </View>
+        </Animated.View>
       )}
 
       {result?.readable && v && (
-        <View style={[s.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Animated.View style={[s.card, styleReveal, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Verdict tone={v.tone} label={v.label} size="lg" />
 
           <View style={{ marginTop: spacing.md, gap: 7 }}>
@@ -202,7 +229,7 @@ export default function ScanScreen() {
               </Text>
             </View>
           )}
-        </View>
+        </Animated.View>
       )}
     </ScrollView>
   );

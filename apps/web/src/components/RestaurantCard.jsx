@@ -25,7 +25,8 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
   return (
     <article className="card reveal" ref={ref}>
       <div className="card__media">
-        <CuisineVisual id={restaurant.id} cuisine={restaurant.cuisine} size={58} />
+        <CuisineVisual id={restaurant.id} cuisine={restaurant.cuisine} size={64} />
+        <span className={`verdict verdict--${v.tone} card__verdict`}>{v.label}</span>
         {dist && <span className="card__distance">{dist}</span>}
       </div>
 
@@ -42,10 +43,8 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
       </div>
 
       <div className="card__foot">
-        <span className={`verdict verdict--${v.tone}`}>{v.label}</span>
         <button
-          className="btn btn--ghost"
-          style={{ padding: "9px 15px" }}
+          className="btn btn--ghost btn--block"
           onClick={() => onOpen(restaurant)}
         >
           Voir la fiche

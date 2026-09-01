@@ -6,9 +6,9 @@
 // voit un verdict lisible et la première raison en français ; le détail du
 // calcul est sur la fiche, derrière « pourquoi ? ».
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  FlatList, Pressable, ScrollView, StyleSheet, Text,
+  Animated, FlatList, Pressable, ScrollView, StyleSheet, Text,
   useColorScheme, View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -32,23 +32,53 @@ const RAYONS = [
 // jamais l'écran sur un message d'erreur de permission.
 const ZONE_PAR_DEFAUT = { lat: 48.8462, lng: 2.3456 };
 
-function Carte({ item, onOpen, isDark }) {
+function Carte({ item, onOpen, isDark, index }) {
   const colors = useColors();
   const v = verdict(item.local_signal, item.confidence);
   const dist = distance(item.distance_m);
   const raison = item.reasons?.[0];
 
+  // Entrée échelonnée : les cartes arrivent dans l'ordre de lecture plutôt que
+  // d'un bloc. Le décalage est plafonné pour que le bas de la première page ne
+  // se fasse pas attendre. `useNativeDriver` déporte l'animation hors du fil
+  // JavaScript, sinon elle saccade dès que la liste défile.
+  const progress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.timing(progress, {
+      toValue: 1,
+      duration: 420,
+      delay: Math.min(index * 55, 420),
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [progress, index]);
+
   return (
-    <Pressable
-      onPress={() => onOpen(item)}
-      accessibilityRole="button"
-      accessibilityLabel={`${item.name}, ${v.label}`}
-      style={({ pressed }) => [
-        s.card,
-        { backgroundColor: colors.surface, borderColor: colors.border },
-        pressed && { opacity: 0.85, transform: [{ scale: 0.995 }] },
-      ]}
+    <Animated.View
+      style={{
+        opacity: progress,
+        transform: [
+          {
+            translateY: progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [18, 0],
+            }),
+          },
+        ],
+      }}
     >
+      <Pressable
+        onPress={() => onOpen(item)}
+        accessibilityRole="button"
+        accessibilityLabel={`${item.name}, ${v.label}`}
+        style={({ pressed }) => [
+          s.card,
+          { backgroundColor: colors.surface, borderColor: colors.border },
+          pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+        ]}
+      >
       <View>
         <CuisineVisual id={item.id} cuisine={item.cuisine} isDark={isDark} />
         {dist && (
@@ -74,12 +104,13 @@ function Carte({ item, onOpen, isDark }) {
           </Text>
         )}
 
-        <View style={s.cardFoot}>
-          <Verdict tone={v.tone} label={v.label} />
-          <Feather name="chevron-right" size={18} color={colors.textFaint} />
+          <View style={s.cardFoot}>
+            <Verdict tone={v.tone} label={v.label} />
+            <Feather name="chevron-right" size={18} color={colors.textFaint} />
+          </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -257,8 +288,8 @@ export default function DiscoverScreen({ onOpen }) {
       ListHeaderComponent={entete}
       ListEmptyComponent={<EmptyState onReset={() => { setCuisine(null); setRadiusM(3000); }} />}
       ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
-      renderItem={({ item }) => (
-        <Carte item={item} onOpen={onOpen} isDark={isDark} />
+      renderItem={({ item, index }) => (
+        <Carte item={item} onOpen={onOpen} isDark={isDark} index={index} />
       )}
     />
   );
