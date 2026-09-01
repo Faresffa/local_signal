@@ -70,9 +70,17 @@ export function hue(id) {
 
 /** Convertit une teinte en couleur de fond selon le thème. */
 export function visualBackground(h, isDark) {
-  return isDark ? `hsl(${h}, 28%, 30%)` : `hsl(${h}, 38%, 86%)`;
+  // MÊMES VALEURS QUE LE WEB (D-022). Le web pose un dégradé sur trois arrêts ;
+  // React Native n'a pas de dégradé natif, donc on reprend l'arrêt médian —
+  // la teinte dominante est identique à l'œil.
+  //
+  // Le clair était à 38 % de saturation sur 86 % de luminosité : les cartes
+  // ressemblaient à des rectangles beiges vides. La correction avait été faite
+  // sur le web seulement, ce qui est exactement la divergence que
+  // packages/shared existe pour empêcher.
+  return isDark ? `hsl(${h}, 28%, 30%)` : `hsl(${h}, 54%, 50%)`;
 }
 
 export function visualForeground(h, isDark) {
-  return isDark ? `hsl(${h}, 55%, 78%)` : `hsl(${h}, 48%, 36%)`;
+  return isDark ? `hsl(${h}, 55%, 88%)` : `hsl(${h}, 60%, 96%)`;
 }

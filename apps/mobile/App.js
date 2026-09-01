@@ -18,6 +18,7 @@ import DetailScreen from "./src/screens/DetailScreen";
 import DiscoverScreen from "./src/screens/DiscoverScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
+import SearchScreen from "./src/screens/SearchScreen";
 import { spacing, useColors } from "./src/theme";
 
 // Transition d'écran.
@@ -61,8 +62,12 @@ function Transition({ decalage, duree, children }) {
   );
 }
 
+// « Découvrir » dépend du GPS ; « Chercher » ne l'exige pas. Les deux sont
+// nécessaires : la base ne couvre qu'un quartier, et un utilisateur qui n'y
+// est pas doit quand même pouvoir explorer (D-026).
 const ONGLETS = [
   { key: "discover", label: "Découvrir", icon: "compass" },
+  { key: "search", label: "Chercher", icon: "search" },
   { key: "scan", label: "Scanner", icon: "camera" },
 ];
 
@@ -99,6 +104,8 @@ export default function App() {
     )
   ) : tab === "discover" ? (
     <DiscoverScreen onOpen={ouvrirFiche} />
+  ) : tab === "search" ? (
+    <SearchScreen onOpen={ouvrirFiche} />
   ) : (
     <ScanScreen />
   );

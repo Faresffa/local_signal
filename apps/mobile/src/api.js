@@ -32,10 +32,14 @@ async function request(path, options) {
  * défaut, le projet doit fonctionner dans n'importe quelle ville.
  */
 export async function fetchRestaurants({
-  lat, lng, radius = 2000, cuisines, limit = 30,
+  lat, lng, radius = 2000, cuisines, budgetMin, budgetMax, limit = 30,
 }) {
   const query = new URLSearchParams({ lat, lng, radius, limit });
   if (cuisines?.length) query.set("cuisines", cuisines.join(","));
+  // Un restaurant sans prix connu n'est pas exclu par le serveur (D-012) :
+  // envoyer les bornes ne penalise pas l'information manquante.
+  if (budgetMin != null) query.set("budget_min", budgetMin);
+  if (budgetMax != null) query.set("budget_max", budgetMax);
   return request(`/api/restaurants?${query}`);
 }
 
