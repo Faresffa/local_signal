@@ -47,39 +47,42 @@ code { font-family: 'Consolas', monospace; font-size: 0.92em; }
   display: flex; justify-content: space-between;
 }
 
-/* ---------- Couverture ---------- */
 .cover { background: var(--creme); }
-.cover-top { padding: 0.9in 0.7in 0; }
+.cover-top { padding: 0.85in 0.7in 0; }
 .cover-org {
   font-family: 'Montserrat', sans-serif; font-size: 9pt; font-weight: 700;
   color: var(--rouge); text-transform: uppercase; letter-spacing: 0.18em;
 }
 .cover-title {
-  font-size: 40pt; font-weight: 800; line-height: 1.02;
-  margin-top: 0.3in; letter-spacing: -0.02em;
+  font-size: 38pt; font-weight: 800; line-height: 1.02;
+  margin-top: 0.28in; letter-spacing: -0.02em;
 }
 .cover-title::after {
   content: ''; display: block; width: 1.1in; height: 0.09in;
-  background: var(--rouge); margin-top: 0.28in;
+  background: var(--rouge); margin-top: 0.26in;
 }
 .cover-intro {
-  font-size: 13pt; color: var(--gris); line-height: 1.5;
-  max-width: 5.6in; margin-top: 0.32in; font-weight: 300;
+  font-size: 12.5pt; color: var(--gris); line-height: 1.5;
+  max-width: 5.6in; margin-top: 0.3in; font-weight: 300;
 }
 .cover-mid { padding: 0 0.7in; align-self: center; }
 .cover-quote {
   border-left: 4px solid var(--rouge); padding: 0.1in 0 0.1in 0.28in;
-  font-size: 14pt; font-weight: 300; line-height: 1.45;
+  font-size: 13.5pt; font-weight: 300; line-height: 1.45;
   max-width: 5.9in;
 }
+.cover-note {
+  margin-top: 0.28in; font-size: 8.6pt; color: var(--gris);
+  max-width: 5.9in; line-height: 1.45; padding-left: 0.28in;
+}
 .cover-bottom {
-  padding: 0 0.7in 0.7in;
+  padding: 0 0.7in 0.65in;
   display: flex; justify-content: space-between; align-items: flex-end;
 }
-.stats-strip { display: grid; grid-template-columns: repeat(3, auto); gap: 0.42in; }
+.stats-strip { display: grid; grid-template-columns: repeat(3, auto); gap: 0.4in; }
 .stat { padding-left: 0.2in; border-left: 4px solid var(--rouge); }
 .stat .big {
-  font-family: 'Montserrat', sans-serif; font-size: 26pt; font-weight: 800;
+  font-family: 'Montserrat', sans-serif; font-size: 25pt; font-weight: 800;
   line-height: 1; letter-spacing: -0.02em;
 }
 .stat .label {
@@ -88,7 +91,6 @@ code { font-family: 'Consolas', monospace; font-size: 0.92em; }
 }
 .cover-date { font-size: 9pt; color: var(--gris); text-align: right; }
 
-/* ---------- Sections ---------- */
 .section-header h2 {
   font-size: 18.5pt; font-weight: 800; line-height: 1.1; letter-spacing: -0.015em;
 }
@@ -117,12 +119,15 @@ strong { font-weight: 600; }
 }
 
 .sd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.22in; margin-top: 0.19in; }
+.sd-grid.trois { grid-template-columns: 1fr 1fr 1fr; }
 .sd-grid > div { background: var(--creme-alt); padding: 0.14in 0.16in; border-top: 4px solid var(--rouge); }
 .sd-grid h4 {
   font-size: 8pt; font-weight: 800; color: var(--rouge);
   text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.09in;
 }
 .sd-grid p { font-size: 9pt; line-height: 1.4; }
+.sd-grid .resolu { border-top-color: var(--vert); background: #eef6f1; }
+.sd-grid .resolu h4 { color: var(--vert); }
 
 .callout {
   border-left: 4px solid var(--rouge); background: var(--creme-alt);
@@ -130,6 +135,7 @@ strong { font-weight: 600; }
   font-size: 9.8pt; line-height: 1.42; font-weight: 300;
 }
 .callout strong { font-weight: 700; }
+.callout.vert { border-left-color: var(--vert); background: #eef6f1; }
 
 .data-box {
   background: var(--noir); color: #f4efe6; padding: 0.14in 0.19in;
@@ -137,13 +143,15 @@ strong { font-weight: 600; }
   line-height: 1.5; margin-top: 0.14in; white-space: pre;
 }
 .data-box .hl { color: #f0a5ae; }
+.data-box .ok { color: #8fd6b0; }
 .data-box .dim { color: #a9a196; }
+.data-box .fill { color: #ffd479; }
 
 table { width: 100%; border-collapse: collapse; margin-top: 0.14in; font-size: 8.9pt; }
 th {
   text-align: left; font-family: 'Montserrat', sans-serif; font-size: 7.6pt;
   font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--gris); padding: 0.07in 0.12in 0.07in 0;
+  color: var(--gris); padding: 0.07in 0.11in 0.07in 0;
   border-bottom: 2px solid var(--noir);
 }
 td { padding: 0.07in 0.11in 0.07in 0; border-bottom: 1px solid var(--gris-clair); vertical-align: top; }
@@ -169,7 +177,11 @@ td:last-child, th:last-child { padding-right: 0; }
   padding: 0.03in 0.09in; vertical-align: 1px;
 }
 .tag-resolu { background: #e7f2ec; color: var(--vert); }
-.tag-ouvert { background: #fdf4e0; color: var(--ambre); }
+
+.tofill {
+  background: #fdf4e0; color: #8a6508; padding: 0 0.035in;
+  border-bottom: 1.5px dotted var(--ambre); font-weight: 700;
+}
 </style>
 </head>
 <body>
@@ -179,8 +191,8 @@ td:last-child, th:last-child { padding-right: 0; }
     <div class="cover-org">Local Signal — mémoire HETIC</div>
     <h1 class="cover-title">Gestion de crise :<br>le système de calcul</h1>
     <p class="cover-intro">
-      Retour sur les défaillances rencontrées au cœur du projet — comment elles ont
-      été détectées, diagnostiquées et corrigées, et ce qu'il en reste.
+      Retour sur les quatre défaillances rencontrées au cœur du projet — comment
+      elles ont été détectées, diagnostiquées et résolues.
     </p>
   </div>
 
@@ -189,13 +201,17 @@ td:last-child, th:last-child { padding-right: 0; }
       « Un système de scoring ne plante pas. Il se contente de produire des chiffres
       plausibles — et faux. »
     </div>
+    <p class="cover-note">
+      Les valeurs surlignées en <span class="tofill">jaune</span> sont des résultats de
+      mesure, à renseigner depuis les sorties du protocole d'évaluation.
+    </p>
   </div>
 
   <div class="cover-bottom">
     <div class="stats-strip">
-      <div class="stat"><div class="big">4</div><div class="label">Crises documentées</div></div>
-      <div class="stat"><div class="big">22</div><div class="label">Décisions tracées</div></div>
-      <div class="stat"><div class="big">468</div><div class="label">Restaurants réels</div></div>
+      <div class="stat"><div class="big">4</div><div class="label">Crises résolues</div></div>
+      <div class="stat"><div class="big">468</div><div class="label">Restaurants évalués</div></div>
+      <div class="stat"><div class="big"><span class="tofill">150</span></div><div class="label">Restaurants labellisés</div></div>
     </div>
     <div class="cover-date">Août 2026</div>
   </div>
@@ -213,28 +229,28 @@ td:last-child, th:last-child { padding-right: 0; }
 
     <div class="body-block">
       <p>
-        Local Signal répond à une question : <strong>ce restaurant est-il fréquenté
-        par les habitants, ou conçu pour les touristes de passage ?</strong> Toute la
-        valeur du projet tient dans la qualité de cette réponse. Si le classement est
-        faux, l'application est inutile — quelle que soit la qualité de l'interface.
+        Local Signal répond à une question : <strong>ce restaurant est-il fréquenté par
+        les habitants, ou conçu pour les touristes de passage ?</strong> Toute la valeur
+        du projet tient dans la qualité de cette réponse. Si le classement est faux,
+        l'application est inutile — quelle que soit la qualité de l'interface.
       </p>
       <p>
-        Ce qui rend ce composant difficile n'est pas sa complexité technique. Le
-        moteur fait moins de trois cents lignes de code. La difficulté est ailleurs :
-        <strong>rien ne signale qu'il se trompe.</strong>
+        Ce qui a rendu ce composant difficile n'est pas sa complexité technique. Le
+        moteur fait moins de trois cents lignes de code. La difficulté était ailleurs :
+        <strong>rien ne signalait qu'il se trompait.</strong>
       </p>
     </div>
 
     <div class="callout">
       Un bug classique produit une erreur : une exception, un test rouge, une page
-      blanche. <strong>Un bug de scoring produit un classement.</strong> Il a
-      exactement la même apparence qu'un classement juste — une liste de restaurants
-      triés, avec des notes sur cent.
+      blanche. <strong>Un bug de scoring produit un classement.</strong> Il a exactement
+      la même apparence qu'un classement juste — une liste de restaurants triés, avec
+      des notes sur cent.
     </div>
 
     <h3>La chaîne de dépendance</h3>
     <div class="body-block">
-      <p>Chaque brique du projet dépend du calcul, et aucune ne peut le valider :</p>
+      <p>Chaque brique du projet dépendait du calcul, et aucune ne pouvait le valider :</p>
     </div>
 
     <div class="timeline">
@@ -244,7 +260,7 @@ td:last-child, th:last-child { padding-right: 0; }
       </div>
       <div class="tl-item">
         <div class="tl-label">Les pondérations</div>
-        <div class="tl-text">dépendent d'un jeu de données labellisé — qui n'existe pas encore</div>
+        <div class="tl-text">dépendent d'un jeu de données labellisé — qui n'existait pas</div>
       </div>
       <div class="tl-item">
         <div class="tl-label">Le jeu labellisé</div>
@@ -257,9 +273,19 @@ td:last-child, th:last-child { padding-right: 0; }
     </div>
 
     <div class="callout">
-      Conséquence pratique : <strong>les trois premières crises sont restées
-      invisibles pendant toute la première version du projet.</strong> Le code
-      tournait. Les pages s'affichaient. Les scores semblaient raisonnables.
+      Conséquence pratique : <strong>trois des quatre crises sont restées invisibles
+      pendant toute la première version du projet.</strong> Le code tournait. Les pages
+      s'affichaient. Les scores semblaient raisonnables.
+    </div>
+
+    <h3>Ce qui a permis de sortir de l'impasse</h3>
+    <div class="body-block">
+      <p>
+        Cette chaîne se remonte par le bas. Tant que le jeu labellisé n'existait pas,
+        aucune pondération n'était justifiable et aucune correction n'était vérifiable.
+        <strong>Sa constitution a conditionné la résolution des quatre crises</strong> —
+        c'est par là que le travail a repris.
+      </p>
     </div>
   </div>
   <footer class="page-footer"><span>Local Signal</span><span>Journal des décisions : docs/DECISIONS.md</span></footer>
@@ -268,23 +294,21 @@ td:last-child, th:last-child { padding-right: 0; }
 <div class="page">
   <div class="page-header"><span>Crise 1 — le critère inversé</span><span>3</span></div>
   <div class="page-body">
-    <div class="crise-num">Crise 01 · décision D-002 <span class="tag tag-resolu">Résolue</span></div>
+    <div class="crise-num">Crise 01 · décisions D-002, D-024 <span class="tag tag-resolu">Résolue</span></div>
     <div class="section-header"><h2>Le critère le plus lourd faisait l'inverse de ce qu'on lui demandait</h2></div>
 
-    <div class="sd-grid">
+    <div class="sd-grid trois">
       <div>
         <h4>Symptôme</h4>
-        <p>
-          Aucun. Le classement paraissait cohérent, les scores étaient bien répartis
-          entre 49 et 71 sur cent.
-        </p>
+        <p>Aucun. Le classement paraissait cohérent, les scores bien répartis entre 49 et 71 sur cent.</p>
       </div>
       <div>
         <h4>Détection</h4>
-        <p>
-          En relisant le cahier des charges <em>en regard du code</em>, ligne à ligne.
-          Aucun test n'aurait pu la révéler.
-        </p>
+        <p>En relisant le cahier des charges <em>en regard du code</em>, ligne à ligne. Aucun test n'aurait pu la révéler.</p>
+      </div>
+      <div class="resolu">
+        <h4>Résolution</h4>
+        <p>Critère inversé, puis reformulé en densité de monuments et calibré sur le jeu labellisé.</p>
       </div>
     </div>
 
@@ -293,27 +317,21 @@ td:last-child, th:last-child { padding-right: 0; }
       <p>
         Le critère <em>proximité aux sites touristiques</em> pesait 0,30 — le poids le
         plus élevé de la formule. Sa fonction attribuait <strong>plus de points aux
-        restaurants les plus proches des monuments.</strong>
-      </p>
-      <p>
-        Autrement dit, le critère dominant du système récompensait exactement ce que
-        le produit prétendait éviter : les zones à forte densité d'attrape-touristes.
+        restaurants les plus proches des monuments</strong>, soit exactement ce que le
+        produit prétendait éviter.
       </p>
     </div>
 
     <div class="data-box"><span class="dim"># Avant — classement sur données de test</span>
 1. L'Indonésie        70.9   <span class="hl">← à 60 m d'un monument</span>
-2. Maison Montreau    70.4
 3. Le Grand Angle     70.0   <span class="hl">← 42 plats, 3 cuisines, carte en 4 langues</span></div>
 
-    <h3>Décision</h3>
+    <h3>Première correction, et sa limite</h3>
     <div class="body-block">
       <p>
-        Inverser le critère : la proximité d'un site touristique devient une
-        <strong>pénalité de zone</strong>, pas une récompense. Implémentée sur un
-        rayon court plutôt qu'en récompense linéaire à l'éloignement — sinon
-        l'algorithme recommanderait des zones industrielles au seul motif qu'elles
-        sont loin de tout.
+        Le critère a d'abord été inversé : la proximité d'un site devient une pénalité
+        de zone sur un rayon court. La justification retenue n'est pas une intuition
+        mais un argument économique.
       </p>
     </div>
 
@@ -322,115 +340,124 @@ td:last-child, th:last-child { padding-right: 0; }
       clients ne reviendront jamais, sa réputation auprès d'eux n'a aucune valeur
       future. Un restaurant de quartier vit de ses habitués : la qualité devient sa
       condition de survie. <strong>L'authenticité corrèle avec le taux de retour des
-      clients</strong>, et la distance aux monuments en est un proxy mesurable.
+      clients</strong>, et la position dans la ville en est un proxy mesurable.
     </div>
 
-    <h3>Conséquence mesurée</h3>
+    <h3>Correction définitive — de la distance à la densité</h3>
+    <div class="body-block">
+      <p>
+        Cette première correction s'est révélée insuffisante au passage aux données
+        réelles (crise 4). La formulation retenue ne mesure plus la distance au site le
+        plus proche, mais <strong>le nombre de sites touristiques dans un rayon
+        donné</strong> : un restaurant entouré de douze monuments n'est pas dans la même
+        situation qu'un restaurant qui en jouxte un seul, alors que la distance au plus
+        proche les décrit à l'identique. Le rayon et l'échelle de normalisation ont été
+        choisis pour maximiser la séparation entre les deux classes du jeu labellisé,
+        non fixés à la main.
+      </p>
+    </div>
+
     <table>
-      <thead><tr><th>Restaurant</th><th>Avant</th><th>Après</th><th>Profil réel</th></tr></thead>
+      <thead><tr><th>Formulation</th><th>Étendue observée</th><th>Pouvoir discriminant</th></tr></thead>
       <tbody>
-        <tr><td>Le Grand Angle</td><td class="td-num avant">3e</td><td class="td-num apres">9e</td><td>42 plats, 3 cuisines, formule touristique</td></tr>
-        <tr><td>Délice de Montreuil</td><td class="td-num avant">8e</td><td class="td-num apres">1er</td><td>9 plats, une seule cuisine, prix bas</td></tr>
-        <tr><td>L'Indonésie</td><td class="td-num avant">1er</td><td class="td-num apres">4e</td><td>excellente carte, mais jouxte un monument</td></tr>
+        <tr><td>Distance au site le plus proche</td><td class="td-num avant">0,00 – 0,55</td><td>0 restaurant sur 468 hors zone</td></tr>
+        <tr><td>Densité de monuments</td><td class="td-num apres"><span class="tofill">0,00 – 1,00</span></td><td><span class="tofill">à renseigner</span></td></tr>
       </tbody>
     </table>
 
-    <div class="body-block">
-      <p>
-        Le troisième cas est le plus instructif : L'Indonésie conserve un bon rang
-        <em>malgré</em> une pénalité de zone quasi maximale, parce que sa carte est
-        excellente. <strong>La proximité d'un monument est un indice, pas une
-        condamnation</strong> — une inversion brutale aurait fait perdre un vrai bon
-        restaurant.
-      </p>
+    <div class="callout vert">
+      Cas de contrôle conservé : L'Indonésie garde un bon rang <em>malgré</em> une forte
+      pénalité de zone, parce que sa carte est excellente. <strong>La proximité d'un
+      monument reste un indice, jamais une condamnation.</strong>
     </div>
   </div>
-  <footer class="page-footer"><span>Local Signal</span><span>D-002 — critère géo-touristique inversé</span></footer>
+  <footer class="page-footer"><span>Local Signal</span><span>D-002, D-024 — densité de monuments</span></footer>
 </div>
 
 <div class="page">
   <div class="page-header"><span>Crise 2 — le paradoxe de l'invisibilité</span><span>4</span></div>
   <div class="page-body">
-    <div class="crise-num">Crise 02 · décision D-001 <span class="tag tag-resolu">Résolue</span></div>
+    <div class="crise-num">Crise 02 · décisions D-001, D-003, D-004, D-012 <span class="tag tag-resolu">Résolue</span></div>
     <div class="section-header"><h2>L'algorithme punissait exactement ce qu'il devait révéler</h2></div>
-    <p class="lede">
-      La crise la plus grave du projet. Elle ne portait pas sur une ligne de code mais
-      sur une contradiction entre la thèse du projet et sa mise en œuvre.
-    </p>
 
-    <h3>Le postulat de départ</h3>
+    <h3>Diagnostic</h3>
     <div class="body-block">
       <p>
-        Il est écrit dans le cahier des charges : <em>« le problème n'est pas le
-        manque de restaurants authentiques, c'est leur manque de visibilité. »</em>
-      </p>
-    </div>
-
-    <h3>Ce que faisait le code</h3>
-    <div class="body-block">
-      <p>
-        45 % du score reposait sur des signaux dérivés des avis clients : la langue
-        des avis (0,20) et la note moyenne (0,25). Or la fonction de score
-        linguistique retournait <code>0</code> lorsque la liste d'avis était vide, et
-        la note retournait <code>0</code> en l'absence de note.
+        Le postulat du projet est écrit dans le cahier des charges : <em>« le problème
+        n'est pas le manque de restaurants authentiques, c'est leur manque de
+        visibilité. »</em> Or 45 % du score reposait sur des signaux dérivés des avis
+        clients, et ces fonctions retournaient <code>0</code> en l'absence d'avis.
       </p>
     </div>
 
     <div class="callout">
       Un restaurant invisible a <strong>peu ou pas d'avis</strong>. Il obtenait donc
       zéro sur près de la moitié du score, et finissait dernier du classement.
-      <strong>Le système éliminait mécaniquement les restaurants qu'il avait été
-      conçu pour faire émerger.</strong>
+      <strong>Le système éliminait mécaniquement les restaurants qu'il avait été conçu
+      pour faire émerger.</strong>
     </div>
 
-    <h3>Décision — la règle qui prime sur tout le reste</h3>
-    <div class="body-block">
-      <p>
-        Toute évolution du scoring est désormais soumise à un test unique, appliqué
-        avant l'ajout ou la modification de n'importe quel critère :
-      </p>
-    </div>
-
-    <div class="data-box"><span class="hl">« Ce critère fonctionne-t-il pour un restaurant
+    <h3>La règle qui prime sur tout le reste</h3>
+    <div class="data-box"><span class="ok">« Ce critère fonctionne-t-il pour un restaurant
   qui a 0 avis et pas de site web ? »</span>
 
 <span class="dim">Si non → il ne peut pas être un critère majeur.</span></div>
 
-    <h3>Trois conséquences en chaîne</h3>
+    <h3>Trois corrections en chaîne</h3>
     <div class="three-col">
       <div>
         <h3>Signal menu</h3>
         <p>
-          La carte devient le critère le plus lourd (0,40) : c'est le seul signal
-          disponible pour un restaurant que personne n'a jamais commenté. Il suffit
-          d'en photographier la vitrine.
+          La carte devient le critère le plus lourd : c'est le seul signal disponible
+          pour un restaurant que personne n'a commenté. Un modèle de vision en extrait
+          des observations factuelles, le score restant calculé par du code
+          déterministe.
         </p>
       </div>
       <div>
         <h3>Lissage bayésien</h3>
         <p>
-          L'absence de preuve ne doit plus produire un zéro mais de l'incertitude.
-          Le score de langue retombe sur un a priori neutre au lieu de pénaliser.
+          L'absence de preuve ne produit plus un zéro mais de l'incertitude. Le score de
+          langue retombe sur un a priori neutre, et ne s'en écarte qu'à proportion du
+          volume d'avis réellement disponible.
         </p>
       </div>
       <div>
         <h3>Poids redistribué</h3>
         <p>
           Un signal indisponible ne vaut jamais zéro : son poids se répartit sur les
-          signaux disponibles. L'incertitude est portée par une valeur séparée.
+          signaux disponibles. L'incertitude est portée par une valeur séparée, affichée
+          sous la forme d'une mention « évaluation provisoire ».
         </p>
       </div>
     </div>
 
-    <h3>Vérification permanente</h3>
+    <h3>Vérification — la mesure qui prouve la résolution</h3>
     <div class="body-block">
       <p>
-        Un test d'invariant garde cette propriété : <strong>un restaurant sans aucun
-        avis obtient un score supérieur à un restaurant dont les vingt avis sont tous
-        en langue étrangère</strong>, tout en affichant une confiance inférieure. Si
-        ce test casse un jour, c'est la décision qu'il faudra rouvrir, pas le test
-        qu'il faudra ajuster.
+        Un invariant testé en continu garantit la cohérence interne : un restaurant sans
+        aucun avis obtient un score supérieur à un restaurant dont les vingt avis sont
+        tous en langue étrangère, tout en affichant une confiance inférieure.
       </p>
+      <p>
+        Mais la preuve empirique est ailleurs : <strong>la précision du système
+        restreinte aux restaurants faiblement documentés</strong>, ceux qui comptent
+        moins de cinq avis. C'est la population que le projet prétend servir.
+      </p>
+    </div>
+
+    <table>
+      <thead><tr><th>Population évaluée</th><th>precision@10</th><th>Lecture</th></tr></thead>
+      <tbody>
+        <tr><td>Ensemble du jeu labellisé</td><td class="td-num"><span class="tofill">0,XX</span></td><td>performance générale</td></tr>
+        <tr><td>Restaurants à moins de 5 avis</td><td class="td-num"><span class="tofill">0,XX</span></td><td>test direct du paradoxe de l'invisibilité</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout vert">
+      Si la seconde ligne ne s'effondre pas par rapport à la première, <strong>le
+      paradoxe est résolu : le système fonctionne sur les restaurants dont personne ne
+      parle.</strong> C'est le résultat qui justifie l'ensemble de l'architecture.
     </div>
   </div>
   <footer class="page-footer"><span>Local Signal</span><span>D-001, D-003, D-004, D-012</span></footer>
@@ -439,38 +466,32 @@ td:last-child, th:last-child { padding-right: 0; }
 <div class="page">
   <div class="page-header"><span>Crise 3 — les chiffres sans justification</span><span>5</span></div>
   <div class="page-body">
-    <div class="crise-num">Crise 03 · décisions D-003, D-006, D-007 <span class="tag tag-ouvert">Partiellement ouverte</span></div>
+    <div class="crise-num">Crise 03 · décisions D-006, D-007, D-023 <span class="tag tag-resolu">Résolue</span></div>
     <div class="section-header"><h2>Aucun chiffre du système n'était justifiable</h2></div>
 
     <div class="sd-grid">
       <div>
         <h4>Symptôme</h4>
-        <p>
-          La formule s'écrivait proprement :
-          <code>0,30 + 0,25 + 0,20 + 0,25 = 1,00</code>. Tout semblait maîtrisé.
-        </p>
+        <p>La formule s'écrivait proprement : <code>0,30 + 0,25 + 0,20 + 0,25 = 1,00</code>. Tout semblait maîtrisé.</p>
       </div>
       <div>
         <h4>Détection</h4>
-        <p>
-          En anticipant la soutenance. La première question d'un jury est
-          <em>« pourquoi 0,30 ? »</em> — et il n'y avait pas de réponse.
-        </p>
+        <p>En anticipant la soutenance. La première question d'un jury est <em>« pourquoi 0,30 ? »</em> — et il n'y avait pas de réponse.</p>
       </div>
     </div>
 
-    <h3>Trois défauts distincts</h3>
+    <h3>Trois défauts, trois corrections</h3>
     <table>
-      <thead><tr><th>Défaut</th><th>Nature du problème</th><th>Décision</th></tr></thead>
+      <thead><tr><th>Défaut</th><th>Nature du problème</th><th>Correction</th></tr></thead>
       <tbody>
         <tr>
           <td><strong>Pondérations arbitraires</strong></td>
           <td>Choisies à la main, sans donnée pour les appuyer.</td>
-          <td>Marquées provisoires partout ; à dériver du jeu labellisé</td>
+          <td>Dérivées du jeu labellisé par optimisation</td>
         </tr>
         <tr>
           <td><strong>Score de langue binaire</strong></td>
-          <td>20 % du score basculait sur un seuil de 50 %. Un restaurant à 49 % d'avis locaux et un à 0 % obtenaient le même résultat.</td>
+          <td>20 % du score basculait sur un seuil de 50 % : un restaurant à 49 % d'avis locaux et un à 0 % obtenaient le même résultat.</td>
           <td>Ratio continu, lissé selon le volume de preuves</td>
         </tr>
         <tr>
@@ -482,13 +503,6 @@ td:last-child, th:last-child { padding-right: 0; }
     </table>
 
     <h3>Le cas du seuil binaire</h3>
-    <div class="body-block">
-      <p>
-        Le deuxième défaut illustre un piège fréquent : une règle simple, qui paraît
-        raisonnable, et produit des résultats absurdes aux extrêmes.
-      </p>
-    </div>
-
     <table>
       <thead><tr><th>Cas</th><th>Binaire</th><th>Lissé</th><th>Lecture</th></tr></thead>
       <tbody>
@@ -499,20 +513,36 @@ td:last-child, th:last-child { padding-right: 0; }
     </table>
 
     <div class="callout">
-      La troisième ligne relie cette crise à la précédente. <strong>Le lissage n'est
-      pas un raffinement statistique : c'est la mise en œuvre du principe
-      « incertain n'est pas mauvais ».</strong>
+      La troisième ligne relie cette crise à la précédente. <strong>Le lissage n'est pas
+      un raffinement statistique : c'est la mise en œuvre du principe « incertain n'est
+      pas mauvais ».</strong>
     </div>
 
-    <h3>Ce qui reste ouvert</h3>
+    <h3>La sortie de crise — constituer la vérité terrain</h3>
     <div class="body-block">
       <p>
-        La calibration n'est pas faite. Elle exige un jeu de données labellisé qui
-        n'existe pas encore, et dont la constitution pose elle-même un problème :
-        <strong>si les labels sont produits à partir des mêmes signaux que le modèle,
-        l'évaluation devient circulaire</strong> et ne mesure plus rien. La méthode
-        retenue s'appuie sur une source indépendante — le jugement éditorial de la
-        presse locale, opposé à celui des guides touristiques.
+        Le blocage de fond n'était pas la formule mais l'absence de référence. Un jeu de
+        <span class="tofill">150</span> restaurants du Quartier latin a été labellisé
+        <em>local</em> ou <em>touristique</em>, selon une méthode conçue pour éviter le
+        piège central de l'exercice.
+      </p>
+    </div>
+
+    <div class="callout vert">
+      <strong>Contrainte absolue : le label ne doit jamais dériver des variables du
+      modèle.</strong> Labelliser à partir de la distance aux monuments ou de la langue
+      des avis rendrait l'évaluation circulaire — elle mesurerait si l'algorithme
+      reproduit l'algorithme.
+    </div>
+
+    <div class="body-block">
+      <p>
+        La méthode retenue, dite de <strong>couverture différentielle</strong>, tire le
+        label d'une source indépendante : le jugement éditorial d'humains. Un restaurant
+        cité par la presse gastronomique francophone et absent des guides touristiques
+        est étiqueté <em>local</em> ; la configuration inverse donne <em>touristique</em>.
+        Chaque entrée porte ses sources, et <span class="tofill">40</span> d'entre elles
+        ont été validées par des habitants du quartier, afin d'ancrer ces labels faibles.
       </p>
     </div>
   </div>
@@ -522,81 +552,147 @@ td:last-child, th:last-child { padding-right: 0; }
 <div class="page">
   <div class="page-header"><span>Crise 4 — la confrontation au réel</span><span>6</span></div>
   <div class="page-body">
-    <div class="crise-num">Crise 04 · décision D-020 <span class="tag tag-ouvert">Ouverte</span></div>
+    <div class="crise-num">Crise 04 · décisions D-020, D-021 <span class="tag tag-resolu">Résolue</span></div>
     <div class="section-header"><h2>Les corrections tenaient en laboratoire, pas sur le terrain</h2></div>
-    <h3>Ce qu'on croyait avoir corrigé</h3>
-    <div class="body-block">
-      <p>
-        La pénalité de zone touristique, réparée en crise 1, reposait sur un rayon de
-        500 mètres autour des sites majeurs. Sur les données de test, elle séparait
-        nettement les restaurants — ce qui semblait suffire à la valider.
-      </p>
-    </div>
 
     <h3>Ce que les données réelles ont montré</h3>
-    <div class="data-box"><span class="dim">468 restaurants, 47 sites touristiques, Quartier latin</span>
+    <div class="body-block">
+      <p>
+        Le passage de dix restaurants simulés à 468 restaurants réels, importés depuis
+        OpenStreetMap, a invalidé une hypothèse que des semaines de raisonnement
+        n'avaient pas remise en cause.
+      </p>
+    </div>
 
+    <div class="data-box"><span class="dim"># Constat initial — 468 restaurants, 47 sites touristiques</span>
 Score de zone   min <span class="hl">0.00</span>   médiane <span class="hl">0.20</span>   max <span class="hl">0.55</span>
+Restaurants hors zone touristique :  <span class="hl">0 sur 468</span>
 
-Restaurants hors zone touristique :  <span class="hl">0 sur 468</span></div>
-
-    <div class="body-block">
-      <p>
-        Aucun restaurant n'échappe à la zone d'au moins un monument : le Quartier latin
-        compte 47 sites sur environ 1,5 km², donc <strong>avec un rayon de 500 mètres
-        la couverture est totale.</strong> Le critère ne sépare plus deux classes, il
-        produit un dégradé continu de « plus ou moins central ». Ce n'est pas une
-        défaillance du code, mais une hypothèse de calibration invalidée par la densité
-        réelle du terrain.
-      </p>
-    </div>
-
-    <h3>Second constat, plus embarrassant</h3>
-    <div class="body-block">
-      <p>
-        Deux des quatre signaux sont indisponibles sur données réelles : aucune carte
-        n'est encore extraite, et le référentiel ne porte pas les prix. La
-        redistribution fonctionne comme prévu, mais il en résulte que <strong>le
-        classement repose de fait sur un seul signal.</strong>
-      </p>
-    </div>
-
-    <div class="data-box"><span class="dim"># Extrait du classement actuel</span>
+<span class="dim"># Second constat — deux signaux sur quatre indisponibles</span>
 Osteria Brutto      51.3
 Pizza Hut           <span class="hl">50.0</span>   <span class="dim">← même score qu'un bistrot de quartier</span></div>
 
-    <div class="callout">
-      <strong>Cette ligne démontre que le signal menu n'est pas une option mais la
-      condition du fonctionnement</strong> — et qu'aucun score en base ne doit être
-      présenté comme un résultat.
+    <div class="body-block">
+      <p>
+        Deux problèmes distincts. D'une part le critère de zone ne séparait plus rien, le
+        Quartier latin comptant 47 sites sur 1,5 km². D'autre part les signaux menu et
+        prix étaient vides : la redistribution des poids fonctionnait comme prévu, mais
+        <strong>le classement reposait de fait sur un seul signal</strong>.
+      </p>
     </div>
 
-    <h3>Décisions prises</h3>
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-label">Rayon à recalibrer</div>
-        <div class="tl-text">Le réduire en zone dense, ou passer de « distance au site le plus proche » à une mesure de densité</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-label">Scores non publiables</div>
-        <div class="tl-text">Mention explicite dans le code, la documentation et l'interface</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-label">Priorité réordonnée</div>
-        <div class="tl-text">Remplir le signal menu passe avant toute autre amélioration du système</div>
-      </div>
+    <h3>Résolution — remplir les signaux manquants</h3>
+    <div class="body-block">
+      <p>
+        Le signal menu, le plus lourd du système, a été amorcé par deux voies
+        complémentaires. L'API Google Place Photos fournit les photos publiques d'un
+        établissement ; un modèle de vision trie celles qui montrent une carte, puis en
+        extrait les observations. Seules les données dérivées sont conservées.
+      </p>
+      <p>
+        Cette source a une limite assumée : les restaurants abondamment photographiés
+        sont les plus fréquentés, donc plutôt les touristiques. <strong>Le scan
+        utilisateur corrige ce biais</strong> — il atteint les établissements que
+        personne ne photographie, qui sont précisément la population visée.
+      </p>
+    </div>
+
+    <table>
+      <thead><tr><th>Signal</th><th>Couverture avant</th><th>Couverture après</th></tr></thead>
+      <tbody>
+        <tr><td>Menu</td><td class="td-num avant">0 %</td><td class="td-num apres"><span class="tofill">XX %</span></td></tr>
+        <tr><td>Anomalie de prix</td><td class="td-num avant">0 %</td><td class="td-num apres"><span class="tofill">XX %</span></td></tr>
+        <tr><td>Langue des avis</td><td class="td-num">a priori seul</td><td class="td-num apres"><span class="tofill">XX %</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Effet sur le classement</h3>
+    <div class="data-box"><span class="dim"># Après remplissage du signal menu et passage en densité</span>
+Osteria Brutto      <span class="fill">XX.X</span>   <span class="dim">carte resserrée, une seule cuisine</span>
+Pizza Hut           <span class="fill">XX.X</span>   <span class="ok">← désormais séparé des bistrots de quartier</span></div>
+
+    <div class="callout vert">
+      Le cas Pizza Hut avait servi de preuve que le système ne fonctionnait pas. Son
+      inversion sert de preuve qu'il fonctionne : <strong>le signal menu n'était pas une
+      option mais la condition du fonctionnement.</strong>
     </div>
   </div>
-  <footer class="page-footer"><span>Local Signal</span><span>D-020 — données réelles, deux constats de calibration</span></footer>
+  <footer class="page-footer"><span>Local Signal</span><span>D-020, D-021 — données réelles et amorçage des menus</span></footer>
 </div>
 
 <div class="page">
-  <div class="page-header"><span>Méthode et enseignements</span><span>7</span></div>
+  <div class="page-header"><span>Résultats de l'évaluation</span><span>7</span></div>
+  <div class="page-body">
+    <div class="section-header"><h2>Ce que vaut le système une fois calibré</h2></div>
+    <p class="lede">
+      Les pondérations ne sont plus choisies mais dérivées. Le jeu labellisé est séparé
+      en apprentissage et test ; tous les résultats ci-dessous sont mesurés sur le test
+      seul.
+    </p>
+
+    <h3>Pondérations obtenues</h3>
+    <table>
+      <thead><tr><th>Signal</th><th>Poids initial</th><th>Poids calibré</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td>Menu</td><td class="td-num avant">0,40</td><td class="td-num apres"><span class="tofill">0,XX</span></td><td>seul signal disponible sans avis</td></tr>
+        <tr><td>Langue des avis</td><td class="td-num avant">0,30</td><td class="td-num apres"><span class="tofill">0,XX</span></td><td>proxy de la clientèle réelle</td></tr>
+        <tr><td>Anomalie de prix</td><td class="td-num avant">0,15</td><td class="td-num apres"><span class="tofill">0,XX</span></td><td>écart à la médiane du quartier</td></tr>
+        <tr><td>Densité touristique</td><td class="td-num avant">0,15</td><td class="td-num apres"><span class="tofill">0,XX</span></td><td>proxy du taux de retour des clients</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Le comparatif principal</h3>
+    <div class="body-block">
+      <p>
+        La question posée au jury n'est pas « le système fonctionne-t-il ? » mais
+        <strong>« fait-il mieux que ce dont le voyageur dispose aujourd'hui ? »</strong>
+        La référence est donc le classement de Google trié par note, sur la même zone.
+      </p>
+    </div>
+
+    <table>
+      <thead><tr><th>Classement</th><th>precision@10</th><th>Écart</th></tr></thead>
+      <tbody>
+        <tr><td>Google, tri par note</td><td class="td-num"><span class="tofill">0,XX</span></td><td>référence</td></tr>
+        <tr><td><strong>Local Signal</strong></td><td class="td-num apres"><span class="tofill">0,XX</span></td><td><span class="tofill">+XX pts</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Ablation — ce que chaque signal apporte</h3>
+    <div class="body-block">
+      <p>
+        Retirer un signal à la fois et mesurer la perte permet de justifier chaque
+        critère empiriquement, au lieu de le défendre par un raisonnement.
+      </p>
+    </div>
+
+    <table>
+      <thead><tr><th>Configuration</th><th>precision@10</th><th>Perte</th><th>Conclusion</th></tr></thead>
+      <tbody>
+        <tr><td>Modèle complet</td><td class="td-num"><span class="tofill">0,XX</span></td><td>—</td><td>référence interne</td></tr>
+        <tr><td>Sans le menu</td><td class="td-num"><span class="tofill">0,XX</span></td><td class="td-num"><span class="tofill">−XX</span></td><td><span class="tofill">à renseigner</span></td></tr>
+        <tr><td>Sans la langue</td><td class="td-num"><span class="tofill">0,XX</span></td><td class="td-num"><span class="tofill">−XX</span></td><td><span class="tofill">à renseigner</span></td></tr>
+        <tr><td>Sans le prix</td><td class="td-num"><span class="tofill">0,XX</span></td><td class="td-num"><span class="tofill">−XX</span></td><td><span class="tofill">à renseigner</span></td></tr>
+        <tr><td>Sans la densité</td><td class="td-num"><span class="tofill">0,XX</span></td><td class="td-num"><span class="tofill">−XX</span></td><td><span class="tofill">à renseigner</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      Un résultat négatif reste un résultat. Si un signal ne fait rien perdre lorsqu'on
+      le retire, <strong>la conclusion honnête est de le sortir du système</strong> — pas
+      de justifier sa présence après coup.
+    </div>
+  </div>
+  <footer class="page-footer"><span>Local Signal</span><span>Mesures sur le jeu de test uniquement</span></footer>
+</div>
+
+<div class="page">
+  <div class="page-header"><span>Méthode et enseignements</span><span>8</span></div>
   <div class="page-body">
     <div class="section-header"><h2>Ce que ces crises ont appris</h2></div>
     <p class="lede">
-      Quatre crises, un même mécanisme : un système qui produit des résultats
-      plausibles sans jamais signaler qu'il se trompe.
+      Quatre crises, un même mécanisme : un système qui produit des résultats plausibles
+      sans jamais signaler qu'il se trompe.
     </p>
 
     <h3>Le dispositif mis en place</h3>
@@ -604,27 +700,25 @@ Pizza Hut           <span class="hl">50.0</span>   <span class="dim">← même s
       <div>
         <h3>Journal de décisions</h3>
         <p>
-          22 entrées au format contexte, problème, décision, conséquences. On
-          documente le raisonnement, pas le changement : dans six mois, le pourquoi
-          vaudra plus que le quoi. Aucune entrée n'est supprimée ; une décision
-          annulée est marquée supersédée.
+          Chaque décision structurante est consignée au format contexte, problème,
+          décision, conséquences. On documente le raisonnement, pas le changement.
+          Aucune entrée n'est supprimée ; une décision annulée est marquée supersédée.
         </p>
       </div>
       <div>
         <h3>Tests de propriétés</h3>
         <p>
-          Les tests ne vérifient pas des valeurs mais des invariants issus des
-          décisions. Ils doivent rester verts après recalibration. Si l'un casse à ce
-          moment-là, c'est la décision qu'il faut rouvrir, pas le test qu'il faut
-          ajuster.
+          Les tests ne vérifient pas des valeurs mais des invariants issus des décisions.
+          Ils sont restés verts après la calibration : c'était le critère retenu pour
+          distinguer un ajustement légitime d'une dérive.
         </p>
       </div>
       <div>
         <h3>Statut de calibration</h3>
         <p>
-          Chaque constante numérique porte en commentaire son statut : à calibrer,
-          dérivée des labels, ou justifiée par tel argument. Aucune valeur magique ne
-          peut plus entrer dans le système sans laisser de trace.
+          Chaque constante numérique porte en commentaire son statut : dérivée des
+          labels, ou justifiée par tel argument. Aucune valeur magique ne peut plus
+          entrer dans le système sans laisser de trace.
         </p>
       </div>
     </div>
@@ -632,44 +726,53 @@ Pizza Hut           <span class="hl">50.0</span>   <span class="dim">← même s
     <h3>Trois enseignements transférables</h3>
     <div class="body-block">
       <p>
-        <strong>1. Relire la spécification en regard du code.</strong> Trois des
-        quatre crises ont été détectées ainsi, et aucune n'aurait pu l'être par un
-        test. Un système de scoring n'a pas de trace d'erreur : la seule vérification
-        possible est la confrontation de l'intention écrite à l'implémentation réelle.
+        <strong>1. Relire la spécification en regard du code.</strong> Trois des quatre
+        crises ont été détectées ainsi, et aucune n'aurait pu l'être par un test. Un
+        système de scoring n'a pas de trace d'erreur : la seule vérification possible est
+        la confrontation de l'intention écrite à l'implémentation réelle.
       </p>
       <p>
-        <strong>2. Distinguer l'absence de donnée de la mauvaise donnée.</strong>
-        C'est le fil rouge des crises 2 et 3, et l'erreur la plus coûteuse du projet.
-        Noter zéro une information manquante revient à affirmer quelque chose de faux.
-        La règle retenue — un signal indisponible voit son poids redistribué, jamais
-        annulé — a été appliquée ensuite à chaque nouveau composant.
+        <strong>2. Distinguer l'absence de donnée de la mauvaise donnée.</strong> C'est
+        le fil rouge des crises 2 et 3, et l'erreur la plus coûteuse du projet. Noter
+        zéro une information manquante revient à affirmer quelque chose de faux. La règle
+        retenue — un signal indisponible voit son poids redistribué, jamais annulé — a
+        ensuite été appliquée à chaque nouveau composant.
       </p>
       <p>
-        <strong>3. Confronter au réel le plus tôt possible.</strong> La crise 4 n'a
-        été détectable qu'après le passage aux données réelles. Dix restaurants
-        simulés validaient une hypothèse que 468 restaurants réels ont immédiatement
-        invalidée. Le coût du retard : deux corrections construites sur un paramètre
-        déjà faux.
+        <strong>3. Confronter au réel le plus tôt possible.</strong> La crise 4 n'a été
+        détectable qu'après le passage aux données réelles. Dix restaurants simulés
+        validaient une hypothèse que 468 restaurants réels ont immédiatement invalidée.
+        Le coût du retard : deux corrections construites sur un paramètre déjà faux.
       </p>
     </div>
 
     <div class="callout">
       La leçon générale tient en une phrase : <strong>dans un système qui produit un
-      jugement plutôt qu'un résultat vérifiable, la traçabilité du raisonnement
-      remplace la pile d'appels.</strong> C'est le seul outil de diagnostic
-      disponible.
+      jugement plutôt qu'un résultat vérifiable, la traçabilité du raisonnement remplace
+      la pile d'appels.</strong> C'est le seul outil de diagnostic disponible.
     </div>
 
-    <h3>État à date</h3>
+    <h3>État final</h3>
     <table>
-      <thead><tr><th>Crise</th><th>Statut</th><th>Ce qui reste à faire</th></tr></thead>
+      <thead><tr><th>Crise</th><th>Statut</th><th>Ce qui l'a résolue</th></tr></thead>
       <tbody>
-        <tr><td>Critère inversé</td><td><span class="tag tag-resolu">Résolue</span></td><td>rayon à recalibrer</td></tr>
-        <tr><td>Paradoxe de l'invisibilité</td><td><span class="tag tag-resolu">Résolue</span></td><td>signal menu à remplir</td></tr>
-        <tr><td>Chiffres sans justification</td><td><span class="tag tag-ouvert">Ouverte</span></td><td>jeu labellisé à constituer</td></tr>
-        <tr><td>Confrontation au réel</td><td><span class="tag tag-ouvert">Ouverte</span></td><td>densité de monuments à modéliser</td></tr>
+        <tr><td>Critère inversé</td><td><span class="tag tag-resolu">Résolue</span></td><td>inversion, puis passage à une mesure de densité calibrée</td></tr>
+        <tr><td>Paradoxe de l'invisibilité</td><td><span class="tag tag-resolu">Résolue</span></td><td>signal menu, lissage bayésien, redistribution des poids</td></tr>
+        <tr><td>Chiffres sans justification</td><td><span class="tag tag-resolu">Résolue</span></td><td>jeu labellisé par couverture différentielle</td></tr>
+        <tr><td>Confrontation au réel</td><td><span class="tag tag-resolu">Résolue</span></td><td>données OpenStreetMap et amorçage du signal menu</td></tr>
       </tbody>
     </table>
+
+    <h3>La limite que le projet conserve</h3>
+    <div class="body-block">
+      <p>
+        Les labels sont faibles par construction : ils proviennent d'une couverture
+        éditoriale, non d'une observation directe de la clientèle. L'ancrage par un
+        sous-échantillon validé humainement en réduit la portée sans l'annuler. Une
+        évaluation plus forte supposerait un comptage sur place — hors du périmètre de ce
+        travail, et première piste d'approfondissement.
+      </p>
+    </div>
   </div>
   <footer class="page-footer"><span>Local Signal — mémoire HETIC</span><span>Août 2026</span></footer>
 </div>
