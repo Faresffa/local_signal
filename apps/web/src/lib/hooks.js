@@ -98,6 +98,11 @@ export function useGeolocation() {
   const [position, setPosition] = useState(supported ? null : ZONE_PAR_DEFAUT);
   const [denied, setDenied] = useState(!supported);
 
+  // Compteur de relances : l'utilisateur qui a choisi un lieu puis revient sur
+  // « autour de moi » doit pouvoir redemander sa position. Un booléen ne
+  // suffirait pas — il ne redéclencherait l'effet qu'une fois.
+  const [demandes, setDemandes] = useState(0);
+
   useEffect(() => {
     if (!supported) return undefined;
 
@@ -116,7 +121,7 @@ export function useGeolocation() {
     );
 
     return () => { cancelled = true; };
-  }, [supported]);
+  }, [supported, demandes]);
 
-  return { position, denied };
+  return { position, denied, relocate: () => setDemandes((n) => n + 1) };
 }

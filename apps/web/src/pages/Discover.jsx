@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
+import LocationPicker from "../components/LocationPicker";
 import RestaurantCard from "../components/RestaurantCard";
 import {
   EmptyState,
@@ -27,7 +28,13 @@ const RAYONS = [
 ];
 
 export default function Discover({ onOpen }) {
-  const { position, denied } = useGeolocation();
+  const { position, denied, relocate } = useGeolocation();
+
+  // Lieu choisi explicitement. Tant qu'il est nul, on suit la géolocalisation ;
+  // dès qu'il existe, il prime — l'utilisateur qui a nommé un endroit ne veut
+  // pas que sa position le contredise.
+  const [lieu, setLieu] = useState(null);
+  const origine = lieu ?? position;
 
   const [radius, setRadius] = useState(800);
   const [cuisine, setCuisine] = useState(null);
@@ -50,13 +57,13 @@ export default function Discover({ onOpen }) {
   // poser l'état de façon synchrone depuis un effet déclenche une cascade de
   // rendus. Les relances manuelles passent par un compteur.
   useEffect(() => {
-    if (!position) return undefined;
+    if (!origine) return undefined;
 
     let cancelled = false;
 
     fetchRestaurants({
-      lat: position.lat,
-      lng: position.lng,
+      lat: origine.lat,
+      lng: origine.lng,
       radius,
       cuisines: cuisine ? [cuisine] : undefined,
       limit: 24,
@@ -74,7 +81,7 @@ export default function Discover({ onOpen }) {
       });
 
     return () => { cancelled = true; };
-  }, [position, radius, cuisine, reloads]);
+  }, [origine, radius, cuisine, reloads]);
 
   const relancer = () => { setStatus("loading"); setReloads((n) => n + 1); };
 
@@ -93,12 +100,13 @@ export default function Discover({ onOpen }) {
 
         <div className="searchbar enter" style={{ "--enter-delay": "280ms" }}>
           <div className="field">
-            <label className="field__label" htmlFor="lieu">Où</label>
-            <input
-              id="lieu"
-              className="field__control"
-              value={denied ? "Quartier latin, Paris" : "Autour de moi"}
-              readOnly
+            <LocationPicker
+              value={lieu ?? (position && {
+                ...position,
+                label: denied ? "Quartier latin, Paris" : "Autour de moi",
+              })}
+              onChange={setLieu}
+              onUseGps={() => { setLieu(null); relocate(); }}
             />
           </div>
 
@@ -137,7 +145,9 @@ export default function Discover({ onOpen }) {
           </button>
         </div>
 
-        {denied && <div style={{ marginTop: 12 }}><LocationNotice /></div>}
+        {/* Le repli n'a plus de sens dès qu'un lieu est choisi : il dirait
+            que les résultats viennent d'ailleurs qu'ils ne viennent. */}
+        {denied && !lieu && <div style={{ marginTop: 12 }}><LocationNotice /></div>}
       </section>
 
       {/* Filtres rapides, en complément du sélecteur. */}
@@ -171,7 +181,7 @@ export default function Discover({ onOpen }) {
       <section>
         <div className="results__head">
           <h2 className="detail__title" style={{ fontSize: "var(--font-size-xl)" }}>
-            Autour de vous
+            {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
           </h2>
           {status === "ready" && (
             <span className="results__count">
@@ -183,7 +193,13 @@ export default function Discover({ onOpen }) {
         {status === "loading" && <ResultsSkeleton />}
         {status === "error" && <ErrorState message={error} onRetry={relancer} />}
         {status === "ready" && restaurants.length === 0 && (
-          <EmptyState onReset={reset} />
+          // Un lieu choisi explicitement qui ne renvoie rien, sans filtre actif,
+          // signale une zone non relevée plutôt que des critères trop stricts.
+          <EmptyState
+            onReset={reset}
+            horsCouverture={Boolean(lieu) && !cuisine && radius >= 1500}
+            lieu={lieu?.label}
+          />
         )}
         {status === "ready" && restaurants.length > 0 && (
           <div className="grid">

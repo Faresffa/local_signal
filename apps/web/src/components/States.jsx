@@ -9,6 +9,7 @@
 import {
   MagnifyingGlass,
   MapPinSimpleArea,
+  MapTrifold,
   WarningCircle,
 } from "@phosphor-icons/react";
 
@@ -44,7 +45,33 @@ export function ResultsSkeleton({ count = 6 }) {
 }
 
 /** Aucun résultat : on dit quoi faire, pas seulement qu'il n'y a rien. */
-export function EmptyState({ onReset }) {
+/**
+ * Liste vide.
+ *
+ * Deux causes très différentes, qu'il serait trompeur de confondre :
+ * des filtres trop stricts sur une zone couverte, ou une zone que la base ne
+ * couvre pas encore. Dire « aucun restaurant ici » à quelqu'un qui cherche à
+ * Lisbonne lui fait croire que Lisbonne n'a pas de restaurants, alors que
+ * c'est notre relevé qui s'arrête. La portée d'ÉVALUATION du mémoire est un
+ * arrondissement ; la portée d'USAGE est le monde. L'écart se dit, il ne se
+ * masque pas.
+ */
+export function EmptyState({ onReset, horsCouverture, lieu }) {
+  if (horsCouverture) {
+    return (
+      <div className="state">
+        <MapTrifold size={40} weight="light" className="state__icon" />
+        <h2 className="state__title">Zone pas encore relevée</h2>
+        <p className="state__text">
+          {lieu ? `Nous n'avons pas encore relevé les restaurants autour de ${lieu}. ` : ""}
+          Le relevé couvre pour l'instant le Quartier latin, à Paris — c'est la
+          zone sur laquelle la méthode est évaluée. Le calcul, lui, ne dépend
+          d'aucune ville.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="state">
       <MagnifyingGlass size={40} weight="light" className="state__icon" />

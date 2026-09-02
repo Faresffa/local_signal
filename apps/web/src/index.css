@@ -861,3 +861,180 @@ img { display: block; max-width: 100%; }
   }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Sélecteur de lieu — saisie, suggestions, carte
+   ------------------------------------------------------------------------ */
+
+.picker { position: relative; display: flex; flex-direction: column; gap: 2px; }
+
+.picker__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: -12px;
+  right: -12px;
+  z-index: 40;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.picker__action,
+.picker__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--motion-ease);
+}
+
+.picker__action { color: var(--color-brand); font-weight: 600; }
+
+.picker__action:hover,
+.picker__option:hover,
+.picker__action:focus-visible,
+.picker__option:focus-visible { background: var(--color-surface-alt); }
+
+/* Sépare les deux actions des résultats de géocodage : ce sont deux natures
+   différentes, l'une agit, l'autre propose. */
+.picker__action + .picker__option { margin-top: 6px; }
+.picker__action + .picker__option::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  margin-top: -9px;
+  border-top: 1px solid var(--color-border);
+}
+
+.picker__option span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picker__empty {
+  margin: 0;
+  padding: 10px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* --- Dialogue de carte --- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: var(--space-md);
+  background: var(--color-overlay);
+  animation: modal-in var(--motion-base) var(--motion-ease);
+}
+
+@keyframes modal-in { from { opacity: 0; } to { opacity: 1; } }
+
+.modal__panel {
+  width: min(720px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+}
+
+.modal__head { display: flex; align-items: center; justify-content: space-between; }
+.modal__title { margin: 0; font-size: var(--font-size-xl); letter-spacing: -0.02em; }
+
+.modal__close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--motion-ease);
+}
+.modal__close:hover { background: var(--color-border); }
+
+.modal__hint { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+
+.map {
+  height: min(56vh, 420px);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+/* Le repère est dessiné en CSS : les icônes par défaut de Leaflet sont servies
+   par des URL relatives que le bundler ne résout pas. */
+.map__pin {
+  border-radius: 50%;
+  background: var(--color-brand);
+  border: 3px solid var(--color-surface);
+  box-shadow: var(--shadow-raised);
+  cursor: grab;
+}
+.map__pin:active { cursor: grabbing; }
+
+.modal__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+.modal__coords {
+  color: var(--color-text-faint);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Les tuiles OpenStreetMap sont claires ; en thème sombre on les assombrit
+   plutôt que de charger un second jeu de tuiles. */
+:root[data-theme="dark"] .leaflet-tile,
+:root:not([data-theme="light"]) .leaflet-tile {
+  filter: brightness(0.72) contrast(1.08) saturate(0.85);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .leaflet-tile { filter: none; }
+}
+
+.leaflet-container { background: var(--color-surface-sunken); font: inherit; }
+.leaflet-control-attribution {
+  background: var(--color-surface) !important;
+  color: var(--color-text-faint) !important;
+  font-size: 10px !important;
+}
+.leaflet-control-attribution a { color: var(--color-text-muted) !important; }
+
+@media (max-width: 640px) {
+  .picker__menu { left: 0; right: 0; }
+  .modal__panel { padding: var(--space-md); }
+}
+
+/* Ordre d'empilement de la barre de recherche.
+   -------------------------------------------
+   L'animation d'entrée porte sur `transform` : tant qu'elle reste appliquée
+   — `animation-fill-mode: forwards` la maintient indéfiniment — l'élément
+   établit un contexte d'empilement, même une fois arrivé à `transform: none`.
+   `.searchbar` et `.chips` en créent donc chacun un, tous deux en `z-index:
+   auto` : ils se peignent dans l'ordre du document, et les pastilles
+   recouvraient la liste de suggestions.
+   Un ordre explicite règle le cas sans toucher à l'animation. */
+.searchbar { position: relative; z-index: 30; }
+.chips { position: relative; z-index: 10; }
