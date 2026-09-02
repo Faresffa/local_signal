@@ -3,14 +3,16 @@
 // Écran de recherche — pendant mobile du formulaire web (D-026).
 //
 // « Autour de moi » dépend entièrement du GPS : un utilisateur qui n'est pas
-// dans la zone relevée n'a aucun moyen d'explorer. Cet écran lui donne trois
+// dans la zone relevée n'a aucun moyen d'explorer. Cet écran lui donne quatre
 // façons de choisir son point de départ :
 //   1. la position GPS,
-//   2. une adresse saisie, avec suggestions,
-//   3. un lieu du Quartier latin en accès direct.
+//   2. une adresse ou une ville saisie, avec suggestions,
+//   3. un point posé sur la carte,
+//   4. un lieu du Quartier latin en accès direct.
 //
-// La troisième existe parce que la base ne couvre qu'une zone : demander une
-// adresse sans dire laquelle est couverte revient à faire deviner.
+// La quatrième existe parce que la base ne couvre qu'une zone : demander une
+// adresse sans dire laquelle est couverte revient à faire deviner. Elle
+// renseigne, elle ne restreint pas — les trois autres acceptent le monde.
 //
 // Les textes viennent de packages/shared/content.js (D-026) et les couleurs de
 // packages/shared/tokens.js (D-022) : rien n'est écrit en dur ici.
@@ -24,6 +26,7 @@ import { Feather } from "@expo/vector-icons";
 import * as Location from "expo-location";
 
 import { fetchRestaurants } from "../api";
+import MapPicker from "../components/MapPicker";
 import {
   Button, CardSkeleton, CuisineVisual, ErrorState, Verdict,
 } from "../components/ui";
@@ -34,9 +37,10 @@ import { copy, demoPlaces, fallbackLocation } from "../../../../packages/shared/
 // Sans limite de temps, un appareil sans fix GPS récent laisse l'écran figé.
 const DELAI_GPS_MS = 7000;
 
-// Cadre privilégié pour les suggestions d'adresse. Sans `bounded`, une adresse
-// hors zone reste trouvable — la restriction serait un mur, pas une aide.
-const VIEWBOX = "2.3380,48.8535,2.3560,48.8400";
+// PORTÉE DE VALIDATION ≠ PORTÉE D'USAGE. Le mémoire évalue le calcul sur un
+// arrondissement ; le produit doit accepter n'importe quel point du globe. Le
+// géocodage n'est donc borné à aucune zone : la couverture est une limite de
+// la BASE, et c'est aux résultats de le dire — pas au champ de le refuser.
 const NOMINATIM = "https://nominatim.openstreetmap.org/search";
 
 const BUDGETS = [
@@ -137,6 +141,7 @@ export default function SearchScreen({ onOpen }) {
   const [resultats, setResultats] = useState(null);
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState(null);
+  const [carteOuverte, setCarteOuverte] = useState(false);
 
   function choisir(lat, lng, label) {
     setDepart({ lat, lng, label });
@@ -176,7 +181,7 @@ export default function SearchScreen({ onOpen }) {
     const minuteur = setTimeout(async () => {
       try {
         const res = await fetch(
-          `${NOMINATIM}?format=json&limit=5&viewbox=${VIEWBOX}&q=${encodeURIComponent(adresse)}`
+          `${NOMINATIM}?format=json&limit=6&q=${encodeURIComponent(adresse)}`
         );
         const data = await res.json();
         if (!annule) setSuggestions(Array.isArray(data) ? data : []);
@@ -210,6 +215,10 @@ export default function SearchScreen({ onOpen }) {
   // --- Résultats -----------------------------------------------------------
   if (resultats) {
     const origine = depart ?? fallbackLocation;
+    // Un lieu choisi explicitement qui ne renvoie rien, sans budget restreint,
+    // signale une zone non relevée plutôt qu'un critère trop strict.
+    const horsCouverture =
+      resultats.length === 0 && Boolean(depart) && budget.min === 0 && budget.max >= 200;
     return (
       <FlatList
         data={resultats}
@@ -237,10 +246,20 @@ export default function SearchScreen({ onOpen }) {
           </View>
         }
         ListEmptyComponent={
+          // Deux causes très différentes : un budget trop étroit sur une zone
+          // couverte, ou une zone non relevée. Dire « aucune adresse ici » à
+          // quelqu'un qui cherche à Lisbonne lui ferait croire que Lisbonne
+          // n'a pas de restaurants, alors que c'est notre relevé qui s'arrête.
           <View style={s.vide}>
-            <Text style={[s.videTitre, { color: colors.text }]}>{copy.resultsEmpty}</Text>
+            <Text style={[s.videTitre, { color: colors.text }]}>
+              {horsCouverture ? "Zone pas encore relevée" : copy.resultsEmpty}
+            </Text>
             <Text style={[s.hint, { color: colors.textMuted }]}>
-              {copy.resultsEmptyHint}
+              {horsCouverture
+                ? "Le relevé couvre pour l'instant le Quartier latin, à Paris — "
+                  + "c'est la zone sur laquelle la méthode est évaluée. Le calcul, "
+                  + "lui, ne dépend d'aucune ville."
+                : copy.resultsEmptyHint}
             </Text>
           </View>
         }
@@ -270,6 +289,22 @@ export default function SearchScreen({ onOpen }) {
 
       <Button title="Utiliser ma position" icon="navigation" onPress={utiliserGps} />
 
+      <View style={{ marginTop: spacing.sm }}>
+        <Button
+          title="Choisir sur la carte"
+          icon="map"
+          variant="ghost"
+          onPress={() => setCarteOuverte(true)}
+        />
+      </View>
+
+      <MapPicker
+        visible={carteOuverte}
+        centre={depart ?? fallbackLocation}
+        onValider={(lieu) => { choisir(lieu.lat, lieu.lng, lieu.label); setCarteOuverte(false); }}
+        onFermer={() => setCarteOuverte(false)}
+      />
+
       <Text style={[s.section, { color: colors.text }]}>Chercher une adresse</Text>
       <TextInput
         style={[
@@ -280,7 +315,7 @@ export default function SearchScreen({ onOpen }) {
             color: colors.text,
           },
         ]}
-        placeholder="Ex : 15 rue de la Huchette, Paris"
+        placeholder="Une ville, un quartier, une adresse"
         placeholderTextColor={colors.textFaint}
         value={adresse}
         onChangeText={setAdresse}
