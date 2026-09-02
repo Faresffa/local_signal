@@ -86,8 +86,21 @@ WEIGHT_TOURIST_ZONE = 0.15  # à calibrer — pénalité de zone touristique
 # Implémenté comme une pénalité de zone à rayon court, et non comme une récompense
 # linéaire à l'éloignement — sinon l'algorithme recommanderait des zones
 # industrielles au seul motif qu'elles sont loin de tout.
-TOURIST_ZONE_RADIUS = 500   # m — à calibrer sur le jeu labellisé
-TOURIST_PENALTY_MAX = 1.0   # pénalité pleine au pied du monument — à calibrer
+# Depuis D-027, la pression est mesurée par un noyau gaussien sur TOUS les sites,
+# puis convertie en rang au sein de la zone. Il n'y a donc plus de seuil en
+# mètres : sigma règle la portée du noyau, pas une frontière.
+#
+# 350 m — À CALIBRER. Ordre de grandeur d'une zone de chalandise piétonne autour
+# d'un monument. À 350 m un site compte pour 0.61, à 700 m pour 0.14, à 1 km pour
+# 0.02 : la décroissance est douce, aucun restaurant n'est classé par une
+# frontière arbitraire.
+TOURIST_KERNEL_SIGMA = 350
+
+# Conservées : plus utilisées par le scoring depuis D-027, mais
+# `distance_to_nearest_tourist_site` reste employée pour les explications
+# lisibles et le diagnostic de zone.
+TOURIST_ZONE_RADIUS = 500   # m — hors scoring depuis D-027
+TOURIST_PENALTY_MAX = 1.0   # hors scoring depuis D-027
 
 # =============================================================================
 # Lissage bayésien du score de langue  (D-003)
@@ -112,7 +125,33 @@ PRICE_RATIO_MAX = 1.5      # à calibrer — ratio au-delà duquel le score tomb
 # =============================================================================
 # PERTINENCE — score dynamique, calculé à la requête  (D-008)
 # =============================================================================
-MAX_DISTANCE_USER = 5000   # m — au-delà, score de proximité = 0
+# Rayon par défaut, utilisé seulement quand l'appelant n'en fournit pas. Depuis
+# D-027, `score_geo_user` se normalise sur le rayon RÉELLEMENT demandé : sans
+# cela, une recherche à 400 m écrasait toutes les proximités entre 0,92 et 0,98
+# et la part réelle de la proximité tombait à 17,5 % au lieu de 30 %.
+MAX_DISTANCE_USER = 5000   # m — défaut seulement
+
+# Constante de temps de la décroissance, en fraction du rayon demandé :
+#     score = exp( −distance / (rayon × PROXIMITY_DECAY_FACTOR) )
+#
+# 0.5 — À CALIBRER SUR LE JEU LABELLISÉ (D-006).
+#
+# Ce facteur règle la RAIDEUR de la décroissance, donc la dispersion du signal,
+# donc son pouvoir de départage effectif. Mesuré sur le Quartier latin :
+#   - avant D-027, normalisation sur 5 km fixes : à 400 m la proximité
+#     s'étalait de 0,921 à 0,980. Une dispersion de 0,06 : le terme était
+#     quasi constant et ne départageait plus rien.
+#   - avec 0.5 : à 400 m elle s'étale de 0,137 à 0,603. Elle départage — mais
+#     elle pèse alors davantage dans la variation du classement que ce que le
+#     poids de 0,30 laisse attendre.
+#
+# ATTENTION à ne pas confondre deux choses : un POIDS porte sur la valeur, une
+# PART DE VARIANCE dépend en plus de la dispersion du terme. Un poids de 0,30
+# ne promet pas 30 % de la variation. Le défaut corrigé par D-027 n'est donc pas
+# « le poids ment » mais « le terme ne varie plus » — ce qui, lui, est
+# indiscutablement un défaut. La valeur exacte du facteur, elle, ne se tranche
+# pas au raisonnement : elle sortira du jeu labellisé.
+PROXIMITY_DECAY_FACTOR = 0.5
 
 # Part de la proximité dans le classement final.
 # Le Local Signal domine, mais la distance module : un excellent restaurant à 8 km

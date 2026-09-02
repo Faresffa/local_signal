@@ -17,7 +17,9 @@
 # une base nationale.
 
 from backend import config
-from backend.core.scoring.geo_score import score_tourist_zone, score_geo_user, haversine
+from backend.core.scoring.geo_score import (
+    haversine, score_geo_user, score_tourist_zone, tourist_pressure,
+)
 from backend.core.scoring.language_score import score_language, language_confidence
 from backend.core.scoring.menu_score import score_menu
 from backend.core.scoring.price_score import score_price
@@ -33,6 +35,7 @@ def compute_local_signal(
     tourist_sites: list[dict],
     peers: list[dict] = None,
     target_lang: str = None,
+    cohort_pressures: list[float] = None,
 ) -> dict:
     """
     Calcule le score d'authenticité d'un restaurant, indépendamment de l'utilisateur.
@@ -73,10 +76,21 @@ def compute_local_signal(
     # --- Signal 3 : anomalie de prix vs voisinage comparable ---
     price = score_price(restaurant, peers or [])
 
-    # --- Signal 4 : pénalité de zone touristique (critère INVERSÉ — D-002) ---
-    tourist_zone = score_tourist_zone(
-        restaurant["lat"], restaurant["lng"], tourist_sites
-    )
+    # --- Signal 4 : pression touristique (critère INVERSÉ — D-002, D-027) ---
+    #
+    # La pression absolue est une grandeur physique conservée telle quelle ; le
+    # signal, lui, est son rang dans la zone. Sans cohorte fournie, on retombe
+    # sur celle des pairs — et à défaut sur le restaurant seul, ce qui donne un
+    # score neutre plutôt qu'un score faux.
+    pressure = tourist_pressure(restaurant["lat"], restaurant["lng"], tourist_sites)
+
+    if cohort_pressures is None:
+        cohort_pressures = [
+            tourist_pressure(p["lat"], p["lng"], tourist_sites)
+            for p in (peers or [restaurant])
+        ]
+
+    tourist_zone = score_tourist_zone(pressure, cohort_pressures)
 
     signals = {
         "menu": {
@@ -104,7 +118,13 @@ def compute_local_signal(
             "value": tourist_zone,
             "weight": config.WEIGHT_TOURIST_ZONE,
             "available": True,  # toujours calculable dès qu'on a des coordonnées
-            "details": {},
+            "details": {
+                # La pression absolue est conservée : c'est elle qui permet de
+                # comparer deux villes et de calibrer (D-027). Le rang, lui,
+                # n'a de sens que dans sa zone.
+                "pressure": round(pressure, 4),
+                "cohort_size": len(cohort_pressures),
+            },
         },
     }
 
@@ -143,13 +163,19 @@ def compute_relevance(
     restaurant: dict,
     user_lat: float,
     user_lng: float,
+    radius: float = None,
 ) -> dict:
     """
     Calcule l'adéquation du restaurant à la requête courante.
     Ne dit rien sur l'authenticité — uniquement sur la commodité (D-008).
+
+    `radius` est le rayon RÉELLEMENT demandé par l'utilisateur. Le transmettre
+    n'est pas optionnel dans les faits (D-027) : sans lui, la proximité se
+    normalise sur une constante de 5 km et cesse de départager quoi que ce soit
+    dès que la recherche est resserrée.
     """
     proximity = score_geo_user(
-        restaurant["lat"], restaurant["lng"], user_lat, user_lng
+        restaurant["lat"], restaurant["lng"], user_lat, user_lng, radius=radius
     )
     distance_m = haversine(
         restaurant["lat"], restaurant["lng"], user_lat, user_lng
@@ -231,6 +257,7 @@ def rank_restaurants(
     user_lng: float,
     tourist_sites: list[dict],
     target_lang: str = None,
+    radius: float = None,
 ) -> list[dict]:
     """
     Score et trie les restaurants.
@@ -245,12 +272,20 @@ def rank_restaurants(
     beta = config.RANKING_WEIGHT_PROXIMITY
     scored = []
 
+    # Cohorte de pression calculée UNE FOIS pour tout le lot (D-027). La
+    # recalculer par restaurant serait quadratique, et surtout donnerait des
+    # rangs incohérents entre deux éléments du même classement.
+    cohort_pressures = [
+        tourist_pressure(r["lat"], r["lng"], tourist_sites) for r in restaurants
+    ]
+
     for resto in restaurants:
         # `peers` = tous les autres restaurants du lot, pour la médiane de prix.
         local = compute_local_signal(
-            resto, tourist_sites, peers=restaurants, target_lang=target_lang
+            resto, tourist_sites, peers=restaurants, target_lang=target_lang,
+            cohort_pressures=cohort_pressures,
         )
-        relevance = compute_relevance(resto, user_lat, user_lng)
+        relevance = compute_relevance(resto, user_lat, user_lng, radius=radius)
 
         final = local["local_signal"] * (1 - beta) + relevance["proximity"] * 100 * beta
 

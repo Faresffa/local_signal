@@ -11,7 +11,9 @@ Lancement :  python -m backend.tests.test_scoring
 
 from backend import config
 from backend.core.scoring.engine import compute_local_signal, rank_restaurants
-from backend.core.scoring.geo_score import score_tourist_zone
+from backend.core.scoring.geo_score import (
+    score_geo_user, score_tourist_zone, tourist_pressure,
+)
 from backend.core.scoring.language_score import score_language
 from backend.core.scoring.menu_score import score_languages, score_menu
 from backend.data.mock_data import MOCK_RESTAURANTS
@@ -57,12 +59,79 @@ check(
 print("\n[D-002] La proximite d'un site touristique est une PENALITE")
 # =============================================================================
 
+# Depuis D-027, le signal est le RANG de la pression dans une cohorte : il faut
+# donc une cohorte pour l'evaluer. L'invariant, lui, est inchange.
 site = TOURIST_SITES[0]
-au_pied = score_tourist_zone(site["lat"], site["lng"], TOURIST_SITES)
-loin = score_tourist_zone(48.9500, 2.6000, TOURIST_SITES)
+p_au_pied = tourist_pressure(site["lat"], site["lng"], TOURIST_SITES)
+p_loin = tourist_pressure(48.9500, 2.6000, TOURIST_SITES)
+cohorte = [p_au_pied, p_loin]
+
+au_pied = score_tourist_zone(p_au_pied, cohorte)
+loin = score_tourist_zone(p_loin, cohorte)
 
 check(au_pied < loin, "au pied du monument < loin du monument", f"({au_pied} vs {loin})")
-check(loin == 1.0, "hors zone = neutre (1.0), pas de bonus a s'eloigner", f"({loin})")
+check(
+    p_loin < p_au_pied,
+    "la pression absolue decroit avec l'eloignement",
+    f"({p_loin:.4f} vs {p_au_pied:.2f})",
+)
+
+# [D-027] La pression compte TOUS les sites, pas seulement le plus proche.
+# Deux points a distance identique d'un site, l'un seul, l'autre entoure.
+import math as _math
+un_seul = [{"lat": 0.0, "lng": 0.0, "name": "a"}]
+entoure = [
+    {"lat": 0.0, "lng": 0.0, "name": "a"},
+    {"lat": 0.0018, "lng": 0.0, "name": "b"},
+    {"lat": -0.0018, "lng": 0.0, "name": "c"},
+]
+p_un = tourist_pressure(0.0009, 0.0, un_seul)
+p_plusieurs = tourist_pressure(0.0009, 0.0, entoure)
+check(
+    p_plusieurs > p_un,
+    "[D-027] plusieurs monuments pesent plus qu'un seul a distance egale",
+    f"({p_plusieurs:.3f} vs {p_un:.3f})",
+)
+
+# [D-027] Le rang occupe toute la plage 0-1, quelle que soit l'echelle de la ville.
+cohorte_large = [tourist_pressure(0.0, i * 0.002, un_seul) for i in range(10)]
+rangs = [score_tourist_zone(p, cohorte_large) for p in cohorte_large]
+check(
+    abs(min(rangs)) < 1e-9 and abs(max(rangs) - 1.0) < 1e-9,
+    "[D-027] le rang couvre bien 0.0 a 1.0 (fini le plafond a 0.55)",
+    f"(min {min(rangs)}, max {max(rangs)})",
+)
+
+# [D-027] Aucune constante en metres : multiplier les distances par 10 ne change
+# pas le classement. C'est ce qui rend le signal transportable d'une ville a l'autre.
+cohorte_x10 = [tourist_pressure(0.0, i * 0.02, un_seul, sigma=3500) for i in range(10)]
+rangs_x10 = [score_tourist_zone(p, cohorte_x10) for p in cohorte_x10]
+check(
+    rangs == rangs_x10,
+    "[D-027] rangs identiques a echelle 10x : le signal est transportable",
+    f"({rangs[:3]} vs {rangs_x10[:3]})",
+)
+
+# [D-027] La proximite se normalise sur le rayon DEMANDE, pas sur une constante.
+# A rayon serre, elle doit encore departager.
+etendue_400 = (
+    score_geo_user(0.0, 0.0, 0.0, 0.0, radius=400)
+    - score_geo_user(0.0, 0.0036, 0.0, 0.0, radius=400)   # ~400 m
+)
+etendue_3000 = (
+    score_geo_user(0.0, 0.0, 0.0, 0.0, radius=3000)
+    - score_geo_user(0.0, 0.0036, 0.0, 0.0, radius=3000)
+)
+check(
+    etendue_400 > 0.5,
+    "[D-027] a 400 m, la proximite departage encore",
+    f"(etendue {etendue_400:.3f})",
+)
+check(
+    etendue_400 > etendue_3000,
+    "[D-027] la meme distance pese plus dans une recherche serree",
+    f"({etendue_400:.3f} vs {etendue_3000:.3f})",
+)
 
 
 # =============================================================================

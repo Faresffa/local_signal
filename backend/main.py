@@ -99,7 +99,7 @@ def list_restaurants(
 
     # --- Classement : Local Signal modulé par la proximité (D-008) ---
     for r in restaurants:
-        r["scoring"] = _build_scoring(r, lat, lng)
+        r["scoring"] = _build_scoring(r, lat, lng, radius=radius)
 
         # Libelle francais de la cuisine : l'interface ne doit jamais avoir a
         # traduire une etiquette OpenStreetMap elle-meme.
@@ -110,7 +110,9 @@ def list_restaurants(
     return {"count": len(restaurants), "restaurants": restaurants[:limit]}
 
 
-def _build_scoring(restaurant: dict, user_lat: float, user_lng: float) -> dict:
+def _build_scoring(
+    restaurant: dict, user_lat: float, user_lng: float, radius: float = None
+) -> dict:
     """
     Assemble le bloc `scoring` attendu par les interfaces.
 
@@ -124,6 +126,11 @@ def _build_scoring(restaurant: dict, user_lat: float, user_lng: float) -> dict:
     Local Signal n'est PAS recalculé ici, il est lu tel quel en base. Seules la
     pertinence et l'explication — toutes deux dépendantes de l'utilisateur —
     sont produites à la requête.
+
+    `radius` est le rayon demandé par l'utilisateur. Le transmettre est ce qui
+    rend le poids de la proximité honnête (D-027) : normalisée sur une constante
+    de 5 km, une recherche à 400 m plaçait tous les résultats entre 0,92 et 0,98
+    et la proximité ne pesait plus que 17,5 % au lieu des 30 % annoncés.
     """
     beta = config.RANKING_WEIGHT_PROXIMITY
 
@@ -135,7 +142,11 @@ def _build_scoring(restaurant: dict, user_lat: float, user_lng: float) -> dict:
     }
     relevance = {
         "proximity": round(
-            score_geo_user(restaurant["lat"], restaurant["lng"], user_lat, user_lng), 4
+            score_geo_user(
+                restaurant["lat"], restaurant["lng"], user_lat, user_lng,
+                radius=radius,
+            ),
+            4,
         ),
         "distance_m": round(
             haversine(restaurant["lat"], restaurant["lng"], user_lat, user_lng)

@@ -16,6 +16,7 @@ import sys
 from datetime import datetime
 
 from backend.core.scoring.engine import compute_local_signal
+from backend.core.scoring.geo_score import tourist_pressure
 from backend.db.models import get_connection, init_db
 from backend.ingestion.osm.overpass import ZONES, fetch_restaurants
 
@@ -169,11 +170,28 @@ def score_zone(zone: str) -> int:
 
     print(f"[Scoring] {with_menu} restaurants disposent d'une carte extraite.")
 
+    # Cohorte de pression touristique, calculée une seule fois pour tout le lot
+    # (D-027). C'est ici — en lot, hors du chemin d'une requête — que le rang en
+    # percentile prend son sens : tous les restaurants de la zone sont classés
+    # les uns par rapport aux autres, et le résultat est figé en base.
+    cohort_pressures = [
+        tourist_pressure(r["lat"], r["lng"], sites) for r in restaurants
+    ]
+    print(
+        f"[Scoring] Pression touristique : "
+        f"min {min(cohort_pressures):.2f}  "
+        f"mediane {sorted(cohort_pressures)[len(cohort_pressures)//2]:.2f}  "
+        f"max {max(cohort_pressures):.2f}"
+        if cohort_pressures else "[Scoring] Aucun restaurant."
+    )
+
     now = datetime.now().isoformat(timespec="seconds")
     cursor = conn.cursor()
 
     for r in restaurants:
-        result = compute_local_signal(r, sites, peers=restaurants)
+        result = compute_local_signal(
+            r, sites, peers=restaurants, cohort_pressures=cohort_pressures
+        )
         cursor.execute("""
             UPDATE restaurants
                SET local_signal = ?, confidence = ?, signals_json = ?, scored_at = ?

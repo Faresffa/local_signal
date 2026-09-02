@@ -1237,3 +1237,125 @@ restaurant détaillée, qui empilera un écran sur un autre (phase 3).
 - Nouvelle classe CSS `.address-suggestions` dans `apps/web/src/App.css`
 - Les textes ne sont plus écrits en dur dans les composants : toute retouche
   éditoriale se fait à un seul endroit, et s'applique aux deux plateformes
+
+---
+
+## D-027 — Les deux scores géographiques : densité et rang, plutôt que seuils en mètres
+
+**Contexte.**
+Le projet a deux signaux géographiques, de natures opposées (D-008) : la pression
+touristique, statique, qui entre dans le Local Signal avec un poids de 0,15 ; et
+la proximité à l'utilisateur, dynamique, qui module le classement à hauteur de
+0,30. Les deux avaient été écrits tôt, avec des seuils en mètres choisis à vue.
+Les 468 restaurants réels du Quartier latin ont permis de les mesurer.
+
+**Problème — quatre défauts mesurés, pas supposés.**
+
+*Sur le signal statique :*
+
+1. **Il ne regardait que le monument le plus proche.** À distance comparable
+   (60–70 m), la pression réelle — mesurée comme somme d'un noyau sur les 47
+   sites — varie de **4,99 à 20,86**, un facteur 4 intégralement écrasé. À
+   250–350 m, `Osteria Brutto` subit 12,27 contre 5,93 pour `Sanuki` : le score
+   les traitait à l'identique. Un restaurant cerné par douze monuments ne subit
+   pas le flux d'un restaurant qui en a un seul à la même distance.
+
+2. **Le seuil de 500 m ne mordait nulle part.** Distance médiane au monument le
+   plus proche : **102 m**. Maximum : **273 m**. Donc **0 restaurant sur 468**
+   n'atteignait le rayon : la branche « hors zone, aucune pénalité » était du
+   code mort, et le signal plafonnait à **0,55** au lieu de 1,00 — la moitié de
+   la plage perdue.
+
+3. **`500` est une constante en mètres.** Calibrée sur un arrondissement dense,
+   elle est fausse à Tokyo comme dans un village. Or le produit doit fonctionner
+   partout, même là où aucune vérité terrain n'existe.
+
+*Sur le signal dynamique :*
+
+4. **Il se normalisait sur `MAX_DISTANCE_USER = 5000 m`, jamais sur le rayon
+   demandé.** À 400 m — « 5 min à pied », le rayon le plus utilisé — toutes les
+   proximités tombaient entre **0,921 et 0,980**. Une dispersion de 0,06 : le
+   terme était quasi constant et **ne départageait plus rien**. La décroissance
+   était de surcroît linéaire, traitant identiquement 100 m → 600 m (décisif à
+   pied) et 4,1 km → 4,6 km (sans objet).
+
+**Décision.**
+
+*Statique — deux grandeurs, conservées séparément.*
+
+```
+pression(r)   = Σᵢ exp( −dᵢ² / 2σ² )        σ = 350 m, à calibrer
+score_zone(r) = 1 − rang_percentile( pression(r) )   dans la zone
+```
+
+- La **pression absolue** est stockée telle quelle. C'est une grandeur physique,
+  reproductible, indépendante de la cohorte et de la requête : c'est elle qui
+  permet l'évaluation, la calibration, et la comparaison entre deux villes.
+- Le **signal** est le rang de cette pression dans sa zone. Un rang ne dépend
+  d'aucune échelle : il se transporte tel quel d'une ville à l'autre, sans
+  recalibrage. L'étendue 0–1 est garantie par construction.
+- Le rang est calculé **en lot** (`backend/ingestion/osm/load.py`), jamais dans
+  le chemin d'une requête : le signal reste statique au sens de D-008, et deux
+  requêtes ne peuvent pas attribuer deux scores au même restaurant.
+
+*Dynamique — normalisation sur le rayon demandé, décroissance exponentielle.*
+
+```
+score_prox(r) = exp( −distance / (rayon_demandé × 0,5) )
+```
+
+Soit 1,00 sur place, 0,37 à mi-rayon, 0,14 en limite : le pouvoir de
+discrimination est placé là où le piéton le ressent.
+
+**Sources retenues.** Monuments et attractions déjà relevés (47 sites) —
+`tourism=attraction`, `historic=*`, musées. Les boutiques de souvenirs, bureaux
+de change et hôtels ont été envisagés comme proxys du flux touristique (une
+boutique de souvenirs est une *réponse commerciale* au flux, donc peut-être un
+meilleur signal que le monument lui-même) et **écartés pour l'instant** : ils
+demandent une nouvelle collecte Overpass. Piste ouverte pour le mémoire.
+
+**Conséquences.**
+
+*Mesurées après recalcul des 468 :*
+
+| | avant | après |
+|---|---|---|
+| signal de zone | 0,00 – 0,55 (médiane 0,20) | 0,00 – 1,00 (médiane 0,50) |
+| restaurants à 1,00 | 0 | 5 |
+| étendue du Local Signal | 18,1 points | **33,3 points** |
+
+Les extrêmes sont devenus lisibles : `Toranj` (pression 3,66) en tête,
+`En face` (pression 17,55) en queue.
+
+*Sur l'API :* `radius` doit être transmis jusqu'à `compute_relevance`. Un
+appelant qui l'omet retombe sur 5 km et retrouve l'ancien défaut.
+
+*Sur les tests :* l'invariant D-002 est reformulé — il porte désormais sur la
+pression et le rang, mais affirme la même chose. Cinq invariants D-027 ajoutés,
+dont un qui vérifie que **multiplier toutes les distances par 10 ne change pas
+le classement** : c'est la garantie formelle que le signal est transportable.
+
+*Ce que ce choix coûte, et qu'il faut assumer devant le jury :* le signal de zone
+devient **relatif à la ville**. Il répond à « ce restaurant est-il dans un coin
+touristique *de cette ville* », pas à « cette ville est-elle touristique ». Deux
+villes ne sont plus comparables sur ce signal — c'est `tourist_pressure`, stockée
+à côté, qui sert à cela.
+
+**Une confusion à ne pas reproduire.**
+L'analyse initiale décrivait le défaut n°4 comme « le poids de 0,30 ment, la
+proximité ne pèse que 17,5 % ». C'est imprécis : un **poids** porte sur la
+valeur, une **part de variance** dépend en plus de la dispersion du terme. Un
+poids de 0,30 ne promet pas 30 % de la variation. Le défaut réel n'était pas que
+le poids mentait, mais que **le terme ne variait plus** — ce qui, lui, est
+indiscutable. Après correction la proximité pèse ~44 % de la variation, ce qui
+n'est ni juste ni faux en soi : `PROXIMITY_DECAY_FACTOR` est en configuration,
+marqué non calibré, et sa valeur sortira du jeu labellisé (D-006).
+
+**Ce qui reste ouvert.**
+- `σ = 350 m` et `PROXIMITY_DECAY_FACTOR = 0,5` sont **non calibrés**.
+- La distance reste **à vol d'oiseau**. Un restaurant de l'autre côté de la Seine
+  est « proche » et pourtant à quinze minutes. Un calcul d'itinéraire piéton
+  (OSRM) le corrigerait.
+- Tous les monuments pèsent encore **également**. Notre-Dame vaut une plaque
+  commémorative. La présence d'un tag `wikidata` ou `wikipedia` serait un proxy
+  d'importance disponible sans collecte supplémentaire.
