@@ -115,12 +115,17 @@ class GroqVisionProvider:
                 # cartes d'affilee. Les seules valeurs acceptees sont « none »
                 # et « default ».
                 reasoning_effort="none",
-                # 700 et non 3000. Le palier gratuit plafonne la SORTIE a
-                # 1000 jetons par minute, et refuse toute requete qui en
-                # reserve davantage — meme si la reponse reelle est courte.
-                # Notre JSON d'observations fait environ 200 jetons ; 700
-                # laisse une marge confortable sans declencher le refus.
-                max_completion_tokens=700,
+                # 300, et ce chiffre est un levier de debit, pas un detail.
+                #
+                # Le palier gratuit plafonne la sortie a 1000 jetons par minute
+                # et compte le budget RESERVE, pas la reponse reelle. A 700
+                # reserves, on ne pouvait lancer qu'UN appel par minute ; a 300,
+                # on en lance trois. La duree de lecture des 334 cartes passe
+                # d'environ dix-neuf heures a six.
+                #
+                # Mesure sur une reponse reelle : 386 caracteres, soit environ
+                # 128 jetons. 300 laisse plus du double de marge.
+                max_completion_tokens=300,
                 temperature=0.0,  # extraction factuelle : pas de créativité souhaitée
             )
         except groq.RateLimitError:
