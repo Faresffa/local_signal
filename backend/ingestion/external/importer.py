@@ -63,7 +63,10 @@ CHAMPS = {
     "review_count": ["reviews", "review_count", "reviews_count", "user_ratings_total"],
     "menu_url": ["menu_link", "menu_url", "menu"],
     "google_place_id": ["place_id", "google_id", "google_place_id", "cid"],
-    "menu_photo_urls": ["menu_photos", "photos_menu", "menu_photo_urls", "photos"],
+    # `photos_data` est le nom reel du champ. Surtout PAS « photo » : ce champ-la
+    # porte la photo principale de l'etablissement, qui n'est pas une carte.
+    "menu_photo_urls": ["photos_data", "menu_photos", "photos_menu",
+                        "menu_photo_urls", "photos"],
     # Fourchette de prix affichee par Google (« $ » a « $$$$ »). Notre colonne
     # `price` est vide sur 100 % des restaurants : OpenStreetMap n'expose aucun
     # prix. Ceci ne le remplace pas — c'est une fourchette, pas un montant —
@@ -119,11 +122,26 @@ def _tourist_flag(ligne: dict):
             return None
     if not isinstance(about, dict):
         return None
-    foule = about.get("Crowd") or about.get("crowd")
-    if not isinstance(foule, dict):
+    # Les cles d'`about` sont rendues DANS LA LANGUE DEMANDEE : en francais,
+    # « Crowd » devient « Clientele » et « Tourists » devient « Touristes ».
+    # Mesure sur un vrai retour : 6 restaurants sur 10 portaient « Touristes ».
+    foule = None
+    for cle in ("Clientèle", "Clientele", "Crowd", "crowd"):
+        v = about.get(cle)
+        if isinstance(v, dict):
+            foule = v
+            break
+    if foule is None:
         return None
-    v = foule.get("Tourists") or foule.get("tourists")
-    return None if v is None else int(bool(v))
+
+    for cle in ("Touristes", "Tourists", "touristes", "tourists"):
+        if cle in foule:
+            return int(bool(foule[cle]))
+
+    # La clientele est decrite MAIS les touristes n'y figurent pas : c'est une
+    # information, pas une absence. Un lieu decrit comme « Etudiants, Groupes »
+    # sans « Touristes » est bien signale comme non touristique.
+    return 0
 
 
 def _photos(brut) -> list[str]:
@@ -147,12 +165,26 @@ def _photos(brut) -> list[str]:
     for element in brut if isinstance(brut, list) else [brut]:
         if isinstance(element, str) and element.startswith("http"):
             urls.append(element)
-        elif isinstance(element, dict):
-            for cle in ("photo_url", "image_url", "url", "src"):
-                v = element.get(cle)
-                if isinstance(v, str) and v.startswith("http"):
-                    urls.append(v)
-                    break
+            continue
+        if not isinstance(element, dict):
+            continue
+
+        # On VERIFIE l'etiquette plutot que de faire confiance au filtre de la
+        # requete. Une photo qui n'est pas une carte gaspillerait un appel au
+        # modele de vision et pourrait polluer l'indicateur qui pese 0,40.
+        tags = element.get("photo_tags")
+        if isinstance(tags, list) and tags:
+            if not any("menu" in str(x).lower() for x in tags):
+                continue
+
+        # `photo_url_big` d'abord : une carte se lit d'autant mieux que la
+        # resolution est haute, et la vision est facturee a l'appel, pas au pixel.
+        for cle in ("photo_url_big", "original_photo_url", "photo_url",
+                    "image_url", "url", "src"):
+            v = element.get(cle)
+            if isinstance(v, str) and v.startswith("http"):
+                urls.append(v)
+                break
     return urls[:MAX_PHOTOS]
 
 
