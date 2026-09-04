@@ -30,6 +30,7 @@ import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import parse_qs, unquote, urlparse
 
 from backend import config
 from backend.core.scoring.geo_score import haversine
@@ -142,6 +143,37 @@ def _tourist_flag(ligne: dict):
     # information, pas une absence. Un lieu decrit comme « Etudiants, Groupes »
     # sans « Touristes » est bien signale comme non touristique.
     return 0
+
+
+def _url_directe(valeur):
+    """
+    Deballe les redirections du moteur de recherche.
+
+    Le collecteur renvoie parfois le lien de carte enveloppe :
+
+        /url?q=https://abraccettoparis.com/menu.html&opi=79508299&sa=U&ved=...
+
+    C'est un chemin relatif, inutilisable tel quel : le recolteur web echouerait
+    dessus. Mesure sur le premier appel reel : 4 des 4 liens fournis par le
+    collecteur etaient enveloppes de cette facon.
+
+    Returns:
+        L'URL reelle, ou la valeur d'origine si elle n'est pas enveloppee.
+    """
+    if not isinstance(valeur, str):
+        return valeur
+    valeur = valeur.strip()
+    if not valeur:
+        return None
+
+    if valeur.startswith("/url?") or "google.com/url?" in valeur:
+        params = parse_qs(urlparse(valeur).query)
+        for cle in ("q", "url"):
+            if params.get(cle):
+                return unquote(params[cle][0])
+        return None
+
+    return valeur if valeur.startswith("http") else None
 
 
 def _photos(brut) -> list[str]:
@@ -261,7 +293,7 @@ def importer(
             continue
 
         photos = _photos(_valeur(ligne, "menu_photo_urls"))
-        menu = _valeur(ligne, "menu_url")
+        menu = _url_directe(_valeur(ligne, "menu_url"))
 
         if a_blanc:
             apparies += 1
