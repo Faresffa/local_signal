@@ -74,7 +74,7 @@ def load_tourist_sites(zone: str) -> int:
     south, west, north, east = ZONES[zone]
     bbox = f"{south},{west},{north},{east}"
     query = (
-        f"[out:json][timeout:60];("
+        f"[out:json][timeout:180];("
         f'nwr["tourism"="attraction"]({bbox});'
         f'nwr["tourism"="museum"]({bbox});'
         f'nwr["historic"="monument"]({bbox});'
@@ -83,10 +83,23 @@ def load_tourist_sites(zone: str) -> int:
     )
 
     print(f"[OSM] Sites touristiques de '{zone}'…")
-    response = requests.post(
-        OVERPASS_URL, data={"data": query},
-        headers={"User-Agent": USER_AGENT}, timeout=90,
-    )
+    # Overpass renvoie 429 (trop de requetes) ou 504 (surcharge) quand on
+    # l'interroge coup sur coup, notamment sur une grande zone comme Paris.
+    # Reprise avec attente croissante plutot que d'echouer sec — meme logique
+    # que fetch_restaurants.
+    import time
+    response = None
+    for tentative in range(5):
+        response = requests.post(
+            OVERPASS_URL, data={"data": query},
+            headers={"User-Agent": USER_AGENT}, timeout=240,
+        )
+        if response.status_code not in (429, 504):
+            break
+        attente = 20 * (tentative + 1)
+        print(f"[OSM] Overpass surcharge ({response.status_code}), "
+              f"nouvelle tentative dans {attente} s…")
+        time.sleep(attente)
     response.raise_for_status()
 
     conn = get_connection()

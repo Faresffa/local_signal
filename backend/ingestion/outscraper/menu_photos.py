@@ -52,7 +52,12 @@ RAYON_APPARIEMENT_M = 200
 # de payer d'avance pour tout le monde.
 PHOTOS_PAR_RESTAURANT = 1
 
-TAILLE_LOT = 25
+# 10 et pas davantage : au-dela de 10 requetes, le SDK bascule en mode
+# asynchrone (`len(queries) > 10` dans `google_maps_photos`). Il sait attendre
+# tout seul — il interroge l'archive toutes les 5 secondes pendant une heure —
+# mais le mode synchrone reste plus previsible pour un premier essai, et une
+# erreur y est immediatement lisible plutot que noyee dans une attente.
+TAILLE_LOT = 10
 
 # Garde-fou de facturation. Outscraper NE BLOQUE PAS au-delà du gratuit : sa
 # documentation dit que « la tâche sera terminée » et qu'une facture suivra.

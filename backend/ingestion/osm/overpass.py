@@ -26,6 +26,15 @@ USER_AGENT = "LocalSignal/0.1 (projet académique HETIC)"
 ZONES = {
     "quartier-latin": (48.8400, 2.3380, 48.8535, 2.3560),
     "montreuil": (48.8480, 2.4050, 48.8720, 2.4650),
+    # Paris intra-muros, des portes au periphérique. Environ 15 000 restaurants
+    # — l'echelle visee pour la V1 du produit.
+    #
+    # ATTENTION AU RANG DE PRESSION TOURISTIQUE (D-027) : il se calcule au sein
+    # d'une zone. Importer Paris comme UNE zone fait de la ville entiere la
+    # cohorte de comparaison, ce qui est plus juste qu'un seul arrondissement —
+    # mais cela change les scores deja calcules sur « quartier-latin ». Les deux
+    # zones ne doivent donc pas etre melangees dans une meme evaluation.
+    "paris": (48.8156, 2.2242, 48.9022, 2.4699),
 }
 
 
@@ -33,7 +42,7 @@ def build_query(bbox: tuple[float, float, float, float]) -> str:
     """Construit la requête Overpass QL pour les restaurants d'une zone."""
     south, west, north, east = bbox
     return (
-        f"[out:json][timeout:60];"
+        f"[out:json][timeout:180];"
         f'nwr["amenity"="restaurant"]({south},{west},{north},{east});'
         f"out center tags;"
     )
