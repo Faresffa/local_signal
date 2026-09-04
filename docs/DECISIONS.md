@@ -1359,3 +1359,84 @@ marqué non calibré, et sa valeur sortira du jeu labellisé (D-006).
 - Tous les monuments pèsent encore **également**. Notre-Dame vaut une plaque
   commémorative. La présence d'un tag `wikidata` ou `wikipedia` serait un proxy
   d'importance disponible sans collecte supplémentaire.
+
+---
+
+## D-029 — Un importeur agnostique à la source, plutôt qu'un connecteur par fournisseur
+
+**Contexte.**
+Quatre voies ont été essayées pour obtenir les cartes des restaurants : le tag
+OpenStreetMap `website:menu` (D-023), les photos de l'API Google Places (D-025),
+le lien de carte et les photos taguées « menu » via Outscraper (D-028), et la
+récolte directe sur les sites des restaurants. Mesures sur le Quartier latin :
+
+| Voie | Rendement |
+|---|---|
+| OSM `website:menu` (468 restaurants) | **0 / 468** |
+| OSM `website:menu` (10 218 restaurants, Paris) | 275 |
+| schema.org `hasMenu` | **1 / 18** testés |
+| sites web des restaurants | **27 / 153** (17,6 %) |
+| API Places officielle | aucun champ menu, photos sans catégorie |
+
+Aucune voie ne suffit seule, et la meilleure d'entre elles couvre moins d'un
+restaurant sur cinq parmi ceux qui ont un site.
+
+**Problème.**
+Écrire un module d'ingestion par fournisseur conduit à une prolifération :
+chaque nouvelle source demande son parseur, ses noms de colonnes, sa gestion
+d'erreurs. Et la source qui finira par être retenue n'est pas connue d'avance —
+elle dépend d'arbitrages de coût et de politique d'utilisation qui peuvent
+changer en cours de projet.
+
+S'ajoute une contrainte propre à ce projet : l'assistant ne construit pas
+d'infrastructure de contournement de détection. La collecte depuis certaines
+sources doit donc être réalisée par l'utilisateur avec l'outil de son choix.
+
+**Décision.**
+Séparer strictement **la collecte** de **l'import**.
+
+`backend/ingestion/external/importer.py` avale un CSV ou un JSON produit par
+n'importe quel collecteur et le range en base. Il ne collecte rien, n'interroge
+aucun service, et ne connaît aucun fournisseur.
+
+Trois principes :
+
+1. **Synonymes de colonnes plutôt que format imposé.** `title` / `name` / `nom`,
+   `booking_appointment_link` / `reservation_url`, `reviews` / `review_count` :
+   les appellations courantes sont reconnues. Changer de collecteur ne demande
+   aucune modification de code.
+
+2. **Appariement par la DISTANCE, jamais par le nom seul.** Rayon de 150 m. Un
+   enregistrement dont la position ne correspond à aucun restaurant connu est
+   **rejeté, pas deviné**. « Alliance » figure deux fois dans la base à deux
+   adresses différentes ; rattacher une carte au mauvais établissement
+   corromprait l'indicateur qui pèse 0,40 dans la formule.
+
+3. **Les faits OpenStreetMap sont COMPLÉTÉS, jamais écrasés.** Un champ OSM
+   vide peut être rempli par l'import ; un champ renseigné est préservé. Les
+   champs d'enrichissement (`rating`, `review_count`, `reservation_url`,
+   `menu_photo_urls`) sont propres à cette voie et portent `external_source` et
+   `external_at`, pour qu'on puisse toujours dire d'où vient chaque donnée.
+
+**Conséquences.**
+
+- Six colonnes ajoutées à `restaurants` : `reservation_url`, `rating`,
+  `review_count`, `menu_photo_urls`, `external_source`, `external_at`.
+- `rating` et `review_count` sont stockés mais restent **HORS SCORING** —
+  D-007 les a explicitement sortis du classement, et D-001 interdit tout critère
+  dépendant du volume d'avis. Ils servent uniquement à l'affichage et à
+  l'analyse de biais.
+- Cinq photos de carte au maximum par restaurant. Au-delà on n'apprend plus
+  rien, et chaque image supplémentaire coûte un appel au modèle de vision.
+- Vérifié sur un jeu d'essai à noms de colonnes volontairement différents :
+  3 restaurants appariés à 20-23 m, 1 enregistrement hors zone rejeté.
+
+**Un biais à mesurer avant d'exploiter les photos de carte.**
+Les photos de cartes sur les plateformes cartographiques sont postées par des
+clients. Un restaurant sans clientèle nombreuse en a donc peu ou pas — c'est
+précisément la population que le projet veut faire remonter (D-001). Avant de
+fonder l'indicateur menu sur cette source, il faut **corréler la présence de
+photos avec le nombre d'avis**. Si la corrélation est forte, le biais doit être
+déclaré dans le mémoire, et l'indicateur menu compensé ou pondéré en
+conséquence. Ne pas le mesurer reviendrait à réintroduire le paradoxe de
+l'invisibilité par la porte des données.

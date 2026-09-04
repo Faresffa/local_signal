@@ -151,6 +151,18 @@ def _migrate(cursor) -> None:
             "menu_url": "TEXT",           # D-023
             "google_place_id": "TEXT",    # D-025 — identifiant, cachable sans réserve
             "photo_ref": "TEXT",          # D-025 — nom de ressource de la 1re photo
+
+            # --- Enrichissement externe (D-029) ---
+            # Champs alimentés par un collecteur tiers, quelle qu'en soit la
+            # source. Ils sont SÉPARÉS des faits OpenStreetMap : `import_externe`
+            # ne les mélange jamais, pour qu'on puisse toujours dire d'où vient
+            # chaque donnée — exigence de traçabilité du mémoire.
+            "reservation_url": "TEXT",    # lien de réservation, quand il existe
+            "rating": "REAL",             # note affichée — HORS SCORING (D-007)
+            "review_count": "INTEGER",    # volume d'avis — HORS SCORING (D-001)
+            "menu_photo_urls": "TEXT",    # JSON : URL des photos taguées « menu »
+            "external_source": "TEXT",    # nom du collecteur, pour l'audit
+            "external_at": "TEXT",        # horodatage de l'enrichissement
         },
         "menus": {
             "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit
