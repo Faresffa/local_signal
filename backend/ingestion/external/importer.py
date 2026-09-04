@@ -316,13 +316,18 @@ def importer(
                 opening_hours   = CASE WHEN coalesce(trim(opening_hours),'') = '' THEN ? ELSE opening_hours END,
                 menu_url        = CASE WHEN coalesce(trim(menu_url),'')      = '' THEN ? ELSE menu_url END,
                 google_place_id = coalesce(google_place_id, ?),
-                reservation_url = ?,
-                rating          = ?,
-                review_count    = ?,
-                menu_photo_urls = ?,
-                price_range     = ?,
-                photos_count    = ?,
-                tourist_flag    = ?,
+                reservation_url = coalesce(?, reservation_url),
+                rating          = coalesce(?, rating),
+                review_count    = coalesce(?, review_count),
+                -- coalesce(?, colonne) : une valeur absente du fichier courant
+                -- LAISSE en place ce qu'un import precedent avait pose. Sans
+                -- cela, importer les fiches apres les photos effacait les
+                -- photos, le fichier des fiches n'en contenant aucune. Un
+                -- import ne doit jamais detruire une donnee deja acquise.
+                menu_photo_urls = coalesce(?, menu_photo_urls),
+                price_range     = coalesce(?, price_range),
+                photos_count    = coalesce(?, photos_count),
+                tourist_flag    = coalesce(?, tourist_flag),
                 external_source = ?,
                 external_at     = ?
              WHERE id = ?
