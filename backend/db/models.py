@@ -169,6 +169,13 @@ def _migrate(cursor) -> None:
             # HORS SCORING, et strictement reserve a la VALIDATION EXTERNE du
             # Local Signal : s'en servir comme entree serait circulaire (D-030).
             "tourist_flag": "INTEGER",
+            # 1 si le collecteur a rendu exactement le nombre de photos demande :
+            # le restaurant en avait probablement davantage, et la carte lue est
+            # peut-etre incomplete (D-031). Abaisse la confiance, ne bloque rien.
+            "photos_saturees": "INTEGER",
+            # Motif de selection des photos, conserve pour l'audit :
+            # « lot groupe du 05/11/2025 — 12 pages, 5 analysees ».
+            "photos_motif": "TEXT",
         },
         "menus": {
             "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit

@@ -34,6 +34,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 from backend import config
 from backend.core.scoring.geo_score import haversine
+from backend.ingestion.external.selection_photos import selectionner
 
 # Distance maximale entre le restaurant connu et l'enregistrement importé.
 # 150 m : assez large pour absorber l'imprécision d'un géocodage, assez étroit
@@ -81,6 +82,9 @@ CHAMPS = {
 # coûte un appel au modèle de vision lors de l'extraction.
 MAX_PHOTOS = 5
 
+# Champs dont la valeur EST une liste et doit le rester.
+CHAMPS_LISTE = {"menu_photo_urls"}
+
 
 def _valeur(ligne: dict, champ: str):
     """Lit un champ en essayant ses synonymes, insensible à la casse."""
@@ -89,8 +93,13 @@ def _valeur(ligne: dict, champ: str):
         v = minuscules.get(cle)
         if v in (None, "", "null", "None", [], {}):
             continue
-        # Une liste (ex: `reservation_links`) : on garde le premier element.
+        # Une liste : on garde le premier element, SAUF pour les champs dont la
+        # liste est la donnee elle-meme. `reservation_links` rend plusieurs liens
+        # dont un seul nous interesse ; `photos_data` rend la collection entiere,
+        # et la reduire a son premier element detruirait la selection par lot.
         if isinstance(v, list):
+            if champ in CHAMPS_LISTE:
+                return v
             return v[0] if v else None
         # Un dictionnaire n'a rien a faire dans une colonne texte : on le
         # serialise en JSON plutot que d'y ecrire une repr Python.
@@ -174,6 +183,27 @@ def _url_directe(valeur):
         return None
 
     return valeur if valeur.startswith("http") else None
+
+
+def _objets_photos(brut) -> list[dict]:
+    """
+    Rend les objets photo bruts, avec leurs dates et etiquettes.
+
+    La selection par lot (D-031) a besoin de `photo_date` : elle ne peut pas
+    travailler sur des URL nues.
+    """
+    if isinstance(brut, str):
+        brut = brut.strip()
+        if brut.startswith("["):
+            try:
+                brut = json.loads(brut)
+            except json.JSONDecodeError:
+                return []
+        else:
+            return []
+    if not isinstance(brut, list):
+        return []
+    return [x for x in brut if isinstance(x, dict)]
 
 
 def _photos(brut) -> list[str]:
@@ -292,7 +322,23 @@ def importer(
             rejetes += 1
             continue
 
-        photos = _photos(_valeur(ligne, "menu_photo_urls"))
+        brut_photos = _valeur(ligne, "menu_photo_urls")
+        objets = _objets_photos(brut_photos)
+
+        if objets:
+            # Selection par lot (D-031) : une carte publiee en pages l'emporte
+            # sur des cliches recents mais partiels.
+            retenues, motif = selectionner(objets)
+            photos = _photos(retenues)
+            # Le collecteur a rendu EXACTEMENT ce qu'on lui demandait : le
+            # restaurant en avait probablement davantage, et la carte lue est
+            # peut-etre incomplete.
+            saturees = 1 if len(objets) >= MAX_PHOTOS else 0
+        else:
+            photos = _photos(brut_photos)
+            motif = None
+            saturees = None
+
         menu = _url_directe(_valeur(ligne, "menu_url"))
 
         if a_blanc:
@@ -328,6 +374,8 @@ def importer(
                 price_range     = coalesce(?, price_range),
                 photos_count    = coalesce(?, photos_count),
                 tourist_flag    = coalesce(?, tourist_flag),
+                photos_saturees = coalesce(?, photos_saturees),
+                photos_motif    = coalesce(?, photos_motif),
                 external_source = ?,
                 external_at     = ?
              WHERE id = ?
@@ -345,6 +393,8 @@ def importer(
             _valeur(ligne, "price_range"),
             _valeur(ligne, "photos_count"),
             _tourist_flag(ligne),
+            saturees,
+            motif,
             source or chemin.stem,
             maintenant,
             meilleur["id"],

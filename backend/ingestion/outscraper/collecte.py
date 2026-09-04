@@ -45,10 +45,20 @@ PLAFOND_DEFAUT = 450
 # il sait attendre seul, mais une erreur y est moins lisible.
 TAILLE_LOT = 10
 
-# Photos par restaurant. À 1, les 468 du Quartier latin tiennent dans le quota
-# gratuit de 500 photos. À 5, on serait à 2 340 — largement au-delà, et facturé.
-# On mesure d'abord la couverture, on augmente ensuite en connaissance de cause.
-PHOTOS_DEFAUT = 1
+# Photos demandées par restaurant.
+#
+# CINQ, sur le jugement terrain de l'utilisateur : la plupart des cartes tiennent
+# en cinq clichés ou moins, et les cas comme Amarvi — douze pages téléversées par
+# le restaurateur — sont rares. En demander quinze pour n'en analyser que cinq
+# quadruplerait la dépense sans gain sur la majorité des restaurants.
+#
+# LE RISQUE ASSUMÉ, et le garde-fou qui va avec : à cinq, on ne sait pas si le
+# restaurant en avait davantage. Un retour de EXACTEMENT cinq photos est donc
+# marqué comme possiblement tronqué (`photos_saturees`), ce qui abaissera la
+# confiance de l'indicateur menu au lieu de laisser passer un comptage partiel
+# en silence. Une carte tronquée donne un `dish_count` trop bas, donc un score
+# trop favorable (D-031).
+PHOTOS_DEFAUT = 5
 
 
 def _client():
