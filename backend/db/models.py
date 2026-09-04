@@ -163,6 +163,12 @@ def _migrate(cursor) -> None:
             "menu_photo_urls": "TEXT",    # JSON : URL des photos taguées « menu »
             "external_source": "TEXT",    # nom du collecteur, pour l'audit
             "external_at": "TEXT",        # horodatage de l'enrichissement
+            "price_range": "TEXT",        # fourchette « $ » a « $$$$ » — HORS SCORING
+            "photos_count": "INTEGER",    # volume de photos — HORS SCORING (D-001)
+            # Google indique lui-meme si un lieu attire les touristes.
+            # HORS SCORING, et strictement reserve a la VALIDATION EXTERNE du
+            # Local Signal : s'en servir comme entree serait circulaire (D-030).
+            "tourist_flag": "INTEGER",
         },
         "menus": {
             "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit

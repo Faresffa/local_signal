@@ -49,8 +49,11 @@ CHAMPS = {
     "phone": ["phone", "phone_number", "telephone", "tel"],
     "website": ["site", "website", "web", "url"],
     "address": ["full_address", "address", "adresse", "street_address", "street"],
-    "opening_hours": ["working_hours", "working_hours_old_format",
-                      "opening_hours", "hours", "horaires"],
+    # `working_hours_old_format` D'ABORD : c'est une chaine lisible. Le champ
+    # `working_hours`, lui, arrive en dictionnaire jour par jour et serait stocke
+    # comme une representation Python illisible.
+    "opening_hours": ["working_hours_old_format", "opening_hours", "hours",
+                      "horaires", "working_hours"],
     # « reservation_links » au pluriel et « booking_appointment_link » sont les
     # appellations reelles verifiees dans la sortie d'Outscraper.
     "reservation_url": ["booking_appointment_link", "reservation_links",
@@ -61,6 +64,12 @@ CHAMPS = {
     "menu_url": ["menu_link", "menu_url", "menu"],
     "google_place_id": ["place_id", "google_id", "google_place_id", "cid"],
     "menu_photo_urls": ["menu_photos", "photos_menu", "menu_photo_urls", "photos"],
+    # Fourchette de prix affichee par Google (« $ » a « $$$$ »). Notre colonne
+    # `price` est vide sur 100 % des restaurants : OpenStreetMap n'expose aucun
+    # prix. Ceci ne le remplace pas — c'est une fourchette, pas un montant —
+    # mais c'est le seul indice de prix disponible sans lire une carte.
+    "price_range": ["range", "price_range", "price_level"],
+    "photos_count": ["photos_count", "photo_count"],
 }
 
 # Nombre de photos de carte conservées par restaurant. Au-delà, on n'apprend
@@ -74,9 +83,47 @@ def _valeur(ligne: dict, champ: str):
     minuscules = {k.lower().strip(): v for k, v in ligne.items() if k}
     for cle in CHAMPS[champ]:
         v = minuscules.get(cle)
-        if v not in (None, "", "null", "None"):
-            return v
+        if v in (None, "", "null", "None", [], {}):
+            continue
+        # Une liste (ex: `reservation_links`) : on garde le premier element.
+        if isinstance(v, list):
+            return v[0] if v else None
+        # Un dictionnaire n'a rien a faire dans une colonne texte : on le
+        # serialise en JSON plutot que d'y ecrire une repr Python.
+        if isinstance(v, dict):
+            return json.dumps(v, ensure_ascii=False)
+        return v
     return None
+
+
+def _tourist_flag(ligne: dict):
+    """
+    Lit `about.Crowd.Tourists` — Google indique lui-meme si un lieu attire une
+    clientele touristique.
+
+    HORS SCORING, et ce n'est pas negociable. S'en servir comme entree du calcul
+    serait circulaire : on utiliserait le jugement de Google pour predire ce que
+    le projet pretend mesurer independamment. En revanche c'est une VALIDATION
+    EXTERNE de premier ordre — si le Local Signal note plus bas les restaurants
+    que Google marque « Tourists », c'est une confirmation qui ne depend d'aucun
+    label humain. Voir D-030.
+
+    Returns:
+        1, 0, ou None si l'information est absente.
+    """
+    about = ligne.get("about") or ligne.get("About")
+    if isinstance(about, str):
+        try:
+            about = json.loads(about)
+        except json.JSONDecodeError:
+            return None
+    if not isinstance(about, dict):
+        return None
+    foule = about.get("Crowd") or about.get("crowd")
+    if not isinstance(foule, dict):
+        return None
+    v = foule.get("Tourists") or foule.get("tourists")
+    return None if v is None else int(bool(v))
 
 
 def _photos(brut) -> list[str]:
@@ -209,6 +256,9 @@ def importer(
                 rating          = ?,
                 review_count    = ?,
                 menu_photo_urls = ?,
+                price_range     = ?,
+                photos_count    = ?,
+                tourist_flag    = ?,
                 external_source = ?,
                 external_at     = ?
              WHERE id = ?
@@ -223,6 +273,9 @@ def importer(
             _valeur(ligne, "rating"),
             _valeur(ligne, "review_count"),
             json.dumps(photos, ensure_ascii=False) if photos else None,
+            _valeur(ligne, "price_range"),
+            _valeur(ligne, "photos_count"),
+            _tourist_flag(ligne),
             source or chemin.stem,
             maintenant,
             meilleur["id"],

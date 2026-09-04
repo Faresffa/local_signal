@@ -1440,3 +1440,65 @@ photos avec le nombre d'avis**. Si la corrélation est forte, le biais doit êtr
 déclaré dans le mémoire, et l'indicateur menu compensé ou pondéré en
 conséquence. Ne pas le mesurer reviendrait à réintroduire le paradoxe de
 l'invisibilité par la porte des données.
+
+---
+
+## D-030 — `about.Crowd.Tourists` : validation externe, jamais entrée du calcul
+
+**Contexte.**
+L'examen d'une réponse réelle du collecteur a révélé un champ inattendu dans le
+bloc `about` de chaque établissement :
+
+```json
+"about": { "Crowd": { "Family-friendly": true, "Groups": true, "Tourists": true } }
+```
+
+La plateforme cartographique indique elle-même si un lieu attire une clientèle
+touristique. C'est exactement la propriété que le projet cherche à mesurer.
+
+**Problème.**
+La tentation immédiate est d'en faire un indicateur, voire de s'en servir pour
+calibrer les pondérations. Ce serait une faute de méthode : on utiliserait le
+jugement d'un tiers pour prédire ce que le projet prétend établir de façon
+indépendante. Le mémoire perdrait son objet — mesurer l'authenticité à partir de
+signaux observables, et non recopier un classement existant.
+
+C'est le même piège que celui identifié pour les cartes de TheFork : une source
+dont la présence même est corrélée à l'orientation touristique.
+
+**Décision.**
+`tourist_flag` est stocké et **exclu du scoring**, au même titre que `rating` et
+`review_count` (D-007, D-001). Il ne sert qu'à deux usages, tous deux
+postérieurs au calcul :
+
+1. **Validation externe du Local Signal.** Si le score attribue des valeurs plus
+   basses aux établissements marqués `Tourists`, c'est une confirmation
+   indépendante que l'indicateur capte bien quelque chose — et elle ne coûte
+   aucun label humain. Le jeu labellisé reste nécessaire pour la calibration,
+   mais cette vérification peut être faite immédiatement, sur l'ensemble des
+   restaurants enrichis, pas seulement sur un échantillon annoté.
+
+2. **Mesure du biais de collecte.** Croisé avec `review_count` et la présence de
+   photos de carte, il permet de vérifier si la voie des photos favorise les
+   établissements fréquentés — le risque signalé en D-029.
+
+**Conséquences.**
+- Trois colonnes ajoutées : `tourist_flag`, `price_range`, `photos_count`.
+  Toutes **hors scoring**.
+- `price_range` (« $ » à « $$$$ ») n'est pas un prix. L'indicateur prix compare
+  un montant à la médiane du voisinage ; une fourchette qualitative ne peut pas
+  l'alimenter. Elle est conservée pour l'affichage et l'analyse.
+- Un test de validation reste à écrire : comparer la distribution du Local
+  Signal entre `tourist_flag = 1` et `tourist_flag = 0`. C'est peut-être le
+  chapitre d'évaluation le plus rapide à produire du mémoire.
+
+**Correctifs d'import associés.**
+La réponse réelle a révélé deux écarts avec le format supposé :
+- `working_hours` arrive en dictionnaire jour par jour, pas en chaîne. La forme
+  `working_hours_old_format` est désormais préférée ; un dictionnaire reçu dans
+  un champ texte est sérialisé en JSON plutôt qu'écrit en `repr` Python.
+- `reservation_links` est une liste. Une valeur de type liste est réduite à son
+  premier élément.
+- Enfin, `menu_link` valait `null` sur les trois exemples fournis, tous issus
+  d'une recherche groupée. Cela confirme la limite documentée : ce champ ne
+  sort que sur des recherches individuelles, une par établissement.
