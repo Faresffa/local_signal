@@ -48,14 +48,18 @@ CHAMPS = {
     "lng": ["lng", "lon", "longitude", "x"],
     "phone": ["phone", "phone_number", "telephone", "tel"],
     "website": ["site", "website", "web", "url"],
-    "address": ["address", "full_address", "adresse", "street_address"],
-    "opening_hours": ["working_hours", "opening_hours", "hours", "horaires"],
-    "reservation_url": ["booking_appointment_link", "reservation_url",
-                        "reservations_link", "booking_link", "reserve_url"],
+    "address": ["full_address", "address", "adresse", "street_address", "street"],
+    "opening_hours": ["working_hours", "working_hours_old_format",
+                      "opening_hours", "hours", "horaires"],
+    # « reservation_links » au pluriel et « booking_appointment_link » sont les
+    # appellations reelles verifiees dans la sortie d'Outscraper.
+    "reservation_url": ["booking_appointment_link", "reservation_links",
+                        "reservation_url", "reservations_link", "booking_link",
+                        "reserve_url"],
     "rating": ["rating", "note", "average_rating", "stars"],
     "review_count": ["reviews", "review_count", "reviews_count", "user_ratings_total"],
     "menu_url": ["menu_link", "menu_url", "menu"],
-    "google_place_id": ["place_id", "google_id", "google_place_id"],
+    "google_place_id": ["place_id", "google_id", "google_place_id", "cid"],
     "menu_photo_urls": ["menu_photos", "photos_menu", "menu_photo_urls", "photos"],
 }
 
