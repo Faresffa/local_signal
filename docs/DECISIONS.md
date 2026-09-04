@@ -1502,3 +1502,74 @@ La réponse réelle a révélé deux écarts avec le format supposé :
 - Enfin, `menu_link` valait `null` sur les trois exemples fournis, tous issus
   d'une recherche groupée. Cela confirme la limite documentée : ce champ ne
   sort que sur des recherches individuelles, une par établissement.
+
+---
+
+## D-031 — Choisir les photos de carte par LOT, et non par date seule
+
+**Contexte.**
+La récolte des photos taguées « menu » rend jusqu'à plusieurs dizaines de
+clichés par restaurant. Les analyser tous coûterait un appel de vision chacun ;
+n'en prendre qu'un donne une carte tronquée. Il fallait une règle de sélection.
+
+Mesuré sur deux restaurants du Quartier latin :
+
+| Restaurant | Photos taguées « menu » | Motif |
+|---|---|---|
+| Amarvi | 12 **au même horodatage** (11/5/2025 12:00:00), puis 3 isolées | téléversement du restaurateur, carte en 12 pages |
+| Allard | 15 dates différentes, de 2022 à 2026 | clichés de clients au fil des ans |
+
+L'utilisateur a vérifié manuellement : la carte d'Amarvi est bien publiée en
+douze pages.
+
+**Problème.**
+La règle intuitive — « prendre les 3 ou 4 plus récentes » — échoue précisément
+sur le cas favorable. Appliquée à Amarvi le 4 septembre 2026, elle retiendrait
+les trois photos isolées de 2026 et **jetterait la carte complète de novembre
+2025**. On échangerait le PDF officiel du restaurant contre trois clichés épars.
+
+L'enjeu n'est pas cosmétique. L'indicateur menu compte les plats, et une carte
+resserrée est le marqueur d'un restaurant local (D-004). Analyser une page sur
+douze rend `dish_count = 8` au lieu de 60 : **le score devient faux, et faux
+dans le sens qui flatte**. Une donnée tronquée est ici pire qu'une donnée
+absente — l'absence, elle, est gérée par la redistribution des poids (D-012).
+
+**Décision.**
+Sélection en trois temps, dans `backend/ingestion/external/selection_photos.py` :
+
+1. **Écarter les photos de plus de 24 mois.** L'indicateur prix compare un
+   montant à la médiane du quartier ; des prix de 2022 fausseraient la
+   comparaison silencieusement.
+2. **Chercher le lot groupé le plus récent** — au moins trois photos partageant
+   l'horodatage. C'est une carte publiée en pages.
+3. **À défaut, retenir les plus récentes**, une par une.
+
+Cinq photos analysées au maximum.
+
+**Le seuil est à TROIS, et non deux.** Les horodatages sont arrondis à l'heure :
+deux clients photographiant la carte le même midi produisent une collision
+fortuite. C'est arrivé sur Allard, où deux clichés isolés du 21/06/2025
+partageaient l'horodatage — le seuil à deux les prenait pour une carte et
+écartait une photo d'août 2026, bien plus récente. À trois, la coïncidence
+devient improbable tandis que le téléversement groupé reste reconnu.
+
+**Un lot ancien l'emporte sur des clichés récents.** C'est délibéré : la
+complétude prime sur la fraîcheur, dans la limite des 24 mois. Un `dish_count`
+juste sur une carte de l'an dernier vaut mieux qu'un comptage partiel sur une
+photo de la semaine.
+
+**Conséquences.**
+- Le motif de sélection est conservé en base — « lot groupé du 05/11/2025,
+  12 pages, 5 analysées ». On doit pouvoir expliquer des mois plus tard
+  pourquoi telle carte a été lue plutôt qu'une autre.
+- Les photos d'un même lot sont des PAGES d'une seule carte. Leurs
+  observations devront être **agrégées**, pas traitées comme des cartes
+  distinctes : les plats se somment, les cuisines s'unissent. Ce point reste à
+  implémenter dans le pipeline d'extraction.
+- Vérifié : Amarvi retient le lot de 12 pages ; Allard bascule sur les cinq
+  photos isolées les plus récentes, à partir du 02/08/2026.
+
+**Ce qui reste ouvert.**
+Le nombre de photos à demander au collecteur détermine le coût. En demander 15
+pour n'en analyser que 5 permet de détecter les lots longs, mais multiplie les
+crédits consommés. Arbitrage non tranché.
