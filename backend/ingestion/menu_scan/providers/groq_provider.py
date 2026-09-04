@@ -109,9 +109,28 @@ class GroqVisionProvider:
                 # Pas de `response_format` strict : les modèles à raisonnement
                 # préfixent leur sortie d'un bloc <think>, que le validateur
                 # de Groq rejette avant même de nous la transmettre.
-                max_completion_tokens=3000,
+                # `reasoning_effort="none"` : ce modele est un modele de
+                # raisonnement. Sans bride, il epuise son budget de jetons en
+                # reflexion et n'emet jamais le JSON — constate sur trois
+                # cartes d'affilee. Les seules valeurs acceptees sont « none »
+                # et « default ».
+                reasoning_effort="none",
+                # 700 et non 3000. Le palier gratuit plafonne la SORTIE a
+                # 1000 jetons par minute, et refuse toute requete qui en
+                # reserve davantage — meme si la reponse reelle est courte.
+                # Notre JSON d'observations fait environ 200 jetons ; 700
+                # laisse une marge confortable sans declencher le refus.
+                max_completion_tokens=700,
                 temperature=0.0,  # extraction factuelle : pas de créativité souhaitée
             )
+        except groq.RateLimitError:
+            # Limite de debit atteinte. Le palier gratuit plafonne la sortie a
+            # 1000 jetons par minute pour toute l'organisation : en lot, on la
+            # touche forcement. Sans reprise, un refus PASSAGER marquerait la
+            # carte « illisible » de facon DEFINITIVE — le module de lecture ne
+            # repasse jamais sur un restaurant deja enregistre. On attend donc
+            # et on retente, plutot que de perdre la donnee.
+            raise
         except groq.APIStatusError as e:
             # Erreur fournisseur : on ne fait pas planter l'app, la carte est
             # traitée comme illisible et son poids redistribué (D-012).
