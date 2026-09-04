@@ -66,3 +66,9 @@ apps/mobile/src/tokens.generated.js
 
 # Photos Google mises en cache pour la demonstration (D-025) — jamais versionnees
 .photo-cache/
+
+# Reponses brutes des collecteurs — volumineuses, et rejouables a la demande
+data/collecte/
+
+# Fichier de requetes genere pour un collecteur externe
+requetes_*.csv

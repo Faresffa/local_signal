@@ -27,6 +27,11 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 
+# Collecteur externe de fiches et de photos de carte (D-028). Isolé à dessein :
+# le jour où cette voie doit disparaître, cette ligne et le dossier
+# `ingestion/outscraper/` suffisent à la retirer.
+OUTSCRAPER_API_KEY = os.environ.get("OUTSCRAPER_API_KEY", "")
+
 # =============================================================================
 # Scan de carte — fournisseur de vision (D-004, D-017)
 # =============================================================================
