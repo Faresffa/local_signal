@@ -1573,3 +1573,91 @@ photo de la semaine.
 Le nombre de photos à demander au collecteur détermine le coût. En demander 15
 pour n'en analyser que 5 permet de détecter les lots longs, mais multiplie les
 crédits consommés. Arbitrage non tranché.
+
+---
+
+## D-032 — Lecture des cartes en local : OCR, code déterministe, modèle sur la machine
+
+**Contexte.**
+La lecture des cartes par un service de vision distant s'est heurtée à un mur
+mesuré : le palier gratuit plafonne à 200 000 jetons par jour et une image de
+carte en consomme environ 2 950, soit **68 pages quotidiennes**. Pour les
+1 120 pages du Quartier latin, seize jours.
+
+Trois obstacles avaient déjà été levés — bridage du raisonnement, réduction des
+images à 1 024 px, budget de sortie ramené de 3 000 à 300 jetons — sans changer
+l'ordre de grandeur : le coût est celui de l'image, pas de la réponse.
+
+**Décision.**
+Déplacer entièrement la lecture sur la machine, en trois étapes :
+
+```
+photo  →  OCR RapidOCR (ONNX, hors ligne)  →  texte
+texte  →  code déterministe                →  4 observations
+texte  →  modèle local Ollama (qwen2.5:7b) →  2 observations
+```
+
+**Ce que le code calcule seul, et pourquoi c'est mieux.**
+
+| Observation | Méthode |
+|---|---|
+| `dish_count` | comptage des motifs de prix |
+| `has_tourist_menu` | vocabulaire |
+| `has_dish_photos` | texte quasi absent sur une image chargée |
+
+Un nombre de plats **compté par une expression régulière est reproductible et
+auditable** ; le même nombre rendu par un modèle ne l'est pas. C'est D-014 — le
+modèle observe, il ne juge pas — poussé d'un cran : là où du code déterministe
+suffit, le modèle n'a rien à faire. Deux lectures de la même carte donnent
+désormais le même compte, condition nécessaire à toute calibration.
+
+**Ce qui reste au modèle** : les cuisines et le ratio vernaculaire, deux champs
+qui demandent de comprendre qu'un *Vitello tonnato* garde son nom d'origine
+tandis qu'un « veau sauce thon » est traduit.
+
+**Pourquoi un modèle de TEXTE et non de vision**, à mémoire graphique égale
+(6 Go) : un modèle de vision de 3 milliards de paramètres dépense la moitié de
+sa capacité dans l'encodeur visuel ; un modèle de texte de 7 milliards consacre
+la sienne entière à la langue. L'OCR fait déjà le travail visuel, et il le fait
+bien.
+
+**Un appel de modèle par restaurant, pas par page.** Les textes des pages sont
+concaténés avant l'appel sémantique : cinq pages sont une seule carte (D-031).
+On passe de 1 120 appels à 318.
+
+**Quatre défauts corrigés, tous révélés par des cartes réelles.**
+
+1. **Prix à une décimale.** Le premier motif exigeait deux décimales et
+   manquait « 15,5 », forme la plus courante en France : cinq prix sur sept
+   perdus sur la carte d'essai.
+2. **Prix en entiers nus.** « Au Moulin à Vent » écrit ses tarifs « 24 », « 29 »
+   sans virgule ni symbole — le comptage rendait **zéro plat sur 155 lignes**.
+   Une ligne ne contenant qu'un entier entre 3 et 199 est désormais un prix.
+3. **Pages en double.** Plusieurs clients photographient souvent la même page ;
+   concaténer sans vérifier doublerait le compte. Les pages dont 70 % des
+   lignes coïncident sont écartées.
+4. **Détection de langue abandonnée.** `langdetect` a répondu « allemand,
+   anglais » sur une carte franco-italienne. Une carte est une liste de
+   syntagmes nominaux, l'OCR la rend en capitales sans accents, et les noms de
+   plats étrangers dominent le vocabulaire. Comme la langue alimente un
+   indicateur qui pèse 0,30 (D-024), une détection fausse y ferait plus de
+   dégâts qu'une absence — que le moteur sait traiter (D-012). Le champ revient
+   au modèle.
+
+**Conséquences.**
+- Ni quota ni facture. Le traitement du Quartier latin passe de seize jours à
+  moins d'une heure, et rien n'empêchera de traiter Paris entier ensuite.
+- Le **texte OCR est conservé en base** (`menus.ocr_text`). Il n'alimente aucun
+  indicateur aujourd'hui, et c'est justement pourquoi il faut le garder : ce
+  qui ne sert pas maintenant peut fonder un indicateur demain, permettre de
+  recalibrer sans retraiter les images, ou constituer une preuve. La base de
+  menus structurés est l'actif du projet (CLAUDE.md §3).
+- Les **images ne sont toujours pas conservées** — œuvres de leurs auteurs
+  (D-021, D-025). Le texte qu'on en tire est un fait, il se garde.
+- Un troisième fournisseur rejoint Groq et Claude (D-017), sans les remplacer :
+  le comparatif de précision d'extraction reste possible.
+
+**Ce qui reste ouvert.**
+Le seuil de déduplication (70 %) et les bornes du prix entier (3 à 199) sont
+posés au jugement. Ils devront être vérifiés sur le jeu labellisé, comme toute
+constante du projet (D-006).

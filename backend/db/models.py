@@ -179,6 +179,19 @@ def _migrate(cursor) -> None:
         },
         "menus": {
             "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit
+            # Texte brut releve par l'OCR, conserve integralement.
+            #
+            # Il n'entre pas dans le calcul actuel, et c'est justement pourquoi
+            # il doit etre garde : ce qui ne sert pas aujourd'hui peut fonder un
+            # indicateur demain, permettre de recalibrer sans retraiter les
+            # images, ou constituer une preuve. La base de menus structures est
+            # l'actif du projet (CLAUDE.md §3) — la jeter serait payer deux fois.
+            #
+            # Les IMAGES, elles, ne sont jamais conservees : ce sont des oeuvres
+            # de leurs auteurs (D-021, D-025). Le texte qu'on en tire est un
+            # fait, il se garde.
+            "ocr_text": "TEXT",
+            "ocr_lines": "INTEGER",   # nombre de lignes relevees, pour l'audit
         },
     }
 

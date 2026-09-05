@@ -41,6 +41,13 @@ OUTSCRAPER_API_KEY = os.environ.get("OUTSCRAPER_API_KEY", "")
 VISION_PROVIDER = os.environ.get("VISION_PROVIDER", "groq")  # "groq" | "claude"
 
 GROQ_VISION_MODEL = "qwen/qwen3.6-27b"
+
+# Modele execute EN LOCAL via Ollama (D-032). Ni quota ni facture : c'est ce qui
+# rend la lecture des 1 120 pages du Quartier latin possible en quelques heures
+# au lieu de seize jours. Il ne recoit que du TEXTE — l'OCR fait le travail
+# visuel, et a memoire graphique egale un modele de texte de 7 milliards de
+# parametres comprend mieux qu'un modele de vision de 3 milliards.
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:7b")
 CLAUDE_VISION_MODEL = "claude-opus-5"
 
 # Récolte web (D-023) : la carte arrive déjà en texte, la traiter par un modèle
