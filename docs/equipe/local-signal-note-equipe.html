@@ -144,51 +144,191 @@ explicable et calibrable.</li>
 
 <div class="page"></div>
 
-<h2>3. Les deux scores géographiques</h2>
+<h2>3. Les scores géographiques, formule par formule</h2>
 
 <p>Ils ont été refondus le 2 septembre après mesure sur les données réelles.
 Les deux formules initiales reposaient sur des seuils en mètres choisis à vue,
 et les données ont montré qu'ils ne mordaient nulle part.</p>
 
-<h3>Pression touristique — statique</h3>
+<p>Quatre objets mathématiques standards s'enchaînent ici. Aucun n'est inventé
+pour le projet, et c'est délibéré : devant un jury, une méthode qui porte un nom
+et une littérature se défend, une formule maison se discute.</p>
 
-<pre>pression(r)   = Σᵢ exp( −dᵢ² / 2σ² )        sur TOUS les sites, σ = 350 m
-score_zone(r) = 1 − rang_percentile( pression(r) )   dans la zone</pre>
+<table>
+<tr><th>Étape</th><th>Nom scientifique</th><th>Rôle ici</th></tr>
+<tr><td>Distance</td><td><strong>Formule de haversine</strong><br>
+    <em>haversine formula — distance orthodromique</em></td>
+    <td>distance sur la sphère entre deux points GPS</td></tr>
+<tr><td>Pression</td><td><strong>Estimation par noyau gaussien</strong><br>
+    <em>Gaussian kernel density estimation (KDE)</em></td>
+    <td>agrège l'effet de tous les monuments en un champ continu</td></tr>
+<tr><td>Score</td><td><strong>Rang en percentile</strong><br>
+    <em>empirical CDF — probability integral transform</em></td>
+    <td>rend le résultat sans unité, donc transportable d'une ville à l'autre</td></tr>
+<tr><td>Proximité</td><td><strong>Décroissance exponentielle de la distance</strong><br>
+    <em>negative exponential distance-decay / deterrence function</em></td>
+    <td>traduit une distance en préférence, sans seuil</td></tr>
+<tr><td>Agrégation</td><td><strong>Moyenne arithmétique pondérée</strong><br>
+    <em>weighted arithmetic mean — linear aggregation</em></td>
+    <td>combine les quatre indicateurs en un seul nombre</td></tr>
+</table>
 
-<p><strong>Pourquoi ce n'est plus « la distance au monument le plus proche ».</strong>
-À distance comparable (60–70 m), la pression réelle varie de 4,99 à 20,86 selon
-le nombre de monuments alentour — un facteur 4 que l'ancienne formule écrasait.
-Et le seuil de 500 m ne servait à rien : la distance médiane au monument le plus
-proche est de 102 m, le maximum de 273 m. <strong>Aucun</strong> des 468
-restaurants ne l'atteignait.</p>
+<h3>3.1 &nbsp;Distance — formule de haversine</h3>
+
+<pre>a = sin²(Δφ/2) + cos φ₁ · cos φ₂ · sin²(Δλ/2)
+d = 2R · atan2( √a , √(1−a) )          R = 6 371 000 m</pre>
+
+<p><strong>Nom :</strong> <em>formule de haversine</em>, d'après la fonction
+hav(θ) = sin²(θ/2). Elle donne la <em>distance orthodromique</em> — la longueur
+de l'arc de grand cercle entre deux points d'une sphère.</p>
+
+<p><strong>Pourquoi elle et pas une autre.</strong> Une distance euclidienne
+calculée sur latitude/longitude est fausse dès qu'on quitte l'équateur : un
+degré de longitude vaut 111 km à l'équateur et 74 km à Paris. Haversine reste
+numériquement stable sur les petites distances, là où la loi des cosinus
+sphérique perd sa précision par arrondi. Son erreur vient de l'hypothèse
+sphérique — la Terre est un ellipsoïde — soit environ 0,3 % au pire ; sur
+200 m, 0,6 m, sans conséquence pour un classement. La formule de Vincenty,
+exacte sur l'ellipsoïde, coûterait bien plus cher pour un gain nul ici.</p>
+
+<h3>3.2 &nbsp;Pression touristique — estimation par noyau <span style="font-weight:400">(statique)</span></h3>
+
+<pre>pression(r) = Σᵢ exp( −dᵢ² / 2σ² )       sur TOUS les sites, σ = 350 m</pre>
+
+<p><strong>Nom :</strong> <em>estimation par noyau gaussien</em> (Gaussian
+kernel density estimation, KDE). En statistique spatiale, c'est
+l'<em>estimateur à noyau de l'intensité d'un processus ponctuel</em> : les
+monuments sont les points, la pression est l'intensité du champ qu'ils
+engendrent. C'est exactement ce qu'un SIG appelle une <em>carte de chaleur</em>.
+Le noyau gaussien est aussi la <em>fonction à base radiale</em> (RBF) la plus
+courante.</p>
+
+<p><strong>σ s'appelle la largeur de bande</strong> (bandwidth, ou fenêtre de
+lissage). C'est l'unique paramètre de la méthode, et le dernier endroit où une
+valeur en mètres subsiste. À σ = 350 m, un monument pèse 0,61 à 350 m, 0,14 à
+700 m, 0,01 à 1 050 m : son influence s'éteint sans jamais être coupée net. La
+valeur correspond à environ cinq minutes de marche — <strong>elle est posée,
+pas calibrée</strong>, et devra l'être sur le jeu labellisé.</p>
+
+<p><strong>Le noyau n'est pas normalisé.</strong> Il manque le facteur
+1/(σ√2π) de la densité gaussienne. C'est volontaire : le rang en percentile
+qui suit est invariant par toute transformation croissante, donc multiplier la
+pression par une constante ne change rien au score. L'écrire aurait coûté un
+calcul et suggéré une précision qui n'existe pas.</p>
+
+<p><strong>Pourquoi une somme, et non « la distance au monument le plus proche ».</strong>
+Mesuré sur les 468 restaurants du Quartier latin : à distance comparable du
+monument le plus proche (60–70 m), la pression réelle varie de 4,99 à 20,86 —
+un facteur 4 que « distance au plus proche » écrase intégralement. Un
+restaurant cerné par douze monuments ne subit pas le flux d'un restaurant qui
+en a un seul à la même distance. Et le seuil de 500 m ne servait à rien : la
+distance médiane au monument le plus proche est de 102 m, le maximum de 273 m.
+<strong>Aucun</strong> des 468 ne l'atteignait — la branche « hors zone »
+était du code mort, et le score plafonnait à 0,55 au lieu de 1,00.</p>
+
+<pre>score_zone(r) = 1 − rang_percentile( pression(r) )   dans la cohorte</pre>
+
+<p><strong>Nom :</strong> <em>rang en percentile</em> — l'application de la
+<em>fonction de répartition empirique</em> (empirical CDF) à sa propre
+distribution. La statistique nomme cette opération <em>transformation intégrale
+de probabilité</em> : elle transforme n'importe quelle distribution en une loi
+uniforme sur [0, 1]. Les égalités sont traitées par <em>rang moyen</em>
+(midrank), pour que deux pressions identiques donnent deux scores identiques —
+sinon l'ordre d'itération déciderait du classement.</p>
 
 <p><strong>Pourquoi un rang et non un seuil.</strong> Aucune constante en mètres
-ne survit à un changement de ville. Un rang n'a pas d'unité : il se transporte
-tel quel de Paris à Tokyo. Un test vérifie formellement que <em>multiplier
-toutes les distances par 10 ne change pas le classement</em>.</p>
+ne survit à un changement de ville : 500 m calibrés sur le Quartier latin
+seraient faux à Tokyo comme dans un village. Un rang n'a pas d'unité. La
+propriété exacte s'appelle l'<em>invariance par transformation monotone
+croissante</em>, et elle est vérifiée par un test : <em>multiplier toutes les
+distances par 10 ne change pas le classement</em>. Second effet : l'étendue
+0–1 est garantie par construction, là où l'ancienne formule n'atteignait
+jamais que 0,55.</p>
 
-<p><em>Ce que ce choix coûte, et qu'il faut assumer :</em> le score devient
-relatif à la ville. Il répond à « ce restaurant est-il dans un coin touristique
-<em>de cette ville</em> », pas à « cette ville est-elle touristique ». La
-pression absolue est conservée à côté pour permettre la comparaison entre
-villes.</p>
+<div class="encadre">
+<strong>Ce que ce choix coûte, et qu'il faut assumer.</strong> Le score devient
+<em>relatif à la cohorte</em>. Il répond à « ce restaurant est-il dans un coin
+touristique <em>de cette ville</em> », pas à « cette ville est-elle
+touristique ». Deux villes ne sont plus comparables sur ce signal. C'est
+pourquoi la pression absolue — elle, dimensionnée et comparable — est
+<strong>conservée séparément en base</strong> : c'est elle qui servira à la
+calibration et à toute comparaison entre villes.
+</div>
 
-<h3>Proximité utilisateur — dynamique</h3>
+<p>Le rang est calculé <strong>en lot</strong>, jamais dans le chemin d'une
+requête : le signal reste statique au sens de la séparation §2, et deux
+requêtes différentes ne peuvent pas attribuer deux scores au même restaurant.</p>
 
-<pre>score_prox(r) = exp( −distance / (rayon demandé × 0,5) )</pre>
+<h3>3.3 &nbsp;Proximité utilisateur — décroissance exponentielle <span style="font-weight:400">(dynamique)</span></h3>
 
-<p>L'ancienne version divisait par 5 km fixes. Sur une recherche à 400 m, toutes
-les proximités tombaient entre 0,921 et 0,980 : une dispersion de 0,06,
-<strong>le terme ne départageait plus rien</strong>. Il est désormais normalisé
-sur le rayon réellement demandé.</p>
+<pre>score_prox(r) = exp( −d / (rayon demandé × 0,5) )</pre>
+
+<p><strong>Nom :</strong> <em>fonction de décroissance exponentielle de la
+distance</em> (negative exponential distance-decay). En économie spatiale et
+dans les modèles gravitaires, c'est la <em>fonction de dissuasion</em>
+(deterrence function) de forme exp(−βd), où β est le <em>paramètre de
+décroissance</em>. Ici β = 1 / (rayon × 0,5).</p>
+
+<p><strong>Lecture concrète du paramètre.</strong> La quantité rayon × 0,5 est
+la <em>distance caractéristique</em> (e-folding distance) : celle où le score
+tombe à 1/e ≈ 0,37. Au bord du rayon demandé, le score vaut e⁻² ≈ 0,14. Sur
+une recherche à 800 m : 0,37 à 400 m, 0,14 à 800 m. La décroissance est donc
+franche à l'intérieur même de la zone cherchée, et c'est le but.</p>
+
+<p><strong>Pourquoi normalisé sur le rayon demandé.</strong> L'ancienne version
+divisait par 5 km fixes. Sur une recherche à 400 m, toutes les proximités
+tombaient entre 0,921 et 0,980 : une dispersion de 0,06 — <strong>le terme ne
+départageait plus rien</strong>, alors qu'il pèse officiellement 30 %.
+Normaliser sur le rayon rend la formule <em>auto-adaptative</em> : elle
+départage aussi bien une recherche de quartier qu'une recherche à l'échelle
+d'une ville, sans constante à retoucher.</p>
+
+<p><strong>Pourquoi exponentielle et pas linéaire.</strong> Une décroissance
+linéaire traiterait l'écart 100 m → 200 m comme l'écart 700 m → 800 m. La
+préférence réelle ne fonctionne pas ainsi : doubler une distance courte compte
+beaucoup, allonger une distance déjà longue compte peu. L'exponentielle est la
+seule fonction dont le taux de décroissance <em>relatif</em> est constant, ce
+qui est précisément cette propriété.</p>
 
 <div class="encadre">
 <strong>Nuance de vocabulaire, à connaître si on vous interroge.</strong> Un
-<em>poids</em> porte sur la valeur ; une <em>part de variance</em> dépend en plus
-de la dispersion du terme. Un poids de 0,30 ne promet pas 30 % de la variation
-du classement. Le défaut corrigé n'était pas « le poids ment » mais « le terme
-ne varie plus ».
+<em>poids</em> porte sur la valeur ; une <em>part de variance</em> dépend en
+plus de la dispersion du terme. Un poids de 0,30 ne promet pas 30 % de la
+variation du classement. Le défaut corrigé n'était pas « le poids ment » mais
+« le terme ne varie plus ». Un indicateur à faible <em>dispersion</em>
+contribue peu au classement quel que soit son poids nominal : c'est un résultat
+classique de l'<em>analyse de sensibilité</em> des indicateurs composites
+(Handbook OCDE-JRC, 2008).
 </div>
+
+<h3>3.4 &nbsp;Comment les quatre indicateurs sont agrégés</h3>
+
+<pre>Local Signal = ( Σ wᵢ · xᵢ ) / ( Σ wᵢ )     sur les seuls indicateurs disponibles
+confiance    = Σ wᵢ  ( à part, non mélangée au score )</pre>
+
+<p><strong>Nom :</strong> <em>agrégation linéaire par moyenne arithmétique
+pondérée</em> (weighted arithmetic mean, linear aggregation) — la forme la plus
+courante d'indicateur composite, et celle que documente le Handbook OCDE-JRC. La
+division par la somme des poids <em>disponibles</em> s'appelle une
+<em>renormalisation des poids</em> ; l'approche générale, face aux données
+manquantes, est l'<em>analyse des cas disponibles</em> (available-case
+analysis).</p>
+
+<p>C'est la traduction mathématique de la règle §2 : un indicateur absent rend
+<code>None</code>, il sort de la somme, et son poids se redistribue sur les
+autres au prorata. Le score reste sur la même échelle ; c'est la
+<strong>confiance</strong>, calculée à part, qui porte l'information « on en
+sait moins sur ce restaurant ». <strong>L'absence n'est jamais convertie en
+mauvaise note</strong> — sans quoi les restaurants les moins documentés,
+c'est-à-dire exactement ceux que le projet veut faire remonter, seraient
+pénalisés par leur invisibilité même.</p>
+
+<p><em>Limite connue de cette forme, à assumer :</em> l'agrégation linéaire est
+<strong>entièrement compensatoire</strong> — une très bonne carte peut masquer
+une très mauvaise note de prix. Les alternatives non compensatoires (moyenne
+géométrique, agrégation multicritère ordinale) sont documentées ; on ne les
+tranchera qu'après la calibration, faute de quoi on empilerait un second choix
+arbitraire sur le premier.</p>
 
 <h2>4. État actuel — Quartier latin, zone témoin</h2>
 

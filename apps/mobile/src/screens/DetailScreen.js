@@ -13,6 +13,8 @@ import {
 import { Feather } from "@expo/vector-icons";
 
 import { fetchRestaurant } from "../api";
+import CartePhotos from "../components/CartePhotos";
+import DetailCalcul from "../components/DetailCalcul";
 import { Button, CuisineVisual, ErrorState, Verdict } from "../components/ui";
 import { radius, spacing, useColors } from "../theme";
 import { distance, hours, verdict } from "../lib/display";
@@ -66,6 +68,16 @@ export default function DetailScreen({ restaurant, onBack, onReserve }) {
   const dist = distance(full.distance_m);
   const raisons = full.scoring?.reasons ?? [];
   const signals = full.signals ?? {};
+
+  // Les URL de carte arrivent en JSON depuis la base : une chaine, pas un
+  // tableau. On tolere les deux, l'API ayant deja change de forme une fois.
+  let photosCarte = [];
+  try {
+    const brut = full.menu_photo_urls;
+    photosCarte = Array.isArray(brut) ? brut : JSON.parse(brut || "[]");
+  } catch {
+    photosCarte = [];
+  }
 
   return (
     <ScrollView contentContainerStyle={s.page}>
@@ -171,6 +183,14 @@ export default function DetailScreen({ restaurant, onBack, onReserve }) {
           )}
         </View>
       )}
+
+      {/* La carte est une piece justificative : elle vient apres l'explication,
+          et repliee. Les images restent chez leur hebergeur (D-021, D-025). */}
+      <CartePhotos urls={photosCarte} motif={full.photos_motif} />
+
+      {/* Vue technique, repliee : elle sert a verifier le calcul et a
+          instruire le memoire, pas a informer le voyageur (D-009). */}
+      <DetailCalcul detail={full.detail_calcul} />
 
       <View style={{ marginTop: spacing.lg }}>
         <Button

@@ -13,6 +13,9 @@ from typing import Optional
 
 from backend import config
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
+from backend.core.filters.criteres import (
+    TRANCHES_PRIX, appliquer as appliquer_filtres, est_ouvert,
+)
 from backend.core.scoring.engine import explain
 from backend.core.scoring.geo_score import haversine, score_geo_user
 from backend.core.scoring.menu_score import score_menu
@@ -67,6 +70,14 @@ def list_restaurants(
     cuisines: Optional[str] = Query(None, description="Types de cuisine (séparés par des virgules)"),
     budget_min: Optional[int] = Query(None, description="Budget minimum"),
     budget_max: Optional[int] = Query(None, description="Budget maximum"),
+    # --- Filtres issus des donnees collectees (D-034) ---
+    # Ils retirent des lignes, ils ne reordonnent rien : le classement reste
+    # celui du Local Signal module par la proximite (D-008).
+    tranche_prix: Optional[str] = Query(
+        None, description=f"Tranche de budget : {', '.join(TRANCHES_PRIX)}"),
+    ouvert: bool = Query(False, description="Uniquement ceux ouverts maintenant"),
+    reservation: bool = Query(False, description="Uniquement ceux qui acceptent les reservations"),
+    avec_carte: bool = Query(False, description="Uniquement ceux dont la carte a ete lue"),
     limit: int = Query(50, description="Nombre maximum de résultats"),
 ):
     """
@@ -97,6 +108,18 @@ def list_restaurants(
             if r.get("price") is None or lo <= r["price"] <= hi
         ]
 
+    # --- Filtres (D-034) ---
+    # Appliques AVANT le calcul de pertinence : inutile de scorer des lignes
+    # qu'on va retirer. Une donnee manquante n'exclut jamais, sauf pour le
+    # filtre qui porte sur la presence meme (`avec_carte`).
+    restaurants = appliquer_filtres(
+        restaurants,
+        tranche_prix=tranche_prix,
+        ouvert_maintenant=ouvert,
+        avec_reservation=reservation,
+        avec_carte=avec_carte,
+    )
+
     # --- Classement : Local Signal modulé par la proximité (D-008) ---
     for r in restaurants:
         r["scoring"] = _build_scoring(r, lat, lng, radius=radius)
@@ -104,6 +127,10 @@ def list_restaurants(
         # Libelle francais de la cuisine : l'interface ne doit jamais avoir a
         # traduire une etiquette OpenStreetMap elle-meme.
         r["cuisine_label"] = cuisine_label(r.get("cuisine"))
+        # Etat d'ouverture, calcule ici car il depend de l'instant de la
+        # requete — donc dynamique au sens de D-008. `None` signifie « horaires
+        # inconnus », et ne doit pas etre affiche comme « ferme ».
+        r["ouvert_maintenant"] = est_ouvert(r.get("opening_hours"))
 
     restaurants.sort(key=lambda r: r["scoring"]["score_final"], reverse=True)
 
@@ -203,8 +230,73 @@ def get_restaurant(
 
     resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
     resto["menu"] = repo.get_latest_menu(restaurant_id)
+    resto["ouvert_maintenant"] = est_ouvert(resto.get("opening_hours"))
+
+    # --- Detail du calcul, pour inspection (D-034) ---
+    #
+    # Ce bloc n'est PAS destine a l'utilisateur final : D-009 impose de ne
+    # montrer aucun score par defaut, et une liste de restaurants n'est pas un
+    # tableau de bord. Il sert a verifier le calcul pendant le developpement et
+    # a instruire le memoire — d'ou son nom explicite.
+    #
+    # Il expose ce qu'aucune explication en langage naturel ne peut rendre :
+    # la contribution chiffree de chaque indicateur, le poids redistribue, et
+    # les observations brutes qui ont produit la note.
+    resto["detail_calcul"] = _detail_calcul(resto)
     repo.log_consultation(restaurant_id, resto["name"], resto.get("local_signal"))
     return resto
+
+
+def _detail_calcul(resto: dict) -> dict:
+    """
+    Decompose le Local Signal indicateur par indicateur.
+
+    Montre, pour chacun : sa valeur, son poids declare, le poids qu'il pese
+    REELLEMENT apres redistribution, et sa contribution en points. La somme des
+    contributions doit egaler le Local Signal — c'est la verification que le
+    lecteur peut faire lui-meme.
+    """
+    signaux = resto.get("signals") or {}
+    if not signaux:
+        return {"disponible": False, "raison": "aucun signal calcule"}
+
+    utilisables = {k: s for k, s in signaux.items() if s.get("value") is not None}
+    poids_total = sum(s["weight"] for s in utilisables.values())
+    poids_declare = sum(s["weight"] for s in signaux.values())
+
+    lignes = []
+    for cle, s in signaux.items():
+        dispo = s.get("value") is not None
+        # Le poids EFFECTIF n'est pas le poids declare : quand un indicateur
+        # manque, le sien est reparti sur les autres (D-012).
+        effectif = (s["weight"] / poids_total) if (dispo and poids_total) else 0.0
+        lignes.append({
+            "indicateur": cle,
+            "disponible": dispo,
+            "valeur": s.get("value"),
+            "poids_declare": s["weight"],
+            "poids_effectif": round(effectif, 4),
+            "contribution": round((s["value"] or 0) * effectif * 100, 2) if dispo else 0.0,
+            "details": s.get("details") or {},
+        })
+
+    manquants = [l["indicateur"] for l in lignes if not l["disponible"]]
+
+    return {
+        "disponible": True,
+        "local_signal": resto.get("local_signal"),
+        "confiance": resto.get("confidence"),
+        "indicateurs": lignes,
+        "poids_declare_total": round(poids_declare, 3),
+        "poids_disponible_total": round(poids_total, 3),
+        "indicateurs_manquants": manquants,
+        "note_methode": (
+            "Le poids d'un indicateur indisponible est redistribue sur les "
+            "autres (D-012) : l'absence reduit la confiance, elle ne penalise "
+            "pas le score. La somme des contributions egale le Local Signal."
+        ),
+        "ponderations_calibrees": False,
+    }
 
 
 @app.get("/api/restaurant/{restaurant_id}/photo")

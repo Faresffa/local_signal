@@ -1038,3 +1038,217 @@ img { display: block; max-width: 100%; }
    Un ordre explicite règle le cas sans toucher à l'animation. */
 .searchbar { position: relative; z-index: 30; }
 .chips { position: relative; z-index: 10; }
+
+/* ==========================================================================
+   Panneau de filtres (D-034)
+   ========================================================================== */
+
+/* Les filtres sont groupés par intention — budget, disponibilité, information,
+   cuisine — plutôt qu'alignés en une seule rangée. Une file indistincte de
+   pastilles oblige à lire chaque libellé pour comprendre ce qu'on filtre ;
+   un intitulé de groupe le dit d'un coup d'œil. */
+.filtres {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.filtres__groupe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.filtres__titre {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 116px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+}
+
+.filtres__reset {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  transition: color var(--motion-fast) var(--motion-ease),
+              background var(--motion-fast) var(--motion-ease);
+}
+.filtres__reset:hover {
+  color: var(--color-text);
+  background: var(--color-surface-sunken);
+}
+
+.filtres__note {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-faint);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-sm);
+}
+
+@media (max-width: 640px) {
+  /* Sur mobile l'intitulé passe au-dessus de ses pastilles : les garder sur
+     la même ligne écraserait les libellés de tranche. */
+  .filtres__groupe { flex-direction: column; align-items: flex-start; }
+  .filtres__titre { min-width: 0; }
+  .filtres__groupe > .chip { flex-shrink: 1; }
+}
+
+/* ==========================================================================
+   Détail du calcul — vue technique (D-034)
+   ========================================================================== */
+
+/* Volontairement sobre et replié : ce panneau n'est pas destiné au voyageur
+   (D-009), il sert à vérifier le calcul et à instruire le mémoire. */
+.calcul,
+.cartephotos {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  overflow: hidden;
+}
+
+.calcul__bascule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  text-align: left;
+}
+.calcul__bascule:hover { color: var(--color-text); }
+
+.calcul__badge {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-faint);
+}
+
+.calcul__corps {
+  padding: 0 var(--spacing-md) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.calcul__entete {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.calcul__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  /* Chiffres alignés en colonne : on compare des contributions, une
+     tabulation proportionnelle rendrait la lecture inutilement pénible. */
+  font-variant-numeric: tabular-nums;
+}
+.calcul__table th,
+.calcul__table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+.calcul__table th {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+}
+.calcul__table .num { text-align: right; }
+.calcul__table tr.is-absent { color: var(--color-text-faint); }
+.calcul__absent { font-size: var(--font-size-xs); font-style: italic; }
+
+.calcul__somme td {
+  font-weight: var(--font-weight-bold);
+  border-bottom: none;
+  color: var(--color-text);
+}
+
+.calcul__obs h4 {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+  margin-bottom: 6px;
+}
+.calcul__obs dl {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: 3px var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+.calcul__obs dl > div { display: contents; }
+.calcul__obs dt { color: var(--color-text-faint); font-family: ui-monospace, monospace; }
+.calcul__obs dd { color: var(--color-text); overflow-wrap: anywhere; }
+
+.calcul__note {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+.calcul__note--alerte {
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-tourist-soft);
+  color: var(--color-text);
+}
+
+/* ==========================================================================
+   Photos de carte (D-034)
+   ========================================================================== */
+
+.cartephotos__corps {
+  padding: 0 var(--spacing-md) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.cartephotos__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.cartephotos__vignette {
+  display: block;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-skeleton);
+  aspect-ratio: 3 / 4;
+  transition: transform var(--motion-fast) var(--motion-spring);
+}
+.cartephotos__vignette:hover { transform: scale(1.02); }
+.cartephotos__vignette img { width: 100%; height: 100%; object-fit: cover; }
+
+.cartephotos__motif,
+.cartephotos__mention {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-faint);
+}

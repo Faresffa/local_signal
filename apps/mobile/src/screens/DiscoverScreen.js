@@ -18,15 +18,10 @@ import { fetchCuisines, fetchRestaurants } from "../api";
 import {
   CardSkeleton, CuisineVisual, EmptyState, ErrorState, Loading, Verdict,
 } from "../components/ui";
+import Filtres from "../components/Filtres";
 import { radius, spacing, useColors } from "../theme";
 import { distance, verdict } from "../lib/display";
-
-const RAYONS = [
-  { value: 400, label: "5 min" },
-  { value: 800, label: "10 min" },
-  { value: 1500, label: "20 min" },
-  { value: 3000, label: "Quartier" },
-];
+import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 
 // Zone d'évaluation, utilisée si la géolocalisation est refusée. On ne bloque
 // jamais l'écran sur un message d'erreur de permission.
@@ -120,8 +115,15 @@ export default function DiscoverScreen({ onOpen }) {
 
   const [position, setPosition] = useState(null);
   const [denied, setDenied] = useState(false);
-  const [radiusM, setRadiusM] = useState(800);
-  const [cuisine, setCuisine] = useState(null);
+  const [radiusM, setRadiusM] = useState(RAYON_DEFAUT);
+
+  // Tous les filtres dans un seul objet : ils partent ensemble a l'API, et un
+  // seul effet suffit a les surveiller. La cuisine en fait partie bien qu'elle
+  // ait ses propres pastilles — c'est le meme critere, pas deux.
+  const [filtres, setFiltres] = useState(FILTRES_VIDES);
+  const cuisine = filtres.cuisine;
+  const setCuisine = (v) => setFiltres((f) => ({ ...f, cuisine: v }));
+
   const [options, setOptions] = useState([]);
 
   const [restaurants, setRestaurants] = useState([]);
@@ -163,12 +165,16 @@ export default function DiscoverScreen({ onOpen }) {
       lat: position.lat,
       lng: position.lng,
       radius: radiusM,
-      cuisines: cuisine ? [cuisine] : undefined,
+      cuisines: filtres.cuisine ? [filtres.cuisine] : undefined,
+      tranchePrix: filtres.tranchePrix,
+      ouvert: filtres.ouvert,
+      reservation: filtres.reservation,
+      avecCarte: filtres.avecCarte,
       limit: 30,
     })
       .then((data) => { setRestaurants(data.restaurants ?? []); setStatus("ready"); })
       .catch((e) => { setError(e.message); setStatus("error"); });
-  }, [position, radiusM, cuisine]);
+  }, [position, radiusM, filtres]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -250,6 +256,8 @@ export default function DiscoverScreen({ onOpen }) {
         </ScrollView>
       )}
 
+      <Filtres valeurs={filtres} onChange={setFiltres} />
+
       {status === "ready" && (
         <Text style={[s.count, { color: colors.textFaint }]}>
           {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""}
@@ -286,7 +294,12 @@ export default function DiscoverScreen({ onOpen }) {
       keyExtractor={(r) => r.id}
       contentContainerStyle={s.list}
       ListHeaderComponent={entete}
-      ListEmptyComponent={<EmptyState onReset={() => { setCuisine(null); setRadiusM(3000); }} />}
+      ListEmptyComponent={
+        // « Aucun resultat » vient souvent d'un filtre, pas du quartier :
+        // ne relacher que la cuisine laissait l'utilisateur devant une liste
+        // vide sans comprendre pourquoi. On efface tout et on elargit.
+        <EmptyState onReset={() => { setFiltres(FILTRES_VIDES); setRadiusM(3000); }} />
+      }
       ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
       renderItem={({ item, index }) => (
         <Carte item={item} onOpen={onOpen} isDark={isDark} index={index} />

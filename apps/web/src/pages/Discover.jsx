@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
+import Filtres from "../components/Filtres";
 import LocationPicker from "../components/LocationPicker";
 import RestaurantCard from "../components/RestaurantCard";
 import {
@@ -18,14 +19,8 @@ import {
   LocationNotice,
   ResultsSkeleton,
 } from "../components/States";
+import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 import { useGeolocation } from "../lib/hooks";
-
-const RAYONS = [
-  { value: 400, label: "5 min à pied" },
-  { value: 800, label: "10 min à pied" },
-  { value: 1500, label: "20 min à pied" },
-  { value: 3000, label: "Tout le quartier" },
-];
 
 export default function Discover({ onOpen }) {
   const { position, denied, relocate } = useGeolocation();
@@ -36,9 +31,13 @@ export default function Discover({ onOpen }) {
   const [lieu, setLieu] = useState(null);
   const origine = lieu ?? position;
 
-  const [radius, setRadius] = useState(800);
-  const [cuisine, setCuisine] = useState(null);
+  const [radius, setRadius] = useState(RAYON_DEFAUT);
   const [cuisineOptions, setCuisineOptions] = useState([]);
+
+  // Tous les filtres dans un seul objet : ils partent ensemble a l'API, et un
+  // seul effet suffit a les surveiller.
+  const [filtres, setFiltres] = useState(FILTRES_VIDES);
+  const cuisine = filtres.cuisine;
 
   const [restaurants, setRestaurants] = useState([]);
   const [status, setStatus] = useState("loading");
@@ -65,7 +64,11 @@ export default function Discover({ onOpen }) {
       lat: origine.lat,
       lng: origine.lng,
       radius,
-      cuisines: cuisine ? [cuisine] : undefined,
+      cuisines: filtres.cuisine ? [filtres.cuisine] : undefined,
+      tranchePrix: filtres.tranchePrix,
+      ouvert: filtres.ouvert,
+      reservation: filtres.reservation,
+      avecCarte: filtres.avecCarte,
       limit: 24,
     })
       .then((data) => {
@@ -81,11 +84,11 @@ export default function Discover({ onOpen }) {
       });
 
     return () => { cancelled = true; };
-  }, [origine, radius, cuisine, reloads]);
+  }, [origine, radius, filtres, reloads]);
 
   const relancer = () => { setStatus("loading"); setReloads((n) => n + 1); };
 
-  const reset = () => { setCuisine(null); setRadius(1500); };
+  const reset = () => { setFiltres(FILTRES_VIDES); setRadius(RAYON_DEFAUT); };
 
   return (
     <>
@@ -116,7 +119,9 @@ export default function Discover({ onOpen }) {
               id="cuisine"
               className="field__control"
               value={cuisine ?? ""}
-              onChange={(e) => setCuisine(e.target.value || null)}
+              onChange={(e) =>
+                setFiltres((f) => ({ ...f, cuisine: e.target.value || null }))
+              }
             >
               <option value="">Toutes</option>
               {cuisineOptions.map((o) => (
@@ -150,33 +155,9 @@ export default function Discover({ onOpen }) {
         {denied && !lieu && <div style={{ marginTop: 12 }}><LocationNotice /></div>}
       </section>
 
-      {/* Filtres rapides, en complément du sélecteur. */}
-      {cuisineOptions.length > 0 && (
-        <div
-          className="chips enter"
-          style={{ "--enter-delay": "380ms" }}
-          role="group"
-          aria-label="Filtres de cuisine"
-        >
-          <button
-            className="chip"
-            aria-pressed={cuisine === null}
-            onClick={() => setCuisine(null)}
-          >
-            Toutes
-          </button>
-          {cuisineOptions.slice(0, 8).map((o) => (
-            <button
-              key={o.value}
-              className="chip"
-              aria-pressed={cuisine === o.value}
-              onClick={() => setCuisine(cuisine === o.value ? null : o.value)}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="enter" style={{ "--enter-delay": "380ms" }}>
+        <Filtres valeurs={filtres} onChange={setFiltres} />
+      </div>
 
       <section>
         <div className="results__head">

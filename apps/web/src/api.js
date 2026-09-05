@@ -30,13 +30,16 @@ async function request(path, options) {
  * défaut, le projet doit fonctionner dans n'importe quelle ville.
  */
 export async function fetchRestaurants({
-  lat, lng, radius = 2000, cuisines, budgetMin, budgetMax, limit = 24,
+  lat, lng, radius = 2000, cuisines, limit = 24,
+  tranchePrix, ouvert, reservation, avecCarte,
 }) {
   const query = new URLSearchParams({ lat, lng, radius, limit });
   if (cuisines?.length) query.set("cuisines", cuisines.join(","));
-  if (budgetMin != null) query.set("budget_min", budgetMin);
-  if (budgetMax != null) query.set("budget_max", budgetMax);
-
+  // Les filtres (D-034) retirent des lignes sans toucher au classement.
+  if (tranchePrix) query.set("tranche_prix", tranchePrix);
+  if (ouvert) query.set("ouvert", "true");
+  if (reservation) query.set("reservation", "true");
+  if (avecCarte) query.set("avec_carte", "true");
   return request(`/api/restaurants?${query}`);
 }
 

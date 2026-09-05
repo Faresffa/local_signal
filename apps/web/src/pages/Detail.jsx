@@ -11,7 +11,9 @@ import {
 } from "@phosphor-icons/react";
 
 import { fetchRestaurant } from "../api";
+import CartePhotos from "../components/CartePhotos";
 import CuisineVisual from "../components/CuisineVisual";
+import DetailCalcul from "../components/DetailCalcul";
 import WhyPanel from "../components/WhyPanel";
 import { CardSkeleton, ErrorState } from "../components/States";
 import { distance, hours, verdict } from "../lib/display";
@@ -42,6 +44,16 @@ export default function Detail({ restaurant, onBack, onReserve }) {
   // On stocke des éléments, pas des types de composants : une balise JSX dont
   // le type est calculé pendant le rendu casse la réconciliation de React.
   const puce = { size: 14, weight: "light", style: FACT_ICON };
+
+  // Les URL de carte arrivent en JSON depuis la base : une chaine, pas un
+  // tableau. On tolere les deux, l'API ayant deja change de forme une fois.
+  let photosCarte = [];
+  try {
+    const brut = full.menu_photo_urls;
+    photosCarte = Array.isArray(brut) ? brut : JSON.parse(brut || "[]");
+  } catch {
+    photosCarte = [];
+  }
 
   const facts = [
     full.address && { icon: <MapPin {...puce} />, label: "Adresse", value: full.address },
@@ -98,6 +110,10 @@ export default function Detail({ restaurant, onBack, onReserve }) {
           )}
 
           <WhyPanel scoring={full} />
+
+          <CartePhotos urls={photosCarte} motif={full.photos_motif} />
+
+          <DetailCalcul detail={full.detail_calcul} />
 
           <button
             className="btn btn--primary btn--lg btn--block"
