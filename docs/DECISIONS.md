@@ -1661,3 +1661,78 @@ On passe de 1 120 appels à 318.
 Le seuil de déduplication (70 %) et les bornes du prix entier (3 à 199) sont
 posés au jugement. Ils devront être vérifiés sur le jeu labellisé, comme toute
 constante du projet (D-006).
+
+---
+
+## D-033 — Les prix viennent du texte des cartes, pas d'une fourchette
+
+**Contexte.**
+L'indicateur prix pèse 0,15 et valait **zéro sur les 468 restaurants** du
+Quartier latin. Deux causes s'additionnaient :
+
+1. OpenStreetMap n'expose aucun prix — mesuré, 0 sur 468 ;
+2. la lecture des cartes **comptait** les prix pour en déduire le nombre de
+   plats, puis **jetait les montants**.
+
+Une troisième voie a été envisagée puis écartée : la fourchette affichée par la
+plateforme cartographique (« $ » à « $$$$ »). Le champ existe dans la réponse du
+collecteur, mais il vaut `None` sur **les 457 fiches** — `range` comme `prices`.
+Il aurait de toute façon posé un problème de résolution : quatre paliers ne
+permettent pas de comparer un restaurant à la médiane de son voisinage, ce que
+l'indicateur exige.
+
+**Décision.**
+Extraire les montants du texte OCR déjà conservé en base (D-032), sans aucun
+appel ni coût.
+
+**Ce qui valide la méthode.** La distribution des nombres relevés sur
+l'ensemble des cartes est celle de prix de plats parisiens, pas celle de
+nombres au hasard :
+
+```
+10 €  132 fois        16 €  162 fois
+12 €  165 fois        18 €  122 fois
+15 €  148 fois        20 €   92 fois
+```
+
+Pic entre 12 et 18, décroissance au-delà de 20, quasi rien sous 10 — entre 1 et
+9 €, au plus 14 occurrences par valeur. Une extraction qui capterait du bruit
+donnerait une distribution plate.
+
+**La médiane, et non la moyenne.** Une carte mêle des desserts à 6 € et des
+plateaux à 90 € ; la moyenne suivrait les extrêmes, la médiane décrit le prix
+d'un plat ordinaire — exactement ce que l'indicateur compare au voisinage.
+
+**Bornes retenues** : 5 € à 199 €. Le plancher écarte boissons et suppléments,
+et la distribution mesurée le justifie. Le plafond écarte années, codes postaux
+et fragments de numéros de téléphone.
+
+**Trois montants au minimum.** En deçà, la médiane ne signifie rien : un seul
+prix relevé peut être celui d'un menu entier comme d'un supplément. Le
+restaurant est alors laissé sans prix, et le moteur redistribue le poids
+(D-012) — ce qui vaut mieux qu'un prix inventé.
+
+**Conséquences.**
+
+| Indicateur | Poids | Avant | Après |
+|---|---|---|---|
+| menu | 0,40 | 338/468 | inchangé |
+| langue | 0,30 | constante | inchangée |
+| **prix** | **0,15** | **0/468** | **278/468** |
+| zone | 0,15 | 468/468 | inchangé |
+
+Le poids réellement actif de la formule passe de **0,55 à 0,70**, et la
+confiance médiane de 0,55 à **0,70**. Médiane du quartier : **15,00 €**.
+
+Le détail complet est conservé dans `restaurants.price_detail` — médiane, min,
+max, amplitude et la liste des montants. Seule la médiane alimente
+l'indicateur ; le reste est gardé parce qu'il pourra en fonder un autre —
+l'amplitude distingue une carte resserrée d'une carte fourre-tout — et parce que
+ce qui est obtenu se garde.
+
+**Ce qui reste ouvert.**
+Un dernier indicateur demeure inerte : **la langue**. Elle mesure la part des
+avis rédigés en langue locale, or aucun texte d'avis n'est en base — seul leur
+nombre l'est. Le lissage bayésien rend donc l'a priori 0,50 pour tous, et 30 %
+de la formule ne départage personne. Y remédier suppose de collecter des textes
+d'avis, ce que D-019 déconseille de conserver durablement.

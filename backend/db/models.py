@@ -169,6 +169,13 @@ def _migrate(cursor) -> None:
             # HORS SCORING, et strictement reserve a la VALIDATION EXTERNE du
             # Local Signal : s'en servir comme entree serait circulaire (D-030).
             "tourist_flag": "INTEGER",
+            # Detail des prix releves sur la carte : mediane, min, max,
+            # amplitude, et la liste complete des montants (D-033).
+            # La colonne `price` ne porte que la mediane, qui alimente
+            # l'indicateur ; le reste est conserve parce qu'il pourra en fonder
+            # un autre — l'amplitude distingue une carte resserree d'une carte
+            # fourre-tout — et parce que ce qui est obtenu se garde.
+            "price_detail": "TEXT",
             # 1 si le collecteur a rendu exactement le nombre de photos demande :
             # le restaurant en avait probablement davantage, et la carte lue est
             # peut-etre incomplete (D-031). Abaisse la confiance, ne bloque rien.

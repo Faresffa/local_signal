@@ -170,7 +170,11 @@ def score_zone(zone: str) -> int:
         r["type"] = r.get("cuisine")   # `price_score` compare à cuisine égale
 
         obs = menus.get(r["id"])
-        if obs and obs.get("readable"):
+        # La requête ne rend QUE des cartes lisibles (`WHERE readable = 1`).
+        # Revérifier la clé dans le JSON était redondant et faux : les
+        # observations produites par la voie OCR ne la portaient pas, et
+        # 318 cartes sur 338 étaient ignorées en silence.
+        if obs:
             r["menu"] = {
                 "cuisines": obs.get("cuisines", []),
                 "dish_count": obs.get("dish_count"),

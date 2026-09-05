@@ -167,6 +167,10 @@ def lire_restaurant(resto: dict, modele: str | None) -> dict:
 
     # Une carte sans plat compté ET sans cuisine reconnue n'est pas une carte.
     lisible = observations["dish_count"] > 0 or bool(observations["cuisines"])
+    # `readable` doit figurer DANS les observations, pas seulement dans la
+    # colonne : le moteur de scoring le relit depuis le JSON, et son absence
+    # faisait silencieusement ignorer la carte.
+    observations["readable"] = lisible
     note = score_menu(observations) if lisible else {"score": None}
 
     with _verrou_base:
