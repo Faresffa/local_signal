@@ -20,6 +20,9 @@ env/
 *.db-journal
 *.sqlite
 *.sqlite3
+# Exports produits par backend/db/export.py : ils se regenerent,
+# ils pesent 10 Mo, et ils n'ont rien a faire dans l'historique.
+local_signal_partage.*
 
 # ---------- Node / JS ----------
 node_modules/
