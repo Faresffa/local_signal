@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Local Signal — note d'équipe</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font: 10.2pt/1.5 "Segoe UI", system-ui, sans-serif;
+    color: #1c1a17; margin: 0;
+  }
+  h1 {
+    font-size: 21pt; letter-spacing: -0.5px; margin: 0 0 2mm;
+    color: #8d0c17;
+  }
+  .sub { font-size: 10pt; color: #6f6961; margin: 0 0 7mm; }
+  h2 {
+    font-size: 12.5pt; margin: 8mm 0 2.5mm; padding-bottom: 1.5mm;
+    border-bottom: 1.5px solid #c1121f; color: #8d0c17;
+    page-break-after: avoid;
+  }
+  h3 { font-size: 10.5pt; margin: 5mm 0 1.5mm; color: #1c1a17; page-break-after: avoid; }
+  p { margin: 0 0 2.5mm; }
+  ul, ol { margin: 0 0 2.5mm; padding-left: 5mm; }
+  li { margin-bottom: 1mm; }
+  code {
+    font-family: Consolas, monospace; font-size: 9pt;
+    background: #f3ece0; padding: 0.3mm 1mm; border-radius: 2px;
+  }
+  pre {
+    font-family: Consolas, monospace; font-size: 9pt; line-height: 1.45;
+    background: #faf6ee; border-left: 3px solid #c1121f;
+    padding: 3mm 4mm; margin: 2.5mm 0; white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+  table {
+    width: 100%; border-collapse: collapse; font-size: 9.3pt;
+    margin: 2.5mm 0; page-break-inside: avoid;
+  }
+  th {
+    text-align: left; background: #f3ece0; padding: 1.6mm 2mm;
+    border-bottom: 1.5px solid #d5c9b6; font-weight: 600;
+  }
+  td { padding: 1.5mm 2mm; border-bottom: 0.5px solid #e8e0d3; vertical-align: top; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .encadre {
+    background: #fdf3e0; border-left: 3px solid #a8760a;
+    padding: 3mm 4mm; margin: 3mm 0; page-break-inside: avoid;
+  }
+  .alerte {
+    background: #fdecec; border-left: 3px solid #c1121f;
+    padding: 3mm 4mm; margin: 3mm 0; page-break-inside: avoid;
+  }
+  .ok { color: #2d6a4f; font-weight: 600; }
+  .ko { color: #c1121f; font-weight: 600; }
+  .attente { color: #a8760a; font-weight: 600; }
+  .page { page-break-before: always; }
+  .pied {
+    margin-top: 8mm; padding-top: 2.5mm; border-top: 0.5px solid #d5c9b6;
+    font-size: 8.5pt; color: #6f6961;
+  }
+  .qr { margin: 2mm 0 4mm; }
+  .qr dt { font-weight: 600; margin-top: 3mm; }
+  .qr dd { margin: 0.8mm 0 0 0; padding-left: 4mm; border-left: 2px solid #e8e0d3; }
+</style>
+</head>
+<body>
+
+<h1>Local Signal</h1>
+<p class="sub">Note de synthèse pour l'équipe — état au 4 septembre 2026</p>
+
+<h2>1. Le projet en une phrase</h2>
+
+<p>Aider un voyageur qui ne connaît pas une ville à trouver un <strong>vrai
+restaurant local</strong> plutôt qu'un attrape-touristes, en calculant un score
+d'authenticité mesurable.</p>
+
+<p><strong>Question de recherche :</strong> peut-on mesurer automatiquement
+l'authenticité locale d'un restaurant <em>sans se reposer sur sa popularité</em> ?</p>
+
+<div class="encadre">
+<strong>La contrainte qui commande tout — le paradoxe de l'invisibilité.</strong>
+Le problème n'est pas le manque de restaurants authentiques, c'est leur manque
+de visibilité. Un restaurant invisible a peu ou pas d'avis. Donc
+<strong>tout critère qui dépend du volume d'avis ou de la notoriété disqualifie
+mécaniquement les restaurants que le projet veut mettre en avant.</strong>
+<br><br>
+Conséquence directe : les <em>étoiles Google ne participent pas au classement</em>.
+Elles sont en base, elles s'affichent, elles ne notent pas.
+</div>
+
+<h2>2. La formule</h2>
+
+<pre>LOCAL SIGNAL  (statique, précalculé, stocké en base)
+  = menu 0,40 + langue 0,30 + prix 0,15 + zone touristique 0,15
+
+CLASSEMENT    (dynamique, calculé à chaque requête)
+  = local_signal × 0,70  +  proximité × 0,30</pre>
+
+<h3>Pourquoi deux étages</h3>
+
+<p>Le <strong>Local Signal</strong> décrit ce qu'<em>est</em> le restaurant : il
+ne dépend pas de qui cherche, il se calcule une fois en lot et se stocke. La
+<strong>proximité</strong> décrit ce qui <em>arrange</em> l'utilisateur ici et
+maintenant.</p>
+
+<p>Deux bénéfices : l'application reste instantanée même avec 50 000
+restaurants, et l'explication rendue à l'utilisateur parle du restaurant, pas de
+sa position.</p>
+
+<h3>Les quatre indicateurs</h3>
+
+<table>
+<tr><th>Indicateur</th><th>Poids</th><th>Ce qu'il mesure</th><th>Pourquoi il résiste au paradoxe</th></tr>
+<tr><td><strong>menu</strong></td><td class="num">0,40</td>
+    <td>cohérence culinaire, nombre de plats, langues, noms conservés en langue d'origine</td>
+    <td>lisible même avec zéro avis — c'est le seul signal d'un restaurant totalement invisible</td></tr>
+<tr><td><strong>langue</strong></td><td class="num">0,30</td>
+    <td>part des avis rédigés en langue locale, <em>lissée</em></td>
+    <td>lissage bayésien : peu d'avis ne pénalise pas, ça réduit la confiance</td></tr>
+<tr><td><strong>prix</strong></td><td class="num">0,15</td>
+    <td>écart à la médiane du voisinage, à cuisine comparable</td>
+    <td>relatif au quartier, pas absolu</td></tr>
+<tr><td><strong>zone touristique</strong></td><td class="num">0,15</td>
+    <td>pression touristique du lieu — <em>pénalité</em></td>
+    <td>propriété du lieu, indépendante de la notoriété du restaurant</td></tr>
+</table>
+
+<h3>Trois règles de calcul à connaître</h3>
+
+<ol>
+<li><strong>Un indicateur indisponible rend <code>None</code>, jamais 0.</strong>
+Le moteur redistribue son poids sur les autres. L'incertitude va dans la
+<em>confiance</em>, pas dans le score. Un restaurant sans carte n'est pas
+« mauvais », il est « moins bien renseigné ».</li>
+<li><strong>Tout indicateur rend une valeur entre 0 et 1.</strong> La
+pondération et la mise à l'échelle sur 100 n'ont lieu qu'à un seul endroit.</li>
+<li><strong>Le modèle observe, il ne juge pas.</strong> On ne demande jamais à
+une IA « ce restaurant est-il authentique ? ». Elle relève des faits ; le score
+est calculé par du code déterministe. C'est ce qui le rend reproductible,
+explicable et calibrable.</li>
+</ol>
+
+<div class="page"></div>
+
+<h2>3. Les deux scores géographiques</h2>
+
+<p>Ils ont été refondus le 2 septembre après mesure sur les données réelles.
+Les deux formules initiales reposaient sur des seuils en mètres choisis à vue,
+et les données ont montré qu'ils ne mordaient nulle part.</p>
+
+<h3>Pression touristique — statique</h3>
+
+<pre>pression(r)   = Σᵢ exp( −dᵢ² / 2σ² )        sur TOUS les sites, σ = 350 m
+score_zone(r) = 1 − rang_percentile( pression(r) )   dans la zone</pre>
+
+<p><strong>Pourquoi ce n'est plus « la distance au monument le plus proche ».</strong>
+À distance comparable (60–70 m), la pression réelle varie de 4,99 à 20,86 selon
+le nombre de monuments alentour — un facteur 4 que l'ancienne formule écrasait.
+Et le seuil de 500 m ne servait à rien : la distance médiane au monument le plus
+proche est de 102 m, le maximum de 273 m. <strong>Aucun</strong> des 468
+restaurants ne l'atteignait.</p>
+
+<p><strong>Pourquoi un rang et non un seuil.</strong> Aucune constante en mètres
+ne survit à un changement de ville. Un rang n'a pas d'unité : il se transporte
+tel quel de Paris à Tokyo. Un test vérifie formellement que <em>multiplier
+toutes les distances par 10 ne change pas le classement</em>.</p>
+
+<p><em>Ce que ce choix coûte, et qu'il faut assumer :</em> le score devient
+relatif à la ville. Il répond à « ce restaurant est-il dans un coin touristique
+<em>de cette ville</em> », pas à « cette ville est-elle touristique ». La
+pression absolue est conservée à côté pour permettre la comparaison entre
+villes.</p>
+
+<h3>Proximité utilisateur — dynamique</h3>
+
+<pre>score_prox(r) = exp( −distance / (rayon demandé × 0,5) )</pre>
+
+<p>L'ancienne version divisait par 5 km fixes. Sur une recherche à 400 m, toutes
+les proximités tombaient entre 0,921 et 0,980 : une dispersion de 0,06,
+<strong>le terme ne départageait plus rien</strong>. Il est désormais normalisé
+sur le rayon réellement demandé.</p>
+
+<div class="encadre">
+<strong>Nuance de vocabulaire, à connaître si on vous interroge.</strong> Un
+<em>poids</em> porte sur la valeur ; une <em>part de variance</em> dépend en plus
+de la dispersion du terme. Un poids de 0,30 ne promet pas 30 % de la variation
+du classement. Le défaut corrigé n'était pas « le poids ment » mais « le terme
+ne varie plus ».
+</div>
+
+<h2>4. État actuel — Quartier latin, zone témoin</h2>
+
+<table>
+<tr><th>Indicateur</th><th>Poids</th><th class="num">Couverture</th><th>État</th></tr>
+<tr><td>menu</td><td class="num">0,40</td><td class="num">338 / 468 — 72 %</td><td class="ok">actif</td></tr>
+<tr><td>langue</td><td class="num">0,30</td><td class="num">468 / 468</td><td class="ko">constante — sans effet</td></tr>
+<tr><td>prix</td><td class="num">0,15</td><td class="num">278 / 468 — 59 %</td><td class="ok">actif</td></tr>
+<tr><td>zone touristique</td><td class="num">0,15</td><td class="num">468 / 468</td><td class="ok">actif</td></tr>
+</table>
+
+<p><strong>70 % du poids de la formule est réellement actif.</strong> Le Local
+Signal s'étale de 33,5 à 81,4 ; la confiance médiane est de 0,70.</p>
+
+<div class="alerte">
+<strong>L'indicateur langue est inerte, et il faut savoir l'expliquer.</strong>
+Il mesure la part des avis rédigés en langue locale. Or nous avons le
+<em>nombre</em> d'avis, jamais leur <em>texte</em> — et on ne peut pas déduire
+une langue d'un décompte. Le lissage bayésien rend donc l'a priori neutre
+(0,50) pour tout le monde. Ce n'est pas un défaut de la formule : c'est un
+manque de données. 30 % du poids ne départage personne aujourd'hui.
+</div>
+
+<h2>5. La base</h2>
+
+<table>
+<tr><th>Contenu</th><th class="num">Volume</th><th>Source</th></tr>
+<tr><td>Restaurants, Paris entier</td><td class="num">10 218</td><td>OpenStreetMap</td></tr>
+<tr><td>Restaurants, Quartier latin (zone témoin)</td><td class="num">468</td><td>OpenStreetMap</td></tr>
+<tr><td>Sites touristiques</td><td class="num">677</td><td>OpenStreetMap</td></tr>
+<tr><td>Cartes lues et structurées</td><td class="num">364</td><td>photos + sites web</td></tr>
+<tr><td>Labels humains (vérité terrain)</td><td class="num ko">0</td><td>à produire</td></tr>
+</table>
+
+<p>SQLite en développement, PostgreSQL + PostGIS en cible. <strong>Aucune image
+n'est conservée</strong> : les photos de cartes sont analysées puis détruites,
+seules les observations dérivées et le texte relevé entrent en base.</p>
+
+<div class="page"></div>
+
+<h2>6. Comment les cartes ont été obtenues</h2>
+
+<p>Quatre voies ont été essayées. Les rendements sont mesurés, pas estimés.</p>
+
+<table>
+<tr><th>Voie</th><th class="num">Rendement</th><th>Verdict</th></tr>
+<tr><td>Tag OpenStreetMap <code>website:menu</code></td><td class="num">0 / 468</td><td>vide à l'échelle du quartier</td></tr>
+<tr><td>Balisage <code>schema.org hasMenu</code></td><td class="num">1 / 18</td><td>les petits restaurants ne balisent pas</td></tr>
+<tr><td>Sites web des restaurants</td><td class="num">27 / 153</td><td>17,6 % — chaque site est construit autrement</td></tr>
+<tr><td>API officielle de la plateforme</td><td class="num">—</td><td>aucun champ menu, photos sans catégorie</td></tr>
+<tr><td><strong>Photos de carte via collecteur tiers</strong></td><td class="num">334 / 468</td><td class="ok">71 % — voie retenue</td></tr>
+</table>
+
+<p>La lecture se fait <strong>entièrement en local</strong> : OCR hors ligne,
+puis un modèle de langue exécuté sur la machine. Ni quota ni facture. Les 312
+cartes ont été lues en 37 minutes.</p>
+
+<p><strong>Quatre des six observations ne passent par aucun modèle</strong> — le
+nombre de plats est compté par expression régulière, donc reproductible à
+l'identique d'une lecture à l'autre. Seules la cuisine et le ratio vernaculaire
+demandent une compréhension du sens.</p>
+
+<h2>7. Ce qu'il faut répondre si on vous interroge</h2>
+
+<dl class="qr">
+
+<dt>D'où viennent les données de cartes ?</dt>
+<dd>Les restaurants et les sites touristiques viennent d'OpenStreetMap, en accès
+libre. Les cartes proviennent de photos publiées sur une plateforme
+cartographique, obtenues via un fournisseur commercial d'accès aux données.
+<strong>Aucune image n'est conservée</strong> : elles sont analysées puis
+détruites, seules les observations dérivées entrent en base. L'usage est
+strictement académique et non commercial, validé par le directeur de mémoire, et
+le cheminement complet est documenté dans le journal de décisions du projet.</dd>
+
+<dt>Est-ce légal ?</dt>
+<dd>C'est une zone grise assumée et documentée, pas une certitude. Le
+fournisseur obtient ces données par moissonnage, ce que les conditions
+d'utilisation de la plateforme interdisent — ces conditions lient le
+fournisseur, pas nous. Le droit européen prévoit une exception de fouille de
+textes et de données pour la recherche ; son application à un mémoire d'école
+n'est pas tranchée. La position du projet est la transparence : source
+documentée, images non conservées, finalité non commerciale. <strong>Le jour où
+le projet devient commercial, cet argument tombe</strong> — c'est pourquoi tout
+le code concerné est isolé dans un module supprimable sans casser le reste.</dd>
+
+<dt>Pourquoi ne pas utiliser les notes et les avis, qui sont plus simples ?</dt>
+<dd>Parce que ce serait refaire Google. Un restaurant de quartier a peu d'avis :
+tout critère fondé sur leur volume le condamne mécaniquement. C'est la thèse même
+du mémoire. Les notes sont stockées et affichées, elles ne notent pas.</dd>
+
+<dt>D'où viennent les pondérations 0,40 / 0,30 / 0,15 / 0,15 ?</dt>
+<dd><strong>Elles sont provisoires, et il faut le dire.</strong> Elles n'ont pas
+encore été dérivées d'un jeu labellisé. Ne jamais les présenter comme justifiées.
+C'est précisément le chantier qui reste.</dd>
+
+<dt>Comment savez-vous que le score fonctionne ?</dt>
+<dd>Nous ne le savons pas encore. Une validation externe a été tentée en
+comparant le score aux restaurants que la plateforme marque « touristiques » :
+le résultat est <em>négatif</em>, mais confondu — les 21 restaurants du groupe
+témoin ne sont pas des adresses locales, ce sont des établissements peu connus
+sur lesquels la plateforme manque d'information. <strong>Seule une vérité
+terrain humaine peut trancher.</strong></dd>
+
+<dt>Quel est le biais connu du jeu de données ?</dt>
+<dd>Il est mesuré : les restaurants marqués touristiques ont une carte
+disponible dans <strong>91 %</strong> des cas, contre <strong>67 %</strong> pour
+les autres. L'indicateur qui pèse le plus est donc mieux renseigné chez ceux que
+le projet veut déclasser. C'est le paradoxe de l'invisibilité qui revient par la
+porte des données, et il doit figurer dans le mémoire.</dd>
+
+</dl>
+
+<h2>8. Ce qui reste à faire</h2>
+
+<table>
+<tr><th>Chantier</th><th>Nature</th><th>Bloque quoi</th></tr>
+<tr><td><strong>Vérité terrain — 150 à 300 restaurants labellisés</strong></td>
+    <td>humain, long</td><td class="ko">tout le reste</td></tr>
+<tr><td>Calibrer les pondérations sur ces labels</td><td>calcul</td><td>la défense des chiffres</td></tr>
+<tr><td>Évaluation <code>precision@10</code> contre le top 10 par note</td><td>calcul</td><td>le résultat principal du mémoire</td></tr>
+<tr><td>Débloquer l'indicateur langue</td><td>collecte</td><td>30 % du poids</td></tr>
+<tr><td>Scan en vitrine dans l'application</td><td>code</td><td>les 112 restaurants sans aucune carte</td></tr>
+</table>
+
+<div class="alerte">
+<strong>La vérité terrain est la priorité absolue.</strong> Sans elle, aucune
+pondération n'est défendable et aucun résultat n'est démontrable. C'est du temps
+humain, pas du temps machine : elle doit démarrer en parallèle du reste, pas
+après.
+</div>
+
+<p class="pied">
+Local Signal — projet de mémoire HETIC, destiné à être poursuivi comme produit.<br>
+Toutes les décisions structurantes sont consignées dans <code>docs/DECISIONS.md</code>
+au format contexte → problème → décision → conséquences (33 entrées).<br>
+Les chiffres de cette note sont mesurés sur les données réelles du Quartier latin
+au 4 septembre 2026. Les pondérations restent provisoires.
+</p>
+
+</body>
+</html>
