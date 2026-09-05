@@ -1736,3 +1736,98 @@ avis rédigés en langue locale, or aucun texte d'avis n'est en base — seul le
 nombre l'est. Le lissage bayésien rend donc l'a priori 0,50 pour tous, et 30 %
 de la formule ne départage personne. Y remédier suppose de collecter des textes
 d'avis, ce que D-019 déconseille de conserver durablement.
+
+---
+
+## D-034 — Filtrer sans refaire le tri par popularité
+
+**Date :** 5 septembre 2026
+
+### Contexte
+
+Les deux interfaces ne proposaient que deux filtres : un rayon et une cuisine.
+Ils dataient d'une époque où la base ne portait rien d'autre. Depuis, la collecte
+Outscraper (D-029) et la lecture locale des cartes (D-032, D-033) ont ajouté des
+prix (278 restaurants), des horaires, des liens de réservation, des notes, des
+nombres d'avis et 334 cartes lues. L'interface n'exploitait rien de tout ça.
+
+### Problème
+
+Trois questions distinctes, qu'il fallait trancher ensemble.
+
+**1. Quels champs peuvent filtrer ?** La note et le nombre d'avis sont désormais
+en base et seraient les filtres les plus évidents à ajouter. C'est exactement ce
+qu'il ne faut pas faire : laisser l'utilisateur écarter « les restaurants sous
+4 étoiles » lui fait refaire à la main le tri par popularité que le projet
+existe pour éviter (D-001, D-007). Le restaurant de quartier, avec ses trois
+avis, disparaîtrait de sa liste — et c'est précisément celui qu'on veut lui
+montrer.
+
+**2. Que faire d'une donnée manquante ?** Un filtre de budget doit-il écarter un
+restaurant dont le prix est inconnu ? Si oui, les restaurants les moins
+documentés disparaissent dès qu'un filtre est actif — soit exactement la
+population que le projet veut faire remonter. C'est le paradoxe de
+l'invisibilité qui ressurgit dans l'interface après avoir été traité dans le
+scoring.
+
+**3. Que montre-t-on du calcul ?** D-009 impose de ne montrer aucun score par
+défaut. Mais pendant le développement et pour le mémoire, il faut pouvoir
+vérifier qu'un score est bien la somme de ses parties, et voir ce que le modèle
+a réellement observé.
+
+### Décision
+
+**Les filtres retirent des lignes, ils n'en réordonnent aucune.** Le classement
+reste celui du Local Signal modulé par la proximité (D-008). Un filtre qui
+influencerait la note ferait entrer par la fenêtre des critères que le scoring a
+délibérément écartés.
+
+**Filtres proposés :** tranche de budget, ouvert maintenant, réservation
+possible, carte analysée. **Ni note ni nombre d'avis**, bien qu'ils soient
+disponibles — ils s'affichent sur la fiche, ils ne filtrent pas.
+
+**Une donnée manquante n'exclut jamais.** Un restaurant sans prix connu reste
+visible sous un filtre de budget ; un restaurant sans horaires reste visible
+sous « ouvert maintenant ». Même règle que D-012 côté scoring : l'absence
+d'information ne se transforme pas en jugement défavorable.
+
+L'unique exception est le filtre qui porte **sur la présence même** : « carte
+analysée » exclut évidemment ceux dont on n'a pas la carte. C'est le seul cas où
+l'absence exclut légitimement, parce que c'est ce que le filtre demande.
+
+**Le lecteur d'horaires accepte deux formats.** OpenStreetMap écrit
+`Mo-Fr 12:00-14:30,19:00-22:00` ; les fiches importées portent un objet JSON aux
+clés françaises. L'import étant non destructif (D-029), il n'a pas uniformisé
+l'existant : les deux formes cohabitent en base et le lecteur doit accepter les
+deux. `est_ouvert` retourne **`True`, `False` ou `None`** — `None` signifiant
+« on ne sait pas » et ne devant jamais être traité comme `False`.
+
+**Le détail du calcul est visible, mais replié et étiqueté « vue technique ».**
+Il montre, pour chaque indicateur : la valeur, le poids déclaré, le **poids
+effectif après redistribution** (D-012), la contribution en points, et les
+observations brutes. Il affiche aussi un **contrôle d'intégrité** : la somme des
+contributions doit retomber sur le Local Signal, sinon l'écart est signalé.
+
+**Les photos de carte sont montrées, jamais stockées.** Elles sont servies
+depuis leur hébergeur d'origine et repliées par défaut. La base ne conserve que
+des URL et le texte relevé (D-021, D-025) : on analyse puis on jette, on ne
+redistribue pas l'œuvre.
+
+### Conséquences
+
+- `backend/core/filters/criteres.py` centralise les tranches de budget et le
+  lecteur d'horaires. Les bornes y sont **la référence** : celles affichées par
+  les fronts doivent leur rester identiques, sinon le libellé et le filtrage
+  décriraient deux choses différentes.
+- Les tranches (< 12 / 12–18 / 18–25 / > 25 €) sont calées sur la distribution
+  du Quartier latin — médiane 15 €. **À recalibrer si la zone change** :
+  « abordable » n'a pas la même borne à Paris et ailleurs.
+- 166 restaurants dont les horaires étaient en JSON sortent de l'état « horaires
+  inconnus » et deviennent filtrables.
+- Le panneau de détail rend visible ce qui ne l'était pas : que la langue vaut
+  0,50 partout faute de textes d'avis, et que le prix manque encore sur la
+  majorité des fiches. C'est un outil de diagnostic autant que d'explication.
+- La vue technique devra être **retirée ou verrouillée** avant toute mise entre
+  les mains d'utilisateurs réels : D-009 n'est pas suspendu, il est mis de côté
+  le temps du développement et du mémoire.
+
