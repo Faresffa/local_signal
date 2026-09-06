@@ -9,6 +9,10 @@ COPY . .
 # Installe les dépendances et build
 WORKDIR /app/apps/web
 RUN npm install
+
+# Injectée par Railway (service variable du même nom) — Vite l'inline dans le
+# bundle au build, elle n'existe plus à l'exécution (VITE_* n'est jamais lu au runtime).
+ARG VITE_API_BASE
 RUN npm run build
 
 # Runtime stage

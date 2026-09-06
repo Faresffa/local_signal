@@ -198,6 +198,10 @@ CARD_INFO_BG = "#fffbf3"
 # Chemin absolu : la base ne dépend plus du répertoire d'où on lance la commande.
 DB_PATH = str(ROOT_DIR / "local_signal.db")
 
+# Si définie (Railway/Supabase), bascule tout le module backend.db sur Postgres.
+# Vide en local par défaut : les contributeurs gardent SQLite sans rien configurer.
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
+
 # =============================================================================
 # Assets (images de démonstration)
 # =============================================================================
