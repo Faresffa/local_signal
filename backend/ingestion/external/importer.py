@@ -25,9 +25,12 @@
 
 import argparse
 import csv
+import difflib
 import json
+import re
 import sqlite3
 import sys
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
@@ -40,6 +43,164 @@ from backend.ingestion.external.selection_photos import selectionner
 # 150 m : assez large pour absorber l'imprécision d'un géocodage, assez étroit
 # pour ne pas confondre deux établissements d'une même rue.
 RAYON_APPARIEMENT_M = 150
+
+# APPARIEMENT PAR NOM ET DISTANCE, UN À UN (D-036).
+#
+# L'appariement ne regardait que les coordonnées : la fiche allait au
+# restaurant le plus proche, quel que soit son nom. Dans le Quartier latin, où
+# les établissements se touchent, la mesure a montré que 56 fiches sur 409
+# portaient un nom différent de celui du restaurant retenu — « Au Vieux
+# Cèdre » atterrissait sur « L'île de Crête », à 11 m. Et 33 restaurants
+# recevaient PLUSIEURS fiches, chacune écrasant la précédente.
+#
+# Conséquence, la vraie : des cartes, des prix et des photos étaient attribués
+# au voisin. Ce n'est pas un trou de couverture, c'est une donnée fausse — et
+# elle entrait dans le calcul du score.
+#
+# La règle est désormais : on note chaque paire possible sur le nom ET la
+# distance, on attribue par score décroissant, et chaque fiche comme chaque
+# restaurant ne sert qu'une fois. Une paire trop faible est REJETÉE plutôt
+# qu'attribuée au hasard : mieux vaut un restaurant sans données qu'un
+# restaurant avec celles d'un autre.
+
+# En dessous, on refuse d'apparier sur le seul nom.
+#
+# 0.50 n'est pas un chiffre rond choisi a vue : il est place dans un ecart
+# mesure sur les paires reelles du Quartier latin. Les paires VRAIES tombent a
+# 0.562 (« Balzar | Brasserie | Paris » / « Brasserie Balzar ») et au-dessus ;
+# les paires FAUSSES a 0.370 (« Atelier Carnem » / « Little Napoli ») et en
+# dessous. Le trou entre les deux est franc, et le seuil se pose dedans.
+#
+# Le seuil precedent, 0.35, laissait passer « Au Vieux Cedre » / « L'Epoque »
+# a 0.353 — deux etablissements sans rapport.
+#
+# A recalibrer si la zone change : la ressemblance des noms depend de la
+# langue et des conventions d'enseigne.
+SIMILARITE_MINIMALE = 0.50
+
+# Sous cette distance, deux noms sans ressemblance peuvent tout de même
+# désigner le même lieu : translittération (« 有面儿 Miaou Mian » contre
+# « Bian Bian Nouilles »), enseigne commerciale contre raison sociale. À 5 m
+# près, il n'y a physiquement pas deux restaurants.
+DISTANCE_CERTAINE_M = 12
+
+# Au-dessus de ce seuil, on considere que deux noms designent le meme
+# etablissement. Sert a detecter qu'une fiche a un homonyme AILLEURS dans la
+# zone : dans ce cas le rattrapage par proximite est interdit — voir
+# `_apparier`.
+SIMILARITE_FRANCHE = 0.70
+
+_ARTICLES = re.compile(
+    r"\b(le|la|les|l|du|de|des|d|au|aux|chez|the|restaurant|paris)\b"
+)
+
+
+def _nom_comparable(nom: str) -> str:
+    """
+    Forme normalisée d'un nom d'établissement.
+
+    Sans accent, sans ponctuation, sans article ni mot passe-partout : c'est ce
+    qui permet de rapprocher « Brasserie Balzar » de « Balzar | Brasserie |
+    Paris », qui désignent le même lieu.
+    """
+    s = unicodedata.normalize("NFKD", (nom or "").lower())
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    s = _ARTICLES.sub(" ", s)
+    return re.sub(r"[^a-z0-9]+", " ", s).strip()
+
+
+def _similarite(a: str, b: str) -> float:
+    """
+    Ressemblance de deux noms, entre 0 et 1.
+
+    Un nom entièrement contenu dans l'autre vaut 1 : « Pizza Roma » et « Pizza
+    Roma Panthéon » sont le même restaurant, et une simple distance d'édition
+    les séparerait à tort.
+    """
+    x, y = _nom_comparable(a), _nom_comparable(b)
+    if not x or not y:
+        return 0.0
+    if x == y or x in y or y in x:
+        return 1.0
+    return difflib.SequenceMatcher(None, x, y).ratio()
+
+
+def _score_paire(similarite: float, distance: float) -> float:
+    """
+    Note d'une paire (fiche, restaurant connu).
+
+    Le nom domine — c'est lui qui identifie l'établissement — et la distance
+    départage : à noms également plausibles, le plus proche l'emporte. Le terme
+    de distance reste borné à 0,25 pour qu'il ne puisse JAMAIS compenser un nom
+    qui ne correspond pas, ce qui était exactement le défaut d'origine.
+    """
+    proximite = max(0.0, 1.0 - distance / RAYON_APPARIEMENT_M)
+    return similarite + 0.25 * proximite
+
+
+def _apparier(lignes_positionnees: list, connus: list) -> dict:
+    """
+    Attribue au plus une fiche par restaurant, et réciproquement.
+
+    Args:
+        lignes_positionnees: [(index, lat, lng, nom), …]
+        connus: [{"id", "name", "lat", "lng"}, …]
+
+    Returns:
+        {index de la ligne: (restaurant connu, distance en metres)} pour les
+        seules paires retenues. La distance est rendue avec le restaurant
+        parce que l'affichage a blanc en a besoin, et la recalculer ailleurs
+        risquerait de diverger de celle qui a decide de l'appariement.
+    """
+    # Deux passes. La premiere n'attribue que sur la FOI DU NOM ; la seconde
+    # ne sert qu'a rattraper ce qui reste, et uniquement a distance certaine.
+    #
+    # L'ordre compte. En une seule passe, une fiche dont le nom ne correspond a
+    # rien pouvait rafler un restaurant proche avant qu'une fiche mieux nommee
+    # ne se presente : « Au Vieux Cedre » atterrissait sur « L'Epoque » parce
+    # qu'elle en etait a 8 m. Reserver le rattrapage aux laisses-pour-compte
+    # supprime cette concurrence.
+    nommees, proches = [], []
+    # Fiches qui portent le nom d'un restaurant connu SANS EGARD A LA DISTANCE.
+    # Une telle fiche ne doit jamais etre rattrapee par proximite : elle nomme
+    # un etablissement que l'on connait, mais pas la ou on le croit. « Au Vieux
+    # Cedre » en est le cas type — son homonyme en base est a 751 m, hors
+    # rayon, et la fiche se serait posee sur « L'Epoque », a 8 m. Entre une
+    # donnee manquante et la donnee d'un autre restaurant, on choisit le trou.
+    homonyme_ailleurs = set()
+    for index, _lat, _lng, nom in lignes_positionnees:
+        if any(_similarite(nom, r["name"]) >= SIMILARITE_FRANCHE for r in connus):
+            homonyme_ailleurs.add(index)
+
+    for index, lat, lng, nom in lignes_positionnees:
+        for r in connus:
+            d = haversine(lat, lng, r["lat"], r["lng"])
+            if d > RAYON_APPARIEMENT_M:
+                continue
+            sim = _similarite(nom, r["name"])
+            if sim >= SIMILARITE_MINIMALE:
+                nommees.append((_score_paire(sim, d), index, r, d))
+            elif d <= DISTANCE_CERTAINE_M and index not in homonyme_ailleurs:
+                # Translitteration, enseigne contre raison sociale : le nom ne
+                # dit rien, la position ne laisse pas de place au doute. Mais
+                # ce n'est bon qu'a defaut de mieux, et jamais pour une fiche
+                # qui a deja un homonyme franc dans la zone.
+                proches.append((_score_paire(sim, d), index, r, d))
+
+    retenues = {}
+    pris = set()
+
+    for lot in (nommees, proches):
+        # Meilleures paires d'abord. `index` departage les ex aequo pour que
+        # deux executions sur le meme fichier donnent le meme resultat.
+        lot.sort(key=lambda p: (-p[0], p[1]))
+        for _score, index, r, d in lot:
+            if index in retenues or r["id"] in pris:
+                continue
+            retenues[index] = (r, d)
+            pris.add(r["id"])
+
+    return retenues
 
 # Synonymes tolérés pour chaque champ. Les collecteurs ne nomment pas leurs
 # colonnes de la même façon ; plutôt que d'imposer un format, on reconnaît les
@@ -277,6 +438,50 @@ def _lire(chemin: Path) -> list[dict]:
     return list(csv.DictReader(texte.splitlines()))
 
 
+# Colonnes alimentees UNIQUEMENT par l'enrichissement externe. Elles peuvent
+# etre effacees sans perte : leur source est le fichier brut, conserve sur
+# disque, et un reimport les reconstruit a l'identique.
+#
+# `price` et `price_detail` en font partie bien qu'ils soient calcules, et non
+# importes : ils sont extraits du texte des cartes (D-033), donc lies aux
+# photos. Si une photo change de restaurant, le prix qui en decoule doit
+# suivre — le laisser en place attribuerait au restaurant un prix tire de la
+# carte d'un autre.
+COLONNES_ENRICHISSEMENT = (
+    "reservation_url", "rating", "review_count", "menu_photo_urls",
+    "external_source", "external_at", "price_range", "photos_count",
+    "tourist_flag", "photos_saturees", "photos_motif", "photo_url",
+    "price", "price_detail", "google_place_id",
+)
+
+
+def reinitialiser(conn: sqlite3.Connection, zone: str = None) -> int:
+    """
+    Efface l'enrichissement externe, pour permettre un reimport propre.
+
+    POURQUOI C'EST NECESSAIRE, ET PAS SEULEMENT PRUDENT. L'import est non
+    destructif : il ecrit `coalesce(?, colonne)` pour qu'un fichier partiel
+    n'efface pas ce qu'un import precedent avait pose (D-029). Cette garantie
+    se retourne contre nous quand la donnee EN PLACE est fausse : une valeur
+    mal attribuee survivrait au reimport qui vient justement la corriger.
+
+    Ne touche a AUCUN fait OpenStreetMap : nom, position, cuisine, horaires et
+    site web restent intacts. Seule la couche d'enrichissement est retiree.
+
+    Returns:
+        Nombre de lignes remises a zero.
+    """
+    colonnes = ", ".join(f"{c} = NULL" for c in COLONNES_ENRICHISSEMENT)
+    sql = f"UPDATE restaurants SET {colonnes}"
+    params = []
+    if zone:
+        sql += " WHERE zone = ?"
+        params.append(zone)
+    curseur = conn.execute(sql, params)
+    conn.commit()
+    return curseur.rowcount
+
+
 def importer(
     conn: sqlite3.Connection,
     chemin: Path,
@@ -304,29 +509,38 @@ def importer(
     print(f"[Import] {len(lignes)} enregistrements lus depuis {chemin.name}")
     print(f"[Import] {len(connus)} restaurants connus" + (f" dans '{zone}'" if zone else ""))
 
-    apparies = rejetes = sans_position = 0
+    apparies = sans_position = 0
+    rejetes = 0
     avec_photos = avec_menu = 0
     maintenant = datetime.now().isoformat(timespec="seconds")
     curseur = conn.cursor()
 
-    for ligne in lignes:
+    # --- Appariement, en deux temps (D-036) ---
+    #
+    # On ne decide plus ligne par ligne. Toutes les paires plausibles sont
+    # notees d'abord, puis attribuees par score decroissant, chaque fiche et
+    # chaque restaurant ne servant qu'une fois. Decider ligne par ligne
+    # laissait la premiere fiche venue prendre la place d'une meilleure, et
+    # permettait a deux fiches d'ecraser le meme restaurant.
+    positionnees = []
+    for index, ligne in enumerate(lignes):
         try:
             lat = float(_valeur(ligne, "lat"))
             lng = float(_valeur(ligne, "lng"))
         except (TypeError, ValueError):
             sans_position += 1
             continue
+        positionnees.append((index, lat, lng, _valeur(ligne, "name")))
 
-        # Le plus proche l'emporte, sous reserve du rayon.
-        meilleur, distance = None, float("inf")
-        for r in connus:
-            d = haversine(lat, lng, r["lat"], r["lng"])
-            if d < distance:
-                meilleur, distance = r, d
+    appariements = _apparier(positionnees, connus)
+    rejetes = len(positionnees) - len(appariements)
 
-        if meilleur is None or distance > RAYON_APPARIEMENT_M:
-            rejetes += 1
+    for index, _lat, _lng, _nom in positionnees:
+        retenue = appariements.get(index)
+        if retenue is None:
             continue
+        meilleur, distance = retenue
+        ligne = lignes[index]
 
         brut_photos = _valeur(ligne, "menu_photo_urls")
         objets = _objets_photos(brut_photos)
@@ -437,6 +651,9 @@ def main():
     parser.add_argument("--source", default=None, help="nom du collecteur, pour l'audit")
     parser.add_argument("--dry-run", action="store_true",
                         help="montre ce qui serait importe sans rien ecrire")
+    parser.add_argument("--reinitialiser", action="store_true",
+                        help="efface l'enrichissement externe avant d'importer "
+                             "(necessaire apres une correction d'appariement)")
     args = parser.parse_args()
 
     chemin = Path(args.fichier)
@@ -446,6 +663,10 @@ def main():
 
     conn = sqlite3.connect(config.DB_PATH)
     try:
+        if args.reinitialiser and not args.dry_run:
+            n = reinitialiser(conn, args.zone)
+            cible = f"'{args.zone}'" if args.zone else "toute la base"
+            print(f"[Import] enrichissement efface sur {n} lignes de {cible}")
         res = importer(conn, chemin, zone=args.zone, source=args.source,
                        a_blanc=args.dry_run)
     finally:
