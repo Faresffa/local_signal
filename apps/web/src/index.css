@@ -1040,73 +1040,278 @@ img { display: block; max-width: 100%; }
 .chips { position: relative; z-index: 10; }
 
 /* ==========================================================================
-   Panneau de filtres (D-034)
+   Barre de filtres (D-035)
    ========================================================================== */
 
-/* Les filtres sont groupés par intention — budget, disponibilité, information,
-   cuisine — plutôt qu'alignés en une seule rangée. Une file indistincte de
-   pastilles oblige à lire chaque libellé pour comprendre ce qu'on filtre ;
-   un intitulé de groupe le dit d'un coup d'œil. */
-.filtres {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-}
+/* Une seule ligne, qui défile horizontalement plutôt que de passer à la ligne :
+   un bloc de filtres qui grandit repousse les résultats hors de l'écran, et on
+   filtre alors sans voir ce qu'on filtre. */
+.fbar { margin: var(--spacing-md) 0 var(--spacing-lg); }
 
-.filtres__groupe {
+.fbar__ligne {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-block: 4px;
+  scrollbar-width: none;
 }
+.fbar__ligne::-webkit-scrollbar { display: none; }
 
-.filtres__titre {
+/* `position: relative` porte les menus déroulants ; `static` casserait leur
+   ancrage. */
+.fbar__enveloppe { position: relative; flex-shrink: 0; }
+
+.fbar__pastille,
+.fbar__tous {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-width: 116px;
-  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+  padding: 9px 15px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition: background var(--motion-fast) var(--motion-ease),
+              border-color var(--motion-fast) var(--motion-ease),
+              color var(--motion-fast) var(--motion-ease),
+              box-shadow var(--motion-fast) var(--motion-ease);
+}
+.fbar__pastille:hover,
+.fbar__tous:hover {
+  border-color: var(--color-text-faint);
+  color: var(--color-text);
+}
+
+/* Un filtre actif se voit sans avoir à lire : contour et texte de marque, fond
+   teinté. Pas le remplissage plein des pastilles de résultat — la barre en
+   compterait trop et deviendrait un mur de couleur. */
+.fbar__pastille[data-actif="true"] {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+  background: var(--color-brand-soft);
+}
+
+/* Le bouton d'accès à tout le reste : rempli, c'est l'ancre de la barre. */
+.fbar__tous {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-background);
+  font-weight: var(--font-weight-bold);
+}
+.fbar__tous:hover {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.fbar__compteur {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+.fbar__tous:hover .fbar__compteur {
+  background: var(--color-on-brand);
+  color: var(--color-brand);
+}
+
+.fbar__caret { opacity: 0.55; }
+
+/* --- Menus déroulants --- */
+
+.fbar__menu,
+.fbar__panneau {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  z-index: 40;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+  animation: fbar-apparait var(--motion-fast) var(--motion-ease);
+}
+.fbar__menu { width: var(--menu-largeur, 260px); padding: 6px; }
+.fbar__panneau { width: 340px; padding: var(--spacing-md); }
+
+@keyframes fbar-apparait {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fbar__menu, .fbar__panneau { animation: none; }
+}
+
+.fbar__liste { display: flex; flex-direction: column; }
+.fbar__liste--haute { max-height: 260px; overflow-y: auto; }
+
+.fbar__option {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  transition: background var(--motion-fast) var(--motion-ease);
+}
+.fbar__option:hover { background: var(--color-surface-sunken); }
+.fbar__option[aria-pressed="true"] {
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-weight: var(--font-weight-medium);
+}
+.fbar__option--effacer {
+  border-top: 1px solid var(--color-border);
+  margin-top: 4px;
+  color: var(--color-text-muted);
+}
+
+.fbar__recherche {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  margin-bottom: 4px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-faint);
+}
+.fbar__recherche input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.fbar__vide {
+  padding: 10px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-faint);
+}
+
+/* --- Panneau « Tous les filtres » --- */
+
+.fbar__groupe { margin-bottom: var(--spacing-md); }
+.fbar__groupe h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-text-faint);
 }
+.fbar__pastilles { display: flex; flex-wrap: wrap; gap: 7px; }
 
-.filtres__reset {
-  align-self: flex-start;
-  display: inline-flex;
+.fbar__case {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
+  gap: 9px;
+  padding: 6px 0;
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  transition: color var(--motion-fast) var(--motion-ease),
-              background var(--motion-fast) var(--motion-ease);
+  cursor: pointer;
 }
-.filtres__reset:hover {
-  color: var(--color-text);
-  background: var(--color-surface-sunken);
-}
+.fbar__case input { width: 16px; height: 16px; accent-color: var(--color-brand); }
 
-.filtres__note {
+.fbar__aide,
+.fbar__note {
   font-size: var(--font-size-xs);
   line-height: var(--line-height-normal);
   color: var(--color-text-faint);
-  border-top: 1px solid var(--color-border);
+}
+.fbar__aide { margin-top: 6px; }
+.fbar__note {
   padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
 }
 
-@media (max-width: 640px) {
-  /* Sur mobile l'intitulé passe au-dessus de ses pastilles : les garder sur
-     la même ligne écraserait les libellés de tranche. */
-  .filtres__groupe { flex-direction: column; align-items: flex-start; }
-  .filtres__titre { min-width: 0; }
-  .filtres__groupe > .chip { flex-shrink: 1; }
+.fbar__pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+.fbar__pied .btn { flex: 1; justify-content: center; }
+
+.fbar__effacer,
+.fbar__reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition: color var(--motion-fast) var(--motion-ease),
+              background var(--motion-fast) var(--motion-ease);
+}
+.fbar__effacer:hover:not(:disabled),
+.fbar__reset:hover { color: var(--color-text); background: var(--color-surface-sunken); }
+.fbar__effacer:disabled { opacity: 0.4; cursor: default; }
+
+@media (max-width: 480px) {
+  /* Le panneau ne peut pas déborder d'un écran étroit : il s'y ajuste. */
+  .fbar__panneau { width: min(340px, calc(100vw - 32px)); }
+}
+
+/* ==========================================================================
+   Photo de restaurant (D-035)
+   ========================================================================== */
+
+/* L'illustration générée est le socle, la photo vient par-dessus. 427
+   restaurants sur 10 686 en ont une : le cas « pas de photo » est le cas
+   MAJORITAIRE, et une grille à moitié illustrée serait pire que pas de photo
+   du tout. Superposer plutôt que remplacer évite aussi le cadre vide pendant
+   le chargement, et le trou quand une URL d'hébergeur a expiré. */
+.photorestau {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.photorestau__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 340ms var(--motion-ease);
+}
+.photorestau__img.is-chargee { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .photorestau__img { transition: none; }
+}
+
+/* Texte réservé aux lecteurs d'écran. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ==========================================================================

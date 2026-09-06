@@ -232,6 +232,12 @@ def _migrate(cursor) -> None:
             "external_at": "TEXT",        # horodatage de l'enrichissement
             "price_range": "TEXT",        # fourchette « $ » a « $$$$ » — HORS SCORING
             "photos_count": "INTEGER",    # volume de photos — HORS SCORING (D-001)
+            # Photo principale de l'etablissement, telle que la designe le
+            # collecteur. On stocke l'URL, JAMAIS l'image : elle reste chez son
+            # hebergeur et ne transite pas par nos serveurs (D-021, D-025).
+            # Une URL peut expirer — l'interface retombe alors sur son visuel
+            # genere, elle ne laisse pas un cadre vide.
+            "photo_url": "TEXT",
             # Google indique lui-meme si un lieu attire les touristes.
             # HORS SCORING, et strictement reserve a la VALIDATION EXTERNE du
             # Local Signal : s'en servir comme entree serait circulaire (D-030).

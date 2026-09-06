@@ -15,7 +15,8 @@ import { Feather } from "@expo/vector-icons";
 import { fetchRestaurant } from "../api";
 import CartePhotos from "../components/CartePhotos";
 import DetailCalcul from "../components/DetailCalcul";
-import { Button, CuisineVisual, ErrorState, Verdict } from "../components/ui";
+import { Button, ErrorState, Verdict } from "../components/ui";
+import PhotoRestaurant from "../components/PhotoRestaurant";
 import { radius, spacing, useColors } from "../theme";
 import { distance, hours, verdict } from "../lib/display";
 
@@ -87,9 +88,10 @@ export default function DetailScreen({ restaurant, onBack, onReserve }) {
       </Pressable>
 
       <View style={{ borderRadius: radius.lg, overflow: "hidden" }}>
-        <CuisineVisual
+        <PhotoRestaurant
           id={full.id}
           cuisine={full.cuisine}
+          photoUrl={full.photo_url}
           height={200}
           iconSize={54}
           isDark={isDark}

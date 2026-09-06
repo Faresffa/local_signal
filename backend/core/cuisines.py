@@ -136,19 +136,39 @@ def options(cuisines: list[str]) -> list[dict]:
     On ne propose jamais un filtre qui ne renverrait aucun résultat : c'est la
     différence entre une liste de filtres utile et une liste décorative.
 
+    TRIÉ PAR FRÉQUENCE, PAS PAR ALPHABET (D-035). L'ordre alphabétique plaçait
+    « Italian restaurant » (1 restaurant en base) juste au-dessus de
+    « Italienne » (627) : l'utilisateur qui cherche de l'italien tombait
+    d'abord sur une étiquette parasite et repartait avec zéro résultat. Ces
+    doublons viennent des libellés du collecteur externe, qui coexistent avec
+    ceux d'OpenStreetMap. Les classer par volume met devant ce qui existe
+    vraiment et laisse la traîne au champ de recherche.
+
+    À libellé également fréquent, l'alphabet départage — sinon l'ordre
+    dépendrait de l'ordre de parcours de la base, et deux appels successifs
+    pourraient ne pas rendre la même liste.
+
     Returns:
-        [{"value": "french", "label": "Française"}, …] trié par libellé.
+        [{"value": "french", "label": "Française", "count": 1234}, …]
     """
-    seen = {}
+    libelles: dict[str, str] = {}
+    volumes: dict[str, int] = {}
+
     for raw in cuisines:
         if not raw:
             continue
         for part in raw.split(";"):
             key = part.strip().lower()
-            if key and key not in seen:
-                seen[key] = _FR.get(key, key.replace("_", " ").capitalize())
+            if not key:
+                continue
+            if key not in libelles:
+                libelles[key] = _FR.get(key, key.replace("_", " ").capitalize())
+            volumes[key] = volumes.get(key, 0) + 1
 
     return sorted(
-        ({"value": v, "label": l} for v, l in seen.items()),
-        key=lambda o: o["label"],
+        (
+            {"value": v, "label": libelles[v], "count": volumes[v]}
+            for v in libelles
+        ),
+        key=lambda o: (-o["count"], o["label"]),
     )

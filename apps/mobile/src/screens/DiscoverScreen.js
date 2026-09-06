@@ -16,8 +16,9 @@ import * as Location from "expo-location";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
 import {
-  CardSkeleton, CuisineVisual, EmptyState, ErrorState, Loading, Verdict,
+  CardSkeleton, EmptyState, ErrorState, Loading, Verdict,
 } from "../components/ui";
+import PhotoRestaurant from "../components/PhotoRestaurant";
 import Filtres from "../components/Filtres";
 import { radius, spacing, useColors } from "../theme";
 import { distance, verdict } from "../lib/display";
@@ -75,7 +76,12 @@ function Carte({ item, onOpen, isDark, index }) {
         ]}
       >
       <View>
-        <CuisineVisual id={item.id} cuisine={item.cuisine} isDark={isDark} />
+        <PhotoRestaurant
+          id={item.id}
+          cuisine={item.cuisine}
+          photoUrl={item.photo_url}
+          isDark={isDark}
+        />
         {dist && (
           <View style={[s.distance, { backgroundColor: colors.surface }]}>
             <Text style={[s.distanceText, { color: colors.text }]}>{dist}</Text>
@@ -122,7 +128,6 @@ export default function DiscoverScreen({ onOpen }) {
   // ait ses propres pastilles — c'est le meme critere, pas deux.
   const [filtres, setFiltres] = useState(FILTRES_VIDES);
   const cuisine = filtres.cuisine;
-  const setCuisine = (v) => setFiltres((f) => ({ ...f, cuisine: v }));
 
   const [options, setOptions] = useState([]);
 
@@ -152,7 +157,11 @@ export default function DiscoverScreen({ onOpen }) {
 
   useEffect(() => {
     fetchCuisines()
-      .then((o) => setOptions(o.slice(0, 12)))
+      // Liste COMPLETE, et non plus tronquee a 12. La troncature datait de la
+      // rangee de pastilles, qui devenait illisible au-dela ; le menu est
+      // desormais recherchable (D-035), et couper la liste rendait le champ de
+      // recherche inutile en cachant 255 cuisines sur 267.
+      .then(setOptions)
       .catch(() => setOptions([]));
   }, []);
 
@@ -216,47 +225,18 @@ export default function DiscoverScreen({ onOpen }) {
         ))}
       </ScrollView>
 
-      {options.length > 0 && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={s.chips}
-        >
-          <Pressable
-            onPress={() => setCuisine(null)}
-            style={[
-              s.chip,
-              { borderColor: colors.borderStrong, backgroundColor: colors.surface },
-              cuisine === null && { backgroundColor: colors.brand, borderColor: colors.brand },
-            ]}
-          >
-            <Text
-              style={[s.chipText, { color: cuisine === null ? colors.onBrand : colors.textMuted }]}
-            >
-              Toutes
-            </Text>
-          </Pressable>
-          {options.map((o) => (
-            <Pressable
-              key={o.value}
-              onPress={() => setCuisine(cuisine === o.value ? null : o.value)}
-              style={[
-                s.chip,
-                { borderColor: colors.borderStrong, backgroundColor: colors.surface },
-                cuisine === o.value && { backgroundColor: colors.brand, borderColor: colors.brand },
-              ]}
-            >
-              <Text
-                style={[s.chipText, { color: cuisine === o.value ? colors.onBrand : colors.textMuted }]}
-              >
-                {o.label}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      )}
+      {/* La rangee de pastilles de cuisine a ete retiree (D-035) : la cuisine
+          se choisit desormais dans la feuille de filtres, avec un champ de
+          recherche. Une rangee de 267 pastilles n'etait pas navigable, et la
+          tronquer cachait l'essentiel de la liste. */}
 
-      <Filtres valeurs={filtres} onChange={setFiltres} />
+      <Filtres
+        valeurs={filtres}
+        onChange={setFiltres}
+        cuisines={options}
+        nbResultats={status === "ready" ? restaurants.length : null}
+        chargement={status === "loading"}
+      />
 
       {status === "ready" && (
         <Text style={[s.count, { color: colors.textFaint }]}>

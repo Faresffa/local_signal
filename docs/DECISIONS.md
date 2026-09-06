@@ -1831,3 +1831,101 @@ redistribue pas l'œuvre.
   les mains d'utilisateurs réels : D-009 n'est pas suspendu, il est mis de côté
   le temps du développement et du mémoire.
 
+---
+
+## D-035 — Barre de filtres, et photo réelle des restaurants
+
+**Date :** 6 septembre 2026
+
+### Contexte
+
+Le panneau de filtres de D-034 était fonctionnellement correct mais empilé
+verticalement : quatre groupes les uns sous les autres, qui repoussaient les
+résultats hors de l'écran. On filtrait sans voir ce qu'on filtrait.
+
+Par ailleurs, chaque restaurant s'affichait avec une illustration générée à
+partir de son identifiant. Le rendu était uniforme et peu engageant, alors que
+la collecte Outscraper (D-029) avait rapporté une photo principale pour 98 %
+des fiches — un champ `photo` que l'importeur n'avait jamais lu.
+
+L'interface de TheFork a servi de référence explicite pour la forme, à la
+demande du porteur du projet.
+
+### Problème
+
+**1. La forme du bloc de filtres.** Un panneau qui grandit à mesure qu'on
+ajoute des critères entre en concurrence directe avec les résultats. Or les
+critères vont continuer de s'ajouter.
+
+**2. La liste des cuisines était tronquée à 14 entrées** côté web et 12 côté
+mobile, par ordre alphabétique. La troncature datait de l'affichage en rangée
+de pastilles, illisible au-delà. Conséquence mesurée : sur 267 cuisines
+présentes en base, l'utilisateur en voyait 14 — « A volonté », « Afghan »,
+« Africaine »… — et « Italienne », qui compte 819 restaurants, était invisible.
+
+**3. L'ordre alphabétique mettait les étiquettes parasites devant.**
+« Italian restaurant » (1 restaurant en base) précédait « Italienne » (819).
+Ces doublons viennent des libellés du collecteur externe, qui coexistent avec
+ceux d'OpenStreetMap. Un utilisateur cherchant de l'italien tombait d'abord sur
+l'étiquette parasite et repartait avec zéro résultat.
+
+**4. Aucune photo réelle.** Le champ existait dans les fichiers bruts, déjà
+collectés et déjà payés.
+
+### Décision
+
+**Une barre horizontale unique, pas un panneau empilé.** Les critères les plus
+utilisés restent visibles sur la ligne ; tout le reste vit derrière un bouton
+« Tous les filtres » qui porte le nombre de filtres actifs. La ligne défile
+horizontalement plutôt que de passer à la ligne.
+
+**Le panneau annonce son effet avant qu'on valide** : « Voir N restaurants »,
+recalculé à chaque changement. Sans ça, on coche à l'aveugle et on découvre une
+liste vide après coup.
+
+**Les cuisines sont chargées en entier et triées par fréquence**, plus par
+alphabet. `core/cuisines.options` rend désormais un `count` et ordonne par
+volume décroissant, l'alphabet ne servant qu'à départager les ex æquo — sinon
+l'ordre dépendrait du parcours de la base et deux appels successifs pourraient
+ne pas rendre la même liste. La traîne des 267 entrées est atteinte par un
+**champ de recherche**, qui n'avait aucun sens sur une liste de 14.
+
+**Divergence assumée entre les deux interfaces.** Le web ouvre des menus
+ancrés sous la pastille ; le mobile ouvre une feuille modale par le bas. Sur
+téléphone, un menu ancré sortirait de l'écran ou couvrirait la pastille qui
+l'a ouvert. La divergence tient à la taille de l'écran, pas au goût.
+
+**La photo réelle se superpose à l'illustration, elle ne la remplace pas.**
+427 restaurants sur 10 686 en ont une : le cas « pas de photo » est le cas
+MAJORITAIRE. L'illustration reste donc le socle et la photo se pose par-dessus
+en fondu. Cela règle trois cas d'un coup : la majorité sans photo, le temps de
+chargement, et l'URL expirée.
+
+**On stocke l'URL, jamais l'image** (colonne `photo_url`). Même règle que pour
+les cartes (D-021, D-025) : l'image reste chez son hébergeur, ne transite pas
+par nos serveurs, et n'est pas redistribuée.
+
+**Ce qui reste refusé.** TheFork propose « Les mieux notés ». Nous ne le
+proposons pas, et ne le proposerons pas : ce serait exactement le tri par
+popularité que le projet existe pour éviter (D-001, D-007). La règle de D-034
+tient intégralement — une donnée manquante n'exclut jamais, sauf pour
+« carte analysée » qui porte sur la présence même.
+
+### Conséquences
+
+- `core/cuisines.options` change de contrat : il rend un `count` en plus de
+  `value` et `label`, et l'ordre n'est plus alphabétique. Tout consommateur qui
+  supposait l'ordre alphabétique doit être revu.
+- La colonne `photo_url` est renseignée sur 427 restaurants. Elle sera vide
+  partout où la collecte externe n'est pas passée — c'est-à-dire hors de la
+  zone témoin.
+- **Les doublons d'étiquettes de cuisine restent en base** (« Italian
+  restaurant » à côté d'« Italienne »). Le tri par fréquence les enterre mais
+  ne les nettoie pas. Un vrai dédoublonnage suppose une table de correspondance
+  entre les libellés du collecteur et ceux d'OpenStreetMap : c'est un chantier
+  séparé, à ouvrir avant toute extension hors zone témoin.
+- Les URL de photo peuvent expirer. Le repli sur l'illustration est la réponse
+  prévue, et il est vérifié : les images bloquées ne laissent aucun cadre vide.
+- La vue technique du calcul (D-034) reste en place et reste à retirer avant
+  toute mise entre les mains d'utilisateurs réels.
+

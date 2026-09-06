@@ -75,6 +75,12 @@ CHAMPS = {
     # mais c'est le seul indice de prix disponible sans lire une carte.
     "price_range": ["range", "price_range", "price_level"],
     "photos_count": ["photos_count", "photo_count"],
+    # Photo principale de l'etablissement — a ne pas confondre avec
+    # `photos_data`, qui porte les cliches de la carte. Le collecteur la
+    # fournit sur 98 % des fiches et l'import la laissait passer : c'est
+    # exactement le genre d'information deja payee qu'on ne doit pas perdre.
+    # `logo` sert de repli, il vaut mieux qu'aucune image.
+    "photo_url": ["photo", "logo"],
 }
 
 # Nombre de photos de carte conservées par restaurant. Au-delà, on n'apprend
@@ -373,6 +379,7 @@ def importer(
                 menu_photo_urls = coalesce(?, menu_photo_urls),
                 price_range     = coalesce(?, price_range),
                 photos_count    = coalesce(?, photos_count),
+                photo_url       = coalesce(?, photo_url),
                 tourist_flag    = coalesce(?, tourist_flag),
                 photos_saturees = coalesce(?, photos_saturees),
                 photos_motif    = coalesce(?, photos_motif),
@@ -392,6 +399,7 @@ def importer(
             json.dumps(photos, ensure_ascii=False) if photos else None,
             _valeur(ligne, "price_range"),
             _valeur(ligne, "photos_count"),
+            _valeur(ligne, "photo_url"),
             _tourist_flag(ligne),
             saturees,
             motif,

@@ -12,7 +12,7 @@ import {
 
 import { fetchRestaurant } from "../api";
 import CartePhotos from "../components/CartePhotos";
-import CuisineVisual from "../components/CuisineVisual";
+import PhotoRestaurant from "../components/PhotoRestaurant";
 import DetailCalcul from "../components/DetailCalcul";
 import WhyPanel from "../components/WhyPanel";
 import { CardSkeleton, ErrorState } from "../components/States";
@@ -71,7 +71,13 @@ export default function Detail({ restaurant, onBack, onReserve }) {
 
       <div className="detail">
         <div className="detail__media">
-          <CuisineVisual id={full.id} cuisine={full.cuisine} size={92} />
+          <PhotoRestaurant
+            id={full.id}
+            cuisine={full.cuisine}
+            photoUrl={full.photo_url}
+            nom={full.name}
+            size={92}
+          />
         </div>
 
         <div>

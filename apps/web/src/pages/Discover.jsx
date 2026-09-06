@@ -46,9 +46,15 @@ export default function Discover({ onOpen }) {
 
   // Les filtres proposés viennent de la base : on ne propose jamais un filtre
   // qui ne renverrait aucun résultat.
+  //
+  // La liste n'est PLUS tronquée. Elle l'était à 14 entrées du temps où les
+  // cuisines s'affichaient en rangée de pastilles — au-delà, la rangée
+  // devenait illisible. Le menu déroulant est recherchable (D-035) : tronquer
+  // à 14 rendait le champ de recherche inutile et cachait 253 cuisines sur
+  // 267, dont l'italienne. On les charge toutes.
   useEffect(() => {
     fetchCuisines()
-      .then((options) => setCuisineOptions(options.slice(0, 14)))
+      .then(setCuisineOptions)
       .catch(() => setCuisineOptions([]));
   }, []);
 
@@ -156,7 +162,13 @@ export default function Discover({ onOpen }) {
       </section>
 
       <div className="enter" style={{ "--enter-delay": "380ms" }}>
-        <Filtres valeurs={filtres} onChange={setFiltres} />
+        <Filtres
+          valeurs={filtres}
+          onChange={setFiltres}
+          cuisines={cuisineOptions}
+          nbResultats={status === "ready" ? restaurants.length : null}
+          chargement={status === "loading"}
+        />
       </div>
 
       <section>

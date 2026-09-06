@@ -8,7 +8,7 @@
 
 import { ForkKnife } from "@phosphor-icons/react";
 
-import CuisineVisual from "./CuisineVisual";
+import PhotoRestaurant from "./PhotoRestaurant";
 
 import { useReveal } from "../lib/hooks";
 import { distance, verdict } from "../lib/display";
@@ -27,7 +27,13 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
   return (
     <article className="card reveal" ref={ref}>
       <div className="card__media">
-        <CuisineVisual id={restaurant.id} cuisine={restaurant.cuisine} size={64} />
+        <PhotoRestaurant
+          id={restaurant.id}
+          cuisine={restaurant.cuisine}
+          photoUrl={restaurant.photo_url}
+          nom={restaurant.name}
+          size={64}
+        />
         <span className={`verdict verdict--${v.tone} card__verdict`}>{v.label}</span>
         {dist && <span className="card__distance">{dist}</span>}
       </div>

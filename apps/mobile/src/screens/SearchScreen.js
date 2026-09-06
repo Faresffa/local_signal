@@ -28,8 +28,9 @@ import * as Location from "expo-location";
 import { fetchRestaurants } from "../api";
 import MapPicker from "../components/MapPicker";
 import {
-  Button, CardSkeleton, CuisineVisual, ErrorState, Verdict,
+  Button, CardSkeleton, ErrorState, Verdict,
 } from "../components/ui";
+import PhotoRestaurant from "../components/PhotoRestaurant";
 import { radius, spacing, useColors } from "../theme";
 import { distance, verdict } from "../lib/display";
 import { copy, demoPlaces, fallbackLocation } from "../../../../packages/shared/content.js";
@@ -96,7 +97,12 @@ function Carte({ item, onOpen, isDark, index }) {
         ]}
       >
         <View>
-          <CuisineVisual id={item.id} cuisine={item.cuisine} isDark={isDark} />
+          <PhotoRestaurant
+            id={item.id}
+            cuisine={item.cuisine}
+            photoUrl={item.photo_url}
+            isDark={isDark}
+          />
           {dist && (
             <View style={[s.distance, { backgroundColor: colors.surface }]}>
               <Text style={[s.distanceText, { color: colors.text }]}>{dist}</Text>
