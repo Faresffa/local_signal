@@ -34,7 +34,10 @@ import {
   CaretDown, Clock, ForkKnife, MagnifyingGlass, Money, Notebook, SlidersHorizontal, X,
 } from "@phosphor-icons/react";
 
-import { FILTRES_VIDES, TRANCHES } from "../lib/filtres";
+import Budget from "./Budget";
+import {
+  BUDGET_MAX, BUDGET_MIN, budgetActif, compterFiltres, FILTRES_VIDES, libelleBudget,
+} from "../lib/filtres";
 
 /** Ferme au clic extérieur et à Échap — sans quoi un menu ouvert piège l'écran. */
 function useFermeture(ouvert, fermer) {
@@ -97,7 +100,7 @@ function Case({ coche, onChange, children }) {
 export default function Filtres({
   valeurs, onChange, cuisines = [], nbResultats = null, chargement = false,
 }) {
-  const { tranchePrix, ouvert, reservation, avecCarte, cuisine } = valeurs;
+  const { budgetMin, budgetMax, ouvert, reservation, avecCarte, cuisine } = valeurs;
 
   const [tousOuvert, setTousOuvert] = useState(false);
   const [recherche, setRecherche] = useState("");
@@ -105,11 +108,13 @@ export default function Filtres({
 
   const modifier = (cle, val) => onChange({ ...valeurs, [cle]: val });
 
-  const actifs =
-    (tranchePrix ? 1 : 0) + (ouvert ? 1 : 0) + (reservation ? 1 : 0) +
-    (avecCarte ? 1 : 0) + (cuisine ? 1 : 0);
+  // Le compte vit dans `lib/filtres` : il est identique au mobile, et une
+  // regle de comptage dupliquee finit toujours par diverger.
+  const actifs = compterFiltres(valeurs);
 
-  const trancheLabel = TRANCHES.find((t) => t.cle === tranchePrix)?.label;
+  const changerBudget = (bas, haut) =>
+    onChange({ ...valeurs, budgetMin: bas, budgetMax: haut });
+
   const cuisineLabel = cuisines.find((c) => c.value === cuisine)?.label;
 
   // La liste des cuisines dépasse les deux cents entrées : sans champ de
@@ -146,20 +151,7 @@ export default function Filtres({
             <div className="fbar__panneau">
               <div className="fbar__groupe">
                 <h4><Money size={14} weight="light" /> Budget</h4>
-                <div className="fbar__pastilles">
-                  {TRANCHES.map((t) => (
-                    <button
-                      key={t.cle}
-                      type="button"
-                      className="chip"
-                      aria-pressed={tranchePrix === t.cle}
-                      onClick={() =>
-                        modifier("tranchePrix", tranchePrix === t.cle ? null : t.cle)}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
+                <Budget min={budgetMin} max={budgetMax} onChange={changerBudget} />
               </div>
 
               <div className="fbar__groupe">
@@ -212,34 +204,26 @@ export default function Filtres({
 
         <Menu
           icone={<Money size={15} weight="light" />}
-          label={trancheLabel || "Budget"}
-          actif={Boolean(tranchePrix)}
+          label={libelleBudget(budgetMin, budgetMax)}
+          actif={budgetActif(valeurs)}
+          largeur={288}
         >
           {(fermer) => (
-            <div className="fbar__liste">
-              {TRANCHES.map((t) => (
-                <button
-                  key={t.cle}
-                  type="button"
-                  className="fbar__option"
-                  aria-pressed={tranchePrix === t.cle}
-                  onClick={() => {
-                    modifier("tranchePrix", tranchePrix === t.cle ? null : t.cle);
-                    fermer();
-                  }}
-                >
-                  {t.label}
-                </button>
-              ))}
-              {tranchePrix && (
+            <div className="fbar__budget">
+              <Budget min={budgetMin} max={budgetMax} onChange={changerBudget} />
+              <div className="fbar__budgetPied">
                 <button
                   type="button"
-                  className="fbar__option fbar__option--effacer"
-                  onClick={() => { modifier("tranchePrix", null); fermer(); }}
+                  className="fbar__effacer"
+                  onClick={() => changerBudget(BUDGET_MIN, BUDGET_MAX)}
+                  disabled={!budgetActif(valeurs)}
                 >
-                  Tous les budgets
+                  Tout budget
                 </button>
-              )}
+                <button type="button" className="btn btn--primary" onClick={fermer}>
+                  {libelleValidation}
+                </button>
+              </div>
             </div>
           )}
         </Menu>

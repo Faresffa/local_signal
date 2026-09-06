@@ -1273,6 +1273,119 @@ img { display: block; max-width: 100%; }
 }
 
 /* ==========================================================================
+   Fourchette de budget (D-037)
+   ========================================================================== */
+
+.fbar__budget { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: 4px; }
+.fbar__budgetPied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+}
+.fbar__budgetPied .btn { flex: 1; justify-content: center; }
+
+.budget { display: flex; flex-direction: column; gap: 9px; }
+
+.budget__valeurs {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+/* La piste porte les deux glissieres en position absolue, superposees. */
+.budget__piste {
+  position: relative;
+  height: 26px;
+  display: flex;
+  align-items: center;
+}
+.budget__piste::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-surface-sunken);
+}
+
+/* Portion effectivement retenue, peinte entre les deux poignees. */
+.budget__retenu {
+  position: absolute;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-brand);
+}
+
+/* SUPERPOSITION DES DEUX GLISSIERES.
+   `pointer-events: none` sur le champ entier, puis `auto` sur la seule
+   poignee : sans cela, la glissiere du dessus intercepte tous les clics et
+   la poignee du dessous devient inatteignable. C'est le seul artifice que
+   demande une fourchette a deux poignees construite sur des champs natifs. */
+.budget__poignee {
+  position: absolute;
+  inset-inline: 0;
+  width: 100%;
+  margin: 0;
+  height: 26px;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none;
+}
+.budget__poignee::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2px solid var(--color-brand);
+  box-shadow: var(--shadow-card);
+  cursor: grab;
+}
+.budget__poignee::-moz-range-thumb {
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2px solid var(--color-brand);
+  box-shadow: var(--shadow-card);
+  cursor: grab;
+}
+.budget__poignee:active::-webkit-slider-thumb { cursor: grabbing; }
+.budget__poignee::-webkit-slider-runnable-track { background: none; }
+.budget__poignee::-moz-range-track { background: none; }
+
+/* L'anneau de focus doit rester visible : c'est la seule affordance au
+   clavier, et la glissiere est transparente. */
+.budget__poignee:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+.budget__poignee:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* La poignee du maximum passe devant : aux valeurs extremes les deux se
+   superposent exactement, et c'est celle-la qu'on veut pouvoir saisir. */
+.budget__poignee--max { z-index: 2; }
+.budget__poignee--min { z-index: 3; }
+
+.budget__note {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-faint);
+}
+
+/* ==========================================================================
    Photo de restaurant (D-035)
    ========================================================================== */
 

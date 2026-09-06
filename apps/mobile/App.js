@@ -18,7 +18,6 @@ import DetailScreen from "./src/screens/DetailScreen";
 import DiscoverScreen from "./src/screens/DiscoverScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
-import SearchScreen from "./src/screens/SearchScreen";
 import { spacing, useColors } from "./src/theme";
 
 // Transition d'écran.
@@ -65,9 +64,17 @@ function Transition({ decalage, duree, children }) {
 // « Découvrir » dépend du GPS ; « Chercher » ne l'exige pas. Les deux sont
 // nécessaires : la base ne couvre qu'un quartier, et un utilisateur qui n'y
 // est pas doit quand même pouvoir explorer (D-026).
+// DEUX ONGLETS, PAS TROIS (D-037).
+//
+// « Chercher » etait un ecran a part, dedie au choix du point de depart,
+// alors que le web fait tout depuis sa page unique. Deux interfaces pour le
+// meme produit, avec des parcours differents : passer de l'une a l'autre
+// obligeait a reapprendre. Le choix du lieu est desormais dans la page de
+// decouverte, comme sur le web, et l'onglet separe disparait.
+//
+// Reste ce qui est reellement une autre activite : scanner une carte.
 const ONGLETS = [
   { key: "discover", label: "Découvrir", icon: "compass" },
-  { key: "search", label: "Chercher", icon: "search" },
   { key: "scan", label: "Scanner", icon: "camera" },
 ];
 
@@ -104,8 +111,6 @@ export default function App() {
     )
   ) : tab === "discover" ? (
     <DiscoverScreen onOpen={ouvrirFiche} />
-  ) : tab === "search" ? (
-    <SearchScreen onOpen={ouvrirFiche} />
   ) : (
     <ScanScreen />
   );

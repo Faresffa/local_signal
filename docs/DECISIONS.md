@@ -1929,3 +1929,83 @@ tient intégralement — une donnée manquante n'exclut jamais, sauf pour
 - La vue technique du calcul (D-034) reste en place et reste à retirer avant
   toute mise entre les mains d'utilisateurs réels.
 
+---
+
+## D-037 — Un seul produit sur deux écrans
+
+**Date :** 6 septembre 2026
+
+### Contexte
+
+Après la refonte des filtres (D-035), l'usage a fait apparaître trois défauts
+que la mesure a confirmés, et un quatrième plus profond : **le web et le mobile
+n'étaient pas le même produit.**
+
+### Problèmes
+
+**1. Le budget par tranches fixes.** Quatre cases — moins de 12, 12–18, 18–25,
+plus de 25. Un découpage arbitraire : chercher entre 14 et 22 € imposait de
+cocher deux cases, et « moins de 10 » était inexprimable.
+
+**2. La liste des cuisines se répétait.** « Pizzeria » y figurait deux fois,
+« Nouilles » et « Noodles » côte à côte, « Grillades » et « Grill ». Cause
+mesurée : 194 des 267 étiquettes n'étaient pas traduites et s'affichaient
+brutes, et `options()` regroupait par valeur brute plutôt que par libellé. Effet
+secondaire plus grave que l'inesthétique : les restaurants étaient **répartis
+entre deux filtres dont aucun ne les montrait tous** — 556 pizzerias sous
+`pizza`, 58 sous `italian_pizza`.
+
+**3. Deux parcours différents pour le même produit.** Le mobile avait trois
+onglets — Découvrir, Chercher, Scanner — dont un entièrement dédié au choix du
+point de départ, alors que le web fait tout depuis sa page unique. Passer d'une
+interface à l'autre demandait de réapprendre.
+
+### Décisions
+
+**Le budget devient une fourchette continue**, de 5 à 60 €, bornes calées sur la
+distribution réelle des 297 prix relevés (p5 = 7,50 ; p50 = 15 ; p90 = 46 ;
+max = 181). La borne haute vaut « et au-delà », pas « exactement 60 » : étirer
+la glissière jusqu'à 181 tasserait 90 % des restaurants sur un tiers de la
+course.
+
+**Une borne restée à son extrémité n'est pas transmise au serveur.** Envoyer
+`budget_max=60` écartait les 26 restaurants plus chers alors que l'utilisateur
+n'avait rien restreint. Le client n'envoie que les bornes réellement déplacées.
+
+**Les cuisines sont regroupées par libellé, pas par valeur.** `options()` rend
+désormais un `value` qui porte toutes les valeurs du groupe, séparées par des
+virgules — forme que `/api/restaurants` acceptait déjà. La table de traduction
+passe de 81 à 196 entrées, en distinguant les **variantes à fusionner** (`grill`
+→ Grillades, `corean` → Coréenne, `italian_pizza` → Pizzeria) des **cuisines
+simplement non traduites** (`tibetan` → Tibétaine). On ne fusionne que ce qui
+désigne réellement la même chose : « Pâtes » et « Pizzeria » restent distincts.
+
+**Le mobile passe à deux onglets** — Découvrir et Scanner. Le choix du lieu
+rejoint la page de découverte, comme sur le web, via un composant `ChoixLieu`
+qui offre les trois voies : position, adresse saisie avec suggestions, point sur
+la carte. `SearchScreen` est supprimé.
+
+**Les filtres sont identiques des deux côtés** : mêmes critères, même ordre,
+mêmes libellés, mêmes bornes. `lib/filtres.js` est volontairement dupliqué à
+l'identique dans les deux applications, en attendant `packages/shared`.
+
+### Conséquences
+
+- `core/cuisines.options` change de contrat : `value` peut porter plusieurs
+  valeurs séparées par des virgules. Tout consommateur qui la traitait comme
+  une valeur unique doit être revu.
+- Le paramètre `tranche_prix` n'est plus utilisé par aucune interface. Il reste
+  côté serveur (`core/filters/criteres.py`) et fonctionne, mais il n'a plus
+  d'appelant : à retirer si rien ne le reprend.
+- **120 étiquettes restent non traduites**, couvrant 155 restaurants — une
+  traîne où chaque entrée pèse trois occurrences ou moins. Elles s'affichent en
+  anglais capitalisé, ce qui reste lisible et signale ce qu'il reste à faire.
+- La glissière mobile est écrite à la main sur `PanResponder`, faute de
+  composant à deux poignées dans React Native. `onLayout` ne se déclenche pas
+  sur une vue montée dans une feuille modale sous react-native-web : la largeur
+  est donc mesurée impérativement à la prise du geste, et un geste sans mesure
+  ne modifie rien plutôt que d'envoyer la valeur à une borne.
+- Divergence assumée qui subsiste : le web ouvre des menus ancrés sous la
+  pastille, le mobile des feuilles qui montent du bas. Elle tient à la taille de
+  l'écran, pas au goût — un menu ancré sortirait de l'écran d'un téléphone.
+

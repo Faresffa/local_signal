@@ -99,6 +99,145 @@ _FR = {
     "fast_food": "Restauration rapide",
     "buffet": "Buffet",
     "food_court": "Aire de restauration",
+
+    # ------------------------------------------------------------------
+    # VARIANTES QUI DESIGNENT LA MEME CHOSE (D-037)
+    # ------------------------------------------------------------------
+    # Elles pointent DELIBEREMENT sur un libelle deja present au-dessus, pour
+    # que les deux ecritures se confondent dans un seul filtre. L'interface
+    # affichait « Nouilles » ET « Noodles », « Grillades » ET « Grill » : deux
+    # entrees pour un meme plat, ce qui donnait a l'utilisateur l'impression
+    # que la liste se repetait — et repartissait les restaurants entre deux
+    # filtres dont aucun ne les montrait tous.
+    #
+    # On ne fusionne que ce qui designe REELLEMENT la meme chose. « Pates » et
+    # « Pizzeria » restent distincts, meme si les deux sont italiens.
+    "noodles": "Nouilles",          # pluriel de `noodle`
+    "corean": "Coréenne",           # faute de frappe presente en base
+    "grill": "Grillades",           # synonyme de `steak_house`
+    "grilled": "Grillades",
+    "steak": "Grillades",
+    "italian_pizza": "Pizzeria",    # c'est une pizzeria, pas une autre cuisine
+    "pizzeria": "Pizzeria",
+    "pizza_restaurant": "Pizzeria",
+    "sushi_bar": "Sushi",
+    "coffee": "Café",
+    "cafe": "Café",
+    "bar": "Bar",
+    "wine_bar": "Bar à vins",
+    "creperie": "Crêperie",
+    "pancakes": "Pancakes",
+    "burgers": "Burger",
+    "sandwiches": "Sandwicherie",
+    "seafoods": "Fruits de mer",
+    "vegan_options": "Végane",
+    "middle_east": "Moyen-orientale",
+
+    # ------------------------------------------------------------------
+    # CUISINES SIMPLEMENT NON TRADUITES (D-037)
+    # ------------------------------------------------------------------
+    # Elles s'affichaient en anglais brut, capitalise. Rien a fusionner ici :
+    # ce sont des cuisines distinctes, elles avaient juste ete oubliees.
+    "tibetan": "Tibétaine",
+    "arab": "Arabe",
+    "arabic": "Arabe",
+    "oriental": "Orientale",
+    "lao": "Laotienne",
+    "laotian": "Laotienne",
+    "sichuan": "Sichuanaise",
+    "cantonese": "Cantonaise",
+    "taiwanese": "Taïwanaise",
+    "kurdish": "Kurde",
+    "latin_american": "Latino-américaine",
+    "mauritian": "Mauricienne",
+    "middle_eastern": "Moyen-orientale",
+    "afghan": "Afghane",
+    "filipino": "Philippine",
+    "hawaiian": "Hawaïenne",
+    "israeli": "Israélienne",
+    "polish": "Polonaise",
+    "venezuelan": "Vénézuélienne",
+    "balkan": "Balkanique",
+    "european": "Européenne",
+    "tex-mex": "Tex-mex",
+    "tex_mex": "Tex-mex",
+    "malaysian": "Malaisienne",
+    "singaporean": "Singapourienne",
+    "sri_lankan": "Sri-lankaise",
+    "bangladeshi": "Bangladaise",
+    "burmese": "Birmane",
+    "mongolian": "Mongole",
+    "armenian": "Arménienne",
+    "ukrainian": "Ukrainienne",
+    "romanian": "Roumaine",
+    "hungarian": "Hongroise",
+    "swedish": "Suédoise",
+    "danish": "Danoise",
+    "swiss": "Suisse",
+    "belgian": "Belge",
+    "dutch": "Néerlandaise",
+    "british": "Britannique",
+    "irish": "Irlandaise",
+    "egyptian": "Égyptienne",
+    "nigerian": "Nigériane",
+    "ivorian": "Ivoirienne",
+    "malagasy": "Malgache",
+    "reunionese": "Réunionnaise",
+    "creole": "Créole",
+    "cuban": "Cubaine",
+    "chilean": "Chilienne",
+    "bolivian": "Bolivienne",
+    "uruguayan": "Uruguayenne",
+
+    # Types de plat et formats de service
+    "salad": "Salades",
+    "poke": "Poke",
+    "bowl": "Bowls",
+    "pita": "Pita",
+    "falafel": "Falafel",
+    "curry": "Curry",
+    "hotpot": "Fondue chinoise",
+    "dumpling": "Raviolis",
+    "dim_sum": "Dim sum",
+    "udon": "Udon",
+    "soba": "Soba",
+    "bento": "Bento",
+    "bagel": "Bagels",
+    "deli": "Traiteur",
+    "cake": "Pâtisserie",
+    "pastry": "Pâtisserie",
+    "waffle": "Gaufres",
+    "pancake": "Pancakes",
+    "donut": "Donuts",
+    "smoothie": "Smoothies",
+    "empanada": "Empanadas",
+    "arepa": "Arepas",
+    "tacos": "Tacos",
+    "burrito": "Burritos",
+    "paella": "Paella",
+    "risotto": "Risotto",
+    "soup": "Soupes",
+    "salad_bar": "Salades",
+    "sausage": "Charcuterie",
+    "cheese": "Fromages",
+    "oyster": "Huîtres",
+    "lobster": "Homard",
+
+    # Qualificatifs de style, volontairement conserves : ils ne designent pas
+    # une origine mais une maniere de servir, et l'utilisateur les cherche.
+    "traditional": "Traditionnelle",
+    "fusion": "Fusion",
+    "local": "Cuisine locale",
+    "organic": "Bio",
+    "halal": "Halal",
+    "kosher": "Casher",
+    "gourmet": "Gastronomique",
+    "canteen": "Cantine",
+    "takeaway": "À emporter",
+    "street_food": "Street food",
+    "a_volonté": "À volonté",
+    "all_you_can_eat": "À volonté",
+    "aligot": "Aligot",
 }
 
 
@@ -136,39 +275,52 @@ def options(cuisines: list[str]) -> list[dict]:
     On ne propose jamais un filtre qui ne renverrait aucun résultat : c'est la
     différence entre une liste de filtres utile et une liste décorative.
 
-    TRIÉ PAR FRÉQUENCE, PAS PAR ALPHABET (D-035). L'ordre alphabétique plaçait
-    « Italian restaurant » (1 restaurant en base) juste au-dessus de
-    « Italienne » (627) : l'utilisateur qui cherche de l'italien tombait
-    d'abord sur une étiquette parasite et repartait avec zéro résultat. Ces
-    doublons viennent des libellés du collecteur externe, qui coexistent avec
-    ceux d'OpenStreetMap. Les classer par volume met devant ce qui existe
-    vraiment et laisse la traîne au champ de recherche.
+    REGROUPÉ PAR LIBELLÉ, PAS PAR VALEUR (D-037). Plusieurs valeurs brutes
+    aboutissent au même libellé : `pizza` et `italian_pizza` donnent tous deux
+    « Pizzeria », `noodle` et `noodles` donnent « Nouilles ». Les laisser
+    séparées produisait deux entrées identiques dans la liste — l'utilisateur
+    y voyait une répétition — et pire, répartissait les restaurants entre deux
+    filtres dont AUCUN ne les montrait tous.
 
-    À libellé également fréquent, l'alphabet départage — sinon l'ordre
-    dépendrait de l'ordre de parcours de la base, et deux appels successifs
-    pourraient ne pas rendre la même liste.
+    Le champ `value` porte donc toutes les valeurs du groupe, séparées par des
+    virgules. C'est la forme que `/api/restaurants` attend déjà pour son
+    paramètre `cuisines` : aucune adaptation n'est nécessaire côté serveur, et
+    le filtre retrouve bien l'ensemble des restaurants du groupe.
+
+    TRIÉ PAR FRÉQUENCE, PAS PAR ALPHABET (D-035). L'ordre alphabétique plaçait
+    « Italian restaurant » (1 restaurant) au-dessus d'« Italienne » (819) :
+    l'utilisateur qui cherchait de l'italien repartait avec zéro résultat. À
+    fréquence égale, l'alphabet départage — sinon l'ordre dépendrait du
+    parcours de la base, et deux appels successifs pourraient différer.
 
     Returns:
-        [{"value": "french", "label": "Française", "count": 1234}, …]
+        [{"value": "pizza,italian_pizza", "label": "Pizzeria", "count": 614}, …]
     """
-    libelles: dict[str, str] = {}
+    valeurs: dict[str, set[str]] = {}
     volumes: dict[str, int] = {}
 
     for raw in cuisines:
         if not raw:
             continue
         for part in raw.split(";"):
-            key = part.strip().lower()
-            if not key:
+            cle = part.strip().lower()
+            if not cle:
                 continue
-            if key not in libelles:
-                libelles[key] = _FR.get(key, key.replace("_", " ").capitalize())
-            volumes[key] = volumes.get(key, 0) + 1
+            libelle = _FR.get(cle, cle.replace("_", " ").capitalize())
+            valeurs.setdefault(libelle, set()).add(cle)
+            volumes[libelle] = volumes.get(libelle, 0) + 1
 
     return sorted(
         (
-            {"value": v, "label": libelles[v], "count": volumes[v]}
-            for v in libelles
+            {
+                # Ordre stable des valeurs du groupe : la même liste doit
+                # produire la même chaîne d'un appel à l'autre, sinon le cache
+                # du navigateur et les tests deviennent imprévisibles.
+                "value": ",".join(sorted(valeurs[libelle])),
+                "label": libelle,
+                "count": volumes[libelle],
+            }
+            for libelle in valeurs
         ),
         key=lambda o: (-o["count"], o["label"]),
     )

@@ -31,8 +31,11 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
+import Budget from "./Budget";
 import { radius, spacing, useColors } from "../theme";
-import { FILTRES_VIDES, TRANCHES } from "../lib/filtres";
+import {
+  BUDGET_MAX, BUDGET_MIN, budgetActif, compterFiltres, FILTRES_VIDES, libelleBudget,
+} from "../lib/filtres";
 
 function Pastille({ label, icone, actif, onPress, hint }) {
   const colors = useColors();
@@ -90,19 +93,22 @@ export default function Filtres({
   valeurs, onChange, cuisines = [], nbResultats = null, chargement = false,
 }) {
   const colors = useColors();
-  const { tranchePrix, ouvert, reservation, avecCarte, cuisine } = valeurs;
+  const { budgetMin, budgetMax, ouvert, reservation, avecCarte, cuisine } = valeurs;
 
-  // `null` = fermée ; "tous" = panneau complet ; "cuisine" = liste des cuisines.
+  // `null` = fermée ; "tous" = panneau complet ; "cuisine" = liste des
+  // cuisines ; "budget" = fourchette de prix.
   const [feuille, setFeuille] = useState(null);
   const [recherche, setRecherche] = useState("");
 
   const modifier = (cle, val) => onChange({ ...valeurs, [cle]: val });
 
-  const actifs =
-    (tranchePrix ? 1 : 0) + (ouvert ? 1 : 0) + (reservation ? 1 : 0) +
-    (avecCarte ? 1 : 0) + (cuisine ? 1 : 0);
+  // Le compte vit dans `lib/filtres` : il est identique au web, et une regle
+  // de comptage dupliquee finit toujours par diverger.
+  const actifs = compterFiltres(valeurs);
 
-  const trancheLabel = TRANCHES.find((t) => t.cle === tranchePrix)?.label;
+  const changerBudget = (bas, haut) =>
+    onChange({ ...valeurs, budgetMin: bas, budgetMax: haut });
+
   const cuisineLabel = cuisines.find((c) => c.value === cuisine)?.label;
 
   // La liste dépasse les deux cents entrées : sans champ de recherche, trouver
@@ -144,6 +150,12 @@ export default function Filtres({
         </Pressable>
 
         <Pastille
+          icone="dollar-sign"
+          label={libelleBudget(budgetMin, budgetMax)}
+          actif={budgetActif(valeurs)}
+          onPress={() => setFeuille("budget")}
+        />
+        <Pastille
           icone="chevron-down"
           label={cuisineLabel || "Type de cuisine"}
           actif={Boolean(cuisine)}
@@ -167,14 +179,6 @@ export default function Filtres({
           hint="Restaurants dont la carte a été lue et analysée"
           onPress={() => modifier("avecCarte", !avecCarte)}
         />
-        {trancheLabel ? (
-          <Pastille
-            icone="dollar-sign"
-            label={trancheLabel}
-            actif
-            onPress={() => modifier("tranchePrix", null)}
-          />
-        ) : null}
       </ScrollView>
 
       <Modal
@@ -191,7 +195,40 @@ export default function Filtres({
             <View style={[s.trait, { backgroundColor: colors.borderStrong }]} />
           </View>
 
-          {feuille === "cuisine" ? (
+          {feuille === "budget" ? (
+            <>
+              <Text style={[s.titre, { color: colors.text }]}>Budget</Text>
+              <View style={{ paddingHorizontal: spacing.lg }}>
+                <Budget min={budgetMin} max={budgetMax} onChange={changerBudget} />
+              </View>
+              <View style={[s.pied, { borderTopColor: colors.border }]}>
+                <Pressable
+                  onPress={() => changerBudget(BUDGET_MIN, BUDGET_MAX)}
+                  disabled={!budgetActif(valeurs)}
+                  accessibilityRole="button"
+                  style={s.effacer}
+                >
+                  <Text
+                    style={[
+                      s.effacerText,
+                      { color: colors.textMuted, opacity: budgetActif(valeurs) ? 1 : 0.4 },
+                    ]}
+                  >
+                    Tout budget
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={fermer}
+                  accessibilityRole="button"
+                  style={[s.valider, { backgroundColor: colors.brand }]}
+                >
+                  <Text style={[s.validerText, { color: colors.onBrand }]}>
+                    {libelleValidation}
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          ) : feuille === "cuisine" ? (
             <>
               <Text style={[s.titre, { color: colors.text }]}>Type de cuisine</Text>
 
@@ -247,17 +284,7 @@ export default function Filtres({
 
               <ScrollView style={s.liste}>
                 <Text style={[s.groupe, { color: colors.textFaint }]}>BUDGET</Text>
-                <View style={s.pastilles}>
-                  {TRANCHES.map((t) => (
-                    <Pastille
-                      key={t.cle}
-                      label={t.label}
-                      actif={tranchePrix === t.cle}
-                      onPress={() =>
-                        modifier("tranchePrix", tranchePrix === t.cle ? null : t.cle)}
-                    />
-                  ))}
-                </View>
+                <Budget min={budgetMin} max={budgetMax} onChange={changerBudget} />
 
                 <Text style={[s.groupe, { color: colors.textFaint }]}>DISPONIBILITÉ</Text>
                 <Case

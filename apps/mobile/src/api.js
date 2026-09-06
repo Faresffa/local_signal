@@ -6,6 +6,8 @@
 // ATTENTION : sur un téléphone physique, "localhost" désigne le téléphone et
 // non la machine de développement. Renseigner EXPO_PUBLIC_API_BASE avec l'IP
 // locale de la machine, par exemple http://192.168.1.20:8000
+import { BUDGET_MAX, BUDGET_MIN } from "./lib/filtres";
+
 const API_BASE = process.env.EXPO_PUBLIC_API_BASE ?? "http://localhost:8000";
 
 async function request(path, options) {
@@ -33,19 +35,23 @@ async function request(path, options) {
  */
 export async function fetchRestaurants({
   lat, lng, radius = 2000, cuisines, budgetMin, budgetMax,
-  tranchePrix, ouvert, reservation, avecCarte, limit = 30,
+  ouvert, reservation, avecCarte, limit = 30,
 }) {
   const query = new URLSearchParams({ lat, lng, radius, limit });
   if (cuisines?.length) query.set("cuisines", cuisines.join(","));
   // Un restaurant sans prix connu n'est pas exclu par le serveur (D-012) :
   // envoyer les bornes ne penalise pas l'information manquante.
-  if (budgetMin != null) query.set("budget_min", budgetMin);
-  if (budgetMax != null) query.set("budget_max", budgetMax);
+  // UNE BORNE AU MAXIMUM DE L'ECHELLE N'EST PAS UN PLAFOND. La glissiere
+  // s'arrete a 60 EUR, mais cette position veut dire « 60 et au-dela » : 26
+  // restaurants coutent davantage, et les transmettre comme plafond les
+  // ecartait alors que l'utilisateur n'avait rien restreint. Meme logique en
+  // bas de l'echelle. On n'envoie donc que les bornes reellement deplacees.
+  if (budgetMin != null && budgetMin > BUDGET_MIN) query.set("budget_min", budgetMin);
+  if (budgetMax != null && budgetMax < BUDGET_MAX) query.set("budget_max", budgetMax);
 
   // Filtres issus des donnees collectees (D-034). On n'envoie que ceux qui
   // sont actifs : un `false` explicite dirait au serveur de filtrer, alors
   // qu'un filtre inactif ne doit rien retirer.
-  if (tranchePrix) query.set("tranche_prix", tranchePrix);
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");

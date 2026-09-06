@@ -19,6 +19,7 @@ import {
   CardSkeleton, EmptyState, ErrorState, Loading, Verdict,
 } from "../components/ui";
 import PhotoRestaurant from "../components/PhotoRestaurant";
+import ChoixLieu from "../components/ChoixLieu";
 import Filtres from "../components/Filtres";
 import { radius, spacing, useColors } from "../theme";
 import { distance, verdict } from "../lib/display";
@@ -121,6 +122,11 @@ export default function DiscoverScreen({ onOpen }) {
 
   const [position, setPosition] = useState(null);
   const [denied, setDenied] = useState(false);
+  // Un lieu choisi a la main prime sur le GPS : sans cela, la position
+  // contredirait le choix explicite de l'utilisateur des la prochaine
+  // mise a jour. Meme regle que sur le web.
+  const [lieu, setLieu] = useState(null);
+  const origine = lieu ?? position;
   const [radiusM, setRadiusM] = useState(RAYON_DEFAUT);
 
   // Tous les filtres dans un seul objet : ils partent ensemble a l'API, et un
@@ -166,16 +172,17 @@ export default function DiscoverScreen({ onOpen }) {
   }, []);
 
   const load = useCallback(() => {
-    if (!position) return;
+    if (!origine) return;
     setStatus("loading");
     setError(null);
 
     fetchRestaurants({
-      lat: position.lat,
-      lng: position.lng,
+      lat: origine.lat,
+      lng: origine.lng,
       radius: radiusM,
       cuisines: filtres.cuisine ? [filtres.cuisine] : undefined,
-      tranchePrix: filtres.tranchePrix,
+      budgetMin: filtres.budgetMin,
+      budgetMax: filtres.budgetMax,
       ouvert: filtres.ouvert,
       reservation: filtres.reservation,
       avecCarte: filtres.avecCarte,
@@ -183,18 +190,30 @@ export default function DiscoverScreen({ onOpen }) {
     })
       .then((data) => { setRestaurants(data.restaurants ?? []); setStatus("ready"); })
       .catch((e) => { setError(e.message); setStatus("error"); });
-  }, [position, radiusM, filtres]);
+  }, [origine, radiusM, filtres]);
 
   useEffect(() => { load(); }, [load]);
 
   const entete = (
     <View style={s.header}>
-      <Text style={[s.title, { color: colors.text }]}>Autour de vous</Text>
+      <Text style={[s.title, { color: colors.text }]}>
+        {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
+      </Text>
       <Text style={[s.lede, { color: colors.textMuted }]}>
-        {denied
+        {denied && !lieu
           ? "Position indisponible. Résultats pour le Quartier latin."
           : "Les restaurants de quartier, pas les plus visibles."}
       </Text>
+
+      <View style={{ marginTop: spacing.md }}>
+        <ChoixLieu
+          value={lieu ?? (position && {
+            ...position,
+            label: denied ? "Quartier latin, Paris" : "Autour de moi",
+          })}
+          onChange={setLieu}
+        />
+      </View>
 
       <ScrollView
         horizontal
@@ -246,7 +265,7 @@ export default function DiscoverScreen({ onOpen }) {
     </View>
   );
 
-  if (!position) return <Loading label="Recherche de votre position" />;
+  if (!origine) return <Loading label="Recherche de votre position" />;
 
   if (status === "error") {
     return (

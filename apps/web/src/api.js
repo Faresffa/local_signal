@@ -4,6 +4,8 @@
 // packages/shared quand la duplication deviendra coûteuse.
 //
 // L'URL vient de l'environnement. En dur, elle casse au premier déploiement.
+import { BUDGET_MAX, BUDGET_MIN } from "./lib/filtres";
+
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 
 async function request(path, options) {
@@ -31,12 +33,21 @@ async function request(path, options) {
  */
 export async function fetchRestaurants({
   lat, lng, radius = 2000, cuisines, limit = 24,
-  tranchePrix, ouvert, reservation, avecCarte,
+  budgetMin,
+  budgetMax, ouvert, reservation, avecCarte,
 }) {
   const query = new URLSearchParams({ lat, lng, radius, limit });
   if (cuisines?.length) query.set("cuisines", cuisines.join(","));
   // Les filtres (D-034) retirent des lignes sans toucher au classement.
-  if (tranchePrix) query.set("tranche_prix", tranchePrix);
+  // Une borne egale a la borne par defaut n'est pas transmise : le serveur
+  // ne doit filtrer que ce que l'utilisateur a reellement restreint.
+  // UNE BORNE AU MAXIMUM DE L'ECHELLE N'EST PAS UN PLAFOND. La glissiere
+  // s'arrete a 60 EUR, mais cette position veut dire « 60 et au-dela » : 26
+  // restaurants coutent davantage, et les transmettre comme plafond les
+  // ecartait alors que l'utilisateur n'avait rien restreint. Meme logique en
+  // bas de l'echelle. On n'envoie donc que les bornes reellement deplacees.
+  if (budgetMin != null && budgetMin > BUDGET_MIN) query.set("budget_min", budgetMin);
+  if (budgetMax != null && budgetMax < BUDGET_MAX) query.set("budget_max", budgetMax);
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");
