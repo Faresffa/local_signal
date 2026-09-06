@@ -43,8 +43,14 @@ export default function CartePhotos({ urls, motif }) {
                   src={u}
                   alt={`Page ${i + 1} de la carte`}
                   loading="lazy"
-                  // Une URL d'hébergeur peut expirer. On retire la vignette
-                  // plutôt que de laisser une image cassée à l'écran.
+                  decoding="async"
+                  // L'hébergeur n'a pas à savoir depuis quelle page on regarde.
+                  referrerPolicy="no-referrer"
+                  // On retire la vignette plutôt que de laisser une image
+                  // cassée à l'écran. Ce qu'un `onError` dit exactement, c'est
+                  // « le navigateur n'a pas pu peindre cette image » — pas
+                  // « l'image n'existe plus ». Les deux ont été confondus, voir
+                  // le message de repli ci-dessous.
                   onError={() => setCassees((s) => new Set(s).add(u))}
                 />
               </a>
@@ -52,10 +58,30 @@ export default function CartePhotos({ urls, motif }) {
           </div>
 
           {visibles.length === 0 && (
-            <p className="cartephotos__motif">
-              Les images ne sont plus accessibles chez leur hébergeur. Les
-              observations qui en ont été tirées restent valides.
-            </p>
+            /* NE PAS AFFIRMER UNE CAUSE QU'ON NE CONNAIT PAS. Ce message
+               annonçait « les images ne sont plus accessibles chez leur
+               hébergeur » — une expiration. Vérification faite, les URL
+               répondaient 200 et l'image faisait 500 Ko : elles étaient
+               parfaitement vivantes, et c'est l'affichage qui avait échoué
+               (extension de navigateur, réseau, politique de contenu).
+               Un composant sait qu'il n'a pas pu peindre une image ; il ne
+               sait pas pourquoi, et ne doit donc pas l'inventer. */
+            <div className="cartephotos__replis">
+              <p className="cartephotos__motif">
+                Ces photos ne s'affichent pas ici. Elles restent consultables
+                chez leur hébergeur — et les observations qui en ont été tirées
+                sont valides dans tous les cas.
+              </p>
+              <ul className="cartephotos__liens">
+                {liste.map((u, i) => (
+                  <li key={u}>
+                    <a href={u} target="_blank" rel="noreferrer noopener">
+                      Ouvrir la page {i + 1}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
           <p className="cartephotos__mention">

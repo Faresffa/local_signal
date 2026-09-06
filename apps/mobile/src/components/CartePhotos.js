@@ -72,9 +72,14 @@ export default function CartePhotos({ urls, motif }) {
           </ScrollView>
 
           {visibles.length === 0 && (
+            /* NE PAS AFFIRMER UNE CAUSE QU'ON NE CONNAIT PAS. Ce message
+               annonçait une expiration ; vérification faite, les URL
+               répondaient 200 avec une image de 500 Ko. Un composant sait
+               qu'il n'a pas pu afficher une image, pas pourquoi. */
             <Text style={[s.note, { color: colors.textFaint }]}>
-              Les images ne sont plus accessibles chez leur hébergeur. Les
-              observations qui en ont été tirées restent valides.
+              Ces photos ne s'affichent pas ici. Elles restent consultables chez
+              leur hébergeur — et les observations qui en ont été tirées sont
+              valides dans tous les cas.
             </Text>
           )}
 

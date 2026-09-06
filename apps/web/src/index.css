@@ -1451,6 +1451,21 @@ img { display: block; max-width: 100%; }
 .cartephotos__vignette:hover { transform: scale(1.02); }
 .cartephotos__vignette img { width: 100%; height: 100%; object-fit: cover; }
 
+.cartephotos__replis { display: flex; flex-direction: column; gap: 6px; }
+.cartephotos__liens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  list-style: none;
+  padding: 0;
+}
+.cartephotos__liens a {
+  font-size: var(--font-size-sm);
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .cartephotos__motif,
 .cartephotos__mention {
   font-size: var(--font-size-xs);
