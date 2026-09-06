@@ -18,9 +18,76 @@ import sqlite3
 
 from backend import config
 
+IS_POSTGRES = bool(config.DATABASE_URL)
 
-def get_connection() -> sqlite3.Connection:
-    """Retourne une connexion à la base SQLite."""
+# SQLite exprime l'auto-incrément comme un alias du rowid ; Postgres via SERIAL.
+# Seule différence de DDL entre les deux dialectes dans ce schéma (D-034).
+_AUTOINCREMENT_PK = "SERIAL PRIMARY KEY" if IS_POSTGRES else "INTEGER PRIMARY KEY AUTOINCREMENT"
+
+
+class _PgCursorWrapper:
+    """
+    Fait ressembler un curseur psycopg2 à un curseur sqlite3 : mêmes appels
+    (`?` en placeholder, `.lastrowid`) pour ne pas toucher aux requêtes de
+    backend/db/repository.py et des scripts d'ingestion (D-034).
+    """
+
+    def __init__(self, cursor):
+        self._cursor = cursor
+        self._lastrowid = None
+
+    def execute(self, sql, params=None):
+        pg_sql = sql.replace("?", "%s")
+        is_insert = pg_sql.strip().upper().startswith("INSERT")
+        if is_insert and "RETURNING" not in pg_sql.upper():
+            pg_sql += " RETURNING id"
+        self._cursor.execute(pg_sql, params or ())
+        if is_insert:
+            row = self._cursor.fetchone()
+            self._lastrowid = row["id"] if row else None
+        return self
+
+    def fetchall(self):
+        return self._cursor.fetchall()
+
+    def fetchone(self):
+        return self._cursor.fetchone()
+
+    @property
+    def lastrowid(self):
+        return self._lastrowid
+
+
+class _PgConnWrapper:
+    """Même rôle que `_PgCursorWrapper`, côté connexion (`conn.execute(...)`)."""
+
+    def __init__(self, conn):
+        self._conn = conn
+
+    def execute(self, sql, params=None):
+        return _PgCursorWrapper(self._conn.cursor()).execute(sql, params)
+
+    def cursor(self):
+        return _PgCursorWrapper(self._conn.cursor())
+
+    def commit(self):
+        self._conn.commit()
+
+    def close(self):
+        self._conn.close()
+
+
+def get_connection():
+    """Retourne une connexion à la base — Postgres si DATABASE_URL est définie, sinon SQLite."""
+    if IS_POSTGRES:
+        import psycopg2
+        import psycopg2.extras
+
+        conn = psycopg2.connect(
+            config.DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor
+        )
+        return _PgConnWrapper(conn)
+
     conn = sqlite3.connect(config.DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
@@ -41,7 +108,7 @@ def init_db():
 
             -- Faits OpenStreetMap
             osm_type TEXT,
-            osm_id INTEGER,
+            osm_id BIGINT,
             name TEXT NOT NULL,
             lat REAL NOT NULL,
             lng REAL NOT NULL,
@@ -79,9 +146,9 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_resto_label ON restaurants(label)")
 
     # --- Cartes scannées (D-004) — l'actif du projet ---
-    cursor.execute("""
+    cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS menus (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {_AUTOINCREMENT_PK},
             restaurant_id TEXT NOT NULL,
             provider TEXT,           -- 'groq' | 'claude' — pour le comparatif D-017
             observations_json TEXT,  -- sortie brute du modèle de vision
@@ -94,9 +161,9 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_menus_resto ON menus(restaurant_id)")
 
     # --- Sites touristiques (référence pour la pénalité de zone — D-002) ---
-    cursor.execute("""
+    cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS tourist_sites (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {_AUTOINCREMENT_PK},
             name TEXT NOT NULL,
             lat REAL NOT NULL,
             lng REAL NOT NULL,
@@ -106,9 +173,9 @@ def init_db():
     """)
 
     # --- Réservations ---
-    cursor.execute("""
+    cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS reservations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {_AUTOINCREMENT_PK},
             restaurant_id TEXT NOT NULL,
             restaurant_name TEXT NOT NULL,
             user_name TEXT NOT NULL,
@@ -121,9 +188,9 @@ def init_db():
     """)
 
     # --- Consultations (historique) ---
-    cursor.execute("""
+    cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS consultations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {_AUTOINCREMENT_PK},
             restaurant_id TEXT NOT NULL,
             restaurant_name TEXT NOT NULL,
             score_final REAL,
@@ -203,8 +270,15 @@ def _migrate(cursor) -> None:
     }
 
     for table, columns in additions.items():
-        cursor.execute(f"PRAGMA table_info({table})")
-        existing = {row[1] for row in cursor.fetchall()}
+        if IS_POSTGRES:
+            cursor.execute(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = ?",
+                (table,),
+            )
+            existing = {row["column_name"] for row in cursor.fetchall()}
+        else:
+            cursor.execute(f"PRAGMA table_info({table})")
+            existing = {row[1] for row in cursor.fetchall()}
         for column, sql_type in columns.items():
             if column not in existing:
                 cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {sql_type}")

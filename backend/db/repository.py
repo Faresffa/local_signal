@@ -224,22 +224,22 @@ def label_stats(zone: str = None) -> dict:
     params = [zone] if zone else []
 
     total = conn.execute(
-        f"SELECT COUNT(*) FROM restaurants {where}", params
-    ).fetchone()[0]
+        f"SELECT COUNT(*) AS n FROM restaurants {where}", params
+    ).fetchone()["n"]
     rows = conn.execute(
-        f"SELECT label, COUNT(*) FROM restaurants {where} "
+        f"SELECT label, COUNT(*) AS n FROM restaurants {where} "
         f"{'AND' if where else 'WHERE'} label IS NOT NULL GROUP BY label", params
     ).fetchall()
     validated = conn.execute(
-        f"SELECT COUNT(*) FROM restaurants {where} "
+        f"SELECT COUNT(*) AS n FROM restaurants {where} "
         f"{'AND' if where else 'WHERE'} human_validated = 1", params
-    ).fetchone()[0]
+    ).fetchone()["n"]
     conn.close()
 
     return {
         "total": total,
-        "labeled": sum(r[1] for r in rows),
-        "by_label": {r[0]: r[1] for r in rows},
+        "labeled": sum(r["n"] for r in rows),
+        "by_label": {r["label"]: r["n"] for r in rows},
         "human_validated": validated,
     }
 

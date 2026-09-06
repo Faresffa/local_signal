@@ -33,6 +33,18 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 OUTSCRAPER_API_KEY = os.environ.get("OUTSCRAPER_API_KEY", "")
 
 # =============================================================================
+# CORS — origines autorisées en production (D-016)
+# =============================================================================
+# En local (`.env` vide), accepte toutes les origines pour compatibilité dev.
+# En production, restrict à l'URL de l'interface web déployée.
+#   Railway : ALLOWED_ORIGINS="https://web-service.up.railway.app"
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("ALLOWED_ORIGINS", "*").split(",")
+    if origin.strip()
+]
+
+# =============================================================================
 # Scan de carte — fournisseur de vision (D-004, D-017)
 # =============================================================================
 # Le fournisseur est interchangeable. Groq par défaut : latence (l'utilisateur
@@ -185,6 +197,10 @@ CARD_INFO_BG = "#fffbf3"
 # =============================================================================
 # Chemin absolu : la base ne dépend plus du répertoire d'où on lance la commande.
 DB_PATH = str(ROOT_DIR / "local_signal.db")
+
+# Si définie (Railway/Supabase), bascule tout le module backend.db sur Postgres.
+# Vide en local par défaut : les contributeurs gardent SQLite sans rien configurer.
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
 # =============================================================================
 # Assets (images de démonstration)
