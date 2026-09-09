@@ -2,9 +2,8 @@
 //
 // Carte de résultat, photo dominante.
 //
-// Règle d'affichage (D-009) : aucun score chiffré. L'utilisateur voit un
-// verdict lisible et la première raison en langage naturel ; le détail du
-// calcul reste sur la fiche, derrière « pourquoi ? ».
+// Le verdict donne une lecture rapide ; le score chiffré rend aussi explicite
+// l'ordre des résultats. Le détail de son calcul reste sur la fiche.
 
 import { ForkKnife } from "@phosphor-icons/react";
 
@@ -20,6 +19,9 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
 
   const v = verdict(restaurant.local_signal, restaurant.confidence);
   const dist = distance(restaurant.distance_m);
+  // C'est le score final (Local Signal + proximité) qui détermine l'ordre
+  // renvoyé par l'API. Le repli conserve l'affichage pour les anciennes données.
+  const score = restaurant.scoring?.score_final ?? restaurant.local_signal;
   // Les explications vivent dans le bloc `scoring`, forme unique produite par
   // `rank_restaurants` et servie telle quelle par l'API.
   const reason = restaurant.scoring?.reasons?.[0];
@@ -34,7 +36,12 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
           nom={restaurant.name}
           size={64}
         />
-        <span className={`verdict verdict--${v.tone} card__verdict`}>{v.label}</span>
+        <span className={`verdict verdict--${v.tone} card__verdict`}>
+          {v.label}
+        </span>
+        {score != null && (
+          <span className="card__score">Score {Math.round(score)}/100</span>
+        )}
         {dist && <span className="card__distance">{dist}</span>}
       </div>
 

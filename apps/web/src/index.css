@@ -366,6 +366,14 @@ img { display: block; max-width: 100%; }
   padding-block: var(--spacing-md);
 }
 .results__count { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+.results__summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+.results__sort { font-size: var(--font-size-xs); color: var(--color-text-faint); }
 
 .grid {
   display: grid;
@@ -449,6 +457,21 @@ img { display: block; max-width: 100%; }
   z-index: 1;
   backdrop-filter: blur(14px) saturate(180%);
   box-shadow: var(--shadow-card);
+}
+
+.card__score {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  z-index: 1;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: hsl(0 0% 8% / 0.76);
+  color: white;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(10px) saturate(150%);
 }
 
 .card__body {
@@ -1052,12 +1075,12 @@ img { display: block; max-width: 100%; }
   display: flex;
   align-items: center;
   gap: 8px;
-  overflow-x: auto;
-  overflow-y: visible;
+  /* Un parent qui défile horizontalement masque aussi les menus absolus.
+     La ligne peut donc revenir à la ligne sur petit écran, sans les couper. */
+  flex-wrap: wrap;
+  overflow: visible;
   padding-block: 4px;
-  scrollbar-width: none;
 }
-.fbar__ligne::-webkit-scrollbar { display: none; }
 
 /* `position: relative` porte les menus déroulants ; `static` casserait leur
    ancrage. */

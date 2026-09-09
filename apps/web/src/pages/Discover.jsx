@@ -22,21 +22,26 @@ import {
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 import { useGeolocation } from "../lib/hooks";
 
-export default function Discover({ onOpen }) {
+export default function Discover({
+  onOpen,
+  filtres,
+  onFiltresChange,
+  radius,
+  onRadiusChange,
+  lieu,
+  onLieuChange,
+}) {
   const { position, denied, relocate } = useGeolocation();
 
   // Lieu choisi explicitement. Tant qu'il est nul, on suit la géolocalisation ;
   // dès qu'il existe, il prime — l'utilisateur qui a nommé un endroit ne veut
   // pas que sa position le contredise.
-  const [lieu, setLieu] = useState(null);
   const origine = lieu ?? position;
 
-  const [radius, setRadius] = useState(RAYON_DEFAUT);
   const [cuisineOptions, setCuisineOptions] = useState([]);
 
   // Tous les filtres dans un seul objet : ils partent ensemble a l'API, et un
   // seul effet suffit a les surveiller.
-  const [filtres, setFiltres] = useState(FILTRES_VIDES);
   const cuisine = filtres.cuisine;
 
   const [restaurants, setRestaurants] = useState([]);
@@ -90,12 +95,20 @@ export default function Discover({ onOpen }) {
         setStatus("error");
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [origine, radius, filtres, reloads]);
 
-  const relancer = () => { setStatus("loading"); setReloads((n) => n + 1); };
+  const relancer = () => {
+    setStatus("loading");
+    setReloads((n) => n + 1);
+  };
 
-  const reset = () => { setFiltres(FILTRES_VIDES); setRadius(RAYON_DEFAUT); };
+  const reset = () => {
+    onFiltresChange({ ...FILTRES_VIDES });
+    onRadiusChange(RAYON_DEFAUT);
+  };
 
   return (
     <>
@@ -111,42 +124,59 @@ export default function Discover({ onOpen }) {
         <div className="searchbar enter" style={{ "--enter-delay": "280ms" }}>
           <div className="field">
             <LocationPicker
-              value={lieu ?? (position && {
-                ...position,
-                label: denied ? "Quartier latin, Paris" : "Autour de moi",
-              })}
-              onChange={setLieu}
-              onUseGps={() => { setLieu(null); relocate(); }}
+              value={
+                lieu ??
+                (position && {
+                  ...position,
+                  label: denied ? "Quartier latin, Paris" : "Autour de moi",
+                })
+              }
+              onChange={onLieuChange}
+              onUseGps={() => {
+                onLieuChange(null);
+                relocate();
+              }}
             />
           </div>
 
           <div className="field">
-            <label className="field__label" htmlFor="cuisine">Cuisine</label>
+            <label className="field__label" htmlFor="cuisine">
+              Cuisine
+            </label>
             <select
               id="cuisine"
               className="field__control"
               value={cuisine ?? ""}
               onChange={(e) =>
-                setFiltres((f) => ({ ...f, cuisine: e.target.value || null }))
+                onFiltresChange((f) => ({
+                  ...f,
+                  cuisine: e.target.value || null,
+                }))
               }
             >
               <option value="">Toutes</option>
               {cuisineOptions.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="field">
-            <label className="field__label" htmlFor="rayon">Distance</label>
+            <label className="field__label" htmlFor="rayon">
+              Distance
+            </label>
             <select
               id="rayon"
               className="field__control"
               value={radius}
-              onChange={(e) => setRadius(Number(e.target.value))}
+              onChange={(e) => onRadiusChange(Number(e.target.value))}
             >
               {RAYONS.map((r) => (
-                <option key={r.value} value={r.value}>{r.label}</option>
+                <option key={r.value} value={r.value}>
+                  {r.label}
+                </option>
               ))}
             </select>
           </div>
@@ -159,13 +189,17 @@ export default function Discover({ onOpen }) {
 
         {/* Le repli n'a plus de sens dès qu'un lieu est choisi : il dirait
             que les résultats viennent d'ailleurs qu'ils ne viennent. */}
-        {denied && !lieu && <div style={{ marginTop: 12 }}><LocationNotice /></div>}
+        {denied && !lieu && (
+          <div style={{ marginTop: 12 }}>
+            <LocationNotice />
+          </div>
+        )}
       </section>
 
       <div className="enter" style={{ "--enter-delay": "380ms" }}>
         <Filtres
           valeurs={filtres}
-          onChange={setFiltres}
+          onChange={onFiltresChange}
           cuisines={cuisineOptions}
           nbResultats={status === "ready" ? restaurants.length : null}
           chargement={status === "loading"}
@@ -174,18 +208,27 @@ export default function Discover({ onOpen }) {
 
       <section>
         <div className="results__head">
-          <h2 className="detail__title" style={{ fontSize: "var(--font-size-xl)" }}>
+          <h2
+            className="detail__title"
+            style={{ fontSize: "var(--font-size-xl)" }}
+          >
             {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
           </h2>
-          {status === "ready" && (
-            <span className="results__count">
-              {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""}
-            </span>
-          )}
+          <div className="results__summary">
+            <span className="results__sort">Triés par score calculé</span>
+            {status === "ready" && (
+              <span className="results__count">
+                {restaurants.length} restaurant
+                {restaurants.length > 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
         </div>
 
         {status === "loading" && <ResultsSkeleton />}
-        {status === "error" && <ErrorState message={error} onRetry={relancer} />}
+        {status === "error" && (
+          <ErrorState message={error} onRetry={relancer} />
+        )}
         {status === "ready" && restaurants.length === 0 && (
           // Un lieu choisi explicitement qui ne renvoie rien, sans filtre actif,
           // signale une zone non relevée plutôt que des critères trop stricts.
