@@ -27,6 +27,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -36,6 +37,7 @@ body {
   color: var(--color-text);
   background: var(--color-background);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 h1, h2, h3, h4 {
@@ -97,7 +99,9 @@ img { display: block; max-width: 100%; }
 .nav {
   position: sticky;
   top: 0;
-  z-index: 20;
+  /* Au-dessus des champs et de leurs menus : `.searchbar` porte un z-index
+     pour ses suggestions, sans devoir passer devant le header au défilement. */
+  z-index: 50;
   height: 68px;
   display: flex;
   align-items: center;
@@ -1166,7 +1170,12 @@ img { display: block; max-width: 100%; }
   box-shadow: var(--shadow-float);
   animation: fbar-apparait var(--motion-fast) var(--motion-ease);
 }
-.fbar__menu { width: var(--menu-largeur, 260px); padding: 6px; }
+.fbar__menu {
+  /* Les menus ne doivent jamais élargir le document sur mobile. */
+  width: min(var(--menu-largeur, 260px), calc(100vw - var(--spacing-lg) - var(--spacing-lg)));
+  margin-left: var(--menu-decalage, 0px);
+  padding: 6px;
+}
 .fbar__panneau { width: 340px; padding: var(--spacing-md); }
 
 @keyframes fbar-apparait {
@@ -1292,7 +1301,7 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 480px) {
   /* Le panneau ne peut pas déborder d'un écran étroit : il s'y ajuste. */
-  .fbar__panneau { width: min(340px, calc(100vw - 32px)); }
+  .fbar__panneau { width: min(340px, calc(100vw - var(--spacing-lg) - var(--spacing-lg))); }
 }
 
 /* ==========================================================================
