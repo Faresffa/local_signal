@@ -9,7 +9,7 @@ import { ForkKnife, Moon, Sun } from "@phosphor-icons/react";
 
 import { useTheme } from "../lib/hooks";
 
-export default function Nav({ page, onNavigate }) {
+export default function Nav({ page, onNavigate, user, onLogout }) {
   const { isDark, toggle } = useTheme();
   const [stuck, setStuck] = useState(false);
 
@@ -60,6 +60,20 @@ export default function Nav({ page, onNavigate }) {
         >
           {isDark ? <Sun size={19} weight="light" /> : <Moon size={19} weight="light" />}
         </button>
+
+        {user ? (
+          <button className="nav__link" onClick={onLogout} title={user.email}>
+            {user.name || user.email} · Se déconnecter
+          </button>
+        ) : (
+          <button
+            className="nav__link"
+            aria-current={page === "login" ? "page" : undefined}
+            onClick={() => onNavigate("login")}
+          >
+            Se connecter
+          </button>
+        )}
       </nav>
     </header>
   );

@@ -12,10 +12,14 @@ import Nav from "./components/Nav";
 import Discover from "./pages/Discover";
 import Detail from "./pages/Detail";
 import Reserve from "./pages/Reserve";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { useCurrentUser } from "./lib/auth";
 
 export default function App() {
   const [page, setPage] = useState("discover");
   const [selected, setSelected] = useState(null);
+  const { user, login, signup, logout } = useCurrentUser();
 
   // Chaque changement d'écran repart du haut : sans cela on arrive au milieu
   // d'une fiche après avoir fait défiler une longue liste.
@@ -33,7 +37,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Nav page={page} onNavigate={setPage} />
+      <Nav page={page} onNavigate={setPage} user={user} onLogout={logout} />
 
       <main className="page-main">
         <div className="shell">
@@ -52,6 +56,22 @@ export default function App() {
               restaurant={selected}
               onBack={() => setPage("detail")}
               onDone={() => setPage("discover")}
+            />
+          )}
+
+          {page === "login" && (
+            <Login
+              onLogin={async (credentials) => { await login(credentials); setPage("discover"); }}
+              onGoToSignup={() => setPage("signup")}
+              onBack={() => setPage("discover")}
+            />
+          )}
+
+          {page === "signup" && (
+            <Signup
+              onSignup={async (fields) => { await signup(fields); setPage("discover"); }}
+              onGoToLogin={() => setPage("login")}
+              onBack={() => setPage("discover")}
             />
           )}
         </div>
