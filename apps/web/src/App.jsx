@@ -12,6 +12,7 @@ import Nav from "./components/Nav";
 import Discover from "./pages/Discover";
 import Detail from "./pages/Detail";
 import Reserve from "./pages/Reserve";
+import { FILTRES_VIDES, RAYON_DEFAUT } from "./lib/filtres";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { useCurrentUser } from "./lib/auth";
@@ -19,6 +20,11 @@ import { useCurrentUser } from "./lib/auth";
 export default function App() {
   const [page, setPage] = useState("discover");
   const [selected, setSelected] = useState(null);
+  // L'écran Discover est démonté pendant la consultation d'une fiche. Cet état
+  // vit donc ici afin que le retour retrouve exactement la recherche en cours.
+  const [filtres, setFiltres] = useState(() => ({ ...FILTRES_VIDES }));
+  const [radius, setRadius] = useState(RAYON_DEFAUT);
+  const [lieu, setLieu] = useState(null);
   const { user, login, signup, logout } = useCurrentUser();
 
   // Chaque changement d'écran repart du haut : sans cela on arrive au milieu
@@ -41,7 +47,17 @@ export default function App() {
 
       <main className="page-main">
         <div className="shell">
-          {page === "discover" && <Discover onOpen={openDetail} />}
+          {page === "discover" && (
+            <Discover
+              onOpen={openDetail}
+              filtres={filtres}
+              onFiltresChange={setFiltres}
+              radius={radius}
+              onRadiusChange={setRadius}
+              lieu={lieu}
+              onLieuChange={setLieu}
+            />
+          )}
 
           {page === "detail" && selected && (
             <Detail

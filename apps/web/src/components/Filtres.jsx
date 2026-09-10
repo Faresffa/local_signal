@@ -29,7 +29,7 @@
 // Le seul filtre où l'absence exclut est « carte analysée », qui porte sur la
 // présence même.
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   CaretDown, Clock, ForkKnife, MagnifyingGlass, Money, Notebook, SlidersHorizontal, X,
 } from "@phosphor-icons/react";
@@ -61,7 +61,37 @@ function useFermeture(ouvert, fermer) {
 /** Pastille qui ouvre un menu sous elle. */
 function Menu({ icone, label, actif, children, largeur = 260 }) {
   const [ouvert, setOuvert] = useState(false);
+  const [decalage, setDecalage] = useState(0);
   const ref = useFermeture(ouvert, () => setOuvert(false));
+  const menuRef = useRef(null);
+  const decalageRef = useRef(0);
+
+  // Sur mobile, un bouton situé à droite ne peut pas ancrer un large menu à
+  // gauche sans le faire sortir du viewport. On le décale juste ce qu'il faut,
+  // tout en conservant son ancrage naturel sur les écrans larges.
+  useLayoutEffect(() => {
+    if (!ouvert) return undefined;
+
+    const ajuster = () => {
+      const rect = menuRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const marge = 8;
+      let prochain = decalageRef.current;
+      if (rect.right > window.innerWidth - marge) {
+        prochain += window.innerWidth - marge - rect.right;
+      }
+      const gaucheApresDecalage = rect.left + prochain - decalageRef.current;
+      if (gaucheApresDecalage < marge) {
+        prochain += marge - gaucheApresDecalage;
+      }
+      decalageRef.current = prochain;
+      setDecalage(prochain);
+    };
+
+    ajuster();
+    window.addEventListener("resize", ajuster);
+    return () => window.removeEventListener("resize", ajuster);
+  }, [ouvert]);
 
   return (
     <div className="fbar__enveloppe" ref={ref}>
@@ -71,7 +101,11 @@ function Menu({ icone, label, actif, children, largeur = 260 }) {
         aria-expanded={ouvert}
         aria-haspopup="true"
         data-actif={actif ? "true" : undefined}
-        onClick={() => setOuvert((o) => !o)}
+        onClick={() => {
+          decalageRef.current = 0;
+          setDecalage(0);
+          setOuvert((o) => !o);
+        }}
       >
         {icone}
         {label}
@@ -79,7 +113,14 @@ function Menu({ icone, label, actif, children, largeur = 260 }) {
       </button>
 
       {ouvert && (
-        <div className="fbar__menu" style={{ "--menu-largeur": `${largeur}px` }}>
+        <div
+          className="fbar__menu"
+          ref={menuRef}
+          style={{
+            "--menu-largeur": `${largeur}px`,
+            "--menu-decalage": `${decalage}px`,
+          }}
+        >
           {typeof children === "function" ? children(() => setOuvert(false)) : children}
         </div>
       )}
