@@ -12,15 +12,15 @@ from backend.core.auth import security
 from backend.db import repository as repo
 
 
-def get_current_user(request: Request) -> dict:
-    """Résout l'utilisateur courant à partir du cookie de session, ou 401."""
+def _resolve_user(request: Request) -> dict | None:
+    """Même résolution que `get_current_user`, sans jamais lever d'exception."""
     token = request.cookies.get(config.SESSION_COOKIE_NAME)
     if not token:
-        raise HTTPException(status_code=401, detail="Non authentifié.")
+        return None
 
     session = repo.get_session(security.hash_token(token))
     if not session:
-        raise HTTPException(status_code=401, detail="Session invalide.")
+        return None
 
     expires_at = session["expires_at"]
     # SQLite renvoie le TIMESTAMP en texte (ISO) ; psycopg2 le renvoie déjà
@@ -30,10 +30,29 @@ def get_current_user(request: Request) -> dict:
     if expires_at.tzinfo is None:
         expires_at = expires_at.replace(tzinfo=timezone.utc)
     if expires_at < datetime.now(timezone.utc):
-        raise HTTPException(status_code=401, detail="Session expirée.")
+        return None
 
     user = repo.get_user_by_id(session["user_id"])
     if not user or not user["is_active"]:
-        raise HTTPException(status_code=401, detail="Compte inactif.")
+        return None
 
     return user
+
+
+def get_current_user(request: Request) -> dict:
+    """Résout l'utilisateur courant à partir du cookie de session, ou 401."""
+    user = _resolve_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Non authentifié.")
+    return user
+
+
+def get_current_user_optional(request: Request) -> dict | None:
+    """
+    Comme `get_current_user`, mais renvoie None au lieu de lever une 401.
+
+    Pour les endpoints publics dont le comportement varie selon la connexion
+    (ex. nombre de résultats affichés) sans les rendre obligatoirement
+    authentifiés.
+    """
+    return _resolve_user(request)
