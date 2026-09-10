@@ -198,6 +198,36 @@ def init_db():
         )
     """)
 
+    # --- Comptes utilisateurs (auth maison — override D-018 pour cette itération) ---
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS users (
+            id {_AUTOINCREMENT_PK},
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            name TEXT,
+            is_active INTEGER DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+
+    # --- Sessions ---
+    # Jeton opaque cote serveur plutot que JWT : revocation immediate au
+    # logout (simple DELETE), zero nouvelle dependance (secrets/hashlib de la
+    # stdlib), coherent avec le style SQL brut de tout le reste du schema.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS sessions (
+            id {_AUTOINCREMENT_PK},
+            user_id INTEGER NOT NULL,
+            token_hash TEXT NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token_hash)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)")
+
     _migrate(cursor)
 
     conn.commit()

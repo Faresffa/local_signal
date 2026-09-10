@@ -302,3 +302,68 @@ def get_consultations(limit: int = 20) -> list[dict]:
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+# =============================================================================
+# COMPTES UTILISATEURS / SESSIONS
+# =============================================================================
+
+def create_user(email: str, password_hash: str, name: str | None = None) -> int:
+    """Crée un compte. Retourne son identifiant."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO users (email, password_hash, name)
+        VALUES (?, ?, ?)
+    """, (email.strip().lower(), password_hash, name))
+    conn.commit()
+    user_id = cursor.lastrowid
+    conn.close()
+    return user_id
+
+
+def get_user_by_email(email: str) -> dict | None:
+    """Récupère un compte par email (insensible à la casse)."""
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT * FROM users WHERE email = ?", (email.strip().lower(),)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_user_by_id(user_id: int) -> dict | None:
+    """Récupère un compte par identifiant."""
+    conn = get_connection()
+    row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def create_session(user_id: int, token_hash: str, expires_at: str) -> None:
+    """Ouvre une session — le jeton en clair n'est jamais stocké, seul son hash l'est."""
+    conn = get_connection()
+    conn.execute("""
+        INSERT INTO sessions (user_id, token_hash, expires_at)
+        VALUES (?, ?, ?)
+    """, (user_id, token_hash, expires_at))
+    conn.commit()
+    conn.close()
+
+
+def get_session(token_hash: str) -> dict | None:
+    """Session active correspondant au hash de jeton fourni."""
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT * FROM sessions WHERE token_hash = ?", (token_hash,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def delete_session(token_hash: str) -> None:
+    """Révoque une session (logout) — suppression immédiate, pas d'expiration différée."""
+    conn = get_connection()
+    conn.execute("DELETE FROM sessions WHERE token_hash = ?", (token_hash,))
+    conn.commit()
+    conn.close()
