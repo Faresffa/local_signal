@@ -193,6 +193,22 @@ BACKGROUND_COLOR = "#fffbf3"
 CARD_INFO_BG = "#fffbf3"
 
 # =============================================================================
+# Authentification (comptes utilisateurs) — override D-018 pour cette itération
+# =============================================================================
+# Session par jeton opaque + cookie httpOnly plutôt que JWT (cf. plan
+# d'implémentation) : révocation immédiate au logout, aucune dépendance
+# supplémentaire.
+SESSION_COOKIE_NAME = "ls_session"
+SESSION_TTL_DAYS = int(os.environ.get("SESSION_TTL_DAYS", "30"))
+# "lax" convient en local (web et API sur "localhost", ports différents mais
+# même site). "none" (+ secure=True obligatoire) est nécessaire dès que web
+# et API sont servis depuis des domaines différents en production.
+SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "lax")
+# Doit passer à true dès que l'API est servie en HTTPS (obligatoire si
+# SESSION_COOKIE_SAMESITE=none).
+SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
+
+# =============================================================================
 # Base de données
 # =============================================================================
 # Chemin absolu : la base ne dépend plus du répertoire d'où on lance la commande.

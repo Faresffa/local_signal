@@ -98,3 +98,46 @@ export async function scanMenu(file, provider) {
 export function photoUrl(restaurantId) {
   return `${API_BASE}/api/restaurant/${encodeURIComponent(restaurantId)}/photo`;
 }
+
+// --- Comptes utilisateurs ---
+//
+// La session vit dans un cookie httpOnly posé par l'API : `credentials:
+// "include"` est indispensable sur chaque appel, sans quoi le navigateur
+// n'envoie ni ne stocke ce cookie (fetch ne le fait jamais par défaut sur une
+// requête cross-origin).
+
+export async function signup({ email, password, name }) {
+  return request("/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, password, name }),
+  });
+}
+
+export async function login({ email, password }) {
+  return request("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function logout() {
+  return request("/api/auth/logout", { method: "POST", credentials: "include" });
+}
+
+/**
+ * Utilisateur courant, ou `null` s'il n'y a pas de session valide.
+ *
+ * Un 401 est un état normal (visiteur non connecté), pas une erreur : on ne
+ * laisse donc pas `request()` le lever.
+ */
+export async function fetchMe() {
+  try {
+    return await request("/api/auth/me", { credentials: "include" });
+  } catch {
+    return null;
+  }
+}
