@@ -208,6 +208,11 @@ SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "lax")
 # SESSION_COOKIE_SAMESITE=none).
 SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
 
+# Nombre de restaurants visibles par recherche pour un visiteur non connecté.
+# Le classement reste inchangé (tri avant troncature) : moins de résultats,
+# jamais de moins bons résultats.
+ANON_RESULTS_LIMIT = int(os.environ.get("ANON_RESULTS_LIMIT", "5"))
+
 # =============================================================================
 # Base de données
 # =============================================================================

@@ -575,6 +575,37 @@ img {
   border-color: var(--color-border-strong);
 }
 
+/* Résultat masqué à un visiteur non connecté (Discover.jsx). Générique par
+   construction : pas de vraie photo/donnée à flouter (voir LockedCard.jsx). */
+.card--locked {
+  cursor: default;
+}
+.card--locked .card__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-skeleton),
+    var(--color-border)
+  );
+}
+.card--locked .card__lock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full, 999px);
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  color: var(--color-text-muted);
+  backdrop-filter: blur(6px);
+}
+.card--locked .card__name,
+.card--locked .card__meta {
+  color: var(--color-text-muted);
+}
+
 /* Les trois premiers résultats se révèlent dans l'ordre à chaque recherche. */
 .card--rang-1 {
   --rang-couleur: var(--color-rank-local);

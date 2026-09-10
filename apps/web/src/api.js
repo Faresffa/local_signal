@@ -51,7 +51,11 @@ export async function fetchRestaurants({
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");
-  return request(`/api/restaurants?${query}`);
+  // `credentials: "include"` est indispensable : sans lui le cookie de
+  // session ne part jamais, et l'API ne peut jamais distinguer un visiteur
+  // connecté d'un anonyme (elle appliquerait alors toujours la limite des
+  // visiteurs non connectés, même une fois inscrit).
+  return request(`/api/restaurants?${query}`, { credentials: "include" });
 }
 
 export async function fetchRestaurant(id) {

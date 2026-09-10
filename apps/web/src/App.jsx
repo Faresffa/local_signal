@@ -56,6 +56,8 @@ export default function App() {
               onRadiusChange={setRadius}
               lieu={lieu}
               onLieuChange={setLieu}
+              user={user}
+              onUnlock={() => setPage("signup")}
             />
           )}
 

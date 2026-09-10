@@ -14,6 +14,7 @@ import Filtres from "../components/Filtres";
 import StarRating from "../components/StarRating";
 import LocationPicker from "../components/LocationPicker";
 import RestaurantCard from "../components/RestaurantCard";
+import LockedCard from "../components/LockedCard";
 import {
   EmptyState,
   ErrorState,
@@ -23,6 +24,10 @@ import {
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 import { useGeolocation } from "../lib/hooks";
 
+// Cartes verrouillées affichées au-delà de la limite — plafond purement
+// visuel pour ne pas allonger indéfiniment la grille quand `total` est grand.
+const MAX_CARTES_VERROUILLEES = 6;
+
 export default function Discover({
   onOpen,
   filtres,
@@ -31,6 +36,8 @@ export default function Discover({
   onRadiusChange,
   lieu,
   onLieuChange,
+  user,
+  onUnlock,
 }) {
   const { position, denied, relocate } = useGeolocation();
 
@@ -46,6 +53,10 @@ export default function Discover({
   const cuisine = filtres.cuisine;
 
   const [restaurants, setRestaurants] = useState([]);
+  // Total après filtrage côté serveur, AVANT troncature — permet de savoir
+  // combien de restaurants sont masqués sans jamais recevoir leurs données
+  // (voir backend/main.py::list_restaurants).
+  const [total, setTotal] = useState(0);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
   const [reloads, setReloads] = useState(0);
@@ -92,6 +103,7 @@ export default function Discover({
         if (cancelled) return;
         const resultats = data.restaurants ?? [];
         setRestaurants(resultats);
+        setTotal(data.count ?? resultats.length);
         // Relance l'animation du podium après chaque recherche ou filtre.
         setVersionResultats((version) => version + 1);
         if (ouvrirClassement.current) {
@@ -124,6 +136,10 @@ export default function Discover({
     onFiltresChange({ ...FILTRES_VIDES });
     onRadiusChange(RAYON_DEFAUT);
   };
+
+  // Restaurants masqués faute de compte — 0 pour un utilisateur connecté,
+  // qui voit toujours l'intégralité des résultats.
+  const masques = user ? 0 : Math.max(0, total - restaurants.length);
 
   return (
     <>
@@ -235,7 +251,13 @@ export default function Discover({
           </h2>
           <div className="results__summary">
             <span className="results__sort">Triés par score</span>
-            {status === "ready" && (
+            {status === "ready" && masques > 0 && (
+              <span className="results__count">
+                {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""} affiché
+                {restaurants.length > 1 ? "s" : ""} sur {total}
+              </span>
+            )}
+            {status === "ready" && masques === 0 && (
               <span className="results__count">
                 {restaurants.length} restaurant
                 {restaurants.length > 1 ? "s" : ""}
@@ -266,6 +288,9 @@ export default function Discover({
                 index={i}
                 onOpen={onOpen}
               />
+            ))}
+            {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) }).map((_, i) => (
+              <LockedCard key={`locked-${i}`} onUnlock={onUnlock} />
             ))}
           </div>
         )}
