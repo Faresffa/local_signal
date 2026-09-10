@@ -16,7 +16,7 @@ from typing import Optional
 
 from backend import config
 from backend.core.auth import security
-from backend.core.auth.dependencies import get_current_user
+from backend.core.auth.dependencies import get_current_user, get_current_user_optional
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.filters.criteres import (
     TRANCHES_PRIX, appliquer as appliquer_filtres, est_ouvert,
@@ -104,6 +104,7 @@ def list_restaurants(
     reservation: bool = Query(False, description="Uniquement ceux qui acceptent les reservations"),
     avec_carte: bool = Query(False, description="Uniquement ceux dont la carte a ete lue"),
     limit: int = Query(50, description="Nombre maximum de résultats"),
+    user: Optional[dict] = Depends(get_current_user_optional),
 ):
     """
     Restaurants autour d'un point, triés par pertinence.
@@ -159,7 +160,11 @@ def list_restaurants(
 
     restaurants.sort(key=lambda r: r["scoring"]["score_final"], reverse=True)
 
-    return {"count": len(restaurants), "restaurants": restaurants[:limit]}
+    # Visiteur non connecté : accès limité (D-0xx), premier avantage réel des
+    # comptes. Le tri a déjà eu lieu au-dessus — la limite retire des résultats,
+    # elle ne dégrade jamais leur ordre.
+    effective_limit = limit if user else min(limit, config.ANON_RESULTS_LIMIT)
+    return {"count": len(restaurants), "restaurants": restaurants[:effective_limit]}
 
 
 def _build_scoring(
