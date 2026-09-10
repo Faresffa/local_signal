@@ -2,13 +2,13 @@
 //
 // Carte de résultat, photo dominante.
 //
-// Règle d'affichage (D-009) : aucun score chiffré. L'utilisateur voit un
-// verdict lisible et la première raison en langage naturel ; le détail du
-// calcul reste sur la fiche, derrière « pourquoi ? ».
+// Le verdict donne une lecture rapide ; le score chiffré rend aussi explicite
+// l'ordre des résultats. Le détail de son calcul reste sur la fiche.
 
 import { ForkKnife } from "@phosphor-icons/react";
 
 import PhotoRestaurant from "./PhotoRestaurant";
+import StarRating from "./StarRating";
 
 import { useReveal } from "../lib/hooks";
 import { distance, verdict } from "../lib/display";
@@ -20,12 +20,17 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
 
   const v = verdict(restaurant.local_signal, restaurant.confidence);
   const dist = distance(restaurant.distance_m);
+  // C'est le score final (Local Signal + proximité) qui détermine l'ordre
+  // renvoyé par l'API. Le repli conserve l'affichage pour les anciennes données.
+  const score = restaurant.scoring?.score_final ?? restaurant.local_signal;
   // Les explications vivent dans le bloc `scoring`, forme unique produite par
   // `rank_restaurants` et servie telle quelle par l'API.
   const reason = restaurant.scoring?.reasons?.[0];
+  const rang = index < 3 ? index + 1 : 0;
+  const etoiles = Math.max(0, Math.min(5, (score ?? 0) / 20));
 
   return (
-    <article className="card reveal" ref={ref}>
+    <article className={`card card--rang-${rang} reveal`} ref={ref}>
       <div className="card__media">
         <PhotoRestaurant
           id={restaurant.id}
@@ -34,12 +39,23 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
           nom={restaurant.name}
           size={64}
         />
-        <span className={`verdict verdict--${v.tone} card__verdict`}>{v.label}</span>
+        <span className={`verdict verdict--${v.tone} card__verdict`}>
+          {v.label}
+        </span>
         {dist && <span className="card__distance">{dist}</span>}
       </div>
 
       <div className="card__body">
-        <h3 className="card__name">{restaurant.name}</h3>
+        <div className="card__heading">
+          <h3 className="card__name">{restaurant.name}</h3>
+          {score != null && (
+            <StarRating
+              value={etoiles}
+              size={14}
+              className={`card__score${rang === 1 ? " card__score--rang-1" : ""}`}
+            />
+          )}
+        </div>
 
         <p className="card__meta">
           <ForkKnife size={15} weight="light" />
