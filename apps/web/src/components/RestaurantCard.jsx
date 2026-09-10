@@ -8,6 +8,7 @@
 import { ForkKnife } from "@phosphor-icons/react";
 
 import PhotoRestaurant from "./PhotoRestaurant";
+import StarRating from "./StarRating";
 
 import { useReveal } from "../lib/hooks";
 import { distance, verdict } from "../lib/display";
@@ -26,6 +27,7 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
   // `rank_restaurants` et servie telle quelle par l'API.
   const reason = restaurant.scoring?.reasons?.[0];
   const rang = index < 3 ? index + 1 : 0;
+  const etoiles = Math.max(0, Math.min(5, (score ?? 0) / 20));
 
   return (
     <article className={`card card--rang-${rang} reveal`} ref={ref}>
@@ -47,9 +49,11 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
         <div className="card__heading">
           <h3 className="card__name">{restaurant.name}</h3>
           {score != null && (
-            <span className={`card__score card__score--rang-${rang}`}>
-              Score {Math.round(score)}/100
-            </span>
+            <StarRating
+              value={etoiles}
+              size={14}
+              className={`card__score${rang === 1 ? " card__score--rang-1" : ""}`}
+            />
           )}
         </div>
 

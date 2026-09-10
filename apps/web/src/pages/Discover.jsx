@@ -6,11 +6,12 @@
 // Elle porte les trois décisions que prend un voyageur qui a faim : où, quel
 // type de cuisine, jusqu'où marcher.
 
-import { useEffect, useState } from "react";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { useEffect, useRef, useState } from "react";
+import { MagnifyingGlass, Trophy, X } from "@phosphor-icons/react";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
 import Filtres from "../components/Filtres";
+import StarRating from "../components/StarRating";
 import LocationPicker from "../components/LocationPicker";
 import RestaurantCard from "../components/RestaurantCard";
 import {
@@ -49,6 +50,9 @@ export default function Discover({
   const [error, setError] = useState(null);
   const [reloads, setReloads] = useState(0);
   const [versionResultats, setVersionResultats] = useState(0);
+  const [classementOuvert, setClassementOuvert] = useState(false);
+  const [podium, setPodium] = useState([]);
+  const ouvrirClassement = useRef(false);
 
   // Les filtres proposés viennent de la base : on ne propose jamais un filtre
   // qui ne renverrait aucun résultat.
@@ -86,14 +90,21 @@ export default function Discover({
     })
       .then((data) => {
         if (cancelled) return;
-        setRestaurants(data.restaurants ?? []);
+        const resultats = data.restaurants ?? [];
+        setRestaurants(resultats);
         // Relance l'animation du podium après chaque recherche ou filtre.
         setVersionResultats((version) => version + 1);
+        if (ouvrirClassement.current) {
+          ouvrirClassement.current = false;
+          setPodium(resultats.slice(0, 3));
+          setClassementOuvert(resultats.length > 0);
+        }
         setError(null);
         setStatus("ready");
       })
       .catch((e) => {
         if (cancelled) return;
+        ouvrirClassement.current = false;
         setError(e.message);
         setStatus("error");
       });
@@ -104,6 +115,7 @@ export default function Discover({
   }, [origine, radius, filtres, reloads]);
 
   const relancer = () => {
+    ouvrirClassement.current = true;
     setStatus("loading");
     setReloads((n) => n + 1);
   };
@@ -258,6 +270,68 @@ export default function Discover({
           </div>
         )}
       </section>
+
+      {classementOuvert && (
+        <div
+          className="modal classement-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="classement-titre"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setClassementOuvert(false);
+          }}
+        >
+          <section className="classement-modal__contenu">
+            <div className="classement-modal__entete">
+              <div>
+                <span className="classement-modal__sur-titre">
+                  <Trophy size={16} weight="fill" /> Classement de votre
+                  recherche
+                </span>
+                <h2 id="classement-titre">Les 3 meilleures adresses</h2>
+              </div>
+              <button
+                type="button"
+                className="modal__close"
+                onClick={() => setClassementOuvert(false)}
+                aria-label="Fermer le classement"
+              >
+                <X size={18} weight="bold" />
+              </button>
+            </div>
+
+            <ol className="classement-modal__liste">
+              {podium.map((restaurant, index) => {
+                const score =
+                  restaurant.scoring?.score_final ?? restaurant.local_signal;
+                const etoiles = Math.max(0, Math.min(5, (score ?? 0) / 20));
+                return (
+                  <li
+                    className={`classement-modal__ligne classement-modal__ligne--${index + 1}`}
+                    key={restaurant.id}
+                  >
+                    <span className="classement-modal__rang">{index + 1}</span>
+                    <span className="classement-modal__nom">
+                      {restaurant.name}
+                    </span>
+                    <strong className="classement-modal__score">
+                      <StarRating value={etoiles} size={14} />
+                    </strong>
+                  </li>
+                );
+              })}
+            </ol>
+
+            <button
+              type="button"
+              className="btn btn--primary btn--block"
+              onClick={() => setClassementOuvert(false)}
+            >
+              Voir les résultats
+            </button>
+          </section>
+        </div>
+      )}
     </>
   );
 }

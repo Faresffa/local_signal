@@ -558,28 +558,21 @@ img {
 }
 
 /* Les trois premiers résultats rendent le classement visible dès la grille. */
-.card--rang-1,
-.card--rang-2,
-.card--rang-3 {
-  border-width: 3px;
-}
 .card--rang-1 {
+  border-width: 3px;
   border-color: var(--color-rank-local);
 }
-.card--rang-2 {
-  border-color: var(--color-rank-mixed);
-}
+.card--rang-2,
 .card--rang-3 {
-  border-color: var(--color-rank-tourist);
+  border-width: 1px;
+  border-color: var(--color-border-strong);
 }
 .card--rang-1:hover {
   border-color: var(--color-rank-local);
 }
-.card--rang-2:hover {
-  border-color: var(--color-rank-mixed);
-}
+.card--rang-2:hover,
 .card--rang-3:hover {
-  border-color: var(--color-rank-tourist);
+  border-color: var(--color-border-strong);
 }
 
 /* Les trois premiers résultats se révèlent dans l'ordre à chaque recherche. */
@@ -588,11 +581,11 @@ img {
   animation: classement-arrive 950ms 100ms var(--motion-spring) both;
 }
 .card--rang-2 {
-  --rang-couleur: var(--color-rank-mixed);
+  --rang-couleur: var(--color-border-strong);
   animation: classement-arrive 950ms 250ms var(--motion-spring) both;
 }
 .card--rang-3 {
-  --rang-couleur: var(--color-rank-tourist);
+  --rang-couleur: var(--color-border-strong);
   animation: classement-arrive 950ms 400ms var(--motion-spring) both;
 }
 
@@ -625,6 +618,9 @@ img {
 
 .card__score {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
   padding: 5px 8px;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
@@ -635,19 +631,43 @@ img {
   font-variant-numeric: tabular-nums;
 }
 .card__score--rang-1 {
-  border-color: var(--color-local);
+  border-color: var(--color-rank-local);
   background: var(--color-local-soft);
-  color: var(--color-local);
+  color: var(--color-rank-local);
 }
-.card__score--rang-2 {
-  border-color: var(--color-mixed);
-  background: var(--color-mixed-soft);
-  color: var(--color-mixed);
+
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--color-text-muted);
+  line-height: 1;
 }
-.card__score--rang-3 {
-  border-color: var(--color-tourist);
-  background: var(--color-tourist-soft);
-  color: var(--color-tourist);
+.star-rating__cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.star-rating__base,
+.star-rating__icon {
+  display: block;
+}
+.star-rating__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--color-rank-local);
+}
+.card__score--rang-1 .star-rating__fill {
+  color: var(--color-rank-local);
+}
+.card__score:not(.card__score--rang-1) .star-rating__fill {
+  color: var(--color-brand-strong);
 }
 
 .card__body {
@@ -1345,6 +1365,81 @@ img {
   color: var(--color-text-faint);
   font-size: var(--font-size-sm);
   font-variant-numeric: tabular-nums;
+}
+
+/* Podium affiché après une recherche volontaire. */
+.classement-modal__contenu {
+  width: min(480px, 100%);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+}
+.classement-modal__entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+.classement-modal__sur-titre {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+.classement-modal__entete h2 {
+  font-size: var(--font-size-xl);
+}
+.classement-modal__liste {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-lg) 0;
+  list-style: none;
+}
+.classement-modal__ligne {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 11px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+.classement-modal__rang {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+.classement-modal__nom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--font-weight-semibold);
+}
+.classement-modal__score {
+  display: inline-flex;
+  gap: 1px;
+  color: var(--color-text-muted);
+}
+.classement-modal__ligne--1 {
+  border-color: var(--color-rank-local);
+}
+.classement-modal__ligne--1 .classement-modal__rang {
+  background: var(--color-local-soft);
+  color: var(--color-rank-local);
+}
+.classement-modal__ligne--1 .classement-modal__score {
+  color: var(--color-rank-local);
 }
 
 /* Les tuiles OpenStreetMap sont claires ; en thème sombre on les assombrit
