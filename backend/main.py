@@ -6,12 +6,17 @@
 # pertinence (distance, filtres) est évaluée à la requête. C'est ce qui permet
 # de rester instantané sur une base nationale.
 
-from fastapi import FastAPI, File, HTTPException, Query, Response, UploadFile
+import re
+from datetime import datetime, timedelta, timezone
+
+from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
 from backend import config
+from backend.core.auth import security
+from backend.core.auth.dependencies import get_current_user
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.filters.criteres import (
     TRANCHES_PRIX, appliquer as appliquer_filtres, est_ouvert,
@@ -56,6 +61,26 @@ class ReservationRequest(BaseModel):
 class ReservationResponse(BaseModel):
     id: int
     message: str
+
+
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+class SignupRequest(BaseModel):
+    email: str
+    password: str
+    name: Optional[str] = None
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    name: Optional[str] = None
 
 
 # =============================================================================
@@ -363,6 +388,74 @@ def stats(zone: Optional[str] = Query(None, description="Filtrer par zone")):
     toute calibration.
     """
     return repo.label_stats(zone)
+
+
+def _issue_session(response: Response, user_id: int) -> None:
+    """Ouvre une session et pose le cookie httpOnly correspondant."""
+    token = security.generate_session_token()
+    expires_at = datetime.now(timezone.utc) + timedelta(days=config.SESSION_TTL_DAYS)
+    repo.create_session(user_id, security.hash_token(token), expires_at.isoformat())
+    response.set_cookie(
+        key=config.SESSION_COOKIE_NAME,
+        value=token,
+        httponly=True,
+        secure=config.SESSION_COOKIE_SECURE,
+        samesite=config.SESSION_COOKIE_SAMESITE,
+        max_age=config.SESSION_TTL_DAYS * 86400,
+        path="/",
+    )
+
+
+def _to_user_response(user: dict) -> UserResponse:
+    return UserResponse(id=user["id"], email=user["email"], name=user.get("name"))
+
+
+@app.post("/api/auth/signup", response_model=UserResponse)
+def signup(req: SignupRequest, response: Response):
+    """Crée un compte et ouvre immédiatement une session (connexion auto)."""
+    email = req.email.strip().lower()
+    if not _EMAIL_RE.match(email):
+        raise HTTPException(status_code=400, detail="Adresse email invalide.")
+    if len(req.password) < 8:
+        raise HTTPException(
+            status_code=400, detail="Le mot de passe doit contenir au moins 8 caractères."
+        )
+    if repo.get_user_by_email(email):
+        raise HTTPException(status_code=409, detail="Cet email est déjà utilisé.")
+
+    user_id = repo.create_user(
+        email=email, password_hash=security.hash_password(req.password), name=req.name
+    )
+    _issue_session(response, user_id)
+    return _to_user_response(repo.get_user_by_id(user_id))
+
+
+@app.post("/api/auth/login", response_model=UserResponse)
+def login(req: LoginRequest, response: Response):
+    """Vérifie les identifiants et ouvre une session."""
+    user = repo.get_user_by_email(req.email)
+    # Message générique dans les deux cas : ne jamais révéler si l'email existe.
+    if not user or not security.verify_password(req.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect.")
+
+    _issue_session(response, user["id"])
+    return _to_user_response(user)
+
+
+@app.post("/api/auth/logout")
+def logout(request: Request, response: Response):
+    """Révoque la session courante (si elle existe) et efface le cookie."""
+    token = request.cookies.get(config.SESSION_COOKIE_NAME)
+    if token:
+        repo.delete_session(security.hash_token(token))
+    response.delete_cookie(config.SESSION_COOKIE_NAME, path="/")
+    return {"message": "Déconnecté."}
+
+
+@app.get("/api/auth/me", response_model=UserResponse)
+def me(user: dict = Depends(get_current_user)):
+    """Utilisateur actuellement connecté."""
+    return _to_user_response(user)
 
 
 @app.post("/api/reservations", response_model=ReservationResponse)
