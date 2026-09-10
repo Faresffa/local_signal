@@ -639,34 +639,45 @@ img {
 .star-rating {
   display: inline-flex;
   align-items: center;
-  gap: 1px;
-  color: var(--color-text-muted);
+  gap: 2px;
   line-height: 1;
 }
+
 .star-rating__cell {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
 }
-.star-rating__base,
-.star-rating__icon {
+
+/* Étoile de fond (contour/vide) */
+.star-rating__base {
   display: block;
+  color: var(--color-text-muted); /* ou #666 / couleur de contour */
 }
+
+/* Zone de remplissage partiel (masque) */
 .star-rating__fill {
   position: absolute;
-  inset: 0 auto 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 0;
+  left: 0;
+  bottom: 0;
   overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Icône remplie : doit garder sa taille originale pour ne pas être déformée */
+.star-rating__icon {
+  display: block;
+  color: var(--color-text); /* Couleur des étoiles remplies (sombre) */
+}
+
+/* Personnalisation selon le rang du restaurant si nécessaire */
+.card__score--rang-1 .star-rating__icon {
   color: var(--color-rank-local);
 }
-.card__score--rang-1 .star-rating__fill {
-  color: var(--color-rank-local);
-}
-.card__score:not(.card__score--rang-1) .star-rating__fill {
+.card__score:not(.card__score--rang-1) .star-rating__icon {
   color: var(--color-brand-strong);
 }
 
