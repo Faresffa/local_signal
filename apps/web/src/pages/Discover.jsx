@@ -48,6 +48,7 @@ export default function Discover({
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
   const [reloads, setReloads] = useState(0);
+  const [versionResultats, setVersionResultats] = useState(0);
 
   // Les filtres proposés viennent de la base : on ne propose jamais un filtre
   // qui ne renverrait aucun résultat.
@@ -86,6 +87,8 @@ export default function Discover({
       .then((data) => {
         if (cancelled) return;
         setRestaurants(data.restaurants ?? []);
+        // Relance l'animation du podium après chaque recherche ou filtre.
+        setVersionResultats((version) => version + 1);
         setError(null);
         setStatus("ready");
       })
@@ -118,7 +121,8 @@ export default function Discover({
         </h1>
         <p className="search__lede enter" style={{ "--enter-delay": "170ms" }}>
           Les vrais restaurants de quartier sont rarement les plus visibles.
-          Local Signal les fait remonter.
+          <br />
+          Local Signal les fait remonter grâce à notre <b>score</b> calculé.
         </p>
 
         <div className="searchbar enter" style={{ "--enter-delay": "280ms" }}>
@@ -196,7 +200,10 @@ export default function Discover({
         )}
       </section>
 
-      <div className="enter" style={{ "--enter-delay": "380ms" }}>
+      <div
+        className="discover__filters enter"
+        style={{ "--enter-delay": "380ms" }}
+      >
         <Filtres
           valeurs={filtres}
           onChange={onFiltresChange}
@@ -215,7 +222,7 @@ export default function Discover({
             {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
           </h2>
           <div className="results__summary">
-            <span className="results__sort">Triés par score calculé</span>
+            <span className="results__sort">Triés par score</span>
             {status === "ready" && (
               <span className="results__count">
                 {restaurants.length} restaurant
@@ -242,7 +249,7 @@ export default function Discover({
           <div className="grid">
             {restaurants.map((r, i) => (
               <RestaurantCard
-                key={r.id}
+                key={i < 3 ? `${r.id}-${versionResultats}` : r.id}
                 restaurant={r}
                 index={i}
                 onOpen={onOpen}

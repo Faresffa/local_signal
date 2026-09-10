@@ -44,6 +44,12 @@ const light = {
   tourist: "#c1121f",
   touristSoft: "#fdecec",
 
+  // Accents de classement : plus lumineux que les teintes de verdict afin
+  // que les bordures des trois premières cartes ressortent sur fond clair.
+  rankLocal: "#168a5a",
+  rankMixed: "#d98700",
+  rankTourist: "#e11d2e",
+
   overlay: "rgba(28, 26, 23, 0.55)",
   skeleton: "#efe7da",
   skeletonSheen: "#f8f3ea",
@@ -78,6 +84,10 @@ const dark = {
   mixedSoft: "#332818",
   tourist: "#e8505f",
   touristSoft: "#3a1e21",
+
+  rankLocal: "#5fbf92",
+  rankMixed: "#d9a441",
+  rankTourist: "#e8505f",
 
   overlay: "rgba(10, 8, 7, 0.7)",
   skeleton: "#2a2522",

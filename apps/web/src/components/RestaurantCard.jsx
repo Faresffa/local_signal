@@ -25,9 +25,10 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
   // Les explications vivent dans le bloc `scoring`, forme unique produite par
   // `rank_restaurants` et servie telle quelle par l'API.
   const reason = restaurant.scoring?.reasons?.[0];
+  const rang = index < 3 ? index + 1 : 0;
 
   return (
-    <article className="card reveal" ref={ref}>
+    <article className={`card card--rang-${rang} reveal`} ref={ref}>
       <div className="card__media">
         <PhotoRestaurant
           id={restaurant.id}
@@ -39,14 +40,18 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
         <span className={`verdict verdict--${v.tone} card__verdict`}>
           {v.label}
         </span>
-        {score != null && (
-          <span className="card__score">Score {Math.round(score)}/100</span>
-        )}
         {dist && <span className="card__distance">{dist}</span>}
       </div>
 
       <div className="card__body">
-        <h3 className="card__name">{restaurant.name}</h3>
+        <div className="card__heading">
+          <h3 className="card__name">{restaurant.name}</h3>
+          {score != null && (
+            <span className={`card__score card__score--rang-${rang}`}>
+              Score {Math.round(score)}/100
+            </span>
+          )}
+        </div>
 
         <p className="card__meta">
           <ForkKnife size={15} weight="light" />
