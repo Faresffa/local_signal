@@ -18,6 +18,7 @@ import { fetchCuisines, fetchRestaurants } from "../api";
 import {
   CardSkeleton, EmptyState, ErrorState, Loading, Verdict,
 } from "../components/ui";
+import BarreSignal from "../components/BarreSignal";
 import PhotoRestaurant from "../components/PhotoRestaurant";
 import ChoixLieu from "../components/ChoixLieu";
 import Filtres from "../components/Filtres";
@@ -73,6 +74,9 @@ function Carte({ item, onOpen, isDark, index }) {
         style={({ pressed }) => [
           s.card,
           { backgroundColor: colors.surface, borderColor: colors.border },
+          // UN SEUL premier, pas trois : trois cartes mises en avant sur cinq
+          // ne distinguent plus rien (LS-12).
+          index === 0 && { borderColor: colors.brand, borderWidth: 2 },
           pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
         ]}
       >
@@ -88,6 +92,27 @@ function Carte({ item, onOpen, isDark, index }) {
             <Text style={[s.distanceText, { color: colors.text }]}>{dist}</Text>
           </View>
         )}
+        {index === 0 && (
+          <View style={[s.premier, { backgroundColor: colors.brand }]}>
+            <Text style={[s.premierText, { color: colors.onBrand }]}>
+              Meilleur profil local
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* Barre et verdict, juste sous la photo : c'est la premiere chose lue
+          apres l'image, avant meme le nom. Identique au web (LS-14). */}
+      <View style={s.signal}>
+        <View style={{ flex: 1 }}>
+          <BarreSignal
+            valeur={item.local_signal}
+            ton={v.tone}
+            delai={Math.min(index * 60, 400) + 180}
+            label={`${v.label} — ${item.name}`}
+          />
+        </View>
+        <Verdict tone={v.tone} label={v.label} />
       </View>
 
       <View style={s.cardBody}>
@@ -107,7 +132,6 @@ function Carte({ item, onOpen, isDark, index }) {
         )}
 
           <View style={s.cardFoot}>
-            <Verdict tone={v.tone} label={v.label} />
             <Feather name="chevron-right" size={18} color={colors.textFaint} />
           </View>
         </View>
@@ -330,12 +354,33 @@ const s = StyleSheet.create({
   name: { fontSize: 17, fontWeight: "600", letterSpacing: -0.2 },
   meta: { fontSize: 14 },
   reason: { fontSize: 13, lineHeight: 18, marginTop: 2 },
+  // Le verdict a remonte sous la photo (LS-14) : le pied ne porte plus que
+  // le chevron, qui s'aligne donc a droite.
   cardFoot: {
     marginTop: 8,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
   },
+
+  // Barre et verdict sur une meme ligne, entre la photo et le corps.
+  signal: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+  },
+
+  premier: {
+    position: "absolute",
+    right: 12,
+    bottom: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+  },
+  premierText: { fontSize: 11, fontWeight: "700" },
 
   distance: {
     position: "absolute",
