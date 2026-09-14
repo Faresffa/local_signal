@@ -12,9 +12,43 @@ from backend.core.auth import security
 from backend.db import repository as repo
 
 
+def jeton_de_session(request: Request) -> str | None:
+    """
+    Le jeton de session, d'où qu'il vienne — cookie ou en-tête.
+
+    DEUX TRANSPORTS POUR UNE SEULE SESSION (LS-40). Le web reçoit un cookie
+    `httpOnly` : c'est le seul transport qu'un script de la page ne peut pas
+    lire, donc la meilleure défense contre le vol de session par XSS.
+
+    Le mobile ne peut pas s'en servir. React Native n'a pas de bocal à cookies
+    fiable — il dépend de la plateforme, se vide à la réinstallation, et
+    n'existe pas du tout sur certaines configurations. L'application garde donc
+    le jeton dans le stockage sécurisé du téléphone (Keychain / Keystore, via
+    `expo-secure-store`) et le présente en en-tête.
+
+    C'EST LE MÊME JETON, LA MÊME TABLE, LA MÊME EXPIRATION. Il n'y a pas deux
+    systèmes d'authentification à maintenir, seulement deux façons de présenter
+    la même preuve — et un compte créé sur le web ouvre le mobile, comme
+    demandé.
+
+    Le cookie est lu en premier : quand les deux sont présents (un navigateur
+    qui poserait aussi l'en-tête), c'est le transport le plus sûr qui gagne.
+    """
+    cookie = request.cookies.get(config.SESSION_COOKIE_NAME)
+    if cookie:
+        return cookie
+
+    entete = request.headers.get("authorization") or ""
+    schema, _, valeur = entete.partition(" ")
+    if schema.lower() == "bearer" and valeur.strip():
+        return valeur.strip()
+
+    return None
+
+
 def _resolve_user(request: Request) -> dict | None:
     """Même résolution que `get_current_user`, sans jamais lever d'exception."""
-    token = request.cookies.get(config.SESSION_COOKIE_NAME)
+    token = jeton_de_session(request)
     if not token:
         return None
 

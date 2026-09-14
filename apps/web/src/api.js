@@ -19,7 +19,13 @@ async function request(path, options) {
     } catch {
       // Réponse non JSON : on garde le message générique.
     }
-    throw new Error(detail);
+    // LE CODE HTTP VOYAGE AVEC LE MESSAGE. Sans lui, l'interface ne peut pas
+    // distinguer « connectez-vous » (401) de « quelque chose a cassé » (500),
+    // et devrait comparer des chaînes de caractères pour le deviner — ce qui
+    // casse à la première reformulation d'un message.
+    const erreur = new Error(detail);
+    erreur.status = res.status;
+    throw erreur;
   }
 
   return res.json();
@@ -144,4 +150,68 @@ export async function fetchMe() {
   } catch {
     return null;
   }
+}
+
+// --- Avis laissés par nos utilisateurs (D-039) ---
+//
+// CES AVIS N'ENTRENT DANS AUCUN CALCUL. Ils sont stockés et affichés, rien de
+// plus : les faire compter reviendrait à réintroduire la popularité dans un
+// score construit pour s'en passer (D-001).
+
+/** Avis d'un restaurant, et le sien s'il est connecté. */
+export async function fetchAvis(restaurantId) {
+  return request(
+    `/api/restaurant/${encodeURIComponent(restaurantId)}/avis`,
+    { credentials: "include" },
+  );
+}
+
+/**
+ * Dépose ou remplace son avis. Lève une erreur `status === 401` si la session
+ * n'est pas valide — c'est le signal que l'interface doit proposer de se
+ * connecter, pas afficher une panne.
+ */
+export async function laisserAvis(restaurantId, { rating, text }) {
+  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/avis`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ rating, text }),
+  });
+}
+
+/** Retire son propre avis. */
+export async function retirerAvis(restaurantId) {
+  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/avis`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+}
+
+// --- Photo de carte envoyée depuis la fiche (D-038, D-039) ---
+
+/**
+ * Envoie la photo d'une carte, rattachée à ce restaurant.
+ *
+ * La connexion n'est pas exigée : le premier réflexe devant une carte en
+ * vitrine est de la photographier, pas de créer un compte. L'envoi est alors
+ * simplement anonyme.
+ *
+ * L'image rejoint un corpus interne qui n'est jamais servi (D-038). Ce qui
+ * revient ici, c'est ce que la lecture automatique en a tiré.
+ */
+export async function envoyerCarte(restaurantId, file) {
+  const form = new FormData();
+  form.append("image", file);
+
+  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/carte`, {
+    method: "POST",
+    credentials: "include",
+    body: form,
+  });
+}
+
+/** Combien de cartes ont été envoyées pour ce restaurant (métadonnées seules). */
+export async function fetchCartes(restaurantId) {
+  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/cartes`);
 }

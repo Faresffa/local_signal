@@ -13,6 +13,8 @@ import {
 import { Feather } from "@expo/vector-icons";
 
 import { fetchRestaurant } from "../api";
+import AjouterCarte from "../components/AjouterCarte";
+import Avis from "../components/Avis";
 import CartePhotos from "../components/CartePhotos";
 import DetailCalcul from "../components/DetailCalcul";
 import { Button, ErrorState, Verdict } from "../components/ui";
@@ -44,7 +46,7 @@ function Fait({ icon, label, value, onPress }) {
   );
 }
 
-export default function DetailScreen({ restaurant, onBack, onReserve }) {
+export default function DetailScreen({ restaurant, onBack, onReserve, user, onSeConnecter }) {
   const colors = useColors();
   const isDark = useColorScheme() === "dark";
 
@@ -201,6 +203,27 @@ export default function DetailScreen({ restaurant, onBack, onReserve }) {
           onPress={() => onReserve(full)}
         />
       </View>
+
+      {/* LES DEUX GESTES DE CONTRIBUTION, DANS LE MÊME ORDRE QUE SUR LE WEB.
+          L'avis vient en premier parce qu'il se lit autant qu'il s'écrit ;
+          l'ajout de carte ensuite — geste plus rare, mais c'est lui qui
+          construit l'actif du projet (CLAUDE.md §3). */}
+      <Avis
+        restaurantId={full.id}
+        user={user}
+        onSeConnecter={onSeConnecter}
+      />
+
+      <AjouterCarte
+        restaurantId={full.id}
+        // Une carte lue change le signal menu : on recharge la fiche plutôt
+        // que de laisser un score périmé à l'écran.
+        onLue={() => {
+          fetchRestaurant(full.id)
+            .then((d) => setFull((f) => ({ ...f, ...d })))
+            .catch(() => {});
+        }}
+      />
     </ScrollView>
   );
 }

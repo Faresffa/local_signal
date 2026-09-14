@@ -17,7 +17,9 @@ from typing import Optional
 
 from backend import config
 from backend.core.auth import limitation, security
-from backend.core.auth.dependencies import get_current_user, get_current_user_optional
+from backend.core.auth.dependencies import (
+    get_current_user, get_current_user_optional, jeton_de_session,
+)
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.filters.criteres import (
     appliquer as appliquer_filtres, est_ouvert,
@@ -99,6 +101,11 @@ class UserResponse(BaseModel):
     id: int
     email: str
     name: Optional[str] = None
+    # Rendu UNIQUEMENT aux clients qui le réclament par l'en-tête
+    # `X-Jeton-Session` — le mobile. Un navigateur reçoit `None` et s'appuie
+    # sur son cookie httpOnly, qu'aucun script de la page ne peut lire : lui
+    # renvoyer le jeton en clair annulerait cette protection (LS-40).
+    token: Optional[str] = None
 
 
 class AvisRequest(BaseModel):
@@ -421,8 +428,13 @@ def stats(zone: Optional[str] = Query(None, description="Filtrer par zone")):
     return repo.label_stats(zone)
 
 
-def _issue_session(response: Response, user_id: int) -> None:
-    """Ouvre une session et pose le cookie httpOnly correspondant."""
+def _issue_session(response: Response, user_id: int) -> str:
+    """
+    Ouvre une session, pose le cookie httpOnly, et rend le jeton.
+
+    Le jeton rendu n'est transmis au client que s'il l'a demandé
+    (`_jeton_demande`). Le cookie, lui, est posé dans tous les cas.
+    """
     token = security.generate_session_token()
     expires_at = datetime.now(timezone.utc) + timedelta(days=config.SESSION_TTL_DAYS)
     repo.create_session(user_id, security.hash_token(token), expires_at.isoformat())
@@ -435,10 +447,26 @@ def _issue_session(response: Response, user_id: int) -> None:
         max_age=config.SESSION_TTL_DAYS * 86400,
         path="/",
     )
+    return token
 
 
-def _to_user_response(user: dict) -> UserResponse:
-    return UserResponse(id=user["id"], email=user["email"], name=user.get("name"))
+def _jeton_demande(request: Request) -> bool:
+    """
+    Le client réclame-t-il le jeton dans le corps de la réponse ?
+
+    Explicite plutôt que deviné. On pourrait renifler l'agent utilisateur pour
+    reconnaître un mobile : ce serait fragile et silencieusement faux le jour
+    où l'agent change. Un en-tête que seul le client mobile pose dit exactement
+    ce qu'il veut, et le web n'a rien à faire pour continuer à ne pas le
+    recevoir.
+    """
+    return (request.headers.get("x-jeton-session") or "").lower() in {"1", "oui", "true"}
+
+
+def _to_user_response(user: dict, token: Optional[str] = None) -> UserResponse:
+    return UserResponse(
+        id=user["id"], email=user["email"], name=user.get("name"), token=token
+    )
 
 
 @app.post("/api/auth/signup", response_model=UserResponse)
@@ -461,8 +489,10 @@ def signup(req: SignupRequest, request: Request, response: Response):
     user_id = repo.create_user(
         email=email, password_hash=security.hash_password(req.password), name=req.name
     )
-    _issue_session(response, user_id)
-    return _to_user_response(repo.get_user_by_id(user_id))
+    jeton = _issue_session(response, user_id)
+    return _to_user_response(
+        repo.get_user_by_id(user_id), jeton if _jeton_demande(request) else None
+    )
 
 
 @app.post("/api/auth/login", response_model=UserResponse)
@@ -482,14 +512,16 @@ def login(req: LoginRequest, request: Request, response: Response):
     # l'utilisateur maladroit qui finit par retrouver son mot de passe.
     limitation.liberer_connexion(req.email)
 
-    _issue_session(response, user["id"])
-    return _to_user_response(user)
+    jeton = _issue_session(response, user["id"])
+    return _to_user_response(user, jeton if _jeton_demande(request) else None)
 
 
 @app.post("/api/auth/logout")
 def logout(request: Request, response: Response):
     """Révoque la session courante (si elle existe) et efface le cookie."""
-    token = request.cookies.get(config.SESSION_COOKIE_NAME)
+    # Même lecture que l'authentification : un mobile se déconnecte par
+    # l'en-tête, faute de cookie à envoyer (LS-40).
+    token = jeton_de_session(request)
     if token:
         repo.delete_session(security.hash_token(token))
     response.delete_cookie(config.SESSION_COOKIE_NAME, path="/")

@@ -130,8 +130,16 @@ sont des informations sur des établissements, pas sur des personnes.
 
 - Les mots de passe sont stockés sous forme d'**empreinte bcrypt**, jamais en
   clair ni de façon réversible.
-- Les sessions reposent sur un **jeton opaque** transmis par cookie `httpOnly` :
-  il n'est pas lisible par du JavaScript, ce qui limite le vol de session.
+- Les sessions reposent sur un **jeton opaque** — une suite de caractères
+  tirée au hasard, qui ne contient aucune information sur vous.
+  - **Sur le site**, il est transmis par un cookie `httpOnly` : aucun script de
+    la page ne peut le lire, ce qui limite le vol de session.
+  - **Dans l'application mobile**, il est conservé dans l'espace sécurisé du
+    téléphone — le Trousseau sur iOS, le Keystore sur Android — chiffré par le
+    système et effacé à la désinstallation.
+  - C'est **le même compte** des deux côtés, et la même session : vous
+    déconnecter d'un côté n'affecte pas l'autre, chaque appareil ayant la
+    sienne.
 - Les tentatives de connexion sont **limitées en nombre**, pour empêcher qu'un
   mot de passe soit deviné par essais répétés.
 - Les journaux du service **masquent systématiquement** mots de passe, jetons et

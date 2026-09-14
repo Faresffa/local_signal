@@ -140,7 +140,7 @@ function Carte({ item, onOpen, isDark, index }) {
   );
 }
 
-export default function DiscoverScreen({ onOpen }) {
+export default function DiscoverScreen({ onOpen, user, onCompte }) {
   const colors = useColors();
   const isDark = useColorScheme() === "dark";
 
@@ -220,9 +220,37 @@ export default function DiscoverScreen({ onOpen }) {
 
   const entete = (
     <View style={s.header}>
-      <Text style={[s.title, { color: colors.text }]}>
-        {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
-      </Text>
+      <View style={s.titleRow}>
+        <Text style={[s.title, { color: colors.text, flex: 1 }]}>
+          {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
+        </Text>
+
+        {/* ACCÈS AU COMPTE SANS TROISIÈME ONGLET (D-037). L'initiale d'un
+            utilisateur connecté vaut confirmation silencieuse : on voit d'un
+            coup d'œil que la session tient, sans ligne de texte en plus. */}
+        <Pressable
+          onPress={onCompte}
+          accessibilityRole="button"
+          accessibilityLabel={user ? "Mon compte" : "Se connecter"}
+          hitSlop={8}
+          style={[
+            s.compte,
+            {
+              backgroundColor: user ? colors.brand : colors.surface,
+              borderColor: user ? colors.brand : colors.border,
+            },
+          ]}
+        >
+          {user ? (
+            <Text style={[s.compteInitiale, { color: colors.onBrand }]}>
+              {(user.name || user.email).trim().charAt(0).toUpperCase()}
+            </Text>
+          ) : (
+            <Feather name="user" size={18} color={colors.textMuted} />
+          )}
+        </Pressable>
+      </View>
+
       <Text style={[s.lede, { color: colors.textMuted }]}>
         {denied && !lieu
           ? "Position indisponible. Résultats pour le Quartier latin."
@@ -334,7 +362,19 @@ export default function DiscoverScreen({ onOpen }) {
 const s = StyleSheet.create({
   list: { padding: spacing.lg, paddingBottom: spacing.xxxl },
   header: { marginBottom: spacing.lg },
+  titleRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   title: { fontSize: 28, fontWeight: "700", letterSpacing: -0.5 },
+  // 40 points : la cible tactile la plus petite qui reste confortable au pouce
+  // dans un coin d'écran.
+  compte: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  compteInitiale: { fontSize: 16, fontWeight: "700" },
   lede: { fontSize: 15, marginTop: 4, lineHeight: 21 },
 
   chips: { gap: 8, paddingVertical: spacing.md },

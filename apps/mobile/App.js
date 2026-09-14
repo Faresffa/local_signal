@@ -14,10 +14,12 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
+import CompteScreen from "./src/screens/CompteScreen";
 import DetailScreen from "./src/screens/DetailScreen";
 import DiscoverScreen from "./src/screens/DiscoverScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
+import { useCurrentUser } from "./src/lib/auth";
 import { spacing, useColors } from "./src/theme";
 
 // Transition d'écran.
@@ -84,6 +86,7 @@ export default function App() {
 
   const [tab, setTab] = useState("discover");
   const [stack, setStack] = useState(null); // { screen, restaurant }
+  const { user, login, signup, logout } = useCurrentUser();
 
   function ouvrirFiche(restaurant) {
     setStack({ screen: "detail", restaurant });
@@ -93,14 +96,44 @@ export default function App() {
     setStack({ screen: "reserve", restaurant });
   }
 
+  // LE COMPTE N'EST PAS UN TROISIÈME ONGLET (D-037). Deux onglets, et deux
+  // seulement : « Découvrir » et « Scanner » sont deux activités, se connecter
+  // n'en est pas une — c'est un détour qu'on fait pour revenir à ce qu'on
+  // faisait. D'où un écran empilé, et un retour qui ramène exactement d'où
+  // l'on vient, fiche comprise.
+  function ouvrirCompte(depuis = null, motif = null) {
+    setStack({ screen: "compte", depuis, motif });
+  }
+
+  function fermerCompte() {
+    // Revenir à la fiche d'où venait la demande de connexion, plutôt qu'à la
+    // liste : sinon il faut refaire la recherche, retrouver le restaurant, et
+    // le geste qu'on voulait faire est oublié en chemin.
+    setStack(stack?.depuis ? { screen: "detail", restaurant: stack.depuis } : null);
+  }
+
   // Un écran empilé recouvre les onglets : on ne mélange pas une fiche et une
   // barre de navigation qui suggère qu'on est ailleurs.
   const contenu = stack ? (
-    stack.screen === "detail" ? (
+    stack.screen === "compte" ? (
+      <CompteScreen
+        user={user}
+        motif={stack.motif}
+        onLogin={async (identifiants) => { await login(identifiants); fermerCompte(); }}
+        onSignup={async (champs) => { await signup(champs); fermerCompte(); }}
+        onLogout={async () => { await logout(); setStack(null); }}
+        onBack={fermerCompte}
+      />
+    ) : stack.screen === "detail" ? (
       <DetailScreen
         restaurant={stack.restaurant}
         onBack={() => setStack(null)}
         onReserve={ouvrirReservation}
+        user={user}
+        onSeConnecter={() => ouvrirCompte(
+          stack.restaurant,
+          "Un compte permet de laisser un avis, et de le modifier ou le retirer quand vous voulez.",
+        )}
       />
     ) : (
       <ReserveScreen
@@ -110,7 +143,7 @@ export default function App() {
       />
     )
   ) : tab === "discover" ? (
-    <DiscoverScreen onOpen={ouvrirFiche} />
+    <DiscoverScreen onOpen={ouvrirFiche} user={user} onCompte={() => ouvrirCompte()} />
   ) : (
     <ScanScreen />
   );
@@ -118,7 +151,7 @@ export default function App() {
   // Le mouvement dit ce qui vient de se passer : un écran empilé glisse depuis
   // la droite (on s'enfonce dans une pile), un changement d'onglet se substitue
   // en fondu (on se déplace latéralement).
-  const cle = stack ? `${stack.screen}-${stack.restaurant.id}` : tab;
+  const cle = stack ? `${stack.screen}-${stack.restaurant?.id ?? "moi"}` : tab;
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.background }]}>

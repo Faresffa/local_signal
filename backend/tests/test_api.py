@@ -31,6 +31,7 @@ from fastapi.testclient import TestClient
 
 from backend import config
 from backend.core.auth import limitation
+from backend.core.stockage import stockage
 from backend.main import app
 
 # DEUX CLIENTS, ET C'EST ESSENTIEL.
@@ -258,18 +259,28 @@ entete = {"X-Forwarded-For": "203.0.113.10"}
 email = email_neuf()
 motdepasse = "motdepasse-solide-123"
 
-r = client.post("/api/auth/signup", headers=entete,
-                json={"email": email, "password": motdepasse, "name": "Test"})
+# CLIENT DEDIE AUX INSCRIPTIONS, ET C'EST INDISPENSABLE.
+#
+# `TestClient` conserve les cookies qu'on lui pose. Une inscription reussie
+# ouvre une session : le client qui l'a lancee est connecte pour tout le reste
+# du fichier. Or `client` est precisement celui qui doit rester ANONYME, faute
+# de quoi chaque test « un visiteur non connecte ne peut pas... » passe au vert
+# sans rien prouver. Le defaut a ete observe ici : deux tests d'anonymat
+# echouaient parce que `client` etait connecte depuis cette ligne.
+inscriptions = TestClient(app)
+
+r = inscriptions.post("/api/auth/signup", headers=entete,
+                      json={"email": email, "password": motdepasse, "name": "Test"})
 verifier(r.status_code == 200, "l'inscription cree un compte", r.text[:120])
 verifier("password" not in r.text.lower() and "hash" not in r.text.lower(),
          "la reponse ne renvoie ni mot de passe ni empreinte")
 
-r = client.post("/api/auth/signup", headers=entete,
-                json={"email": email, "password": motdepasse, "name": "Test"})
+r = inscriptions.post("/api/auth/signup", headers=entete,
+                      json={"email": email, "password": motdepasse, "name": "Test"})
 verifier(r.status_code == 409, "un email deja pris est refuse")
 
-r = client.post("/api/auth/signup", headers={"X-Forwarded-For": "203.0.113.11"},
-                json={"email": email_neuf(), "password": "court", "name": "T"})
+r = inscriptions.post("/api/auth/signup", headers={"X-Forwarded-For": "203.0.113.11"},
+                      json={"email": email_neuf(), "password": "court", "name": "T"})
 verifier(r.status_code == 400, "un mot de passe trop court est refuse")
 
 # --- Le message ne doit pas reveler si le compte existe
@@ -313,6 +324,175 @@ print("=" * 78)
 r = client.get("/api/cuisines")
 verifier(r.headers.get("x-request-id"),
          "chaque reponse porte un identifiant de requete")
+
+
+# =============================================================================
+print("\n" + "=" * 78)
+print("LE MEME COMPTE SUR LES DEUX INTERFACES — LS-40")
+print("=" * 78)
+
+# Le mobile n'a pas de bocal a cookies fiable : il presente le jeton en
+# en-tete. On verifie que c'est LA MEME session, pas un second systeme.
+limitation.reinitialiser()
+_email_mobile = email_neuf()
+# CLIENT DEDIE, ET C'EST IMPORTANT. `TestClient` garde les cookies qu'on lui
+# pose : s'inscrire avec le client anonyme le rendrait connecte pour tous les
+# tests qui suivent, et « un visiteur anonyme ne peut pas... » passerait au
+# vert sans rien prouver. Le defaut a ete observe ici meme.
+navigateur = TestClient(app)
+r = navigateur.post("/api/auth/signup",
+                    headers={"X-Forwarded-For": "203.0.113.55", "X-Jeton-Session": "oui"},
+                    json={"email": _email_mobile, "password": "motdepasse-mobile-123"})
+verifier(r.status_code == 200, "l'inscription aboutit")
+_jeton = r.json().get("token")
+verifier(bool(_jeton), "le client qui demande le jeton le recoit")
+
+# Un client neuf, SANS cookie : c'est la situation du telephone.
+mobile = TestClient(app)
+r = mobile.get("/api/auth/me", headers={"Authorization": f"Bearer {_jeton}"})
+verifier(r.status_code == 200 and r.json()["email"] == _email_mobile,
+         "le jeton porteur ouvre la meme session que le cookie")
+
+verifier(mobile.get("/api/auth/me").status_code == 401,
+         "sans jeton ni cookie, le meme client reste anonyme")
+
+r = navigateur.post("/api/auth/login", headers={"X-Forwarded-For": "203.0.113.56"},
+                    json={"email": _email_mobile, "password": "motdepasse-mobile-123"})
+verifier(r.status_code == 200 and r.json().get("token") is None,
+         "le navigateur ne recoit JAMAIS le jeton dans le corps")
+
+mobile.post("/api/auth/logout", headers={"Authorization": f"Bearer {_jeton}"})
+verifier(mobile.get("/api/auth/me",
+                    headers={"Authorization": f"Bearer {_jeton}"}).status_code == 401,
+         "la deconnexion par en-tete revoque bien la session")
+limitation.reinitialiser()
+
+
+# =============================================================================
+print("\n" + "=" * 78)
+print("AVIS LAISSES PAR NOS UTILISATEURS — D-039")
+print("=" * 78)
+
+_cible = restos[0]["id"] if restos else None
+
+if not _cible:
+    ignorer("avis utilisateurs", "aucun restaurant en base")
+else:
+    # Garde-fou : si `client` a ete contamine par une session en amont, tous
+    # les tests d'anonymat qui suivent ne prouvent plus rien.
+    verifier(client.get("/api/auth/me").status_code == 401,
+             "le client de reference est bien reste anonyme")
+
+    r = client.get(f"/api/restaurant/{_cible}/avis")
+    verifier(r.status_code == 200, "les avis sont lisibles sans etre connecte")
+    verifier(r.json().get("connecte") is False,
+             "l'API dit au visiteur anonyme qu'il ne l'est pas")
+
+    r = client.post(f"/api/restaurant/{_cible}/avis", json={"rating": 5})
+    verifier(r.status_code == 401,
+             "un visiteur anonyme ne peut pas laisser d'avis")
+
+    r = connecte.post(f"/api/restaurant/{_cible}/avis",
+                      json={"rating": 4, "text": "Tres bonne adresse de quartier."})
+    verifier(r.status_code == 200, "un utilisateur connecte depose son avis")
+
+    # UN SEUL AVIS PAR PERSONNE : le second remplace le premier, il ne
+    # s'empile pas. Sans cette regle, un double clic pese deux fois.
+    avant = len(connecte.get(f"/api/restaurant/{_cible}/avis").json()["avis"])
+    connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 2, "text": "Je corrige."})
+    apres = connecte.get(f"/api/restaurant/{_cible}/avis").json()
+    verifier(len(apres["avis"]) == avant,
+             "un second envoi modifie l'avis au lieu d'en creer un autre")
+    verifier(apres["le_mien"]["rating"] == 2, "c'est bien la nouvelle valeur qui est gardee")
+
+    r = connecte.post(f"/api/restaurant/{_cible}/avis", json={})
+    verifier(r.status_code == 400, "un avis sans note ni texte est refuse")
+
+    r = connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 9})
+    verifier(r.status_code == 400, "une note hors de 1-5 est refusee")
+
+    r = connecte.post(f"/api/restaurant/{_cible}/avis", json={"text": "x" * 2100})
+    verifier(r.status_code == 400, "un avis interminable est refuse")
+
+    r = connecte.post("/api/restaurant/inconnu-000/avis", json={"rating": 3})
+    verifier(r.status_code == 404, "un avis sur un restaurant inconnu est refuse")
+
+    # CE QUI COMPTE VRAIMENT : ces avis ne touchent pas au score (D-001).
+    avant_score = connecte.get(f"/api/restaurant/{_cible}").json().get("local_signal")
+    connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 5, "text": "Excellent !"})
+    apres_score = connecte.get(f"/api/restaurant/{_cible}").json().get("local_signal")
+    verifier(avant_score == apres_score,
+             "un avis utilisateur ne modifie PAS le score d'authenticite")
+
+    verifier(connecte.delete(f"/api/restaurant/{_cible}/avis").status_code == 200,
+             "l'auteur peut retirer son avis")
+    verifier(connecte.delete(f"/api/restaurant/{_cible}/avis").status_code == 404,
+             "retirer deux fois le meme avis ne fait rien")
+
+    # L'adresse e-mail n'a aucune raison d'apparaitre devant d'autres
+    # utilisateurs : on verifie que la reponse ne la porte pas.
+    connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 4})
+    corps = connecte.get(f"/api/restaurant/{_cible}/avis").text
+    verifier(_email_lecture not in corps,
+             "l'adresse e-mail de l'auteur n'est jamais rendue")
+    connecte.delete(f"/api/restaurant/{_cible}/avis")
+
+
+# =============================================================================
+print("\n" + "=" * 78)
+print("CARTE SOUMISE DEPUIS LA FICHE — D-038")
+print("=" * 78)
+
+if not _cible:
+    ignorer("envoi de carte", "aucun restaurant en base")
+else:
+    r = client.get(f"/api/restaurant/{_cible}/cartes")
+    verifier(r.status_code == 200 and "nombre" in r.json(),
+             "les cartes soumises sont denombrables")
+
+    # LE CORPUS N'EST PAS SERVI (D-038) : la reponse dit qu'une contribution
+    # existe, jamais ou trouver le fichier.
+    for carte in r.json()["cartes"]:
+        verifier("corpus_key" not in carte and "chemin" not in carte,
+                 "aucune cle de corpus ne fuit vers le client")
+        break
+
+    r = client.post(f"/api/restaurant/{_cible}/carte",
+                    files={"image": ("vide.jpg", b"", "image/jpeg")},
+                    params={"analyser": "false"})
+    verifier(r.status_code == 400, "une image vide est refusee")
+
+    r = client.post(f"/api/restaurant/{_cible}/carte",
+                    files={"image": ("script.txt", b"pas une image", "text/plain")},
+                    params={"analyser": "false"})
+    verifier(r.status_code == 400, "un fichier qui n'est pas une image est refuse")
+
+    r = client.post("/api/restaurant/inconnu-000/carte",
+                    files={"image": ("c.jpg", b"\xff\xd8\xff", "image/jpeg")},
+                    params={"analyser": "false"})
+    verifier(r.status_code == 404, "une carte sur un restaurant inconnu est refusee")
+
+    # Depot reel, sans analyse : on verifie la conservation, pas le modele.
+    octets = b"\xff\xd8\xff" + uuid.uuid4().bytes * 8
+    avant = client.get(f"/api/restaurant/{_cible}/cartes").json()["nombre"]
+    r = client.post(f"/api/restaurant/{_cible}/carte",
+                    files={"image": ("carte.jpg", octets, "image/jpeg")},
+                    params={"analyser": "false"})
+    verifier(r.status_code == 200 and r.json()["conservee"] is True,
+             "une carte envoyee anonymement est acceptee et conservee")
+    apres = client.get(f"/api/restaurant/{_cible}/cartes").json()["nombre"]
+    verifier(apres == avant + 1, "la soumission est tracee")
+
+    # IDEMPOTENCE DU STOCKAGE (D-038) : la meme image deux fois ne cree qu'un
+    # fichier, mais les DEUX contributions sont tracees.
+    volume_avant = stockage().volume()["fichiers"]
+    client.post(f"/api/restaurant/{_cible}/carte",
+                files={"image": ("carte.jpg", octets, "image/jpeg")},
+                params={"analyser": "false"})
+    verifier(stockage().volume()["fichiers"] == volume_avant,
+             "la meme image envoyee deux fois n'est stockee qu'une fois")
+    verifier(client.get(f"/api/restaurant/{_cible}/cartes").json()["nombre"] == apres + 1,
+             "les deux contributions restent tracees separement")
 
 
 # =============================================================================

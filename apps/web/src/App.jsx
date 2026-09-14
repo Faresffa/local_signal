@@ -25,6 +25,11 @@ export default function App() {
   const [filtres, setFiltres] = useState(() => ({ ...FILTRES_VIDES }));
   const [radius, setRadius] = useState(RAYON_DEFAUT);
   const [lieu, setLieu] = useState(null);
+  // OÙ REVENIR APRÈS S'ÊTRE CONNECTÉ. Quelqu'un qui clique « laisser un avis »
+  // depuis une fiche veut revenir à cette fiche, pas être renvoyé à la liste :
+  // sinon il doit refaire sa recherche, retrouver le restaurant, et le geste
+  // qu'il voulait faire est oublié en chemin.
+  const [retour, setRetour] = useState("discover");
   const { user, login, signup, logout } = useCurrentUser();
 
   // Chaque changement d'écran repart du haut : sans cela on arrive au milieu
@@ -39,6 +44,11 @@ export default function App() {
   function openReserve(restaurant) {
     setSelected(restaurant);
     setPage("reserve");
+  }
+
+  function demanderConnexion() {
+    setRetour(page);
+    setPage("login");
   }
 
   return (
@@ -66,6 +76,8 @@ export default function App() {
               restaurant={selected}
               onBack={() => setPage("discover")}
               onReserve={openReserve}
+              user={user}
+              onSeConnecter={demanderConnexion}
             />
           )}
 
@@ -79,17 +91,17 @@ export default function App() {
 
           {page === "login" && (
             <Login
-              onLogin={async (credentials) => { await login(credentials); setPage("discover"); }}
+              onLogin={async (credentials) => { await login(credentials); setPage(retour); }}
               onGoToSignup={() => setPage("signup")}
-              onBack={() => setPage("discover")}
+              onBack={() => setPage(retour)}
             />
           )}
 
           {page === "signup" && (
             <Signup
-              onSignup={async (fields) => { await signup(fields); setPage("discover"); }}
+              onSignup={async (fields) => { await signup(fields); setPage(retour); }}
               onGoToLogin={() => setPage("login")}
-              onBack={() => setPage("discover")}
+              onBack={() => setPage(retour)}
             />
           )}
         </div>
