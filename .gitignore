@@ -79,3 +79,7 @@ data/collecte/
 
 # Fichier de requetes genere pour un collecteur externe
 requetes_*.csv
+
+# Sauvegardes de la base (LS-26) — copies locales, jamais versionnees :
+# elles portent les memes donnees personnelles que la base elle-meme.
+data/sauvegardes/

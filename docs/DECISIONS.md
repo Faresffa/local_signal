@@ -2285,3 +2285,88 @@ La distinction est portée par le code et doit le rester :
   retomberait sur l'a priori sans qu'on le distingue d'un restaurant sans avis.
 - Le JSON brut de chaque collecte est écrit **avant** l'import. Une donnée payée
   ne doit pas dépendre du bon fonctionnement du code qui la range.
+
+---
+
+## D-041 — Sauvegarder la base, et refuser d'exporter ce qui ne doit pas sortir
+
+**Date :** 14 septembre 2026 · **Statut :** actif
+
+### Contexte
+
+Deux mécanismes touchent au fichier de base : la **sauvegarde** (LS-26), qui
+n'existait pas, et l'**export vers un tiers** (`backend/db/export.py`), qui
+existait depuis l'envoi de la base à un hébergeur.
+
+### Problème 1 — rien n'était sauvegardé
+
+La base porte 381 cartes lues, 297 prix extraits et 2 100 avis. Les cartes
+représentent des heures de récolte et un quota de modèle consommé ; **les avis
+ont été payés**. Rien ne se reconstitue en relançant un script : les pages web
+changent, et une collecte refaite se refacture.
+
+La tentation est la copie de fichier. Elle est fausse : si une écriture est en
+cours, la copie attrape une base à moitié écrite et le journal WAL qui
+contiendrait la fin de la transaction reste dans l'autre fichier. Le résultat
+s'ouvre et il manque les dernières minutes — la pire forme d'échec, celle qu'on
+découvre au moment de restaurer.
+
+### Problème 2 — l'export emportait les comptes utilisateurs
+
+`TABLES_A_VIDER` valait `("reservations", "consultations")`. La liste datait
+d'avant l'authentification (LS-28). Depuis, la base porte `users`, `sessions`
+et `user_reviews`.
+
+**Un export emportait donc 49 comptes — adresses e-mail et empreintes bcrypt —
+chez l'hébergeur, le coéquipier ou le jury.** C'est exactement la fuite que ce
+script avait été écrit pour empêcher. Vérifié sur un fichier produit : les
+empreintes y étaient.
+
+Ce n'est pas un oubli isolé, c'est une **classe** d'oubli : une liste écrite à
+la main se périme à la table suivante.
+
+### Décisions
+
+**1. `sqlite3.Connection.backup()`, pas une copie de fichier.** L'API copie
+page à page en tenant compte des transactions en cours. C'est la seule façon
+correcte de sauvegarder SQLite à chaud.
+
+**2. Une sauvegarde non vérifiée n'est pas une sauvegarde.** Chaque fichier
+produit est rouvert, soumis à `PRAGMA integrity_check`, et ses tables comptées
+et comparées à la source. Si la vérification échoue, le fichier est **détruit**
+plutôt que conservé sous un nom rassurant.
+
+**3. Trois copies, et on dit ce que ça ne protège pas.** Une rotation locale
+protège d'une fausse manœuvre ; elle ne protège **pas** d'une panne de disque,
+et pas d'une corruption passée inaperçue une semaine. Le script l'imprime à
+chaque exécution plutôt que de laisser croire le contraire. Le corpus d'images
+(D-038) n'est pas couvert : il vit hors de la base.
+
+**4. L'export vide toute table nominative — et un garde-fou l'impose.**
+`_verifier_nominatives()` parcourt le schéma réel et **interrompt l'export** si
+une table porte `user_id`, `email`, `token`, `token_hash` ou `password_hash`
+sans être traitée. La règle ne repose plus sur la mémoire de qui ajoutera la
+prochaine table : un script qui refuse de tourner vaut mieux qu'un fichier de
+données personnelles envoyé par e-mail.
+
+**5. Délier plutôt que vider, quand la ligne décrit un établissement.**
+`menu_submissions` documente un restaurant — quelle carte, quand, quelle
+empreinte. Seul le lien vers la personne est nominatif : `user_id` passe à
+`NULL`, la ligne reste. C'est la règle déjà appliquée à la suppression d'un
+compte (D-038).
+
+### Conséquences
+
+- Export vérifié après correction : `users` 49 → 0, `sessions` et
+  `user_reviews` vidées, `menu_submissions` 8/8 déliées, **zéro empreinte
+  bcrypt** dans le fichier binaire. Les 3 adresses e-mail restantes sont des
+  contacts de restaurants issus d'OpenStreetMap — des données publiques
+  d'établissements, pas des personnes.
+- `reviews` (collecte externe) **rejoint** les tables de données : ce sont des
+  avis publics sur des établissements, le matériau de l'indicateur de langue.
+  Ils n'ont jamais porté d'identité d'auteur chez nous.
+- `data/sauvegardes/` n'est pas versionné : ces copies portent les mêmes
+  données personnelles que la base.
+- **Toute base exportée avant le 14 septembre 2026 est à considérer comme
+  contenant les comptes.** Si un fichier a circulé, il faut le reprendre et le
+  remplacer — et les mots de passe concernés sont à changer.
