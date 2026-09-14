@@ -79,7 +79,7 @@ ce qui permet de répondre instantanément sur dix mille restaurants.
 ║   sites touristiques│                                                      ║
 ║                     ├──► appariement ──► lecture des cartes                ║
 ║   Collecteur tiers ─┘    nom + distance   OCR + modèle, en local           ║
-║   cartes, notes          un pour un       images détruites après lecture   ║
+║   cartes, notes          un pour un       images gardées, jamais servies   ║
 ║                                                  │                         ║
 ║                     ┌────────────────────────────┘                         ║
 ║                     ▼                                                      ║
