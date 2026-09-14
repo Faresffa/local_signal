@@ -32,8 +32,21 @@ const light = {
   borderStrong: "#d5c9b6",
 
   text: "#1c1a17",
-  textMuted: "#6f6961",
-  textFaint: "#989186",
+  // NIVEAUX DE GRIS — assombris pour passer 4,5:1 (LS-17, WCAG AA).
+  //
+  // MESURE AVANT CORRECTION, en conditions reelles : `textFaint` donnait
+  // 2,89:1 sur `surfaceAlt` en clair et 3,43:1 en sombre, la ou 4,5:1 est le
+  // minimum pour du texte sous 18,66 px. Ce n'etait pas un detail : ce niveau
+  // portait les mentions qui ENGAGENT — « ces avis ne modifient pas le score »,
+  // « la photo n'est ni publiee ni revendue ». Le texte qu'il faut lire etait
+  // le moins lisible de la page.
+  //
+  // `textMuted` est assombri en meme temps, en clair, pour garder un ecart
+  // visible entre les deux niveaux (1,54:1) : sans cela la correction de
+  // `textFaint` aurait ecrase la hierarchie au lieu de la sauver. En sombre
+  // l'ecart tenait deja, seul `textFaint` bouge.
+  textMuted: "#534e48",
+  textFaint: "#716a60",
   textInverse: "#ffffff",
 
   // Verdict d'authenticité : vert local, ambre mixte, rouge touristique.
@@ -60,7 +73,11 @@ const light = {
 // sombre, et le rouge est éclairci pour rester lisible et reconnaissable.
 // Ni noir pur ni blanc pur, qui écrasent la profondeur.
 const dark = {
-  brand: "#e8505f",
+  // Eclairci de #e8505f a #e95766 (LS-17) : la teinte precedente donnait
+  // 4,30:1 sur `surfaceAlt`, juste sous les 4,5:1 exiges pour un lien.
+  // L'ecart est imperceptible a l'oeil, et le texte pose SUR la marque y
+  // gagne aussi (5,05 -> 5,29).
+  brand: "#e95766",
   brandHover: "#f0616f",
   brandDark: "#c1121f",
   brandSoft: "#3a1e21",
@@ -75,7 +92,7 @@ const dark = {
 
   text: "#f5efe6",
   textMuted: "#a9a096",
-  textFaint: "#7d746a",
+  textFaint: "#92887e",
   textInverse: "#1c1a17",
 
   local: "#5fbf92",

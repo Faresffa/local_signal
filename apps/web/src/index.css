@@ -382,6 +382,12 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  /* ZONE CLIQUABLE, PAS SEULEMENT TEXTE (LS-17). Un lien de 14 px fait
+     18 px de haut : c'est une cible qu'on rate au doigt, et qu'on rate
+     aussi a la souris quand on vise vite. Le remplissage vertical
+     l'agrandit sans deplacer le texte, y compris en plein milieu d'une
+     phrase ou une hauteur minimale casserait l'interligne. */
+  padding: 7px 0;
 }
 .linkbtn:hover {
   text-decoration: underline;
