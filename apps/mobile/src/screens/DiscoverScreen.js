@@ -19,12 +19,18 @@ import {
   CardSkeleton, EmptyState, ErrorState, Loading, Verdict,
 } from "../components/ui";
 import BarreSignal from "../components/BarreSignal";
+import CarteVerrouillee from "../components/CarteVerrouillee";
 import PhotoRestaurant from "../components/PhotoRestaurant";
 import ChoixLieu from "../components/ChoixLieu";
 import Filtres from "../components/Filtres";
 import { radius, spacing, useColors } from "../theme";
 import { distance, verdict } from "../lib/display";
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
+
+// Cartes verrouillées affichées au-delà de la limite (LS-19) — plafond
+// purement visuel, pour ne pas dérouler quarante cadenas quand la zone en
+// compte 423. Même valeur que sur le web : c'est le même produit (D-037).
+const MAX_CARTES_VERROUILLEES = 6;
 
 // Zone d'évaluation, utilisée si la géolocalisation est refusée. On ne bloque
 // jamais l'écran sur un message d'erreur de permission.
@@ -162,6 +168,7 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
   const [options, setOptions] = useState([]);
 
   const [restaurants, setRestaurants] = useState([]);
+  const [total, setTotal] = useState(0);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
 
@@ -212,11 +219,23 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
       avecCarte: filtres.avecCarte,
       limit: 30,
     })
-      .then((data) => { setRestaurants(data.restaurants ?? []); setStatus("ready"); })
+      .then((data) => {
+        const liste = data.restaurants ?? [];
+        setRestaurants(liste);
+        // `count` est le nombre de restaurants qui CORRESPONDENT, pas le
+        // nombre renvoyé. L'écart est exactement ce qui est masqué.
+        setTotal(data.count ?? liste.length);
+        setStatus("ready");
+      })
       .catch((e) => { setError(e.message); setStatus("error"); });
   }, [origine, radiusM, filtres]);
 
   useEffect(() => { load(); }, [load]);
+
+  // UN UTILISATEUR CONNECTÉ NE MASQUE RIEN. Le serveur applique déjà la
+  // limite ; on ne fait que la rendre lisible plutôt que de laisser croire
+  // que le quartier ne compte que cinq restaurants.
+  const masques = user ? 0 : Math.max(0, total - restaurants.length);
 
   const entete = (
     <View style={s.header}>
@@ -311,7 +330,10 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
 
       {status === "ready" && (
         <Text style={[s.count, { color: colors.textFaint }]}>
-          {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""}
+          {masques > 0
+            ? `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""} `
+              + `affiché${restaurants.length > 1 ? "s" : ""} sur ${total}`
+            : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
         </Text>
       )}
     </View>
@@ -355,6 +377,16 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
       renderItem={({ item, index }) => (
         <Carte item={item} onOpen={onOpen} isDark={isDark} index={index} />
       )}
+      ListFooterComponent={
+        masques > 0 ? (
+          <View style={{ gap: spacing.md, marginTop: spacing.md }}>
+            {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) })
+              .map((_, i) => (
+                <CarteVerrouillee key={`verrou-${i}`} onInscription={onCompte} />
+              ))}
+          </View>
+        ) : null
+      }
     />
   );
 }
