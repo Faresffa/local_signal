@@ -238,6 +238,159 @@ _FR = {
     "a_volonté": "À volonté",
     "all_you_can_eat": "À volonté",
     "aligot": "Aligot",
+    # -------------------------------------------------------------------------
+    # COMPLÉMENT LS-05 — les 120 étiquettes qui s'affichaient encore en brut,
+    # couvrant 155 restaurants.
+    #
+    # TROIS RÈGLES, APPLIQUÉES DANS CET ORDRE :
+    #
+    #   1. Si le libellé français existe déjà dans ce tableau, on l'y rattache.
+    #      `japonais`, `japan` et `japonnaise` désignent la même chose que
+    #      `japanese` : les laisser séparés répartissait les restaurants entre
+    #      quatre filtres dont AUCUN ne les montrait tous (D-037).
+    #
+    #   2. Une variante hyper-locale d'une cuisine déjà présente, portée par
+    #      un ou deux restaurants, rejoint sa cuisine parente. Un filtre
+    #      « Hangzhou » montrerait un restaurant et le cacherait à qui cherche
+    #      « Chinoise » — c'est-à-dire tout le monde. `sichuanese` fait
+    #      exception : « Sichuanaise » existait déjà, il rejoint ce groupe.
+    #
+    #   3. Une cuisine nationale réellement absente reçoit son nom français.
+    #      « Ouïghoure », « Yéménite », « Comorienne » ne sont pas des
+    #      variantes de quoi que ce soit.
+    #
+    # CE QUI N'EST PAS TRADUIT, ET POURQUOI. `libre` et `ecai` restent hors du
+    # tableau : ce ne sont pas des cuisines mais des saisies erronées dans
+    # OpenStreetMap. Les traduire donnerait un filtre qui ne veut rien dire ;
+    # affichées brutes, elles signalent ce qu'il faudrait corriger à la source.
+
+    # Variantes d'orthographe ou de langue — même cuisine, autre écriture
+    "japonais": "Japonaise",
+    "japonnaise": "Japonaise",
+    "japan": "Japonaise",
+    "turque": "Turque",
+    "libanais": "Libanaise",
+    "syrienne": "Syrienne",
+    "colombien": "Colombienne",
+    "columbian": "Colombienne",
+    "végétarienne": "Végétarienne",
+    "cambodgien": "Cambodgienne",
+    "bresilian": "Brésilienne",
+    "vietnam": "Vietnamienne",
+    "sénégal": "Sénégalaise",
+    "kurde": "Kurde",
+    "pakistanese": "Pakistanaise",
+    "indian_pakistanese": "Pakistanaise",
+    "taiwan": "Taïwanaise",
+    "sichuanese": "Sichuanaise",
+    "italian_restaurant": "Italienne",
+    "trattoria": "Italienne",
+    "sardinian": "Italienne",
+    "neapolitan": "Pizzeria",
+    "gastronomique": "Gastronomique",
+    "gastronomic": "Gastronomique",
+    "gastromique": "Gastronomique",
+    "french gastronomy": "Gastronomique",
+    "bistronomie": "Bistrot",
+    "hawaii": "Hawaïenne",
+    "latino": "Latino-américaine",
+    "southamerican": "Latino-américaine",
+    "maghreb": "Maghrébine",
+    "maghrebi": "Maghrébine",
+    "north_african": "Maghrébine",
+    "tajine": "Marocaine",
+    "cap vert": "Cap-verdienne",
+    "cape_verdean": "Cap-verdienne",
+    "mésopotamie_et_anatolie": "Moyen-orientale",
+    "shawarma": "Kebab",
+    "izakaya": "Japonaise",
+    "tropical_izakaya": "Japonaise",
+    "bobun": "Vietnamienne",
+    "petiscos": "Portugaise",
+    "bacalhau": "Portugaise",
+    "jewish": "Casher",
+    "asian_fusion": "Fusion",
+    "fusion_asiatique": "Fusion",
+    "teahouse": "Salon de thé",
+    "salon_de_thé": "Salon de thé",
+    "salad bar": "Salades",
+    "poke_bowl": "Poke",
+    "raclette": "Savoyarde",
+    "savoie": "Savoyarde",
+    "breton": "Crêperie",
+    "savory_pancakes": "Crêperie",
+    "crêpes_galettes_&_cachapas_focaccia": "Crêperie",
+    "flammkuchen": "Alsacienne",
+    "currywurst": "Allemande",
+    "fish_and_chips": "Britannique",
+    "diner": "Américaine",
+    "cajun": "Américaine",
+    "cordon_bleu": "Française",
+    "tartare": "Française",
+    "cafeteria": "Cantine",
+    "lunch": "Cantine",
+    "delicatessen": "Traiteur",
+    "cocktails": "Bar",
+    "meat": "Grillades",
+    "beef": "Grillades",
+    "rotisserie": "Volaille",
+    "wings": "Volaille",
+    "fried_chicken": "Volaille",
+    "hot_dog": "Restauration rapide",
+    "crousty": "Restauration rapide",
+    "dumplings": "Raviolis",
+    "hot_pot": "Fondue chinoise",
+    "火鍋": "Fondue chinoise",
+    "beef_noodle": "Nouilles",
+    "lanzhou": "Nouilles",
+    "重庆小面": "Nouilles",
+    "渝小面": "Nouilles",
+
+    # Variantes régionales rattachées à leur cuisine parente (règle 2)
+    "chineses (teochew) - 中国潮州": "Chinoise",
+    "yunnan": "Chinoise",
+    "wuhan": "Chinoise",
+    "shandong": "Chinoise",
+    "shaanxi": "Chinoise",
+    "jiangxi": "Chinoise",
+    "hubei": "Chinoise",
+    "hangzhou": "Chinoise",
+    "chongqing": "Chinoise",
+    "cuisine_nissarde": "Niçoise",
+    "auvergne": "Auvergnate",
+
+    # Cuisines nationales réellement absentes du tableau (règle 3)
+    "yemeni": "Yéménite",
+    "uzbek": "Ouzbèke",
+    "uyghur": "Ouïghoure",
+    "somali": "Somalienne",
+    "djiboutian": "Djiboutienne",
+    "comorian": "Comorienne",
+    "cameroonian": "Camerounaise",
+    "gabonese": "Gabonaise",
+    "congo": "Congolaise",
+    "mali": "Malienne",
+    "west_african": "Ouest-africaine",
+    "berber": "Berbère",
+    "palestinian": "Palestinienne",
+    "maltese": "Maltaise",
+    "bulgarian": "Bulgare",
+    "balinese": "Balinaise",
+    "himalayan": "Himalayenne",
+    "caucasian": "Caucasienne",
+    "jamaican": "Jamaïcaine",
+    "haitian": "Haïtienne",
+    "guadeloupean": "Guadeloupéenne",
+    "afro-cuban": "Afro-cubaine",
+    "equatorian": "Équatorienne",
+    "canadian": "Canadienne",
+    "quebec": "Québécoise",
+
+    # Qualificatifs de service, pas de cuisine — mais affichés tels quels
+    # aujourd'hui, donc traduits plutôt que laissés en anglais.
+    "modern": "Moderne",
+    "seasonal": "De saison",
+
 }
 
 
