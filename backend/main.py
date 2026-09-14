@@ -29,6 +29,7 @@ from backend.ingestion.menu_scan.client import analyze_menu_image
 from backend.db.models import init_db
 from backend.db import repository as repo
 from backend.core.journal import JournalRequetes, configurer as configurer_journal
+from backend.core.stockage import ErreurStockage, stockage
 
 # --- Init ---
 # La journalisation d'abord : sans elle, une erreur pendant `init_db` ne
@@ -98,6 +99,11 @@ class UserResponse(BaseModel):
     id: int
     email: str
     name: Optional[str] = None
+
+
+class AvisRequest(BaseModel):
+    rating: Optional[int] = None
+    text: Optional[str] = None
 
 
 # =============================================================================
@@ -666,4 +672,203 @@ async def scan_menu(
         "menu_score": scored["score"],
         "details": scored["details"],
         "notes": analysis.notes,
+    }
+
+
+# =============================================================================
+# AVIS LAISSÉS PAR NOS UTILISATEURS (LS-39)
+# =============================================================================
+#
+# CE QU'ILS NE FONT PAS : entrer dans le calcul du score. Ils sont stockés et
+# affichés, rien de plus. Les faire compter avant d'avoir mesuré leur biais
+# reviendrait à réintroduire la popularité par la porte de service — le défaut
+# même que le projet existe pour corriger (D-001, D-007).
+#
+# Ils constituent en revanche un actif : une base d'avis dont NOUS connaissons
+# la provenance, contrairement à ceux d'un fournisseur tiers.
+
+
+@app.get("/api/restaurant/{restaurant_id}/avis")
+def lister_avis(restaurant_id: str,
+                user: Optional[dict] = Depends(get_current_user_optional)):
+    """
+    Avis laissés sur un restaurant, et celui de l'utilisateur s'il en a un.
+
+    Renvoyer son propre avis à part évite un second appel : l'interface doit
+    savoir s'il faut proposer « laisser un avis » ou « modifier le mien ».
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
+    return {
+        "avis": repo.get_user_reviews(restaurant_id),
+        "le_mien": repo.get_own_review(restaurant_id, user["id"]) if user else None,
+        "connecte": bool(user),
+    }
+
+
+@app.post("/api/restaurant/{restaurant_id}/avis")
+def laisser_avis(restaurant_id: str, req: AvisRequest,
+                 user: dict = Depends(get_current_user)):
+    """
+    Dépose ou met à jour l'avis de l'utilisateur connecté.
+
+    `get_current_user` impose la connexion : un visiteur reçoit 401, et
+    l'interface l'oriente alors vers l'écran de connexion. C'est délibéré — un
+    avis anonyme ne serait ni modifiable ni supprimable par son auteur, et ne
+    pourrait pas entrer dans son droit d'accès (D-029).
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
+    texte = (req.text or "").strip()
+    if req.rating is None and not texte:
+        raise HTTPException(
+            status_code=400, detail="Un avis doit porter une note ou un texte."
+        )
+    if req.rating is not None and not 1 <= req.rating <= 5:
+        raise HTTPException(status_code=400, detail="La note va de 1 à 5.")
+    if len(texte) > 2000:
+        raise HTTPException(status_code=400, detail="Avis trop long (2000 caractères).")
+
+    # La langue est détectée à l'écriture et stockée : la recalculer plus tard
+    # sur des milliers d'avis coûterait cher, et le résultat serait le même.
+    langue = None
+    if len(texte) >= 12:
+        try:
+            from langdetect import detect, DetectorFactory
+            DetectorFactory.seed = 0
+            langue = detect(texte)
+        except Exception:
+            langue = None
+
+    repo.save_user_review(restaurant_id, user["id"], req.rating, texte or None, langue)
+    return {
+        "message": "Avis enregistré.",
+        "le_mien": repo.get_own_review(restaurant_id, user["id"]),
+    }
+
+
+@app.delete("/api/restaurant/{restaurant_id}/avis")
+def retirer_avis(restaurant_id: str, user: dict = Depends(get_current_user)):
+    """Retire son propre avis. L'auteur en reste maître."""
+    if not repo.delete_user_review(restaurant_id, user["id"]):
+        raise HTTPException(status_code=404, detail="Aucun avis à retirer.")
+    return {"message": "Avis retiré."}
+
+
+# =============================================================================
+# CARTE SOUMISE DEPUIS LA FICHE D'UN RESTAURANT (LS-38)
+# =============================================================================
+
+
+@app.post("/api/restaurant/{restaurant_id}/carte")
+async def soumettre_carte(
+    restaurant_id: str,
+    image: UploadFile = File(...),
+    analyser: bool = Query(True, description="Lire la carte dans la foulée"),
+    user: Optional[dict] = Depends(get_current_user_optional),
+):
+    """
+    Reçoit la photo d'une carte, la conserve, et la lit.
+
+    C'EST LE MÉCANISME PAR LEQUEL L'ACTIF DU PROJET SE CONSTRUIT
+    (CLAUDE.md §3). Jusqu'ici le scan existait en écran séparé, sans restaurant
+    rattaché : l'analyse était rendue puis perdue. Ici la carte est liée au
+    restaurant dès l'envoi.
+
+    L'IMAGE EST CONSERVÉE DANS LE CORPUS, jamais servie (LS-38). Ce qui rend la
+    conservation défendable, c'est précisément qu'elle n'est pas redistribuée :
+    on garde un matériau de vérification, on ne republie pas l'œuvre.
+
+    La connexion n'est PAS exigée : le premier réflexe d'un utilisateur devant
+    une carte affichée en vitrine est de la photographier, pas de créer un
+    compte. La soumission est alors simplement anonyme.
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
+    contenu = await image.read()
+    if not contenu:
+        raise HTTPException(status_code=400, detail="Image vide.")
+
+    plafond = config.MENU_SCAN_MAX_IMAGE_MB * 1024 * 1024
+    if len(contenu) > plafond:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Image trop volumineuse (max {config.MENU_SCAN_MAX_IMAGE_MB} Mo).",
+        )
+
+    try:
+        cle = stockage().deposer(contenu, image.content_type)
+    except ErreurStockage as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # L'ANALYSE PEUT ÉCHOUER SANS PERDRE LA CARTE. Le fichier est déjà déposé :
+    # si le modèle est indisponible, la contribution est conservée et relisible
+    # plus tard. L'inverse — analyser puis stocker — perdrait la photo à chaque
+    # panne du fournisseur.
+    menu_id = None
+    analyse = None
+    erreur_analyse = None
+
+    if analyser:
+        try:
+            resultat = analyze_menu_image(contenu, image.filename or "carte.jpg")
+            note = score_menu(resultat.to_menu_signal())
+            menu_id = repo.save_menu_scan(
+                restaurant_id=restaurant_id,
+                provider=config.VISION_PROVIDER,
+                observations=resultat.model_dump(exclude={"readable", "notes"}),
+                menu_score=note["score"],
+                readable=resultat.readable,
+            )
+            analyse = {
+                "readable": resultat.readable,
+                "menu_score": note["score"],
+                "details": note["details"],
+            }
+        except Exception as e:
+            erreur_analyse = type(e).__name__
+
+    repo.save_menu_submission(
+        restaurant_id=restaurant_id,
+        corpus_key=cle,
+        mime=image.content_type,
+        octets=len(contenu),
+        user_id=user["id"] if user else None,
+        menu_id=menu_id,
+    )
+
+    return {
+        "message": "Merci — la carte est enregistrée.",
+        "conservee": True,
+        "analysee": analyse is not None,
+        "analyse": analyse,
+        "erreur_analyse": erreur_analyse,
+    }
+
+
+@app.get("/api/restaurant/{restaurant_id}/cartes")
+def lister_cartes(restaurant_id: str):
+    """
+    Cartes soumises pour ce restaurant.
+
+    Rend des MÉTADONNÉES, jamais les images : le corpus n'est pas servi. Ce qui
+    est exposé, c'est qu'une contribution existe et quand elle a eu lieu — de
+    quoi dire « 3 cartes ont été envoyées », pas de quoi les afficher.
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+    soumissions = repo.get_menu_submissions(restaurant_id)
+    return {
+        "nombre": len(soumissions),
+        "cartes": [
+            {
+                "id": s["id"],
+                "soumise_le": s["submitted_at"],
+                "lue": s["menu_id"] is not None,
+            }
+            for s in soumissions
+        ],
     }

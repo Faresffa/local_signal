@@ -42,9 +42,23 @@ from pathlib import Path
 
 from backend import config
 
-# Avis demandés par restaurant. Dix suffisent à estimer une proportion : au-delà
-# la précision gagnée est marginale, et chaque avis se facture.
-AVIS_PAR_RESTAURANT = 10
+# Avis demandés par restaurant. CE NOMBRE EST CALCULÉ, PAS CHOISI.
+#
+# On estime une proportion — la part d'avis en langue locale. La marge d'erreur
+# à 95 % vaut 1,96 × racine(0,25 / n) :
+#
+#      10 avis  →  ± 31 points   inutilisable : on ne distingue pas 80 % de 40 %
+#      20 avis  →  ± 22 points   limite
+#      50 avis  →  ± 14 points   exploitable
+#     100 avis  →  ± 10 points   confortable
+#     200 avis  →  ±  7 points   quatre fois le coût pour 7 points de plus
+#
+# 50 est le point où l'estimation devient exploitable sans que le coût
+# s'emballe. Un restaurant qui en a moins en rend simplement moins : le lissage
+# bayésien tire alors son score vers l'a priori neutre, ce qui est exactement
+# le comportement voulu (D-003). On ne coupe JAMAIS à un nombre fixe par le bas
+# — ce serait jeter de l'information sur les restaurants bien pourvus.
+AVIS_PAR_RESTAURANT = 50
 
 # Lots envoyés en une requête. Le fournisseur accepte plusieurs requêtes à la
 # fois ; grouper réduit la latence sans changer le coût.

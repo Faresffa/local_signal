@@ -26,6 +26,7 @@ Nous ne collectons que ce dont le service a besoin pour fonctionner.
 | Mot de passe | protéger votre compte — **stocké sous forme d'empreinte, jamais en clair** | exécution du service |
 | Prénom ou nom, si vous le donnez | vous nommer dans l'interface et sur une réservation | exécution du service |
 | Réservations | transmettre votre demande au restaurant | exécution du service |
+| Avis que vous laissez | les afficher aux autres utilisateurs | exécution du service |
 | Sessions ouvertes | vous garder connecté sans redemander le mot de passe | exécution du service |
 
 **Nous ne collectons pas** : votre position en dehors de la recherche en cours,
@@ -44,13 +45,19 @@ saisissant une adresse ou en posant un point sur la carte.
 
 ## 4. Les photos de carte
 
-Quand vous photographiez la carte d'un restaurant, l'image est analysée puis
-**immédiatement détruite**. Nous ne conservons que ce qui en a été relevé — le
-nombre de plats, les cuisines proposées, les langues de rédaction — et jamais
-la photographie elle-même.
+Quand vous photographiez la carte d'un restaurant, l'image est analysée, puis
+**conservée dans un corpus interne**. Ce corpus nous sert à vérifier ce que la
+lecture automatique en a tiré, et à la refaire si nos méthodes s'améliorent —
+sans vous redemander la photo.
 
-C'est une règle d'architecture du projet, pas une intention : le code n'a aucun
-emplacement où stocker une image.
+**Ce corpus n'est jamais publié.** Les images ne sont pas servies par
+l'application, pas diffusées, pas revendues. L'application affiche les photos
+depuis leur hébergeur d'origine, jamais depuis nos serveurs.
+
+**Une photo de carte ne vous identifie pas** : c'est la carte d'un restaurant,
+pas une donnée vous concernant. Si vous supprimez votre compte, le lien entre
+vous et les photos que vous avez envoyées disparaît — les photos, elles,
+restent dans le corpus.
 
 ## 5. Combien de temps nous gardons vos données
 
@@ -59,7 +66,8 @@ emplacement où stocker une image.
 | Compte | jusqu'à ce que vous le supprimiez |
 | Session | 30 jours, puis suppression automatique |
 | Réservation | supprimée avec votre compte |
-| Photo de carte | non conservée |
+| Avis laissé | supprimé avec votre compte |
+| Photo de carte que vous envoyez | conservée dans le corpus interne, mais **déliée de vous** à la suppression du compte |
 | Position | non conservée |
 
 Les sessions expirées sont effacées automatiquement au démarrage du service.
@@ -78,8 +86,14 @@ GET /api/auth/mes-donnees
 ```
 
 **Supprimer votre compte.** La suppression est immédiate et définitive. Elle
-efface le compte, ses sessions et ses réservations. Ce n'est pas une
-désactivation : votre adresse e-mail disparaît de la base.
+efface le compte, ses sessions, ses réservations et les avis que vous avez
+laissés. Ce n'est pas une désactivation : votre adresse e-mail disparaît de la
+base.
+
+Les photos de carte que vous avez envoyées sont **déliées de vous** plutôt que
+supprimées : elles documentent un restaurant, pas vous, et le corpus perdrait
+sa valeur à chaque départ. Plus rien ne permet alors de savoir que vous en êtes
+l'auteur.
 
 ```
 DELETE /api/auth/compte

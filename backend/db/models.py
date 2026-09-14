@@ -191,6 +191,82 @@ def init_db():
         )
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_reviews_resto ON reviews(restaurant_id)")
+
+    # --- Avis laisses par NOS utilisateurs (LS-39) ---
+    #
+    # Distincts de `reviews`, qui porte les avis collectes chez un tiers. Deux
+    # tables et non une, pour trois raisons.
+    #
+    # LA PROVENANCE EST UNE PROPRIETE, PAS UNE COLONNE. Melanger nos avis et
+    # ceux d'un fournisseur dans une meme table invite a les traiter ensemble,
+    # et rend toute mesure de biais impossible a poser proprement.
+    #
+    # LES DONNEES PERSONNELLES NE SONT PAS LES MEMES. Un avis maison est
+    # rattache a un compte : il entre dans le droit d'acces et dans le droit a
+    # l'effacement (D-029). Un avis collecte ne nous appartient pas et ne
+    # designe personne chez nous.
+    #
+    # LE CYCLE DE VIE DIFFERE. Un avis maison se modifie et se supprime par son
+    # auteur ; un avis collecte se remplace par une nouvelle collecte.
+    #
+    # CE QU'ON EN FAIT AUJOURD'HUI : RIEN. Ils sont stockes, affiches, et
+    # n'entrent dans AUCUN calcul de score. Les faire compter avant d'avoir
+    # mesure leur biais reviendrait a reintroduire la popularite par la porte
+    # de service (D-001, D-007).
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS user_reviews (
+            id {_AUTOINCREMENT_PK},
+            restaurant_id TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
+            rating INTEGER,          -- 1 a 5, AFFICHE, jamais note (D-007)
+            text TEXT,
+            lang TEXT,               -- detectee a l'ecriture, pour un usage futur
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP,
+            FOREIGN KEY(restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_user_reviews_resto "
+        "ON user_reviews(restaurant_id)"
+    )
+    # Un utilisateur n'a qu'un avis par restaurant : il le modifie, il n'en
+    # empile pas. Sans cette contrainte, un clic repete cree des doublons.
+    cursor.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_user_reviews_unique "
+        "ON user_reviews(restaurant_id, user_id)"
+    )
+
+    # --- Cartes soumises par les utilisateurs (LS-38) ---
+    #
+    # La table `menus` porte le RESULTAT de la lecture. Celle-ci porte la
+    # SOUMISSION : qui a envoye quoi, quand, et ou le fichier est range.
+    #
+    # `corpus_key` est l'empreinte SHA-256 du fichier, qui sert aussi de nom
+    # dans le stockage. Deux utilisateurs qui envoient la meme photo produisent
+    # la meme empreinte : le fichier n'est stocke qu'une fois, et l'egalite le
+    # prouve.
+    #
+    # L'IMAGE N'EST PAS DANS LA BASE, seulement sa cle. Un BLOB gonflerait les
+    # sauvegardes au point de les rendre inexploitables.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS menu_submissions (
+            id {_AUTOINCREMENT_PK},
+            restaurant_id TEXT NOT NULL,
+            user_id INTEGER,         -- NULL si soumis sans compte
+            corpus_key TEXT NOT NULL,
+            mime TEXT,
+            octets INTEGER,
+            menu_id INTEGER,         -- lecture produite, quand elle a abouti
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_submissions_resto "
+        "ON menu_submissions(restaurant_id)"
+    )
     # Un meme avis ne doit pas entrer deux fois si la collecte est relancee.
     cursor.execute(
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_unique "

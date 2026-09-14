@@ -422,11 +422,21 @@ def export_user_data(user_id: int) -> dict:
         ).fetchall()
     ]
 
+    # Les avis laisses par la personne sont des donnees personnelles : ils
+    # entrent dans le droit d'acces au meme titre que le compte (LS-39).
+    avis = [
+        dict(r) for r in conn.execute(
+            "SELECT restaurant_id, rating, text, created_at, updated_at "
+            "FROM user_reviews WHERE user_id = ?", (user_id,)
+        ).fetchall()
+    ]
+
     conn.close()
     return {
         "compte": utilisateur,
         "sessions": sessions,
         "reservations": reservations,
+        "avis": avis,
     }
 
 
@@ -463,12 +473,27 @@ def delete_user(user_id: int) -> dict:
     curseur.execute("DELETE FROM reservations WHERE user_email = ?", (email,))
     reservations = curseur.rowcount
 
+    # Les avis laisses portent le texte ecrit par la personne : ils partent
+    # avec elle (LS-39). Oublier une table est exactement ce qui vide un droit
+    # a l'effacement de son sens.
+    curseur.execute("DELETE FROM user_reviews WHERE user_id = ?", (user_id,))
+    avis = curseur.rowcount
+
+    # Les cartes soumises, elles, sont DELIEES et non supprimees : la photo
+    # d'une carte de restaurant ne designe personne, et le corpus perdrait sa
+    # valeur a chaque depart. Seul le lien vers la personne disparait.
+    curseur.execute(
+        "UPDATE menu_submissions SET user_id = NULL WHERE user_id = ?", (user_id,)
+    )
+    cartes_deliees = curseur.rowcount
+
     curseur.execute("DELETE FROM users WHERE id = ?", (user_id,))
     compte = curseur.rowcount
 
     conn.commit()
     conn.close()
-    return {"sessions": sessions, "reservations": reservations, "compte": compte}
+    return {"sessions": sessions, "reservations": reservations,
+            "avis": avis, "cartes_deliees": cartes_deliees, "compte": compte}
 
 
 def purge_expired_sessions() -> int:
@@ -488,3 +513,128 @@ def purge_expired_sessions() -> int:
     n = curseur.rowcount
     conn.close()
     return n
+
+
+# =============================================================================
+# AVIS LAISSÉS PAR NOS UTILISATEURS (LS-39)
+# =============================================================================
+#
+# Ils sont stockés et affichés. Ils n'entrent dans AUCUN calcul de score
+# aujourd'hui, et c'est délibéré : les faire compter avant d'avoir mesuré leur
+# biais reviendrait à réintroduire la popularité par la porte de service
+# (D-001, D-007). La note affichée suit la même règle que celle de Google.
+
+
+def save_user_review(restaurant_id: str, user_id: int, rating: int | None,
+                     text: str | None, lang: str | None = None) -> int:
+    """
+    Enregistre ou met à jour l'avis d'un utilisateur sur un restaurant.
+
+    UN SEUL AVIS PAR PERSONNE ET PAR RESTAURANT. On modifie, on n'empile pas :
+    sans cette règle, un double clic crée deux avis, et une personne pourrait
+    peser deux fois sur un restaurant le jour où ces avis compteront.
+    """
+    conn = get_connection()
+    curseur = conn.cursor()
+    curseur.execute("""
+        INSERT INTO user_reviews (restaurant_id, user_id, rating, text, lang)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(restaurant_id, user_id) DO UPDATE SET
+            rating = excluded.rating,
+            text = excluded.text,
+            lang = excluded.lang,
+            updated_at = CURRENT_TIMESTAMP
+    """, (restaurant_id, user_id, rating, text, lang))
+    conn.commit()
+    identifiant = curseur.lastrowid
+    conn.close()
+    return identifiant
+
+
+def get_user_reviews(restaurant_id: str, limit: int = 20) -> list[dict]:
+    """
+    Avis laissés sur un restaurant, du plus récent au plus ancien.
+
+    Le nom de l'auteur accompagne l'avis ; son adresse e-mail, jamais — elle
+    n'a aucune raison d'apparaître devant d'autres utilisateurs.
+    """
+    conn = get_connection()
+    lignes = conn.execute("""
+        SELECT v.id, v.rating, v.text, v.created_at, v.updated_at,
+               u.name AS author
+          FROM user_reviews v
+          LEFT JOIN users u ON u.id = v.user_id
+         WHERE v.restaurant_id = ?
+         ORDER BY COALESCE(v.updated_at, v.created_at) DESC
+         LIMIT ?
+    """, (restaurant_id, limit)).fetchall()
+    conn.close()
+    return [dict(r) for r in lignes]
+
+
+def get_own_review(restaurant_id: str, user_id: int) -> dict | None:
+    """L'avis de cet utilisateur sur ce restaurant, pour pouvoir le modifier."""
+    conn = get_connection()
+    ligne = conn.execute(
+        "SELECT * FROM user_reviews WHERE restaurant_id = ? AND user_id = ?",
+        (restaurant_id, user_id),
+    ).fetchone()
+    conn.close()
+    return dict(ligne) if ligne else None
+
+
+def delete_user_review(restaurant_id: str, user_id: int) -> bool:
+    """Retire l'avis d'un utilisateur. Il en reste maître."""
+    conn = get_connection()
+    curseur = conn.cursor()
+    curseur.execute(
+        "DELETE FROM user_reviews WHERE restaurant_id = ? AND user_id = ?",
+        (restaurant_id, user_id),
+    )
+    conn.commit()
+    supprime = curseur.rowcount > 0
+    conn.close()
+    return supprime
+
+
+# =============================================================================
+# CARTES SOUMISES PAR LES UTILISATEURS (LS-38)
+# =============================================================================
+
+
+def save_menu_submission(restaurant_id: str, corpus_key: str, mime: str,
+                         octets: int, user_id: int | None = None,
+                         menu_id: int | None = None) -> int:
+    """
+    Trace une carte envoyée : qui, quand, et où le fichier est rangé.
+
+    `corpus_key` est l'empreinte du fichier. Deux personnes qui envoient la
+    même photo produisent la même empreinte : le fichier n'est stocké qu'une
+    fois, mais les DEUX soumissions sont tracées — c'est ce qui permettra de
+    mesurer combien de personnes ont contribué, et non combien de fichiers
+    existent.
+    """
+    conn = get_connection()
+    curseur = conn.cursor()
+    curseur.execute("""
+        INSERT INTO menu_submissions
+            (restaurant_id, user_id, corpus_key, mime, octets, menu_id)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (restaurant_id, user_id, corpus_key, mime, octets, menu_id))
+    conn.commit()
+    identifiant = curseur.lastrowid
+    conn.close()
+    return identifiant
+
+
+def get_menu_submissions(restaurant_id: str) -> list[dict]:
+    """Cartes soumises pour un restaurant, de la plus récente à la plus ancienne."""
+    conn = get_connection()
+    lignes = conn.execute("""
+        SELECT id, corpus_key, mime, octets, menu_id, submitted_at
+          FROM menu_submissions
+         WHERE restaurant_id = ?
+         ORDER BY submitted_at DESC
+    """, (restaurant_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in lignes]

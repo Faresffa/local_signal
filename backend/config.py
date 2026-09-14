@@ -150,7 +150,17 @@ TOURIST_PENALTY_MAX = 1.0   # hors scoring depuis D-027
 # pas *pénalisé* (D-001).
 LANGUAGE_SMOOTHING_ALPHA = 5.0    # à calibrer — force du lissage
 LANGUAGE_PRIOR = 0.5              # a priori neutre en l'absence d'avis — à calibrer
-LANGUAGE_CONFIDENCE_FULL = 20     # nb d'avis au-delà duquel l'info est jugée fiable
+# Nombre d'avis au-delà duquel l'information est jugée pleinement fiable.
+#
+# Était à 20, ce qui était optimiste : à 20 avis la marge d'erreur sur la
+# proportion est encore de ± 22 points à 95 %, soit assez pour confondre un
+# restaurant de quartier avec un attrape-touristes. À 50, elle tombe à ± 14
+# points — le seuil où l'estimation sépare réellement les deux.
+#
+# STATUT : dérivé du calcul de marge d'erreur, pas posé à vue. Reste à vérifier
+# sur le jeu labellisé que ce seuil correspond bien au point où l'indicateur
+# devient prédictif (D-006).
+LANGUAGE_CONFIDENCE_FULL = 50
 
 # =============================================================================
 # Anomalie de prix
@@ -278,6 +288,18 @@ EXPOSE_DETAIL_CALCUL = os.environ.get("EXPOSE_DETAIL_CALCUL", "false").lower() =
 # code. C'est ce qui rend les tests exécutables sur une base jetable, et c'est
 # indispensable en intégration continue où aucune base réelle n'existe.
 DB_PATH = os.environ.get("DB_PATH", "").strip() or str(ROOT_DIR / "local_signal.db")
+
+# Corpus des cartes soumises (LS-38).
+#
+# Les images y sont conservées pour pouvoir VÉRIFIER ce que la lecture en a
+# tiré et RETRAITER sans recollecter. Elles ne sont jamais servies par l'API :
+# conserver un matériau de recherche et redistribuer une œuvre sont deux choses
+# différentes, et seule la première est défendable.
+#
+# Hors du dépôt et hors sauvegarde de base : ce dossier grossit, et une base
+# qu'on ne peut plus restaurer parce qu'elle pèse six gigaoctets d'images est
+# une base perdue. `data/corpus/` est ignoré par Git.
+CORPUS_DIR = os.environ.get("CORPUS_DIR", "").strip() or str(ROOT_DIR / "data" / "corpus")
 
 # Si définie (Railway/Supabase), bascule tout le module backend.db sur Postgres.
 # Vide en local par défaut : les contributeurs gardent SQLite sans rien configurer.

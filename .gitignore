@@ -24,6 +24,10 @@ env/
 # ils pesent 10 Mo, et ils n'ont rien a faire dans l'historique.
 local_signal_partage.*
 
+# Corpus des cartes soumises (LS-38) : materiau de recherche, pas du code.
+# Volumineux, jamais publie, reconstructible depuis les sources brutes.
+data/corpus/
+
 # ---------- Node / JS ----------
 node_modules/
 dist/
