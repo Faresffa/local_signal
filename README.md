@@ -68,13 +68,54 @@ Trois fonctions en un seul geste :
 
 ## Architecture du scoring
 
-Deux scores de nature distincte, jamais mélangés :
+Deux étages, jamais mélangés. C'est la règle structurante du backend, et c'est
+ce qui permet de répondre instantanément sur dix mille restaurants.
 
-**Local Signal** — statique, précalculé, stocké en base. *Ce qu'est le restaurant :*
-signal menu, signal avis, anomalie de prix, pénalité zone touristique.
+```
+╔═ CALCUL EN LOT ═══════════ hors ligne, une fois par zone ══════════════════╗
+║                                                                            ║
+║   OpenStreetMap ────┐                                                      ║
+║   restaurants,      │                                                      ║
+║   sites touristiques│                                                      ║
+║                     ├──► appariement ──► lecture des cartes                ║
+║   Collecteur tiers ─┘    nom + distance   OCR + modèle, en local           ║
+║   cartes, notes          un pour un       images détruites après lecture   ║
+║                                                  │                         ║
+║                     ┌────────────────────────────┘                         ║
+║                     ▼                                                      ║
+║   quatre indicateurs, de 0 à 1                                             ║
+║   menu 0,40 · langue 0,30 · prix 0,15 · zone 0,15                          ║
+║   absent = inconnu, jamais 0 — le poids se redistribue                     ║
+║                     │                                                      ║
+║                     ▼                                                      ║
+║   LOCAL SIGNAL sur 100  +  confiance, à part ──────────► base de données   ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
 
-**Pertinence** — dynamique, calculée à la requête. *Ce qui convient à l'utilisateur
-maintenant :* distance, ouverture, budget, cuisine, contraintes alimentaires.
+╔═ À CHAQUE REQUÊTE ════════ en ligne, instantané ═══════════════════════════╗
+║                                                                            ║
+║   Web / Mobile ──► API ──► filtres ──► lecture du Local Signal             ║
+║   position,                            (jamais recalculé)                  ║
+║   rayon, filtres                                │                          ║
+║                                                 ▼                          ║
+║                            proximité  exp( −d / (rayon × 0,5) )            ║
+║                            distance   haversine                            ║
+║                                                 │                          ║
+║                                                 ▼                          ║
+║             CLASSEMENT = Local Signal × 0,70 + proximité × 0,30            ║
+║                          ──► liste + explication en français               ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
+
+**Local Signal** décrit le restaurant : il ne dépend pas de qui cherche, donc il
+se calcule une fois et se stocke. **La proximité** décrit l'utilisateur ici et
+maintenant : elle seule se recalcule à chaque requête.
+
+Les méthodes employées sont toutes standard — formule de haversine, estimation
+par noyau gaussien, rang en percentile, lissage bayésien, moyenne arithmétique
+pondérée. Aucune n'est inventée pour le projet : c'est ce qui permet d'en
+discuter plutôt que de les croire sur parole.
 
 > Les pondérations actuelles sont **provisoires**. Elles seront dérivées du jeu
 > labellisé, pas choisies à la main — voir [`docs/methodologie/evaluation.md`](docs/methodologie/evaluation.md).
@@ -106,9 +147,28 @@ docs/
 
 ## Lancer le projet
 
+### En une commande
+
+```bash
+docker compose up
+```
+
+Lance la base (PostgreSQL + PostGIS), l'API et le web. Aucune installation
+préalable de Python ni de Node.
+
+| | |
+|---|---|
+| Web | http://localhost:3000 |
+| API | http://localhost:8000/docs |
+| Base | `localhost:5432` — `local_signal` / `local_signal_dev` |
+
+Une base neuve démarre **vide**. Pour la peupler, voir *Données* plus bas.
+
+### Ou à la main
+
 Toutes les commandes se lancent **depuis la racine du dépôt**.
 
-### Installation
+#### Installation
 
 ```bash
 pip install -r requirements.txt
@@ -121,19 +181,19 @@ cd apps/web && npm install
 Copier `.env.example` en `.env` et y renseigner les clés (voir
 [docs/CONVENTIONS.md §7](docs/CONVENTIONS.md)).
 
-### Backend API
+#### Backend API
 
 ```bash
 python -m uvicorn backend.main:app --reload --port 8000
 ```
 
-### Interface web
+#### Interface web
 
 ```bash
 cd apps/web && npm run dev
 ```
 
-### Application mobile
+#### Application mobile
 
 ```bash
 cd apps/mobile && npm start
@@ -193,6 +253,46 @@ python -m backend.ingestion.menu_scan.harvest quartier-latin --limit 20
 ```bash
 python -m backend.tests.test_scoring
 ```
+
+```bash
+python -m backend.tests.test_api
+```
+
+Ce sont des tests de **propriétés**, pas de valeurs : ils vérifient les
+invariants issus des décisions — un restaurant sans avis n'est pas pénalisé, un
+filtre ne réordonne jamais, la note n'influence pas le classement, le Local
+Signal ne dépend pas de la position de l'utilisateur. Ils doivent rester verts
+après la calibration des pondérations ; si l'un casse alors, c'est la décision
+qu'il faut rouvrir, pas le test qu'il faut ajuster.
+
+Les tests d'API tournent sur la base réelle si elle existe, et s'annoncent
+ignorés sur une base vide plutôt que de produire un faux échec — c'est ce qui
+leur permet de tourner en intégration continue.
+
+Pour les exécuter sur une base jetable :
+
+```bash
+DB_PATH=/tmp/essai.db python -m backend.tests.test_api
+```
+
+### Variables d'environnement
+
+Copier `.env.example` en `.env`. Aucune n'est obligatoire en développement.
+
+| Variable | Rôle | Défaut |
+|---|---|---|
+| `DATABASE_URL` | bascule sur PostgreSQL | vide → SQLite |
+| `DB_PATH` | emplacement de la base SQLite | `local_signal.db` |
+| `ALLOWED_ORIGINS` | origines CORS autorisées | les ports de développement |
+| `LOG_LEVEL` | verbosité des journaux | `INFO` |
+| `EXPOSE_DETAIL_CALCUL` | expose le détail du calcul par indicateur | `false` |
+| `ANON_RESULTS_LIMIT` | résultats visibles sans compte | `5` |
+| `SESSION_TTL_DAYS` | durée de vie d'une session | `30` |
+| `SESSION_COOKIE_SECURE` | cookie réservé au HTTPS | `false` |
+| `GROQ_API_KEY`, `ANTHROPIC_API_KEY`, `OUTSCRAPER_API_KEY` | collecte et vision | vide |
+
+**Aucune clé ne doit jamais être écrite dans `backend/config.py`**, qui est
+versionné : elles viennent uniquement de l'environnement (D-016).
 
 | | |
 |---|---|
