@@ -231,7 +231,12 @@ ANON_RESULTS_LIMIT = int(os.environ.get("ANON_RESULTS_LIMIT", "5"))
 # Base de données
 # =============================================================================
 # Chemin absolu : la base ne dépend plus du répertoire d'où on lance la commande.
-DB_PATH = str(ROOT_DIR / "local_signal.db")
+#
+# SURCHARGEABLE PAR L'ENVIRONNEMENT (LS-21). La valeur par défaut reste la base
+# de travail à la racine ; `DB_PATH` permet de pointer ailleurs sans toucher au
+# code. C'est ce qui rend les tests exécutables sur une base jetable, et c'est
+# indispensable en intégration continue où aucune base réelle n'existe.
+DB_PATH = os.environ.get("DB_PATH", "").strip() or str(ROOT_DIR / "local_signal.db")
 
 # Si définie (Railway/Supabase), bascule tout le module backend.db sur Postgres.
 # Vide en local par défaut : les contributeurs gardent SQLite sans rien configurer.

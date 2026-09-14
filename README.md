@@ -1,5 +1,7 @@
 # Local Signal
 
+[![CI](https://github.com/Faresffa/local_signal/actions/workflows/ci.yml/badge.svg)](https://github.com/Faresffa/local_signal/actions/workflows/ci.yml)
+
 Quand on voyage, on veut souvent découvrir une ville **comme un local**.
 Cela passe évidemment par la nourriture et les restaurants que fréquentent réellement les habitants.
 

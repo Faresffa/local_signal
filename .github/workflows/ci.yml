@@ -1,0 +1,97 @@
+# Intégration continue (LS-21).
+#
+# Le dépôt n'en avait aucune : tests, lint et build se lançaient à la main,
+# donc pas toujours, donc pas avant les moments qui comptent. Une régression
+# arrivait sur `main` sans que rien ne la signale.
+#
+# TROIS TÂCHES INDÉPENDANTES, VOLONTAIREMENT. Un échec du lint web ne doit pas
+# masquer un échec des tests de scoring : on veut voir les deux du même coup
+# d'œil, pas découvrir le second après avoir corrigé le premier.
+#
+# LES TESTS D'API TOURNENT SUR UNE BASE VIDE, et c'est délibéré. La base réelle
+# est ignorée par Git — la CI n'y a pas accès, et ne doit pas en dépendre. Les
+# tests sont écrits pour cela : ceux qui exigent des données s'annoncent
+# ignorés plutôt que de produire un faux échec. Ce qu'ils vérifient ici, c'est
+# que le contrat tient et que rien ne plante à vide.
+
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+
+  backend:
+    name: Backend — tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+
+      - name: Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Tests de scoring — les invariants des décisions
+        run: python -m backend.tests.test_scoring
+
+      - name: Tests d'API — le contrat consommé par les interfaces
+        env:
+          # Base vide et jetable : la CI ne doit jamais écrire dans une base
+          # réelle, ni supposer qu'il en existe une.
+          LOG_LEVEL: WARNING
+        run: python -m backend.tests.test_api
+
+  web:
+    name: Web — lint et build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: apps/web
+        run: npm ci
+
+      - name: Lint
+        working-directory: apps/web
+        run: npx eslint src/
+
+      - name: Build
+        working-directory: apps/web
+        run: npm run build
+
+  mobile:
+    name: Mobile — contrôle syntaxique
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Pas de build Expo en CI : il demande un compte et des minutes de
+      # construction. Le contrôle syntaxique suffit à attraper ce qui casse
+      # réellement — une erreur de syntaxe ou un import mort, qui sinon ne se
+      # découvrent qu'au lancement sur un téléphone.
+      # `find` plutôt qu'un glob `**` : sans `globstar`, le shell ne le
+      # développe pas récursivement et la commande ne vérifierait qu'un seul
+      # niveau de dossiers — en passant silencieusement, ce qui est pire.
+      - name: Vérifier que chaque source compile
+        run: |
+          FICHIERS=$(find apps/mobile/App.js apps/mobile/src -name '*.js' | tr '\n' ' ')
+          echo "Contrôle de $(echo $FICHIERS | wc -w) fichiers"
+          npx --yes esbuild $FICHIERS --loader:.js=jsx --outdir=/tmp/verif-mobile
