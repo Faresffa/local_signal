@@ -15,6 +15,7 @@ import json
 import sys
 from datetime import datetime
 
+from backend import config
 from backend.core.scoring.engine import compute_local_signal
 from backend.core.scoring.geo_score import tourist_pressure
 from backend.db.models import get_connection, init_db
@@ -206,8 +207,12 @@ def score_zone(zone: str) -> int:
     cursor = conn.cursor()
 
     for r in restaurants:
+        # La langue locale attendue depend de la ZONE, pas du produit (LS-06).
+        # Sans cela, une carte barcelonaise sans espagnol serait jugee avec le
+        # critere parisien.
         result = compute_local_signal(
-            r, sites, peers=restaurants, cohort_pressures=cohort_pressures
+            r, sites, peers=restaurants, cohort_pressures=cohort_pressures,
+            target_lang=config.langue_de_zone(r.get("zone")),
         )
         cursor.execute("""
             UPDATE restaurants

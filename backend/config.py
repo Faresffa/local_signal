@@ -196,8 +196,38 @@ PROXIMITY_DECAY_FACTOR = 0.5
 # ne doit pas devancer un très bon restaurant à 200 m.
 RANKING_WEIGHT_PROXIMITY = 0.30  # à calibrer
 
-# Langue cible pour le score de langue
-TARGET_LANGUAGE = "fr"
+# Langue cible pour le score de langue — LA LANGUE DU QUARTIER, pas du produit.
+#
+# Elle était écrite en dur à « fr » alors que le projet doit fonctionner dans
+# n'importe quelle ville (CLAUDE.md §8). À Barcelone, « une carte sans espagnol
+# mais avec de l'anglais » est le signal touristique ; à Paris c'est « sans
+# français ». Le même code, avec « fr » figé, aurait pénalisé toutes les cartes
+# barcelonaises.
+#
+# Chaque zone porte donc sa langue. La valeur par défaut reste le français,
+# puisque la zone témoin est parisienne, mais elle est désormais un DÉFAUT et
+# non une constante — c'est la différence entre un produit localisable et un
+# produit français.
+#
+# À compléter au fur et à mesure des villes couvertes.
+LANGUE_PAR_ZONE = {
+    "paris": "fr",
+    "quartier-latin": "fr",
+}
+
+TARGET_LANGUAGE = os.environ.get("TARGET_LANGUAGE", "fr").strip() or "fr"
+
+
+def langue_de_zone(zone: str | None) -> str:
+    """
+    Langue locale attendue dans une zone.
+
+    Retombe sur `TARGET_LANGUAGE` pour une zone inconnue : mieux vaut un défaut
+    explicite qu'une erreur au milieu d'un calcul en lot.
+    """
+    if not zone:
+        return TARGET_LANGUAGE
+    return LANGUE_PAR_ZONE.get(zone.strip().lower(), TARGET_LANGUAGE)
 
 # =============================================================================
 # UI — Design System
