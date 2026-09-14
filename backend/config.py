@@ -227,6 +227,17 @@ SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "false").lower()
 # jamais de moins bons résultats.
 ANON_RESULTS_LIMIT = int(os.environ.get("ANON_RESULTS_LIMIT", "5"))
 
+# Vue technique du calcul — exposition du detail par indicateur (LS-16).
+#
+# D-009 impose de ne montrer aucun score a l'utilisateur : il veut une liste de
+# restaurants, pas un tableau de bord, et il n'a pas a connaitre l'algorithme.
+# Ce panneau expose pourtant la contribution chiffree de chaque indicateur.
+#
+# Il reste indispensable pour verifier le calcul pendant le developpement et
+# pour instruire le memoire — d'ou ce commutateur plutot qu'une suppression.
+# FAUX PAR DEFAUT : ce qui part en production ne l'expose pas.
+EXPOSE_DETAIL_CALCUL = os.environ.get("EXPOSE_DETAIL_CALCUL", "false").lower() == "true"
+
 # =============================================================================
 # Base de données
 # =============================================================================

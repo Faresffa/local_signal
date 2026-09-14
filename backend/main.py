@@ -278,7 +278,13 @@ def get_restaurant(
     # Il expose ce qu'aucune explication en langage naturel ne peut rendre :
     # la contribution chiffree de chaque indicateur, le poids redistribue, et
     # les observations brutes qui ont produit la note.
-    resto["detail_calcul"] = _detail_calcul(resto)
+    # VERROUILLEE PAR DEFAUT (LS-16). D-009 impose de ne montrer aucun score :
+    # ce panneau expose l'algorithme indicateur par indicateur. Il reste
+    # indispensable pour verifier le calcul et instruire le memoire, mais il
+    # n'a rien a faire devant un utilisateur. `EXPOSE_DETAIL_CALCUL=true`
+    # l'active en developpement et pour la soutenance.
+    if config.EXPOSE_DETAIL_CALCUL:
+        resto["detail_calcul"] = _detail_calcul(resto)
     repo.log_consultation(restaurant_id, resto["name"], resto.get("local_signal"))
     return resto
 
@@ -521,6 +527,11 @@ def list_tourist_sites(zone: Optional[str] = Query(None, description="Filtrer pa
 @app.post("/api/menu/scan")
 async def scan_menu(
     image: UploadFile = File(...),
+    restaurant_id: Optional[str] = Query(
+        None,
+        description="Restaurant auquel rattacher la carte. Sans lui, l'analyse "
+                    "est rendue mais n'enrichit pas la base (LS-07).",
+    ),
     provider: Optional[str] = Query(
         None,
         description="Forcer un fournisseur de vision ('groq' ou 'claude'). "
@@ -543,6 +554,11 @@ async def scan_menu(
             "notes": str,
         }
     """
+    # Le restaurant est vérifié AVANT de lire l'image et d'appeler le modèle :
+    # un identifiant erroné ne doit pas coûter un appel de vision (LS-07).
+    if restaurant_id and not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
     content = await image.read()
 
     max_bytes = config.MENU_SCAN_MAX_IMAGE_MB * 1024 * 1024
@@ -567,7 +583,28 @@ async def scan_menu(
     signal = analysis.to_menu_signal()
     scored = score_menu(signal)
 
+    # LE SCAN ENRICHIT LA BASE (LS-07, CLAUDE.md §3).
+    #
+    # L'analyse etait jusqu'ici rendue puis jetee : la base de menus, presentee
+    # comme le seul actif defendable du projet, ne se construisait pas par les
+    # scans. Elle le fait desormais — des qu'un restaurant est designe.
+    #
+    # AUCUNE IMAGE N'EST CONSERVEE (D-021, D-025) : seules les observations et
+    # le score sont stockes. `source_url` reste nul, ce qui distingue en base
+    # un scan utilisateur d'une carte recoltee sur le web.
+    enregistre = False
+    if restaurant_id:
+        repo.save_menu_scan(
+            restaurant_id=restaurant_id,
+            provider=provider or config.VISION_PROVIDER,
+            observations=analysis.model_dump(exclude={"readable", "notes"}),
+            menu_score=scored["score"],
+            readable=analysis.readable,
+        )
+        enregistre = True
+
     return {
+        "enregistre": enregistre,
         "provider": provider or config.VISION_PROVIDER,
         "readable": analysis.readable,
         "observations": analysis.model_dump(exclude={"readable", "notes"}),
