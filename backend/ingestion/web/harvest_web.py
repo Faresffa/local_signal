@@ -51,16 +51,29 @@ def _log(message: str) -> None:
         print(message, flush=True)
 
 
-def candidates(zone: str, limit: int | None = None) -> list[dict]:
+def candidates(zone: str, limit: int | None = None,
+               manquants: bool = False) -> list[dict]:
     """
     Restaurants de la zone susceptibles d'avoir une carte en ligne.
 
     Ceux qui n'ont ni tag `website:menu` ni site web sont écartés d'emblée :
     aucun appel réseau ne sert à rien pour eux. C'est la majorité — et c'est
     le fait central que cette méthode ne peut pas contourner (D-001).
+
+    `manquants` ÉCARTE CEUX DONT LA CARTE EST DÉJÀ LUE. Sans ce filtre, relancer
+    la récolte sur une zone à moitié faite repaie la totalité : sur le Quartier
+    latin, 349 sites interrogés pour 62 cartes réellement manquantes. Le quota
+    du modèle est la ressource rare ici, et le reste du pipeline est idempotent
+    — la reprise doit l'être aussi.
     """
+    exclusion = """
+           AND NOT EXISTS (
+                 SELECT 1 FROM menus m WHERE m.restaurant_id = restaurants.id
+           )
+    """ if manquants else ""
+
     conn = get_connection()
-    rows = conn.execute("""
+    rows = conn.execute(f"""
         SELECT id, name, website, menu_url
           FROM restaurants
          WHERE zone = ?
@@ -68,6 +81,7 @@ def candidates(zone: str, limit: int | None = None) -> list[dict]:
                 (menu_url IS NOT NULL AND menu_url != '')
              OR (website  IS NOT NULL AND website  != '')
            )
+           {exclusion}
       ORDER BY (menu_url IS NULL OR menu_url = ''), name
     """, (zone,)).fetchall()
     conn.close()
@@ -152,6 +166,10 @@ def main():
     parser.add_argument("zone", choices=sorted(ZONES), help="zone à traiter")
     parser.add_argument("--limit", type=int, help="nombre de restaurants à traiter")
     parser.add_argument(
+        "--manquants", action="store_true",
+        help="ne traiter que les restaurants dont la carte n'est pas encore lue",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="mesure la couverture sans appeler le modèle (aucun coût)",
     )
@@ -166,7 +184,7 @@ def main():
     args = parser.parse_args()
 
     init_db()
-    targets = candidates(args.zone, args.limit)
+    targets = candidates(args.zone, args.limit, args.manquants)
 
     if not targets:
         print(
