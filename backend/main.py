@@ -15,7 +15,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 from backend import config
-from backend.core.auth import security
+from backend.core.auth import limitation, security
 from backend.core.auth.dependencies import get_current_user, get_current_user_optional
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.filters.criteres import (
@@ -413,8 +413,12 @@ def _to_user_response(user: dict) -> UserResponse:
 
 
 @app.post("/api/auth/signup", response_model=UserResponse)
-def signup(req: SignupRequest, response: Response):
+def signup(req: SignupRequest, request: Request, response: Response):
     """Crée un compte et ouvre immédiatement une session (connexion auto)."""
+    # Avant toute validation : créer des comptes en masse n'a aucun usage
+    # légitime, et chaque création coûte un hachage bcrypt (LS-28).
+    limitation.garder_inscription(request)
+
     email = req.email.strip().lower()
     if not _EMAIL_RE.match(email):
         raise HTTPException(status_code=400, detail="Adresse email invalide.")
@@ -433,12 +437,21 @@ def signup(req: SignupRequest, response: Response):
 
 
 @app.post("/api/auth/login", response_model=UserResponse)
-def login(req: LoginRequest, response: Response):
+def login(req: LoginRequest, request: Request, response: Response):
     """Vérifie les identifiants et ouvre une session."""
+    # AVANT la vérification du mot de passe, jamais après : un compteur qui ne
+    # s'incrémente qu'en cas d'échec avéré laisse passer autant de tentatives
+    # qu'on veut tant qu'elles échouent vite (LS-28).
+    limitation.garder_connexion(request, req.email)
+
     user = repo.get_user_by_email(req.email)
     # Message générique dans les deux cas : ne jamais révéler si l'email existe.
     if not user or not security.verify_password(req.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect.")
+
+    # Connexion réussie : on efface le compteur du compte, pour ne pas pénaliser
+    # l'utilisateur maladroit qui finit par retrouver son mot de passe.
+    limitation.liberer_connexion(req.email)
 
     _issue_session(response, user["id"])
     return _to_user_response(user)
