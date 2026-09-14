@@ -1931,6 +1931,67 @@ tient intégralement — une donnée manquante n'exclut jamais, sauf pour
 
 ---
 
+## D-036 — Rapprocher deux bases sur le nom ET la distance, pas sur la distance seule
+
+**Date :** 12 septembre 2026 · **Statut :** actif
+
+### Contexte
+
+L'importeur externe (D-029) rattache chaque fiche d'un collecteur commercial à
+un restaurant OpenStreetMap déjà en base. Le rapprochement se faisait **sur la
+distance seule** : la fiche allait au restaurant le plus proche dans un rayon
+de 60 mètres.
+
+### Problème
+
+Dans le Quartier latin, la densité est telle que ce critère ne discrimine plus.
+Un même immeuble abrite trois adresses, les coordonnées OSM et celles du
+collecteur portent chacune leur propre imprécision, et **plusieurs fiches
+pouvaient être attribuées au même restaurant** — ou à son voisin.
+
+Mesure sur la zone : **56 fiches sur 409 étaient posées sur le mauvais
+restaurant**, soit 14 %. Les notes, les photos et les horaires d'un
+établissement se retrouvaient affichés sur un autre. Un signal faux est pire
+qu'un signal absent : il ne se voit pas.
+
+### Décision
+
+Le rapprochement devient une **affectation une-pour-une**, arbitrée par un score
+qui combine deux preuves indépendantes :
+
+| Preuve | Rôle |
+|---|---|
+| Similarité des noms (`SequenceMatcher` sur formes normalisées) | l'identité |
+| Distance en mètres | la plausibilité géographique |
+
+Deux passes, dans cet ordre :
+
+1. **Les paires nommées d'abord.** Similarité ≥ `SIMILARITE_MINIMALE = 0.50`,
+   les meilleures d'abord, chaque fiche et chaque restaurant consommés une seule
+   fois. Une similarité ≥ `SIMILARITE_FRANCHE = 0.70` autorise une distance plus
+   large : deux bases peuvent placer le même établissement à 50 m d'écart, elles
+   ne lui inventent pas le même nom par hasard.
+2. **Rattrapage par proximité ensuite**, sur ce qui reste seulement, et
+   uniquement sous `DISTANCE_CERTAINE_M = 12` — distance à laquelle il n'y a
+   matériellement pas deux établissements.
+
+`reinitialiser()` (option `--reinitialiser`) efface les champs importés avant de
+rejouer, faute de quoi une mauvaise attribution survit à sa propre correction.
+
+### Conséquences
+
+- Concordance mesurée sur la zone : **91 % → 99 %**.
+- L'import n'est plus idempotent par accident mais par construction : une fiche
+  ne peut plus être posée deux fois.
+- Les restaurants sans nom exploitable ne sont rattachés que par la voie stricte
+  des 12 mètres. C'est assumé : mieux vaut une fiche non rattachée qu'une fiche
+  posée au hasard.
+- `photo_url` est désormais importée (`CHAMPS`). Elle existait déjà dans les
+  réponses déjà payées et n'était pas lue : **427 photos récupérées sans un
+  appel réseau de plus**.
+
+---
+
 ## D-037 — Un seul produit sur deux écrans
 
 **Date :** 6 septembre 2026
@@ -2009,3 +2070,218 @@ l'identique dans les deux applications, en attendant `packages/shared`.
   pastille, le mobile des feuilles qui montent du bas. Elle tient à la taille de
   l'écran, pas au goût — un menu ancré sortirait de l'écran d'un téléphone.
 
+---
+
+## D-038 — Conserver les images dans un corpus interne, sans jamais les servir
+
+**Date :** 13 septembre 2026 · **Statut :** actif
+**Supersède partiellement :** D-021 et D-025 (destruction après lecture)
+
+### Contexte
+
+Depuis D-021, une photo de carte était analysée puis **détruite**. L'intention
+était juste : ne pas redistribuer des œuvres qui ne nous appartiennent pas, et
+ne pas constituer un stock d'images sans base légale.
+
+### Problème
+
+La conséquence n'avait pas été mesurée : **aucune lecture n'était vérifiable.**
+
+- Impossible de rouvrir une carte pour contrôler ce que l'OCR en avait tiré —
+  alors que le signal menu pèse 0,40 dans le score.
+- Tout retraitement — meilleur modèle, meilleur prompt — imposait une **nouvelle
+  collecte payante** des mêmes images.
+- Un jury demandant « montrez-moi la carte d'où sort ce chiffre » n'aurait rien
+  obtenu.
+
+Un jeu de données de recherche dont on ne peut pas inspecter les entrées n'est
+pas un jeu de données : c'est une croyance.
+
+### Décision
+
+La distinction qui rend la conservation défendable n'est pas *conserver ou non*,
+mais **conserver ou redistribuer** :
+
+| | Statut |
+|---|---|
+| Conserver pour vérifier et retraiter | corpus interne, jamais servi |
+| Servir les images depuis nos serveurs | redistribution — **écarté** |
+
+`backend/core/stockage.py` porte l'abstraction. Trois propriétés :
+
+- **L'empreinte SHA-256 sert de nom de fichier.** Deux envois de la même image
+  ne créent qu'un fichier, et l'égalité des empreintes le prouve. Le dépôt est
+  idempotent : rejouer un import n'accumule rien.
+- **Rangement par préfixe de deux caractères** (`a3/a3f2….jpg`). Un dossier de
+  plusieurs milliers d'entrées devient lent à lister — c'est ce que font Git et
+  les caches de navigateur, pour la même raison.
+- **Le fichier vit hors de la base.** Des images en BLOB gonflent les
+  sauvegardes et ralentissent toute restauration. La base ne garde qu'une clé.
+
+Le fournisseur réel — dossier local, Supabase Storage, S3, R2 — se tranche au
+déploiement. Le reste du code appelle `deposer` et `lire` sans le savoir.
+
+### Conséquences
+
+- `docs/CONFIDENTIALITE.md` est amendé : §4 énonce la conservation, son motif,
+  et le fait que le corpus n'est **jamais publié**. Une ligne contradictoire
+  (« Photo de carte | non conservée ») a été retirée.
+- **À la suppression d'un compte, les photos sont déliées, pas supprimées** :
+  elles documentent un restaurant, pas une personne. Plus rien ne permet de
+  savoir qui les a envoyées.
+- Le corpus n'est ni versionné, ni exposé par une route. `GET .../cartes` rend
+  des **métadonnées** — combien, quand, lues ou non — jamais une image.
+- La croissance est à surveiller : `volume()` existe pour ça. À 2 Mo par carte,
+  3 000 cartes font 6 Go — au-delà du disque d'un hébergeur gratuit.
+
+---
+
+## D-039 — Nos propres avis : stockés et affichés, hors du calcul
+
+**Date :** 14 septembre 2026 · **Statut :** actif
+
+### Contexte
+
+Les utilisateurs connectés peuvent laisser un avis, et déposer une photo de
+carte depuis la fiche d'un restaurant.
+
+### Problème
+
+La tentation immédiate est de faire entrer ces avis dans le score. Ce serait
+**réintroduire la popularité par la porte de service** — le défaut exact que le
+projet existe pour corriger (D-001). Un restaurant qui reçoit dix avis de nos
+utilisateurs n'est pas plus authentique qu'un restaurant qui n'en reçoit aucun ;
+il est plus visible. C'est la confusion d'origine.
+
+S'y ajoute un biais que nous ne savons pas encore mesurer : les premiers
+utilisateurs d'un service d'authenticité ne sont pas un échantillon neutre.
+
+### Décision
+
+**Les avis utilisateurs sont stockés et affichés. Ils n'entrent dans aucun
+calcul.** La table `user_reviews` est séparée de `reviews` (collecte externe) :
+deux provenances, deux fiabilités, deux usages — les confondre rendrait
+impossible de dire d'où vient un chiffre.
+
+Ce qu'ils sont en revanche : **un actif**. Une base d'avis dont nous connaissons
+la provenance, la date et l'auteur — ce qu'aucun fournisseur tiers ne garantit.
+Le jour où leur biais sera mesuré sur le jeu labellisé, la question pourra être
+rouverte. Pas avant.
+
+**La connexion est exigée pour un avis, pas pour une carte.** Un avis anonyme ne
+serait ni modifiable ni supprimable par son auteur, et échapperait à son droit
+d'accès (D-029) — il est donc impossible. Une photo de carte, elle, ne dit rien
+de la personne : le premier réflexe devant une carte en vitrine est de la
+photographier, pas de créer un compte, et exiger l'inscription à cet instant
+coûterait l'essentiel des contributions.
+
+**L'image est déposée avant l'analyse.** Si le modèle est indisponible, la
+contribution est conservée et relisible plus tard. L'ordre inverse perdrait la
+photo à chaque panne du fournisseur.
+
+### Conséquences
+
+- La fiche d'un restaurant porte les deux gestes, **sur les deux interfaces**.
+  Le mobile conserve en plus son onglet Scanner : une carte photographiée sans
+  restaurant rattaché reste possible.
+- Un utilisateur a **un seul avis par restaurant**, modifiable et supprimable.
+  Un fil de commentaires appellerait une modération que nous n'avons pas.
+- La langue de l'avis est détectée à l'écriture et stockée : la recalculer plus
+  tard sur des milliers d'avis coûterait cher pour le même résultat.
+- Ces avis étant hors calcul, ils **ne peuvent pas** servir à manipuler un
+  classement. C'est une propriété, pas un effet de bord.
+
+---
+
+## D-040 — Collecter des avis pour la langue : combien, lesquels, et que faire de l'indéterminé
+
+**Date :** 14 septembre 2026 · **Statut :** actif
+
+### Contexte
+
+L'indicateur de langue pèse **0,30** dans le Local Signal. Il valait `0,500`
+pour les 468 restaurants de la zone — une seule valeur distincte. Un indicateur
+constant ne classe rien : 30 % du score ne servait à rien.
+
+Cause racine, trouvée dans `backend/ingestion/osm/load.py` :
+
+```python
+r["reviews"] = []    # pas d'avis : le lissage gère (D-003)
+```
+
+Le lissage bayésien faisait exactement son travail — sans donnée, il rend l'a
+priori, `0,5`. Le défaut n'était pas dans le calcul, il était dans le fait
+qu'**aucun avis n'était jamais chargé**, alors que la table existait.
+
+### Décisions
+
+**1. Cinquante avis par restaurant, parce que c'est ce que dit la marge d'erreur.**
+
+Sur une proportion, la marge à 95 % vaut `1,96 · √(p(1−p)/n)`, maximale en
+`p = 0,5` :
+
+| n | marge |
+|---|---|
+| 10 | ± 31 points |
+| 50 | ± 14 points |
+| 100 | ± 10 points |
+| 200 | ± 7 points |
+
+Passer de 10 à 50 divise l'erreur par 2,2 ; de 50 à 100 ne la réduit plus que
+d'un tiers, pour un coût doublé. **50 est le point où la courbe s'aplatit.**
+Une proportion à ± 14 points suffit à distinguer « 5 % de français » de « 60 % » ;
+elle ne suffit pas à distinguer 48 % de 52 %, et le score ne prétend pas le
+faire.
+
+**2. Les plus récents, jamais les plus pertinents.** `sort="newest"`.
+« Most relevant » est un classement de popularité Google : reprendre son ordre
+importerait sa notion de ce qui compte, en violation directe de D-001.
+« Récent » est un critère qui ne dépend pas de la notoriété — et la langue des
+clients d'aujourd'hui informe mieux que celle d'il y a six ans.
+
+**3. Ordre de collecte aléatoire, et reproductible.** Le premier jet triait par
+`review_count DESC` : Le Procope, 28 389 avis, en tête. Si le budget arrête la
+collecte à mi-parcours, **seuls les restaurants les plus touristiques auraient
+des données de langue** — le biais que le projet combat, reconstitué par l'ordre
+d'une boucle. L'ordre par défaut est aléatoire, rendu déterministe par
+`substr(hex(r.id), -6)` pour qu'une collecte interrompue reprenne où elle en
+était.
+
+**4. Un avis indétectable ne compte ni pour, ni contre.**
+
+La collecte stocke `lang = None` quand le texte est trop court pour qu'une
+langue soit identifiée — « Super ! », une suite d'émojis. C'est délibéré : mieux
+vaut « je ne sais pas » qu'une langue inventée (D-012).
+
+`count_local_reviews` **relançait la détection dans ce cas**, produisant
+exactement la valeur que la collecte avait refusé d'inventer. Effet mesuré sur
+Toppoki : 17 avis sur 50 indétectables, re-devinés, score `0,500` — l'a priori,
+par accident, sur un restaurant qui avait pourtant des données.
+
+Un avis dont on ignore la langue **sort du total** : ce n'est pas un avis en
+langue étrangère. La proportion se calcule sur les seules preuves disponibles,
+et le lissage fait le reste quand elles sont peu nombreuses. Toppoki passe de
+`0,500` à `0,645` — 22 français sur 33 identifiables.
+
+La distinction est portée par le code et doit le rester :
+
+```
+{"text": "..."}                clé absente  -> on détecte      (mocks, D-003)
+{"text": "...", "lang": None}  clé nulle    -> indétectable, écarté
+{"text": "...", "lang": "fr"}  clé remplie  -> on la croit
+```
+
+### Conséquences
+
+- Sur 10 restaurants collectés (500 avis), l'indicateur passe de **1 valeur
+  distincte à 11**, étalées de 0,047 à 0,645. Il classe enfin.
+- **458 restaurants sur 468 restent à 0,500** faute d'avis. Le chiffre affiché
+  n'est pas faux — c'est l'aveu d'une absence de donnée, correctement traduit
+  par le lissage — mais la zone n'est pas exploitable tant que la collecte n'est
+  pas complète : **20 478 avis** à 50 par restaurant.
+- Le taux d'indétectables n'est pas négligeable : 17/50 sur Toppoki, 0/50 sur
+  Casa di Peppe. Il dépend de la longueur typique des avis, donc du public. À
+  surveiller : un restaurant dont *tous* les avis seraient indétectables
+  retomberait sur l'a priori sans qu'on le distingue d'un restaurant sans avis.
+- Le JSON brut de chaque collecte est écrit **avant** l'import. Une donnée payée
+  ne doit pas dépendre du bon fonctionnement du code qui la range.
