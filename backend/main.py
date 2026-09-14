@@ -682,12 +682,22 @@ async def scan_menu(
     # comme le seul actif defendable du projet, ne se construisait pas par les
     # scans. Elle le fait desormais — des qu'un restaurant est designe.
     #
-    # AUCUNE IMAGE N'EST CONSERVEE (D-021, D-025) : seules les observations et
-    # le score sont stockes. `source_url` reste nul, ce qui distingue en base
-    # un scan utilisateur d'une carte recoltee sur le web.
+    # LA PHOTO EST CONSERVEE, ELLE AUSSI, QUAND UN RESTAURANT EST DESIGNE
+    # (D-038). Cette route et `POST /api/restaurant/{id}/carte` font le meme
+    # geste ; en conserver l'image d'un cote et la jeter de l'autre rendait la
+    # verification possible ou impossible selon le chemin emprunte par
+    # l'utilisateur, ce qui n'a aucun sens. Le corpus reste interne et n'est
+    # jamais servi.
+    #
+    # SANS RESTAURANT, ON NE CONSERVE RIEN. Une carte qu'on ne peut rattacher a
+    # aucun etablissement ne documente rien de verifiable : la garder ferait
+    # grossir un stock d'images sans usage, ce qui est exactement ce que D-021
+    # refusait. L'analyse est rendue a l'ecran, et c'est tout.
     enregistre = False
+    conservee = False
+
     if restaurant_id:
-        repo.save_menu_scan(
+        menu_id = repo.save_menu_scan(
             restaurant_id=restaurant_id,
             provider=provider or config.VISION_PROVIDER,
             observations=analysis.model_dump(exclude={"readable", "notes"}),
@@ -696,8 +706,26 @@ async def scan_menu(
         )
         enregistre = True
 
+        # L'echec du depot ne doit pas annuler une analyse reussie : le score
+        # est deja calcule et il est juste. On perd la piece justificative,
+        # pas la mesure.
+        try:
+            cle = stockage().deposer(contenu=content, type_mime=image.content_type)
+            repo.save_menu_submission(
+                restaurant_id=restaurant_id,
+                corpus_key=cle,
+                mime=image.content_type,
+                octets=len(content),
+                user_id=None,
+                menu_id=menu_id,
+            )
+            conservee = True
+        except ErreurStockage:
+            conservee = False
+
     return {
         "enregistre": enregistre,
+        "conservee": conservee,
         "provider": provider or config.VISION_PROVIDER,
         "readable": analysis.readable,
         "observations": analysis.model_dump(exclude={"readable", "notes"}),

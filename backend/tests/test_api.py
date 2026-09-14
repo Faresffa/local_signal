@@ -497,6 +497,43 @@ else:
 
 # =============================================================================
 print("\n" + "=" * 78)
+print("SCAN RATTACHE : MEME GESTE, MEME CONSERVATION — LS-07")
+print("=" * 78)
+
+# `POST /api/menu/scan?restaurant_id=...` et `POST /api/restaurant/{id}/carte`
+# font le meme geste. En conserver l'image d'un cote et la jeter de l'autre
+# rendait la verification possible ou impossible selon le chemin emprunte par
+# l'utilisateur, ce qui n'a aucun sens.
+if not _cible:
+    ignorer("scan rattache", "aucun restaurant en base")
+else:
+    r = client.post("/api/menu/scan",
+                    files={"image": ("c.jpg", b"\xff\xd8\xff", "image/jpeg")},
+                    params={"restaurant_id": "inconnu-000"})
+    verifier(r.status_code == 404,
+             "un identifiant errone est refuse AVANT l'appel au modele")
+
+    r = client.post("/api/menu/scan",
+                    files={"image": ("vide.jpg", b"", "image/jpeg")})
+    verifier(r.status_code == 400, "une image vide est refusee")
+
+    # Le contrat, verifiable sans depenser un appel de vision : on lit le code
+    # de la route. C'est moins elegant qu'un appel reel, mais un test qui
+    # facture a chaque execution ne serait jamais lance.
+    import inspect
+    from backend.main import scan_menu
+    source = inspect.getsource(scan_menu)
+    verifier('"conservee": conservee' in source,
+             "la reponse dit si la photo a ete conservee")
+    verifier(source.index("get_restaurant") < source.index("analyze_menu_image"),
+             "le restaurant est valide avant l'appel de vision")
+    verifier("stockage().deposer" in source
+             and source.index("if restaurant_id:") < source.index("stockage().deposer"),
+             "la photo n'est deposee QUE lorsqu'un restaurant est designe")
+
+
+# =============================================================================
+print("\n" + "=" * 78)
 if _ignores:
     print(f"{len(_ignores)} test(s) ignore(s) faute de donnees : {', '.join(_ignores)}")
 if _echecs:
