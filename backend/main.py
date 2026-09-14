@@ -6,6 +6,7 @@
 # pertinence (distance, filtres) est évaluée à la requête. C'est ce qui permet
 # de rester instantané sur une base nationale.
 
+import logging
 import re
 from datetime import datetime, timedelta, timezone
 
@@ -34,6 +35,13 @@ from backend.core.journal import JournalRequetes, configurer as configurer_journ
 # laisserait aucune trace (LS-25).
 configurer_journal()
 init_db()
+
+# Les sessions expirees sont des donnees personnelles conservees sans raison
+# (LS-29). Purgees au demarrage : a raison d'un deploiement par jour, cela
+# suffit sans ajouter de tache planifiee.
+_purgees = repo.purge_expired_sessions()
+if _purgees:
+    logging.getLogger("api").info("%d session(s) expiree(s) purgee(s)", _purgees)
 
 app = FastAPI(
     title="Local Signal API",
@@ -486,6 +494,53 @@ def logout(request: Request, response: Response):
 def me(user: dict = Depends(get_current_user)):
     """Utilisateur actuellement connecté."""
     return _to_user_response(user)
+
+
+# =============================================================================
+# DROITS DE LA PERSONNE — RGPD (LS-29)
+# =============================================================================
+#
+# Le produit collecte une adresse e-mail et un mot de passe. Le droit d'acces,
+# le droit a l'effacement et le droit a la portabilite en decoulent. Ce ne sont
+# pas des fonctionnalites de confort : ce sont des obligations, et l'absence de
+# formulaire de suppression est ce qu'un jury reperera en premier devant un
+# ecran d'inscription.
+
+
+@app.get("/api/auth/mes-donnees")
+def mes_donnees(user: dict = Depends(get_current_user)):
+    """
+    Toutes les donnees rattachees au compte connecte.
+
+    Droit d'acces et droit a la portabilite d'un seul coup : la reponse est du
+    JSON, donc un format structure et lisible par machine, ce que le reglement
+    demande pour la portabilite.
+
+    L'empreinte du mot de passe n'y figure jamais : elle n'aide en rien la
+    personne et faciliterait une attaque hors ligne si l'export fuitait.
+    """
+    return repo.export_user_data(user["id"])
+
+
+@app.delete("/api/auth/compte")
+def supprimer_compte(request: Request, response: Response,
+                     user: dict = Depends(get_current_user)):
+    """
+    Efface definitivement le compte connecte et tout ce qui s'y rattache.
+
+    SUPPRESSION REELLE, PAS DESACTIVATION. Basculer `is_active` laisserait
+    l'adresse en base : c'est un masquage, pas un effacement.
+
+    Le cookie est retire dans la foulee : sans cela le navigateur continuerait
+    d'envoyer un jeton devenu orphelin, et l'utilisateur verrait une erreur
+    d'authentification au lieu d'une deconnexion propre.
+    """
+    efface = repo.delete_user(user["id"])
+    response.delete_cookie(config.SESSION_COOKIE_NAME, path="/")
+    return {
+        "message": "Compte supprime.",
+        "efface": efface,
+    }
 
 
 @app.post("/api/reservations", response_model=ReservationResponse)

@@ -10,6 +10,7 @@ import json
 import math
 
 from backend.db.models import get_connection
+from datetime import datetime
 
 
 # =============================================================================
@@ -367,3 +368,123 @@ def delete_session(token_hash: str) -> None:
     conn.execute("DELETE FROM sessions WHERE token_hash = ?", (token_hash,))
     conn.commit()
     conn.close()
+
+
+# =============================================================================
+# DROITS DE LA PERSONNE — RGPD (LS-29)
+# =============================================================================
+#
+# Le produit collecte une adresse e-mail et un mot de passe. Trois droits en
+# découlent, et ils ne sont pas optionnels : accès, effacement, portabilité.
+# Les implémenter côté base plutôt que dans la route les rend testables et
+# réutilisables — et surtout, les rend EXHAUSTIFS : c'est ici qu'on sait
+# quelles tables portent une donnée personnelle.
+
+
+def export_user_data(user_id: int) -> dict:
+    """
+    Toutes les données rattachées à une personne, pour son droit d'accès.
+
+    CE QUI EST RENDU, ET CE QUI NE L'EST PAS. Le compte, ses sessions ouvertes
+    et ses réservations. Jamais l'empreinte du mot de passe : elle est
+    strictement un mécanisme d'authentification, la rendre n'aide en rien la
+    personne et faciliterait une attaque hors ligne si l'export fuitait.
+
+    Les consultations ne sont PAS rattachées à un compte — elles n'enregistrent
+    qu'un restaurant et une date, sans identifiant d'utilisateur. Il n'y a donc
+    rien à en extraire, et c'est délibéré.
+    """
+    conn = get_connection()
+    utilisateur = conn.execute(
+        "SELECT id, email, name, is_active, created_at FROM users WHERE id = ?",
+        (user_id,),
+    ).fetchone()
+
+    if not utilisateur:
+        conn.close()
+        return {}
+
+    utilisateur = dict(utilisateur)
+
+    sessions = [
+        {"created_at": r["created_at"], "expires_at": r["expires_at"]}
+        for r in conn.execute(
+            "SELECT created_at, expires_at FROM sessions WHERE user_id = ?",
+            (user_id,),
+        ).fetchall()
+    ]
+
+    # Les réservations portent l'e-mail, pas l'identifiant : c'est ce lien qui
+    # les rattache à la personne.
+    reservations = [
+        dict(r) for r in conn.execute(
+            "SELECT * FROM reservations WHERE user_email = ?", (utilisateur["email"],)
+        ).fetchall()
+    ]
+
+    conn.close()
+    return {
+        "compte": utilisateur,
+        "sessions": sessions,
+        "reservations": reservations,
+    }
+
+
+def delete_user(user_id: int) -> dict:
+    """
+    Efface un compte et tout ce qui s'y rattache. Droit à l'effacement.
+
+    SUPPRESSION RÉELLE, PAS DÉSACTIVATION. Basculer `is_active` à faux
+    laisserait l'adresse e-mail en base : ce n'est pas un effacement, c'est un
+    masquage, et ça ne satisfait pas la demande.
+
+    Les sessions partent en premier : une session qui survivrait à son compte
+    donnerait un accès à un utilisateur qui n'existe plus.
+
+    Returns:
+        Le compte de ce qui a été supprimé, pour pouvoir le confirmer à la
+        personne — elle a le droit de savoir ce qui a disparu.
+    """
+    conn = get_connection()
+    utilisateur = conn.execute(
+        "SELECT email FROM users WHERE id = ?", (user_id,)
+    ).fetchone()
+
+    if not utilisateur:
+        conn.close()
+        return {"sessions": 0, "reservations": 0, "compte": 0}
+
+    email = dict(utilisateur)["email"]
+    curseur = conn.cursor()
+
+    curseur.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,))
+    sessions = curseur.rowcount
+
+    curseur.execute("DELETE FROM reservations WHERE user_email = ?", (email,))
+    reservations = curseur.rowcount
+
+    curseur.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    compte = curseur.rowcount
+
+    conn.commit()
+    conn.close()
+    return {"sessions": sessions, "reservations": reservations, "compte": compte}
+
+
+def purge_expired_sessions() -> int:
+    """
+    Supprime les sessions dépassées.
+
+    Une session expirée n'est plus valide mais reste en base : c'est une donnée
+    personnelle conservée sans raison, et le RGPD demande une durée de
+    conservation limitée à la finalité. Appelée au démarrage, ce qui suffit à
+    l'échelle actuelle — un déploiement par jour purge quotidiennement.
+    """
+    conn = get_connection()
+    curseur = conn.cursor()
+    curseur.execute("DELETE FROM sessions WHERE expires_at < ?",
+                    (datetime.now().isoformat(timespec="seconds"),))
+    conn.commit()
+    n = curseur.rowcount
+    conn.close()
+    return n
