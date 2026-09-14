@@ -11,7 +11,6 @@ import { MagnifyingGlass, Trophy, X } from "@phosphor-icons/react";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
 import Filtres from "../components/Filtres";
-import StarRating from "../components/StarRating";
 import LocationPicker from "../components/LocationPicker";
 import RestaurantCard from "../components/RestaurantCard";
 import LockedCard from "../components/LockedCard";
@@ -21,6 +20,7 @@ import {
   LocationNotice,
   ResultsSkeleton,
 } from "../components/States";
+import { verdict } from "../lib/display";
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 import { useGeolocation } from "../lib/hooks";
 
@@ -327,9 +327,10 @@ export default function Discover({
 
             <ol className="classement-modal__liste">
               {podium.map((restaurant, index) => {
-                const score =
-                  restaurant.scoring?.score_final ?? restaurant.local_signal;
-                const etoiles = Math.max(0, Math.min(5, (score ?? 0) / 20));
+                // Le verdict plutot que des etoiles : c'est ce que le score
+                // dit reellement, et les etoiles reprenaient le symbole de la
+                // popularite que le projet recuse (D-007, LS-12).
+                const v = verdict(restaurant.local_signal, restaurant.confidence);
                 return (
                   <li
                     className={`classement-modal__ligne classement-modal__ligne--${index + 1}`}
@@ -339,9 +340,7 @@ export default function Discover({
                     <span className="classement-modal__nom">
                       {restaurant.name}
                     </span>
-                    <strong className="classement-modal__score">
-                      <StarRating value={etoiles} size={14} />
-                    </strong>
+                    <span className={`verdict verdict--${v.tone}`}>{v.label}</span>
                   </li>
                 );
               })}

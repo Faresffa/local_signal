@@ -557,24 +557,6 @@ img {
   box-shadow: var(--shadow-card);
 }
 
-/* Les trois premiers résultats rendent le classement visible dès la grille. */
-.card--rang-1 {
-  border-width: 3px;
-  border-color: var(--color-rank-local);
-}
-.card--rang-2,
-.card--rang-3 {
-  border-width: 1px;
-  border-color: var(--color-border-strong);
-}
-.card--rang-1:hover {
-  border-color: var(--color-rank-local);
-}
-.card--rang-2:hover,
-.card--rang-3:hover {
-  border-color: var(--color-border-strong);
-}
-
 /* Résultat masqué à un visiteur non connecté (Discover.jsx). Générique par
    construction : pas de vraie photo/donnée à flouter (voir LockedCard.jsx). */
 .card--locked {
@@ -606,119 +588,6 @@ img {
   color: var(--color-text-muted);
 }
 
-/* Les trois premiers résultats se révèlent dans l'ordre à chaque recherche. */
-.card--rang-1 {
-  --rang-couleur: var(--color-rank-local);
-  animation: classement-arrive 950ms 100ms var(--motion-spring) both;
-}
-.card--rang-2 {
-  --rang-couleur: var(--color-border-strong);
-  animation: classement-arrive 950ms 250ms var(--motion-spring) both;
-}
-.card--rang-3 {
-  --rang-couleur: var(--color-border-strong);
-  animation: classement-arrive 950ms 400ms var(--motion-spring) both;
-}
-
-@keyframes classement-arrive {
-  0% {
-    opacity: 0;
-    transform: translateY(24px) scale(0.92);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--rang-couleur) 0%, transparent);
-  }
-  55% {
-    opacity: 1;
-    transform: translateY(-8px) scale(1.025);
-    box-shadow:
-      0 0 0 11px color-mix(in srgb, var(--rang-couleur) 38%, transparent),
-      0 18px 34px color-mix(in srgb, var(--rang-couleur) 30%, transparent);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-    box-shadow: var(--shadow-subtle);
-  }
-}
-
-.card__heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--spacing-sm);
-}
-
-.card__score {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-  padding: 5px 8px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-alt);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  font-variant-numeric: tabular-nums;
-}
-.card__score--rang-1 {
-  border-color: var(--color-rank-local);
-  background: var(--color-local-soft);
-  color: var(--color-rank-local);
-}
-
-.star-rating {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  line-height: 1;
-}
-
-.star-rating__cell {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Étoile de fond (contour/vide) */
-.star-rating__base {
-  display: block;
-  color: var(--color-text-muted); /* ou #666 / couleur de contour */
-}
-
-/* Zone de remplissage partiel (masque) */
-.star-rating__fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-/* Icône remplie : doit garder sa taille originale pour ne pas être déformée */
-.star-rating__icon {
-  display: block;
-  color: var(--color-text); /* Couleur des étoiles remplies (sombre) */
-}
-
-/* Personnalisation selon le rang du restaurant si nécessaire */
-.card__score--rang-1 .star-rating__icon {
-  color: var(--color-rank-local);
-}
-.card__score:not(.card__score--rang-1) .star-rating__icon {
-  color: var(--color-brand-strong);
-}
-
-.card__body {
-  padding: var(--spacing-md) var(--spacing-md) var(--spacing-lg);
-  display: grid;
-  gap: 7px;
-  flex: 1;
-  align-content: start;
-}
 
 .card__name {
   font-family: "Outfit Variable", sans-serif;
@@ -1535,6 +1404,84 @@ img {
 .chips {
   position: relative;
   z-index: 10;
+}
+
+
+/* ==========================================================================
+   Barre de position sur l'echelle du Local Signal (LS-12, LS-13)
+   ========================================================================== */
+
+/* Pas de chiffre, pas d'etoiles : une POSITION. Elle repond a « par rapport a
+   quoi ? » sans transformer la carte en tableau de bord (D-009). */
+.barresignal {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-surface-sunken);
+  overflow: hidden;
+}
+
+/* Le remplissage part de zero et rejoint sa largeur. Ce geste dit qu'un calcul
+   a eu lieu : une barre deja pleine se lirait comme une propriete fixe du
+   restaurant, une barre qui se remplit se lit comme un resultat. */
+.barresignal__part {
+  height: 100%;
+  border-radius: 3px;
+  width: var(--part, 0%);
+  transform-origin: left center;
+  animation: barre-remplit 600ms var(--motion-ease) both;
+  animation-delay: var(--delai, 0ms);
+}
+
+@keyframes barre-remplit {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* La couleur porte le verdict, jamais seule : le libelle est ecrit a cote.
+   Un daltonien lit « Profil local », pas une nuance de vert. */
+.barresignal__part--local   { background: var(--color-local); }
+.barresignal__part--mixed   { background: var(--color-mixed); }
+.barresignal__part--tourist { background: var(--color-tourist); }
+.barresignal__part--unknown { background: var(--color-text-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .barresignal__part { animation: none; }
+}
+
+/* Barre et verdict sur la meme ligne, juste sous la photo : c'est la premiere
+   chose lue apres l'image, avant meme le nom. */
+.card__signal {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md) 0;
+}
+.card__signal .barresignal { flex: 1; }
+.card__signal .card__verdict { position: static; flex-shrink: 0; }
+
+/* ==========================================================================
+   Premier resultat (LS-12)
+   ========================================================================== */
+
+/* UN SEUL, pas trois. Trois cartes mises en avant sur cinq ne distinguent
+   plus rien — elles deplacent seulement la ligne de flottaison. */
+.card--premier {
+  border-color: var(--color-brand);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--color-brand) 18%, transparent);
+}
+
+.card__premier {
+  position: absolute;
+  left: var(--spacing-sm);
+  bottom: var(--spacing-sm);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
 }
 
 /* ==========================================================================
