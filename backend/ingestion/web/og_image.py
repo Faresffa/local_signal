@@ -95,10 +95,19 @@ def robots_autorise(url: str) -> bool:
         if origine in _robots_cache:
             lecteur = _robots_cache[origine]
         else:
+            # `RobotFileParser.read()` N'ACCEPTE AUCUN DÉLAI D'ATTENTE : il
+            # appelle `urlopen` sans `timeout`, et un site lent bloque le fil
+            # indéfiniment. Mesuré : la collecte se figeait sans produire une
+            # ligne. On récupère donc le fichier nous-mêmes, avec un délai, et
+            # on ne confie au lecteur que le texte.
             lecteur = RobotFileParser()
-            lecteur.set_url(f"{origine}/robots.txt")
             try:
-                lecteur.read()
+                requete = urllib.request.Request(
+                    f"{origine}/robots.txt", headers={"User-Agent": AGENT}
+                )
+                with urllib.request.urlopen(requete, timeout=DELAI_S) as reponse:
+                    texte = reponse.read(100_000).decode("utf-8", "replace")
+                lecteur.parse(texte.splitlines())
             except Exception:
                 lecteur = None
             _robots_cache[origine] = lecteur
