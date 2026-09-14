@@ -160,6 +160,43 @@ def init_db():
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_menus_resto ON menus(restaurant_id)")
 
+    # --- Avis, avec leur TEXTE (LS-01) ---
+    #
+    # La base portait jusqu'ici `review_count` — le NOMBRE d'avis — mais jamais
+    # leur contenu. L'indicateur langue, qui pese 0,30 du Local Signal, valait
+    # donc 0,50 pour les 468 restaurants de la zone temoin : il ne separait
+    # personne. Detecter une langue demande du texte.
+    #
+    # LE TEXTE EST CONSERVE, PAS SEULEMENT LA LANGUE DETECTEE. Deux raisons.
+    # D'abord parce que `langdetect` se trompe, surtout sur les avis courts :
+    # garder le texte permet de recalculer sans recollecter — donc sans
+    # repayer. Ensuite parce qu'un avis porte d'autres signaux que sa langue
+    # (marqueurs d'habitues, mentions de prix), et que ce qui est obtenu se
+    # garde.
+    #
+    # `review_id` porte l'identifiant du fournisseur quand il existe : c'est ce
+    # qui rend une recollecte idempotente au lieu de dupliquer.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS reviews (
+            id {_AUTOINCREMENT_PK},
+            restaurant_id TEXT NOT NULL,
+            review_id TEXT,          -- identifiant chez le fournisseur, pour dedupliquer
+            text TEXT,
+            lang TEXT,               -- code ISO 639-1 detecte, NULL si indetectable
+            rating REAL,
+            published_at TEXT,
+            source TEXT,             -- nom du collecteur, pour l'audit
+            collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_reviews_resto ON reviews(restaurant_id)")
+    # Un meme avis ne doit pas entrer deux fois si la collecte est relancee.
+    cursor.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_unique "
+        "ON reviews(restaurant_id, review_id) WHERE review_id IS NOT NULL"
+    )
+
     # --- Sites touristiques (référence pour la pénalité de zone — D-002) ---
     cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS tourist_sites (
