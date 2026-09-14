@@ -27,8 +27,12 @@ from backend.core.scoring.menu_score import score_menu
 from backend.ingestion.menu_scan.client import analyze_menu_image
 from backend.db.models import init_db
 from backend.db import repository as repo
+from backend.core.journal import JournalRequetes, configurer as configurer_journal
 
 # --- Init ---
+# La journalisation d'abord : sans elle, une erreur pendant `init_db` ne
+# laisserait aucune trace (LS-25).
+configurer_journal()
 init_db()
 
 app = FastAPI(
@@ -36,6 +40,11 @@ app = FastAPI(
     description="API REST pour l'application Local Signal — scoring et filtrage de restaurants",
     version="0.1.0",
 )
+
+# --- Journalisation : une ligne par requete, avec sa duree (LS-25) ---
+# Enregistre AVANT le CORS pour que la trace couvre aussi les requetes que le
+# CORS rejette — sinon un blocage d'origine serait invisible cote serveur.
+app.add_middleware(JournalRequetes)
 
 # --- CORS (permet au frontend React de consommer l'API) ---
 app.add_middleware(
