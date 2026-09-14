@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Local Signal — plan de rush final</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font: 9.8pt/1.45 "Segoe UI", system-ui, sans-serif; color: #1c1a17; margin: 0; }
+
+  h1 { font-size: 20pt; letter-spacing: -0.5px; margin: 0 0 2mm; color: #8d0c17; }
+  .sub { font-size: 9.5pt; color: #6f6961; margin: 0 0 5mm; }
+
+  h2 {
+    font-size: 12pt; margin: 7mm 0 3mm; padding-bottom: 1.5mm;
+    border-bottom: 1.5px solid #c1121f; color: #8d0c17;
+    page-break-after: avoid;
+  }
+  h3 { font-size: 10pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+
+  p { margin: 0 0 2mm; }
+  code {
+    font-family: Consolas, monospace; font-size: 8.5pt;
+    background: #f3ece0; padding: 0.2mm 1mm; border-radius: 2px;
+  }
+  pre {
+    font-family: Consolas, monospace; font-size: 8.5pt; line-height: 1.4;
+    background: #faf6ee; border-left: 3px solid #c1121f;
+    padding: 2.5mm 3mm; margin: 2mm 0; white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+
+  /* --- Tâches --- */
+  .t {
+    border: 0.5px solid #e8e0d3; border-left: 3px solid #d5c9b6;
+    padding: 2.5mm 3mm; margin: 2mm 0; page-break-inside: avoid;
+    background: #fff;
+  }
+  .t--haut { border-left-color: #c1121f; background: #fffdfc; }
+  .t--moyen { border-left-color: #a8760a; }
+
+  .t__tete { display: flex; align-items: baseline; gap: 2mm; margin-bottom: 1mm; }
+  .t__num {
+    font-weight: 700; color: #8d0c17; font-size: 10pt;
+    min-width: 8mm;
+  }
+  .t__titre { font-weight: 600; font-size: 10pt; flex: 1; }
+  .t__cout {
+    font-size: 8pt; color: #6f6961; white-space: nowrap;
+    background: #f3ece0; padding: 0.5mm 2mm; border-radius: 8px;
+  }
+  .t__corps { font-size: 9.3pt; }
+  .t__corps ul { margin: 1mm 0 0; padding-left: 4.5mm; }
+  .t__corps li { margin-bottom: 0.8mm; }
+  .pourquoi {
+    font-size: 8.8pt; color: #6f6961; font-style: italic;
+    margin-top: 1.5mm; padding-top: 1.5mm; border-top: 0.5px dotted #d5c9b6;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: 2mm 0; page-break-inside: avoid; }
+  th { text-align: left; background: #f3ece0; padding: 1.4mm 2mm; border-bottom: 1.5px solid #d5c9b6; font-weight: 600; }
+  td { padding: 1.3mm 2mm; border-bottom: 0.5px solid #e8e0d3; vertical-align: top; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .encadre { background: #fdf3e0; border-left: 3px solid #a8760a; padding: 2.5mm 3mm; margin: 3mm 0; page-break-inside: avoid; }
+  .alerte { background: #fdecec; border-left: 3px solid #c1121f; padding: 2.5mm 3mm; margin: 3mm 0; page-break-inside: avoid; }
+  .ok { color: #2d6a4f; font-weight: 600; }
+  .ko { color: #c1121f; font-weight: 600; }
+  .page { page-break-before: always; }
+
+  .legende { font-size: 8.5pt; color: #6f6961; margin-bottom: 3mm; }
+  .pied { margin-top: 6mm; padding-top: 2mm; border-top: 0.5px solid #d5c9b6; font-size: 8pt; color: #989186; }
+</style>
+</head>
+<body>
+
+<h1>Local Signal — plan de rush final</h1>
+<p class="sub">Tout ce qui reste à faire, dans l'ordre. Deux semaines. 9 septembre 2026.</p>
+
+<div class="alerte">
+<strong>Comment lire ce document.</strong> Chaque tâche porte un numéro, ce qu'il faut faire,
+et <em>pourquoi</em> — en italique. Le coût est une estimation à une personne.
+Les tâches à bordure rouge sont bloquantes : rien de ce qui suit n'a de valeur sans elles.
+Les tâches en ambre comptent pour la note. Les grises sont de la dette : elles ne se voient
+pas, mais elles se paieront.
+</div>
+
+<h2>Décisions à prendre avant de commencer</h2>
+
+<p>Trois questions bloquent des tâches entières. Elles se tranchent en réunion, pas au clavier.</p>
+
+<table>
+<tr><th>Décision</th><th>Options</th><th>Bloque</th></tr>
+<tr>
+  <td><strong>Vérité terrain</strong></td>
+  <td>Aucune (poids ajustés à l'œil) · minimale (60 restaurants, 2 personnes, 1 h) · complète (150, 3 personnes)</td>
+  <td>Tâches 6 et 7</td>
+</tr>
+<tr>
+  <td><strong>Budget avis</strong></td>
+  <td>Combien on accepte de dépenser pour récolter les textes d'avis</td>
+  <td>Tâche 1</td>
+</tr>
+<tr>
+  <td><strong>Portée mobile</strong></td>
+  <td>Mobile au même niveau que le web · mobile en démonstration seulement</td>
+  <td>Tâches 15 à 17</td>
+</tr>
+</table>
+
+<div class="encadre">
+<strong>Sur la vérité terrain — la version minimale tient en une heure.</strong>
+60 restaurants tirés au hasard, deux personnes, une seule question :
+<em>« j'y emmènerais un ami qui habite le quartier — oui / non »</em>, sans ouvrir la carte.
+On mesure l'accord entre les deux annotateurs, on garde les restaurants où ils sont d'accord.
+<br><br>
+Sans ça, la tâche 7 n'est pas une calibration : c'est un réglage à vue, et il faudra le
+dire tel quel au jury. Ce n'est pas disqualifiant — mais c'est à assumer explicitement,
+pas à laisser croire.
+</div>
+
+<div class="page"></div>
+
+<h2>Bloc 1 — Le score : le faire fonctionner</h2>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">1</span><span class="t__titre">Activer l'indicateur langue</span><span class="t__cout">2 j</span></div>
+  <div class="t__corps">
+    Aujourd'hui il vaut <code>0,50</code> pour les 468 restaurants du Quartier latin : il ne
+    sépare personne, alors qu'il pèse 30 % du score.
+    <ul>
+      <li>Écrire <code>backend/ingestion/outscraper/avis.py</code>, sur le modèle de <code>menu_photos.py</code></li>
+      <li>Appeler <code>client.google_maps_reviews(...)</code> — le SDK est déjà installé, la clé déjà en place</li>
+      <li><strong>Tester sur 10 restaurants d'abord</strong> et relever la consommation exacte, comme pour les cartes</li>
+      <li>Écrire la réponse brute sur disque <em>avant</em> l'import — une requête facturée ne doit jamais être perdue</li>
+      <li>Passer <code>langdetect</code> sur chaque texte, stocker le ratio d'avis en langue locale</li>
+      <li>Relancer <code>load --score-only</code> et vérifier que les 468 ne sont plus tous à 0,50</li>
+    </ul>
+    <div class="pourquoi">Pourquoi en premier : c'est 30 % du score qui ne fait rien. Tant que
+    cet indicateur est constant, le Local Signal repose en réalité sur trois indicateurs, et
+    la question « montrez-moi deux restaurants que la langue sépare » n'a pas de réponse.</div>
+  </div>
+</div>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">2</span><span class="t__titre">Repli si les avis coûtent trop cher</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    À décider après le test de la tâche 1.
+    <ul>
+      <li>Ne récolter que les restaurants ayant déjà beaucoup d'avis — couverture partielle assumée</li>
+      <li>Ou réduire à 5 avis par restaurant au lieu de 10</li>
+      <li>Dans les deux cas : l'indicateur passe de « constant » à « actif sur une fraction », ce qui est déjà un progrès majeur</li>
+    </ul>
+    <div class="pourquoi">Un indicateur actif sur 40 % des restaurants vaut infiniment mieux
+    qu'un indicateur constant sur 100 %.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">3</span><span class="t__titre">Récupérer les 55 restaurants sans fiche</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    413 des 468 ont une fiche collectée. Sur les 55 restants : 47 n'ont jamais été renvoyés
+    par le collecteur, 8 sont des homonymes ambigus.
+    <ul>
+      <li>Extraire la liste des 55 noms et adresses</li>
+      <li>Petite collecte ciblée (55 fiches, coût négligeable)</li>
+      <li>Réimporter, relancer la lecture des cartes et l'extraction des prix</li>
+    </ul>
+    <div class="pourquoi">88 % de couverture au lieu de 100 %, sur la seule zone où se joue
+    l'évaluation. C'est peu cher et ça se voit sur toutes les diapos de chiffres.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">4</span><span class="t__titre">Photos gratuites par <code>og:image</code></span><span class="t__cout">1 j</span></div>
+  <div class="t__corps">
+    3 373 restaurants ont un site web sans photo chez nous. Rendement mesuré sur 40 sites
+    tirés au hasard : <strong>50 % brut, ~37 % après filtrage</strong> des logos et des URL cassées.
+    <ul>
+      <li>Lire la balise <code>og:image</code>, repli sur <code>twitter:image</code></li>
+      <li>Filtrer : rejeter les SVG, vérifier le type et la taille réelle par une requête <code>HEAD</code></li>
+      <li>Respecter <code>robots.txt</code>, agent identifiable, pas de déguisement</li>
+      <li>Stocker l'URL seulement, avec la source, jamais l'image</li>
+    </ul>
+    <div class="pourquoi">~1 200 photos, gratuitement, en 45 minutes de collecte.
+    La couverture photo passe de 427 à ~1 600.</div>
+  </div>
+</div>
+
+<div class="t">
+  <div class="t__tete"><span class="t__num">5</span><span class="t__titre">Nettoyer la base</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    <ul>
+      <li><strong>45 paires de doublons</strong> — même nom, même position, deux lignes. Fusionner en gardant la plus renseignée.</li>
+      <li><strong>120 étiquettes de cuisine</strong> non traduites (155 restaurants, ≤ 3 occurrences chacune) — compléter la table ou les regrouper sous « Autre ».</li>
+      <li><code>TARGET_LANGUAGE = "fr"</code> en dur — le passer en paramètre de zone.</li>
+    </ul>
+    <div class="pourquoi">Les doublons faussent les comptages annoncés en soutenance. Les
+    étiquettes anglaises se voient dans le filtre.</div>
+  </div>
+</div>
+
+<h2>Bloc 2 — Calibration et évaluation</h2>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">6</span><span class="t__titre">Constituer le jeu labellisé</span><span class="t__cout">1 j à plusieurs</span></div>
+  <div class="t__corps">
+    <strong>Règle absolue : ne jamais labelliser en regardant la carte.</strong> La carte pèse
+    40 % du score ; labelliser dessus reviendrait à mesurer l'accord de l'algorithme avec
+    lui-même, et invaliderait tout le chapitre évaluation.
+    <ul>
+      <li>Tirer 60 à 150 restaurants au hasard dans les 468</li>
+      <li>Question unique et binaire : <em>« j'y emmènerais un ami qui habite le quartier — oui / non »</em></li>
+      <li>Deux ou trois annotateurs, <strong>en aveugle</strong>, sans voir le score ni la carte</li>
+      <li>Calculer l'accord entre annotateurs (kappa de Cohen)</li>
+      <li>Ne garder que les restaurants où tous sont d'accord</li>
+    </ul>
+    <div class="pourquoi">Ça transforme « c'est subjectif » en « l'accord inter-annotateurs
+    est de 0,72, voici le jeu retenu ». La subjectivité devient un résultat mesuré au lieu
+    d'être une faiblesse.</div>
+  </div>
+</div>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">7</span><span class="t__titre">Calibrer les pondérations et mesurer</span><span class="t__cout">1,5 j</span></div>
+  <div class="t__corps">
+    <ul>
+      <li>Dériver les poids du jeu labellisé plutôt que de les poser</li>
+      <li>Calculer <code>precision@10</code> sur le jeu labellisé</li>
+      <li><strong>Comparer au top 10 de Google par note</strong> — c'est le résultat principal du mémoire</li>
+      <li>Vérifier que les tests de propriétés restent verts. S'ils cassent, c'est la décision qu'il faut rouvrir, pas le test.</li>
+      <li>Recalibrer aussi les seuils internes : 25 plats, 4 cuisines, 5 langues, ratio prix 1,5, α = 5, σ = 350 m</li>
+    </ul>
+    <div class="pourquoi">« Pourquoi 0,40 ? » est la première question du jury. Sans cette
+    tâche, la seule réponse honnête est « parce qu'on l'a choisi ».</div>
+  </div>
+</div>
+
+<div class="page"></div>
+
+<h2>Bloc 3 — L'interface : le punch qui manque</h2>
+
+<p class="legende">Le retour de l'encadrant était : « des restaurants s'affichent, mais on ne
+comprend pas par rapport à quoi ». Les étoiles ne répondent pas — elles reprennent le symbole
+de la popularité que le projet combat, et tout le monde est à trois étoiles.</p>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">8</span><span class="t__titre">Refondre la carte de résultat</span><span class="t__cout">1,5 j</span></div>
+  <div class="t__corps">
+    <ul>
+      <li><strong>Barre de position</strong>, pleine largeur, en haut de la carte — pas d'étoiles, pas de chiffre brut</li>
+      <li><strong>Verdict en capitales</strong> : <code>PROFIL LOCAL</code> / <code>MIXTE</code> / <code>TOURISTIQUE</code>, avec sa couleur</li>
+      <li><strong>La raison en français</strong>, déjà produite par l'API (<code>reasons[0]</code>), en taille lisible et non en gris pâle</li>
+      <li>Photo, nom, distance, prix — dans cet ordre de poids visuel</li>
+    </ul>
+    <div class="pourquoi">Tout existe déjà dans l'API. Le problème n'est pas l'information
+    manquante, c'est qu'elle est typographiquement invisible.</div>
+  </div>
+</div>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">9</span><span class="t__titre">L'animation de recherche</span><span class="t__cout">1,5 j</span></div>
+  <div class="t__corps">
+    L'effet recherché : on lance la recherche, et <em>ça se calcule sous les yeux</em>.
+    <ul>
+      <li><strong>Squelettes</strong> pendant le chargement, aux dimensions exactes des vraies cartes — pas de saut de mise en page à l'arrivée</li>
+      <li><strong>Apparition décalée</strong> : chaque carte entre 60 ms après la précédente, plafonné à ~400 ms pour que le bas de liste n'attende pas</li>
+      <li><strong>La barre se remplit</strong> de gauche à droite à l'apparition, en 600 ms — c'est elle qui donne l'impression du calcul</li>
+      <li><strong>Le compteur de résultats monte</strong> de 0 à N</li>
+      <li><strong>La photo arrive en fondu</strong> par-dessus l'illustration, jamais en remplacement sec</li>
+      <li><strong>Le premier résultat est distingué</strong> — bandeau, ombre portée, légèrement plus grand</li>
+      <li>Tout doit respecter <code>prefers-reduced-motion</code></li>
+    </ul>
+    <div class="pourquoi">Le design est la première chose que le jury voit, avant la moindre
+    explication. Une liste qui apparaît d'un bloc n'a aucune valeur perçue ; la même liste
+    qui se construit sous les yeux raconte qu'un calcul a eu lieu.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">10</span><span class="t__titre">Aligner web et mobile à l'identique</span><span class="t__cout">1 j</span></div>
+  <div class="t__corps">
+    Les deux fronts ont été alignés sur les filtres, puis ont divergé : l'authentification et
+    la limite à 5 résultats sont web uniquement.
+    <ul>
+      <li>Même carte de résultat, même barre, même verdict, mêmes animations</li>
+      <li>Mêmes libellés, même ordre des filtres</li>
+      <li>Extraire les constantes partagées dans <code>packages/shared/</code> — <code>lib/filtres.js</code> est aujourd'hui dupliqué à l'identique dans les deux applications</li>
+    </ul>
+    <div class="pourquoi">Un jury qui voit deux produits différents se demande lequel est le
+    vrai. Et la duplication finit toujours par diverger.</div>
+  </div>
+</div>
+
+<div class="t">
+  <div class="t__tete"><span class="t__num">11</span><span class="t__titre">Verrouiller la vue technique du calcul</span><span class="t__cout">0,5 h</span></div>
+  <div class="t__corps">
+    Le panneau « détail du calcul » expose l'algorithme, indicateur par indicateur. Il est
+    utile pour la démonstration, il ne doit pas rester devant de vrais utilisateurs.
+    <ul>
+      <li>Le conditionner à une variable d'environnement, ou au compte administrateur</li>
+    </ul>
+    <div class="pourquoi">Décision D-009 : par défaut, aucun score visible.</div>
+  </div>
+</div>
+
+<h2>Bloc 4 — Mobile et hébergement</h2>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">12</span><span class="t__titre">Authentification partagée web et mobile</span><span class="t__cout">1 j</span></div>
+  <div class="t__corps">
+    Même compte des deux côtés, comme n'importe quel produit.
+    <ul>
+      <li>Écrans d'inscription et de connexion côté mobile</li>
+      <li><strong>Attention au cookie de session</strong> : <code>httpOnly</code> fonctionne en navigateur, pas dans React Native. Prévoir un jeton en <code>SecureStore</code> côté mobile, la même session côté serveur.</li>
+      <li>Appliquer la même limite à 5 résultats pour un visiteur non connecté</li>
+      <li><code>SESSION_COOKIE_SAMESITE=none</code> et <code>SECURE=true</code> dès que web et API sont sur des domaines différents</li>
+    </ul>
+    <div class="pourquoi">C'est le point où le mobile décroche aujourd'hui. Et le stockage de
+    session est le piège technique : ce qui marche en web ne marche pas en natif.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">13</span><span class="t__titre">Héberger le mobile sans payer</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    <ul>
+      <li><strong>Android</strong> — <code>eas build --profile preview</code> produit un APK installable par lien. Gratuit dans le quota Expo.</li>
+      <li><strong>Web</strong> — <code>expo export --platform web</code> produit un site statique, hébergé à côté du web.</li>
+      <li><strong>iOS</strong> — TestFlight exige 99 € par an. <strong>À ne pas faire.</strong></li>
+    </ul>
+    <div class="pourquoi">Un jury n'a pas besoin de l'App Store. APK plus build web : zéro
+    euro, et ça démontre que le même code tourne sur les deux plateformes — l'argument même
+    du choix d'Expo.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">14</span><span class="t__titre">Charger la base en production</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    Le code est déployé sur Railway, <strong>pas les données</strong> : le site en ligne tourne à vide.
+    <ul>
+      <li><code>python -m backend.db.export --sql</code> produit un dump sans données personnelles</li>
+      <li>Adapter la syntaxe SQLite → PostgreSQL et charger</li>
+      <li>Vérifier que <code>DATABASE_URL</code> et <code>ALLOWED_ORIGINS</code> sont posées côté Railway</li>
+      <li>Ouvrir le site et confirmer que les 10 686 restaurants répondent</li>
+    </ul>
+    <div class="pourquoi">Une démonstration sur <code>localhost</code> le jour J est un risque
+    inutile. Un lien public qui marche vaut trois diapositives.</div>
+  </div>
+</div>
+
+<div class="page"></div>
+
+<h2>Bloc 5 — Rendre le projet professionnel</h2>
+
+<div class="encadre">
+<strong>Ce qui fait « professionnel » pour un jury de mémoire, ce n'est pas la taille de
+l'infrastructure.</strong> C'est que les choix soient justifiés et que le projet soit
+reproductible. Vous avez déjà trois choses que la plupart des projets de master n'ont pas :
+un journal de décisions de 37 entrées, des tests de propriétés, et des corrections trouvées
+par la mesure. Ce qui manque est court, visible, et tient en trois jours.
+<br><br>
+<strong>Migrer vers AWS à deux semaines de la remise serait une erreur.</strong> Railway
+fonctionne et est déployé. Un projet cassé sur une belle infrastructure se note plus mal
+qu'un projet qui tourne.
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">15</span><span class="t__titre">Intégration continue</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    Aucune CI aujourd'hui. C'est ce qui se voit le plus vite sur un dépôt GitHub.
+    <ul>
+      <li><code>.github/workflows/ci.yml</code> : à chaque <em>push</em> et chaque <em>pull request</em></li>
+      <li><code>python -m backend.tests.test_scoring</code></li>
+      <li><code>npx eslint src/</code> et <code>npm run build</code> sur le web</li>
+      <li>Vérification syntaxique du mobile</li>
+      <li>Une pastille de statut dans le <code>README</code></li>
+    </ul>
+    <div class="pourquoi">Une pastille verte en tête de dépôt dit « ce projet est testé » avant
+    même qu'on lise une ligne. C'est le meilleur rapport effet/effort de toute la liste.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">16</span><span class="t__titre">Démarrage en une commande</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    <ul>
+      <li><code>docker-compose.yml</code> : API, PostgreSQL + PostGIS, web</li>
+      <li><code>docker compose up</code> et tout tourne, sans installer Python ni Node</li>
+      <li>Documenter dans le <code>README</code></li>
+    </ul>
+    <div class="pourquoi">C'est le critère qu'un professionnel applique : est-ce que je peux
+    lancer ce projet sans lire trois pages ? Et ça met PostGIS en place pour de bon.</div>
+  </div>
+</div>
+
+<div class="t">
+  <div class="t__tete"><span class="t__num">17</span><span class="t__titre">Migrations de schéma</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    Aujourd'hui <code>init_db()</code> ajoute les colonnes manquantes au démarrage. Ça marche,
+    mais ce n'est pas versionné : personne ne peut dire quel schéma tourne en production.
+    <ul>
+      <li>Passer à des migrations numérotées (Alembic, ou de simples fichiers SQL ordonnés)</li>
+    </ul>
+    <div class="pourquoi">C'est la différence entre « ça marche chez moi » et « on sait ce qui
+    tourne ». Un jury technique le demandera.</div>
+  </div>
+</div>
+
+<div class="t">
+  <div class="t__tete"><span class="t__num">18</span><span class="t__titre">Diagramme d'architecture dans le README</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    Les deux étages — calcul en lot hors ligne, requête en ligne — dessinés, pas décrits.
+    Plus la structure du dépôt et le flux des données.
+    <div class="pourquoi">Le <code>README</code> est la première page que quelqu'un ouvre.
+    Aujourd'hui il ne montre pas l'architecture qui est l'apport principal du projet.</div>
+  </div>
+</div>
+
+<div class="t">
+  <div class="t__tete"><span class="t__num">19</span><span class="t__titre">Corrections courtes — une heure au total</span><span class="t__cout">1 h</span></div>
+  <div class="t__corps">
+    <ul>
+      <li><code>.python-version</code> dit <code>3.12</code>, le développement se fait en <code>3.13</code> — aligner avant que ça casse au déploiement</li>
+      <li><code>allow_credentials=True</code> avec <code>allow_origins=["*"]</code> : combinaison refusée par les navigateurs, bloquante dès que l'authentification traverse les domaines</li>
+      <li><code>CLAUDE.md</code> §11 documente <code>python -m backend.db.seed</code>, fichier supprimé</li>
+      <li><code>tranche_prix</code> côté serveur n'a plus aucun appelant — à retirer</li>
+      <li>Placeholders <code>[·]</code> restés dans les diapositives</li>
+    </ul>
+    <div class="pourquoi">Cinq détails sans gloire, dont deux casseront au pire moment si on
+    ne les corrige pas.</div>
+  </div>
+</div>
+
+<div class="t">
+  <div class="t__tete"><span class="t__num">20</span><span class="t__titre">Le scan utilisateur ne stocke rien</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    <code>/api/menu/scan</code> analyse la photo, renvoie le résultat, et <strong>n'enregistre
+    rien</strong>. Or la base de menus est présentée comme l'actif du projet, et elle doit se
+    construire par les scans.
+    <ul>
+      <li>Enregistrer les observations et le score dans <code>menus</code>, rattachés au restaurant</li>
+      <li>Ne stocker aucune image — seulement le texte relevé et les observations</li>
+      <li>Marquer la source : <code>scan_utilisateur</code>, pour distinguer du collecteur</li>
+    </ul>
+    <div class="pourquoi">C'est le seul mécanisme par lequel la base s'enrichit toute seule.
+    Sans lui, la promesse « les utilisateurs nourrissent notre base » est une intention, pas
+    une fonctionnalité — et c'est démontrable en trente secondes.</div>
+  </div>
+</div>
+
+<div class="page"></div>
+
+<h2>Bloc 6 — Soutenance et mémoire</h2>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">21</span><span class="t__titre">Corriger la présentation</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    <ul>
+      <li><strong>Page 2</strong> — les quatre vrais indicateurs <span class="ok">(fait)</span></li>
+      <li><strong>Pages 3 et 4</strong> — « ce que ce scénario prouve » → « met en évidence » ; budget de Sabrina en euros <em>par repas</em>, pas par jour</li>
+      <li><strong>Page 5</strong> — ajouter le collecteur tiers dans les origines, <code>10 686</code> et non <code>10 218</code>, retirer « Points d'intérêt » qui n'est pas une origine</li>
+      <li><strong>Page 7</strong> — ligne pipeline raccourcie, ajouter Python et les deux fronts</li>
+      <li><strong>Page 8</strong> — <code>5 observations déterministes, 3 par le modèle</code> et non 4/2 ; la formule de confiance affichée est fausse</li>
+      <li><strong>Page 9</strong> — les trois colonnes réécrites</li>
+      <li><strong>Page 10</strong> — « prouvé » → « établi »</li>
+      <li><strong>Réordonner</strong> — les personas avant les démonstrations, le dossier marché en annexe après « Questions ? »</li>
+    </ul>
+  </div>
+</div>
+
+<div class="t t--haut">
+  <div class="t__tete"><span class="t__num">22</span><span class="t__titre">Créer la diapositive « limites »</span><span class="t__cout">1 h</span></div>
+  <div class="t__corps">
+    Ce qu'il faut y mettre, et qui joue en votre faveur :
+    <ul>
+      <li>Les pondérations sont posées, pas dérivées</li>
+      <li>Le paradoxe de l'invisibilité, mesuré : <strong>la couverture documentaire est corrélée à la visibilité</strong>, donc toute source gratuite est biaisée dans le sens contraire de l'objectif</li>
+      <li>La validation externe est négative et confondue : les restaurants marqués touristiques ont 91 % de couverture de carte contre 67 %, et une médiane de 814 avis contre 293</li>
+      <li>Un défaut trouvé, mesuré et corrigé : <strong>56 fiches sur 409 étaient rattachées au mauvais restaurant</strong> — concordance passée de 91 % à 99 %</li>
+    </ul>
+    <div class="pourquoi">Une équipe qui expose ses limites avec des chiffres est plus crédible
+    qu'une équipe qui n'en a aucune. Et un jury qui vous voit énoncer votre propre limite
+    arrête de la chercher.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">23</span><span class="t__titre">Préparer la démonstration</span><span class="t__cout">0,5 j</span></div>
+  <div class="t__corps">
+    <ul>
+      <li><strong>La paire vérifiée</strong> : Welcome to Istanbul 71,9 contre Red Grill 41,4, à 29 mètres. Le piège à touristes a la meilleure note (4,7 contre 4,2) et le plus d'avis (1 706 contre 1 330). Google le classe devant ; le Local Signal l'envoie 30 points derrière.</li>
+      <li><strong>L'entonnoir</strong> : 500 candidats → 423 à 800 m → 111 à 400 m → 27 ouverts → 19 avec carte lue</li>
+      <li><strong>Répéter la démonstration sur la version en ligne</strong>, pas en local</li>
+      <li>Vérifier la veille que ces deux fiches s'affichent correctement</li>
+    </ul>
+    <div class="pourquoi">Un exemple qui ne charge pas le jour J est pire que pas d'exemple.
+    Et les 27 « ouverts maintenant » dépendent de l'heure.</div>
+  </div>
+</div>
+
+<div class="t t--moyen">
+  <div class="t__tete"><span class="t__num">24</span><span class="t__titre">Rédiger le mémoire</span><span class="t__cout">en continu</span></div>
+  <div class="t__corps">
+    La matière existe déjà, elle est dispersée.
+    <ul>
+      <li><code>docs/DECISIONS.md</code> — 37 décisions au format contexte → problème → décision → conséquences. C'est le chapitre méthodologie.</li>
+      <li>La note d'équipe — les formules avec leurs noms scientifiques. C'est le chapitre technique.</li>
+      <li>Ouvrir sur le <em>Handbook on Constructing Composite Indicators</em> (OCDE-JRC, 2008) — c'est la référence qui légitime la méthode</li>
+      <li>Vocabulaire à tenir : <strong>indicateurs</strong>, <strong>pondérations</strong>, <strong>paramètres</strong></li>
+    </ul>
+  </div>
+</div>
+
+<div class="page"></div>
+
+<h2>Le plan sur deux semaines</h2>
+
+<table>
+<tr><th>Jour</th><th>Tâches</th><th>Qui</th></tr>
+<tr><td><strong>J1–J2</strong></td><td>1 · indicateur langue (test 10 restaurants, puis lancement)<br>19 · corrections courtes en parallèle</td><td>back</td></tr>
+<tr><td><strong>J3</strong></td><td>6 · jeu labellisé — toute l'équipe, en aveugle<br>3 · les 55 restaurants manquants</td><td>tous</td></tr>
+<tr><td><strong>J4–J5</strong></td><td>7 · calibration et <code>precision@10</code> contre Google</td><td>back</td></tr>
+<tr><td><strong>J4–J5</strong></td><td>8 · carte de résultat refondue (en parallèle)</td><td>front</td></tr>
+<tr><td><strong>J6–J7</strong></td><td>9 · animations de recherche<br>10 · alignement web / mobile</td><td>front</td></tr>
+<tr><td><strong>J8</strong></td><td>12 · authentification mobile<br>13 · APK Android et build web</td><td>mobile</td></tr>
+<tr><td><strong>J9</strong></td><td>15 · CI · 16 · docker-compose · 18 · diagramme<br>14 · base en production</td><td>tous</td></tr>
+<tr><td><strong>J10</strong></td><td>21 · présentation · 22 · diapositive limites · 23 · répétition</td><td>tous</td></tr>
+</table>
+
+<h3>Ce qui est volontairement écarté</h3>
+
+<table>
+<tr><th>Écarté</th><th>Pourquoi</th></tr>
+<tr><td>Migration vers AWS</td><td>Railway fonctionne. Changer d'hébergeur à deux semaines de la remise est un risque sans contrepartie académique.</td></tr>
+<tr><td>PostGIS branché pour de bon</td><td>La distance calculée en Python tient largement à 10 686 restaurants. Arrive avec <code>docker-compose</code>, tâche 16.</td></tr>
+<tr><td>Ingestion OSM à la demande</td><td>Utile pour le produit, invisible pour le jury.</td></tr>
+<tr><td>iOS / TestFlight</td><td>99 € pour une démonstration que l'APK Android fait gratuitement.</td></tr>
+<tr><td>Refonte du nommage des cuisines</td><td>Le tri par fréquence a réglé le visible. Le reste est une traîne à ≤ 3 occurrences.</td></tr>
+</table>
+
+<div class="alerte">
+<strong>Le seul vrai risque du plan.</strong> Les tâches 6 et 7 — jeu labellisé et calibration —
+sont les seules que personne ne peut faire à votre place, et les seules qui transforment
+« nous avons un algorithme » en « nous avons un résultat ». Si le temps manque, c'est le
+bloc 5 qu'il faut sacrifier, jamais celui-là.
+<br><br>
+Et si la vérité terrain ne se fait pas du tout : dites-le sur la diapositive des limites,
+en toutes lettres. Un aveu assumé coûte moins cher qu'une question à laquelle on ne sait pas
+répondre.
+</div>
+
+<div class="pied">
+Local Signal — plan de rush final · 24 tâches · document interne · 9 septembre 2026
+</div>
+
+</body>
+</html>

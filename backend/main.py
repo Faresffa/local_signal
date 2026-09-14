@@ -19,7 +19,7 @@ from backend.core.auth import security
 from backend.core.auth.dependencies import get_current_user, get_current_user_optional
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.filters.criteres import (
-    TRANCHES_PRIX, appliquer as appliquer_filtres, est_ouvert,
+    appliquer as appliquer_filtres, est_ouvert,
 )
 from backend.core.scoring.engine import explain
 from backend.core.scoring.geo_score import haversine, score_geo_user
@@ -98,8 +98,6 @@ def list_restaurants(
     # --- Filtres issus des donnees collectees (D-034) ---
     # Ils retirent des lignes, ils ne reordonnent rien : le classement reste
     # celui du Local Signal module par la proximite (D-008).
-    tranche_prix: Optional[str] = Query(
-        None, description=f"Tranche de budget : {', '.join(TRANCHES_PRIX)}"),
     ouvert: bool = Query(False, description="Uniquement ceux ouverts maintenant"),
     reservation: bool = Query(False, description="Uniquement ceux qui acceptent les reservations"),
     avec_carte: bool = Query(False, description="Uniquement ceux dont la carte a ete lue"),
@@ -140,7 +138,6 @@ def list_restaurants(
     # filtre qui porte sur la presence meme (`avec_carte`).
     restaurants = appliquer_filtres(
         restaurants,
-        tranche_prix=tranche_prix,
         ouvert_maintenant=ouvert,
         avec_reservation=reservation,
         avec_carte=avec_carte,

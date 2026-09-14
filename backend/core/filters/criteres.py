@@ -17,8 +17,9 @@
 #
 # RÈGLE POUR UNE DONNÉE MANQUANTE : elle n'exclut pas.
 #
-# Un restaurant sans prix connu n'est pas écarté d'un filtre de budget, un
-# restaurant sans horaires n'est pas écarté d'un filtre « ouvert maintenant ».
+# Un restaurant sans horaires n'est pas écarté d'un filtre « ouvert maintenant »,
+# un restaurant sans prix connu n'est pas écarté d'un filtre de budget — ce
+# dernier est appliqué en amont, par `budget_min` / `budget_max` (D-037).
 # C'est la même règle que D-012 côté scoring : l'absence d'information ne se
 # transforme pas en jugement défavorable. Or les restaurants les moins
 # renseignés sont précisément ceux que le projet veut faire remonter.
@@ -29,17 +30,6 @@
 import json
 import re
 from datetime import datetime
-
-# Tranches de budget, calées sur la distribution réelle du Quartier latin :
-# prix médian de 15 €, premier décile vers 10 €, dernier vers 25 €.
-# À recalibrer si la zone change — une tranche « abordable » n'a pas la même
-# borne à Paris et ailleurs.
-TRANCHES_PRIX = {
-    "petit": (0, 12),
-    "moyen": (12, 18),
-    "eleve": (18, 25),
-    "tres_eleve": (25, 10_000),
-}
 
 _JOURS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 
@@ -176,7 +166,7 @@ def _ouvert_json(texte: str, maintenant: datetime) -> bool | None:
     return False if (connu or plages) else None
 
 
-def appliquer(restaurants: list[dict], *, tranche_prix: str = None,
+def appliquer(restaurants: list[dict], *,
               ouvert_maintenant: bool = False, avec_reservation: bool = False,
               avec_carte: bool = False, maintenant: datetime = None) -> list[dict]:
     """
@@ -185,12 +175,6 @@ def appliquer(restaurants: list[dict], *, tranche_prix: str = None,
     L'ordre est PRÉSERVÉ : le classement vient du scoring, pas d'ici.
     """
     sortie = restaurants
-
-    if tranche_prix in TRANCHES_PRIX:
-        bas, haut = TRANCHES_PRIX[tranche_prix]
-        # Prix inconnu : conservé. L'absence n'exclut pas.
-        sortie = [r for r in sortie
-                  if r.get("price") is None or bas <= r["price"] < haut]
 
     if ouvert_maintenant:
         # `None` (horaires inconnus) est conservé, `False` est écarté.

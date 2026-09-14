@@ -35,12 +35,26 @@ OUTSCRAPER_API_KEY = os.environ.get("OUTSCRAPER_API_KEY", "")
 # =============================================================================
 # CORS — origines autorisées en production (D-016)
 # =============================================================================
-# En local (`.env` vide), accepte toutes les origines pour compatibilité dev.
-# En production, restrict à l'URL de l'interface web déployée.
+# JAMAIS « * » PAR DÉFAUT (LS-31).
+#
+# La spécification CORS interdit d'associer `allow_origins=["*"]` à
+# `allow_credentials=True` : le navigateur refuse alors TOUTE requête portant un
+# cookie de session. Comme l'authentification repose précisément sur un cookie
+# (voir plus bas), le défaut « * » rendait la connexion inopérante dès que le
+# front et l'API ne partagent pas la même origine — c'est-à-dire en production.
+#
+# Le défaut liste donc explicitement les origines de développement. En
+# production, ALLOWED_ORIGINS doit porter l'URL réelle du front :
 #   Railway : ALLOWED_ORIGINS="https://web-service.up.railway.app"
+_ORIGINES_DEV = ",".join([
+    "http://localhost:5173",    # web, Vite
+    "http://127.0.0.1:5173",
+    "http://localhost:8081",    # mobile, Expo web
+    "http://127.0.0.1:8081",
+])
 ALLOWED_ORIGINS = [
     origin.strip()
-    for origin in os.environ.get("ALLOWED_ORIGINS", "*").split(",")
+    for origin in os.environ.get("ALLOWED_ORIGINS", _ORIGINES_DEV).split(",")
     if origin.strip()
 ]
 

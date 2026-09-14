@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Local Signal — plan de livraison</title>
+<style>
+  @page { size: A4; margin: 15mm 13mm 13mm; }
+  * { box-sizing: border-box; }
+  body { font: 9.4pt/1.42 "Segoe UI", system-ui, sans-serif; color: #1c1a17; margin: 0; }
+
+  h1 { font-size: 21pt; letter-spacing: -0.5px; margin: 0 0 2mm; color: #8d0c17; }
+  .sub { font-size: 9.5pt; color: #6f6961; margin: 0 0 6mm; }
+
+  h2 {
+    font-size: 12.5pt; margin: 7mm 0 2.5mm; padding-bottom: 1.5mm;
+    border-bottom: 1.5px solid #c1121f; color: #8d0c17; page-break-after: avoid;
+  }
+  h3 { font-size: 10.5pt; margin: 5mm 0 2mm; color: #8d0c17; page-break-after: avoid; }
+  h4 { font-size: 9.6pt; margin: 3mm 0 1.5mm; page-break-after: avoid; }
+
+  p { margin: 0 0 2mm; }
+  ul, ol { margin: 0 0 2mm; padding-left: 4.5mm; }
+  li { margin-bottom: 0.7mm; }
+
+  code { font-family: Consolas, monospace; font-size: 8.4pt; background: #f3ece0; padding: 0.2mm 1mm; border-radius: 2px; }
+  pre {
+    font-family: Consolas, monospace; font-size: 8.4pt; line-height: 1.38;
+    background: #faf6ee; border-left: 3px solid #c1121f; padding: 2.5mm 3mm;
+    margin: 2mm 0; white-space: pre-wrap; page-break-inside: avoid;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 8.8pt; margin: 2mm 0; page-break-inside: avoid; }
+  th { text-align: left; background: #f3ece0; padding: 1.3mm 1.8mm; border-bottom: 1.5px solid #d5c9b6; font-weight: 600; }
+  td { padding: 1.2mm 1.8mm; border-bottom: 0.5px solid #e8e0d3; vertical-align: top; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .c { text-align: center; }
+
+  .item {
+    border: 0.5px solid #e8e0d3; border-left: 3px solid #d5c9b6;
+    padding: 2.5mm 3mm; margin: 2.5mm 0; page-break-inside: avoid; background: #fff;
+  }
+  .p1 { border-left-color: #c1121f; background: #fffdfc; }
+  .p2 { border-left-color: #a8760a; }
+  .item__t { display: flex; align-items: baseline; gap: 2mm; margin-bottom: 1.2mm; }
+  .id { font-family: Consolas, monospace; font-weight: 700; color: #8d0c17; font-size: 9pt; white-space: nowrap; }
+  .titre { font-weight: 600; font-size: 9.8pt; flex: 1; }
+  .meta { font-size: 7.8pt; color: #6f6961; white-space: nowrap; background: #f3ece0; padding: 0.4mm 1.8mm; border-radius: 8px; }
+  .da { font-size: 8.7pt; margin-top: 1.5mm; padding-top: 1.5mm; border-top: 0.5px dotted #d5c9b6; }
+  .da strong { color: #2d6a4f; }
+  .pq { font-size: 8.6pt; color: #6f6961; font-style: italic; margin-top: 1.2mm; }
+
+  .encadre { background: #fdf3e0; border-left: 3px solid #a8760a; padding: 2.5mm 3mm; margin: 3mm 0; page-break-inside: avoid; }
+  .alerte { background: #fdecec; border-left: 3px solid #c1121f; padding: 2.5mm 3mm; margin: 3mm 0; page-break-inside: avoid; }
+  .ok { color: #2d6a4f; font-weight: 600; }
+  .ko { color: #c1121f; font-weight: 600; }
+  .att { color: #a8760a; font-weight: 600; }
+  .page { page-break-before: always; }
+  .pied { margin-top: 6mm; padding-top: 2mm; border-top: 0.5px solid #d5c9b6; font-size: 7.8pt; color: #989186; }
+  .som { font-size: 9.2pt; }
+  .som td { border: none; padding: 0.8mm 1.8mm; }
+</style>
+</head>
+<body>
+
+<h1>Local Signal — plan de livraison</h1>
+<p class="sub">Périmètre, backlog, dette, risques et jalons jusqu'au produit déployable ·
+Version 1.0 · 9 septembre 2026 · Échéance de remise : 23 septembre 2026</p>
+
+<table class="som">
+<tr><td><strong>1.</strong> Cadre et périmètre</td><td><strong>6.</strong> Registre de dette technique</td></tr>
+<tr><td><strong>2.</strong> État des lieux, chiffré</td><td><strong>7.</strong> Registre des risques</td></tr>
+<tr><td><strong>3.</strong> Architecture actuelle et cible</td><td><strong>8.</strong> Jalons et affectation</td></tr>
+<tr><td><strong>4.</strong> Définition du « fini »</td><td><strong>9.</strong> Exploitation</td></tr>
+<tr><td><strong>5.</strong> Backlog — 37 éléments</td><td><strong>10.</strong> Hors périmètre assumé</td></tr>
+</table>
+
+<h2>1. Cadre et périmètre</h2>
+
+<h4>Objectif de la livraison</h4>
+<p>Amener Local Signal d'un prototype fonctionnel à un produit <strong>déployé, mesuré et
+défendable</strong> : les quatre indicateurs actifs, un résultat d'évaluation chiffré, deux
+interfaces identiques en ligne, et une plateforme qu'un tiers peut reprendre.</p>
+
+<h4>Dans le périmètre</h4>
+<table>
+<tr><th style="width:26%">Domaine</th><th>Contenu</th></tr>
+<tr><td>Score</td><td>Activation de l'indicateur langue, complétion des données de la zone témoin, calibration et évaluation chiffrée</td></tr>
+<tr><td>Interfaces</td><td>Refonte de la restitution des résultats, parité web / mobile, animations</td></tr>
+<tr><td>Mobile</td><td>Authentification partagée, distribution Android et web</td></tr>
+<tr><td>Plateforme</td><td>Intégration continue, conteneurisation, migrations, mise en production des données, journalisation, sauvegardes</td></tr>
+<tr><td>Conformité</td><td>Limitation de débit, RGPD, gestion des secrets</td></tr>
+<tr><td>Livrables académiques</td><td>Présentation, démonstration, mémoire</td></tr>
+</table>
+
+<h4>Hors périmètre — voir §10 pour la justification</h4>
+<p>Migration d'hébergeur, distribution iOS, ingestion à la demande hors zone couverte,
+recherche multi-villes, interface restaurateur, réservation transactionnelle.</p>
+
+<h2>2. État des lieux, chiffré</h2>
+
+<table>
+<tr><th>Périmètre</th><th class="num">Volume</th><th>Commentaire</th></tr>
+<tr><td>Restaurants en base</td><td class="num">10 686</td><td>dont 468 en zone témoin (Quartier latin)</td></tr>
+<tr><td>Sites touristiques</td><td class="num">677</td><td>OpenStreetMap, Paris</td></tr>
+<tr><td>Cartes lues</td><td class="num">356</td><td>lecture locale, sans coût récurrent</td></tr>
+</table>
+
+<h4>Couverture de la zone témoin — 468 restaurants</h4>
+<table>
+<tr><th>Champ</th><th class="num">Renseignés</th><th class="num">Taux</th><th>État</th></tr>
+<tr><td>Horaires</td><td class="num">430</td><td class="num">92 %</td><td class="ok">suffisant</td></tr>
+<tr><td>Fiche collectée</td><td class="num">413</td><td class="num">88 %</td><td class="att">55 manquants — LS-02</td></tr>
+<tr><td>Photo de l'établissement</td><td class="num">413</td><td class="num">88 %</td><td class="ok">suffisant</td></tr>
+<tr><td>Note affichée</td><td class="num">411</td><td class="num">88 %</td><td class="ok">hors scoring</td></tr>
+<tr><td>Photos de carte</td><td class="num">353</td><td class="num">75 %</td><td class="att">lié à LS-02</td></tr>
+<tr><td>Prix médian extrait</td><td class="num">297</td><td class="num">63 %</td><td class="att">lié à LS-02</td></tr>
+<tr><td>Lien de réservation</td><td class="num">249</td><td class="num">53 %</td><td class="ok">hors scoring</td></tr>
+</table>
+
+<h4>État des quatre indicateurs</h4>
+<table>
+<tr><th>Indicateur</th><th class="num">Poids</th><th class="num">Disponible sur</th><th>État réel</th></tr>
+<tr><td>Menu</td><td class="num">0,40</td><td class="num">353 / 468</td><td class="ok">actif et discriminant</td></tr>
+<tr><td>Langue des avis</td><td class="num">0,30</td><td class="num">468 / 468</td><td class="ko">inerte — valeur 0,50 pour les 468, ne sépare personne</td></tr>
+<tr><td>Prix</td><td class="num">0,15</td><td class="num">297 / 468</td><td class="ok">actif et discriminant</td></tr>
+<tr><td>Zone touristique</td><td class="num">0,15</td><td class="num">468 / 468</td><td class="ok">actif et discriminant</td></tr>
+</table>
+
+<div class="alerte">
+<strong>Le constat qui commande tout le reste.</strong> L'indicateur langue est disponible
+partout mais <strong>constant</strong> : il vaut 0,50 sur les 468 restaurants, parce que la base
+contient le <em>nombre</em> d'avis mais jamais leur <em>texte</em>. Trente pour cent du poids du
+score ne sépare aucun restaurant de son voisin. Le Local Signal repose aujourd'hui, en pratique,
+sur trois indicateurs. <strong>LS-01 est donc la première tâche du plan.</strong>
+</div>
+
+<div class="page"></div>
+
+<h2>3. Architecture actuelle et cible</h2>
+
+<h4>Actuelle</h4>
+<pre>CALCUL EN LOT (hors ligne, une fois par zone)
+  OpenStreetMap  ──┐
+  Collecteur tiers ┴─► appariement nom + distance ─► lecture locale des cartes
+                                                     (OCR + modèle local)
+                                                          │
+                        4 indicateurs 0–1 ◄───────────────┘
+                              │
+                        Local Signal /100 + confiance ──► SQLite
+
+À CHAQUE REQUÊTE (en ligne)
+  Web / Mobile ──► API FastAPI ──► filtres ──► lecture du Local Signal
+                                   proximité exp(−d/(rayon×0,5))
+                                   classement 0,70 / 0,30 ──► liste + explication</pre>
+
+<h4>Cible à l'issue de la livraison</h4>
+<table>
+<tr><th style="width:22%">Couche</th><th style="width:36%">Aujourd'hui</th><th>Cible</th></tr>
+<tr><td>Base</td><td>SQLite, schéma appliqué au démarrage</td><td>PostgreSQL + PostGIS, migrations versionnées — LS-23, LS-24</td></tr>
+<tr><td>Démarrage</td><td>Trois commandes, dépendances locales</td><td><code>docker compose up</code> — LS-22</td></tr>
+<tr><td>Qualité</td><td>Tests de propriétés, lancés à la main</td><td>CI sur chaque <em>push</em>, tests d'API — LS-21, LS-32</td></tr>
+<tr><td>Observabilité</td><td>Aucune</td><td>Journalisation structurée, erreurs remontées — LS-25</td></tr>
+<tr><td>Données</td><td>Locales uniquement</td><td>Chargées en production — LS-24</td></tr>
+<tr><td>Mobile</td><td>Développement seulement</td><td>APK distribuable + build web — LS-20</td></tr>
+<tr><td>Conformité</td><td>Comptes sans cadre légal</td><td>Politique de confidentialité, suppression de compte — LS-29</td></tr>
+</table>
+
+<h2>4. Définition du « fini »</h2>
+
+<p>Un élément du backlog n'est terminé que si <strong>tous</strong> ces points sont vrais.
+Cette règle vaut pour les 37 éléments, sans exception.</p>
+
+<table>
+<tr><th style="width:30%">Critère</th><th>Vérification</th></tr>
+<tr><td>Le code passe la CI</td><td>Tests, lint et build verts sur la branche</td></tr>
+<tr><td>Les critères d'acceptation sont vérifiés</td><td>Un par un, sur des données réelles, pas sur des mocks</td></tr>
+<tr><td>La décision est tracée</td><td>Entrée dans <code>docs/DECISIONS.md</code> si le changement est structurant</td></tr>
+<tr><td>Aucun secret n'est versionné</td><td><code>config.py</code> ne contient que des lectures d'environnement</td></tr>
+<tr><td>Les deux interfaces restent cohérentes</td><td>Un changement visible côté web est porté côté mobile, ou l'écart est consigné</td></tr>
+<tr><td>Le chiffre annoncé est mesuré</td><td>Toute valeur citée dans la présentation vient d'une requête, pas d'un souvenir</td></tr>
+</table>
+
+<div class="page"></div>
+
+<h2>5. Backlog</h2>
+
+<p class="sub">Priorité <span class="ko">P1</span> bloquante · <span class="att">P2</span> à
+fort impact · P3 dette. Estimation en jours-personne. <strong>DA</strong> = critères d'acceptation.</p>
+
+<h3>Épopée 1 — Score et données</h3>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-01</span><span class="titre">Activer l'indicateur langue</span><span class="meta">P1 · 2 j</span></div>
+  Récolter le texte des avis via l'endpoint <code>google_maps_reviews</code> du SDK Outscraper
+  déjà installé, détecter la langue de chaque avis, stocker le ratio d'avis en langue locale.
+  Écrire la réponse brute sur disque <em>avant</em> l'import, comme pour les cartes.
+  <div class="da"><strong>DA —</strong> un test sur 10 restaurants est mené et la consommation
+  relevée avant tout lancement · les 468 restaurants ne présentent plus une valeur unique ·
+  la dispersion de l'indicateur est mesurée et consignée · la réponse brute est conservée
+  et rejouable sans nouvel appel payant</div>
+  <div class="pq">Trente pour cent du poids du score ne discrimine rien aujourd'hui.</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-02</span><span class="titre">Compléter les 55 restaurants sans fiche</span><span class="meta">P2 · 0,5 j</span></div>
+  47 n'ont jamais été renvoyés par le collecteur, 8 sont des homonymes ambigus volontairement
+  rejetés par l'appariement. Collecte ciblée, réimport, relecture des cartes, extraction des prix.
+  <div class="da"><strong>DA —</strong> couverture des fiches ≥ 97 % sur la zone témoin ·
+  aucune fiche attribuée à un restaurant dont le nom diffère · les prix et cartes des nouveaux
+  sont recalculés</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-03</span><span class="titre">Photos gratuites par <code>og:image</code></span><span class="meta">P2 · 1 j</span></div>
+  3 373 restaurants ont un site web sans photo. Rendement mesuré sur échantillon de 40 :
+  50 % brut, ~37 % après filtrage. Lire <code>og:image</code>, repli <code>twitter:image</code>,
+  rejeter SVG et URL invalides par une requête <code>HEAD</code>, respecter <code>robots.txt</code>,
+  agent identifiable.
+  <div class="da"><strong>DA —</strong> ≥ 1 000 photos ajoutées · aucune image stockée, URL
+  seulement · la source est tracée en base · aucun logo ni image de gabarit dans le résultat</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-04</span><span class="titre">Dédoublonner la base</span><span class="meta">P3 · 0,5 j</span></div>
+  45 paires de lignes partagent nom et position. Fusionner en conservant la plus renseignée.
+  <div class="da"><strong>DA —</strong> zéro paire nom + position à moins de 50 m · aucun
+  enrichissement perdu à la fusion · les comptages annoncés en soutenance sont recalculés</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-05</span><span class="titre">Achever la table des cuisines</span><span class="meta">P3 · 0,5 j</span></div>
+  120 étiquettes restent affichées en anglais brut, couvrant 155 restaurants.
+  <div class="da"><strong>DA —</strong> aucune étiquette anglaise au-dessus de 3 occurrences ·
+  zéro libellé en double dans la liste des filtres</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-06</span><span class="titre">Sortir la langue cible du code</span><span class="meta">P3 · 0,5 j</span></div>
+  <code>TARGET_LANGUAGE = "fr"</code> est en dur alors que le produit doit fonctionner dans
+  n'importe quelle ville. À rattacher à la zone.
+  <div class="da"><strong>DA —</strong> une zone porte sa langue locale · le calcul d'une zone
+  non francophone donne un résultat cohérent sur un jeu d'essai</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-07</span><span class="titre">Persister le scan utilisateur</span><span class="meta">P2 · 0,5 j</span></div>
+  <code>/api/menu/scan</code> analyse la photo, renvoie le résultat et <strong>n'enregistre
+  rien</strong>. La base de menus est pourtant présentée comme l'actif du projet et doit se
+  construire par les scans.
+  <div class="da"><strong>DA —</strong> un scan crée une ligne dans <code>menus</code> rattachée
+  au restaurant · aucune image conservée, texte et observations seulement · la source est
+  marquée <code>scan_utilisateur</code> · le Local Signal du restaurant est mis à jour</div>
+  <div class="pq">Sans cet élément, « les utilisateurs nourrissent notre base » est une
+  intention, pas une fonctionnalité — et l'écart se démontre en trente secondes.</div>
+</div>
+
+<h3>Épopée 2 — Évaluation et calibration</h3>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-08</span><span class="titre">Protocole et jeu labellisé</span><span class="meta">P1 · 1 j équipe</span></div>
+  <strong>Contrainte absolue : ne jamais labelliser en regardant la carte</strong>, qui pèse
+  40 % du score — ce serait mesurer l'accord de l'algorithme avec lui-même.
+  Tirage aléatoire de 60 à 150 restaurants, question binaire unique
+  (<em>« j'y emmènerais un ami qui habite le quartier »</em>), deux ou trois annotateurs en aveugle.
+  <div class="da"><strong>DA —</strong> le protocole est écrit avant le premier label ·
+  les annotateurs ne voient ni le score ni la carte · l'accord inter-annotateurs est calculé
+  et publié · seuls les restaurants en accord total sont retenus · le jeu est versionné dans
+  <code>docs/data/</code></div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-09</span><span class="titre">Calibrer les pondérations</span><span class="meta">P1 · 1 j</span></div>
+  Dériver les quatre poids du jeu labellisé au lieu de les poser.
+  <div class="da"><strong>DA —</strong> chaque poids est issu d'un calcul reproductible · les
+  tests de propriétés restent verts · les poids retenus et la méthode sont consignés dans
+  <code>DECISIONS.md</code> · l'écart avec les poids précédents est chiffré</div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-10</span><span class="titre">Mesurer <code>precision@10</code> contre Google</span><span class="meta">P1 · 0,5 j</span></div>
+  Le résultat principal du mémoire.
+  <div class="da"><strong>DA —</strong> <code>precision@10</code> du Local Signal et du classement
+  Google par note, sur le même jeu · l'écart est chiffré et commenté · le script est rejouable
+  et versionné</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-11</span><span class="titre">Recalibrer les seuils internes</span><span class="meta">P2 · 0,5 j</span></div>
+  Sept constantes restent posées au bon sens : 25 plats, 80 plats, 4 cuisines, 5 langues,
+  ratio prix 1,5, α = 5, σ = 350 m — plus les pénalités 0,25 et 0,15.
+  <div class="da"><strong>DA —</strong> chaque constante est soit dérivée, soit explicitement
+  marquée « posée » avec sa justification · aucune constante ne reste sans statut</div>
+</div>
+
+<div class="page"></div>
+
+<h3>Épopée 3 — Interfaces</h3>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-12</span><span class="titre">Refondre la carte de résultat</span><span class="meta">P1 · 1,5 j</span></div>
+  Retour de l'encadrant : « des restaurants s'affichent, on ne comprend pas par rapport à quoi ».
+  Barre de position pleine largeur, verdict en capitales avec sa couleur, raison en français
+  lisible. <strong>Pas d'étoiles</strong> : elles reprennent le symbole de la popularité que le
+  projet combat, et la dispersion réelle les rend illisibles.
+  <div class="da"><strong>DA —</strong> la raison produite par l'API est visible sans interaction ·
+  le verdict est le premier élément lu après la photo · aucune note en étoiles n'est présentée
+  comme un jugement d'authenticité · l'encadrant valide la lisibilité</div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-13</span><span class="titre">Animer la recherche</span><span class="meta">P1 · 1,5 j</span></div>
+  Squelettes aux dimensions exactes des cartes finales, apparition décalée de 60 ms plafonnée
+  à 400 ms, barre qui se remplit en 600 ms, compteur de résultats qui monte, photo en fondu
+  par-dessus l'illustration, premier résultat distingué.
+  <div class="da"><strong>DA —</strong> aucun saut de mise en page entre le squelette et le
+  contenu · <code>prefers-reduced-motion</code> respecté · l'animation ne retarde pas
+  l'interaction — la liste reste cliquable pendant l'entrée · testé sur mobile réel</div>
+  <div class="pq">Le design est ce que le jury voit avant toute explication. Une liste qui
+  apparaît d'un bloc n'a aucune valeur perçue.</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-14</span><span class="titre">Parité stricte web / mobile</span><span class="meta">P2 · 1 j</span></div>
+  L'authentification et la limite anonyme sont aujourd'hui web uniquement.
+  <div class="da"><strong>DA —</strong> mêmes filtres, même ordre, mêmes libellés · même carte
+  de résultat et mêmes animations · tout écart restant est consigné avec sa raison</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-15</span><span class="titre">Factoriser dans <code>packages/shared</code></span><span class="meta">P3 · 0,5 j</span></div>
+  <code>lib/filtres.js</code> et le client API sont dupliqués à l'identique dans les deux
+  applications.
+  <div class="da"><strong>DA —</strong> une seule source pour les constantes de filtre et le
+  client API · les deux applications compilent</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-16</span><span class="titre">Verrouiller la vue technique</span><span class="meta">P2 · 0,5 h</span></div>
+  Le panneau « détail du calcul » expose l'algorithme indicateur par indicateur.
+  <div class="da"><strong>DA —</strong> invisible par défaut en production · accessible par
+  variable d'environnement ou compte administrateur</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-17</span><span class="titre">Passe d'accessibilité</span><span class="meta">P3 · 0,5 j</span></div>
+  <div class="da"><strong>DA —</strong> navigation complète au clavier sur le web · contrastes
+  conformes AA · chaque contrôle porte un nom accessible · les animations respectent la
+  préférence système</div>
+</div>
+
+<h3>Épopée 4 — Mobile</h3>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-18</span><span class="titre">Authentification mobile partagée</span><span class="meta">P2 · 1 j</span></div>
+  Même compte des deux côtés. <strong>Piège technique :</strong> le cookie <code>httpOnly</code>
+  fonctionne en navigateur, pas en React Native — prévoir un jeton en <code>SecureStore</code>
+  et la même session côté serveur.
+  <div class="da"><strong>DA —</strong> un compte créé sur le web ouvre une session sur le mobile ·
+  la session survit au redémarrage de l'application · la déconnexion révoque immédiatement ·
+  aucun jeton en stockage non chiffré</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-19</span><span class="titre">Limite visiteur anonyme sur mobile</span><span class="meta">P3 · 0,5 j</span></div>
+  <div class="da"><strong>DA —</strong> même limite que le web · le classement reste calculé
+  avant troncature · l'utilisateur comprend que la liste est tronquée, pas vide</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-20</span><span class="titre">Distribution Android et web</span><span class="meta">P0,5 j</span></div>
+  <code>eas build --profile preview</code> pour un APK installable par lien ;
+  <code>expo export --platform web</code> pour un site statique. iOS écarté (99 €/an).
+  <div class="da"><strong>DA —</strong> l'APK s'installe sur un téléphone tiers et joint l'API
+  de production · le build web est en ligne · les deux sont testés sur un appareil qui n'est
+  pas celui de développement</div>
+</div>
+
+<div class="page"></div>
+
+<h3>Épopée 5 — Plateforme et exploitation</h3>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-21</span><span class="titre">Intégration continue</span><span class="meta">P2 · 0,5 j</span></div>
+  Aucune CI aujourd'hui. <code>.github/workflows/ci.yml</code> sur chaque <em>push</em> et
+  chaque <em>pull request</em>.
+  <div class="da"><strong>DA —</strong> tests de scoring, lint et build web, contrôle syntaxique
+  du mobile · la CI échoue si un test casse · pastille de statut dans le <code>README</code></div>
+  <div class="pq">Meilleur rapport effet/effort du plan : une pastille verte dit « ce projet est
+  testé » avant qu'on lise une ligne de code.</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-22</span><span class="titre">Démarrage en une commande</span><span class="meta">P2 · 0,5 j</span></div>
+  <code>docker-compose.yml</code> : API, PostgreSQL + PostGIS, web.
+  <div class="da"><strong>DA —</strong> <code>docker compose up</code> suffit sur une machine
+  vierge · aucune installation préalable de Python ni de Node · documenté dans le
+  <code>README</code> · PostGIS est effectivement actif</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-23</span><span class="titre">Migrations de schéma versionnées</span><span class="meta">P3 · 0,5 j</span></div>
+  <code>init_db()</code> ajoute les colonnes manquantes au démarrage : ça fonctionne, mais nul
+  ne peut dire quel schéma tourne en production.
+  <div class="da"><strong>DA —</strong> migrations numérotées et versionnées · une base vierge
+  se construit par migrations successives · la version du schéma est interrogeable</div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-24</span><span class="titre">Charger les données en production</span><span class="meta">P1 · 0,5 j</span></div>
+  Le code est déployé, <strong>pas les données</strong> : le site en ligne tourne à vide.
+  <div class="da"><strong>DA —</strong> les 10 686 restaurants répondent depuis l'URL publique ·
+  <code>DATABASE_URL</code> et <code>ALLOWED_ORIGINS</code> sont posées · aucune donnée
+  personnelle dans le dump chargé · un parcours complet est vérifié en ligne</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-25</span><span class="titre">Journalisation et remontée d'erreurs</span><span class="meta">P2 · 0,5 j</span></div>
+  Aucune journalisation dans tout le backend. Une erreur en production est aujourd'hui
+  invisible.
+  <div class="da"><strong>DA —</strong> journalisation structurée sur les 14 routes · les
+  erreurs 5xx sont tracées avec leur contexte · aucun mot de passe ni jeton dans les journaux ·
+  les journaux sont consultables sur l'hébergeur</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-26</span><span class="titre">Sauvegarde de la base</span><span class="meta">P2 · 0,5 j</span></div>
+  Aucune stratégie de sauvegarde. La base porte 356 cartes lues et 297 prix extraits qui
+  représentent des semaines de collecte et un coût réel.
+  <div class="da"><strong>DA —</strong> sauvegarde automatique quotidienne · une restauration
+  est testée au moins une fois · la procédure est écrite</div>
+  <div class="pq">C'est l'actif du projet. Le perdre serait irrattrapable avant la soutenance.</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-27</span><span class="titre"><code>README</code> et diagramme d'architecture</span><span class="meta">P2 · 0,5 j</span></div>
+  <div class="da"><strong>DA —</strong> les deux étages sont dessinés · le démarrage tient en
+  une commande documentée · les variables d'environnement sont listées · la structure du dépôt
+  est expliquée</div>
+</div>
+
+<h3>Épopée 6 — Sécurité et conformité</h3>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-28</span><span class="titre">Limitation de débit sur l'authentification</span><span class="meta">P1 · 0,5 j</span></div>
+  Aucune limitation aujourd'hui : les routes de connexion et d'inscription acceptent un nombre
+  illimité de tentatives. Une attaque par force brute est triviale.
+  <div class="da"><strong>DA —</strong> connexion et inscription limitées par IP et par compte ·
+  le dépassement renvoie 429 · le mécanisme est testé</div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-29</span><span class="titre">Conformité RGPD</span><span class="meta">P1 · 1 j</span></div>
+  Le produit collecte désormais des adresses e-mail et des mots de passe. Il n'existe ni
+  politique de confidentialité, ni mentions légales, ni suppression de compte, ni durée de
+  conservation. <strong>Ce sont des obligations légales, pas des options.</strong>
+  <div class="da"><strong>DA —</strong> politique de confidentialité et mentions légales
+  accessibles depuis les deux interfaces · suppression de compte effective, qui efface aussi
+  les sessions · export des données de l'utilisateur · durées de conservation écrites ·
+  consentement recueilli à l'inscription</div>
+  <div class="pq">Un jury de master interrogera là-dessus dès qu'il verra un formulaire
+  d'inscription. Et c'est le seul point du plan qui expose juridiquement.</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-30</span><span class="titre">Revue des secrets</span><span class="meta">P2 · 0,5 j</span></div>
+  <div class="da"><strong>DA —</strong> aucun secret dans l'historique Git · <code>.env.example</code>
+  liste toutes les variables sans valeur · les clés de production diffèrent de celles de
+  développement · la procédure de rotation est écrite</div>
+</div>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-31</span><span class="titre">Durcir CORS et cookies</span><span class="meta">P2 · 1 h</span></div>
+  <code>allow_credentials=True</code> avec <code>allow_origins=["*"]</code> est refusé par les
+  navigateurs et bloquera l'authentification inter-domaines.
+  <div class="da"><strong>DA —</strong> origines explicitement listées en production ·
+  <code>SESSION_COOKIE_SECURE=true</code> en HTTPS · <code>SameSite</code> cohérent avec le
+  déploiement · un parcours d'authentification traverse les domaines sans erreur</div>
+</div>
+
+<h3>Épopée 7 — Qualité</h3>
+
+<div class="item p2">
+  <div class="item__t"><span class="id">LS-32</span><span class="titre">Tests d'API</span><span class="meta">P2 · 1 j</span></div>
+  Les seuls tests existants portent sur le scoring. Les 14 routes ne sont pas testées.
+  <div class="da"><strong>DA —</strong> chaque route a au moins un test nominal et un test
+  d'erreur · les filtres sont testés, y compris la règle « une donnée manquante n'exclut
+  jamais » · le parcours d'authentification est testé de bout en bout · la CI les exécute</div>
+</div>
+
+<div class="item">
+  <div class="item__t"><span class="id">LS-33</span><span class="titre">Test du parcours principal</span><span class="meta">P3 · 0,5 j</span></div>
+  <div class="da"><strong>DA —</strong> un test automatisé couvre recherche → filtre → ouverture
+  de fiche · il tourne en CI</div>
+</div>
+
+<h3>Épopée 8 — Soutenance et mémoire</h3>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-34</span><span class="titre">Corriger la présentation</span><span class="meta">P1 · 0,5 j</span></div>
+  Pages 3 et 4 : « prouve » → « met en évidence », budget en euros par repas. Page 5 : ajouter
+  le collecteur tiers, <code>10 686</code>, retirer « Points d'intérêt ». Page 7 : ligne pipeline
+  raccourcie, ajouter Python et les fronts. Page 8 : <code>5 observations déterministes, 3 par
+  le modèle</code>, et la formule de confiance affichée est fausse. Page 9 : trois colonnes
+  réécrites. Page 10 : « prouvé » → « établi ». Réordonner : personas avant les démonstrations.
+  <div class="da"><strong>DA —</strong> chaque chiffre de la présentation correspond à une
+  requête en base le jour de la remise</div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-35</span><span class="titre">Diapositive des limites</span><span class="meta">P1 · 1 h</span></div>
+  Pondérations posées ou dérivées selon l'issue de LS-09 · le paradoxe de l'invisibilité mesuré :
+  la couverture documentaire est corrélée à la visibilité · la validation externe est négative
+  et confondue · un défaut trouvé, mesuré et corrigé : 56 fiches sur 409 rattachées au mauvais
+  restaurant, concordance passée de 91 % à 99 %.
+  <div class="da"><strong>DA —</strong> chaque limite porte un chiffre · aucune limite connue
+  n'est omise</div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-36</span><span class="titre">Préparer et répéter la démonstration</span><span class="meta">P1 · 0,5 j</span></div>
+  Paire vérifiée : Welcome to Istanbul 71,9 contre Red Grill 41,4, à 29 m — le piège à touristes
+  a la meilleure note et le plus d'avis. Entonnoir : 500 → 423 → 111 → 27 → 19.
+  <div class="da"><strong>DA —</strong> la démonstration tourne sur l'URL publique, pas en local ·
+  répétée deux fois en conditions réelles · un repli hors ligne existe (captures) · les fiches
+  citées sont vérifiées la veille</div>
+</div>
+
+<div class="item p1">
+  <div class="item__t"><span class="id">LS-37</span><span class="titre">Rédaction du mémoire</span><span class="meta">P1 · continu</span></div>
+  <code>DECISIONS.md</code> alimente le chapitre méthodologie · la note d'équipe alimente le
+  chapitre technique · ouverture sur le <em>Handbook on Constructing Composite Indicators</em>
+  (OCDE-JRC, 2008) · vocabulaire tenu : indicateurs, pondérations, paramètres.
+  <div class="da"><strong>DA —</strong> tout chiffre du mémoire est reproductible depuis le
+  dépôt · toute décision citée renvoie à son entrée</div>
+</div>
+
+<div class="page"></div>
+
+<h2>6. Registre de dette technique</h2>
+
+<p>Éléments connus qui ne bloquent pas la livraison mais se paieront. Chacun est rattaché à sa
+tâche quand il en a une.</p>
+
+<table>
+<tr><th style="width:30%">Dette</th><th style="width:14%">Impact</th><th>Traitement</th></tr>
+<tr><td><code>.python-version</code> indique 3.12, développement en 3.13</td><td class="ko">rupture au déploiement</td><td>LS-31 — une ligne</td></tr>
+<tr><td><code>CLAUDE.md</code> documente <code>backend.db.seed</code>, supprimé</td><td>confusion</td><td>LS-27</td></tr>
+<tr><td><code>tranche_prix</code> sans appelant côté serveur</td><td>code mort</td><td>à retirer</td></tr>
+<tr><td>PostGIS annoncé, distance calculée en Python</td><td>écart annonce / réalité</td><td>LS-22</td></tr>
+<tr><td><code>USE_MOCK_DATA = True</code> et le module Google désactivé</td><td>code inerte conservé</td><td>documenter ou retirer</td></tr>
+<tr><td>Aucun test sur les 14 routes</td><td class="att">régressions invisibles</td><td>LS-32</td></tr>
+<tr><td>Duplication <code>lib/filtres.js</code> web et mobile</td><td class="att">divergence certaine</td><td>LS-15</td></tr>
+<tr><td>Schéma appliqué au démarrage, non versionné</td><td class="att">production non traçable</td><td>LS-23</td></tr>
+<tr><td>Aucune journalisation</td><td class="ko">incidents invisibles</td><td>LS-25</td></tr>
+<tr><td>Aucune sauvegarde</td><td class="ko">perte irréversible</td><td>LS-26</td></tr>
+</table>
+
+<h2>7. Registre des risques</h2>
+
+<table>
+<tr><th style="width:27%">Risque</th><th class="c" style="width:9%">Prob.</th><th class="c" style="width:9%">Impact</th><th>Parade</th></tr>
+<tr>
+  <td>Le coût des avis dépasse le budget (LS-01)</td>
+  <td class="c att">moyenne</td><td class="c ko">fort</td>
+  <td>Test obligatoire sur 10 restaurants avant lancement. Repli : 5 avis par fiche, ou seulement les restaurants déjà pourvus en avis.</td>
+</tr>
+<tr>
+  <td>Le jeu labellisé n'est pas produit (LS-08)</td>
+  <td class="c ko">forte</td><td class="c ko">fort</td>
+  <td>Version minimale : 60 restaurants, 2 annotateurs, 1 h. À défaut, l'annoncer en toutes lettres sur la diapositive des limites — un aveu assumé coûte moins qu'une question sans réponse.</td>
+</tr>
+<tr>
+  <td>La démonstration échoue le jour J</td>
+  <td class="c att">moyenne</td><td class="c ko">fort</td>
+  <td>LS-36 : répétition en ligne, repli en captures, vérification la veille des fiches citées.</td>
+</tr>
+<tr>
+  <td>Le mobile décroche définitivement du web</td>
+  <td class="c att">moyenne</td><td class="c att">moyen</td>
+  <td>LS-14 en même temps que LS-12, jamais après. Tout écart consigné.</td>
+</tr>
+<tr>
+  <td>Question RGPD en soutenance sans réponse</td>
+  <td class="c att">moyenne</td><td class="c att">moyen</td>
+  <td>LS-29. Le formulaire d'inscription rend la question quasi certaine.</td>
+</tr>
+<tr>
+  <td>Perte de la base de collecte</td>
+  <td class="c">faible</td><td class="c ko">critique</td>
+  <td>LS-26. 356 cartes et 297 prix représentent des semaines de travail et un coût réel.</td>
+</tr>
+<tr>
+  <td>Le périmètre dépasse le temps disponible</td>
+  <td class="c ko">forte</td><td class="c att">moyen</td>
+  <td>Sacrifier l'épopée 5 avant l'épopée 2. Voir §8.</td>
+</tr>
+</table>
+
+<h2>8. Jalons et affectation</h2>
+
+<div class="alerte">
+<strong>Arithmétique du plan.</strong> Le backlog représente environ <strong>24 jours-personne</strong>.
+Cinq personnes sur dix jours ouvrés offrent théoriquement 50 jours-personne, mais la
+disponibilité réelle sur un rush avec cours en parallèle est plutôt de la moitié. <strong>Le
+plan tient, sans marge.</strong> Toute tâche ajoutée doit en retirer une autre.
+</div>
+
+<table>
+<tr><th style="width:12%">Jalon</th><th style="width:14%">Date</th><th>Contenu</th></tr>
+<tr><td><strong>J1</strong></td><td>Score complet</td><td>LS-01, LS-02, LS-31 — l'indicateur langue discrimine, la zone témoin est complète</td></tr>
+<tr><td><strong>J2</strong></td><td>Évaluation</td><td>LS-08, LS-09, LS-10 — un résultat chiffré existe</td></tr>
+<tr><td><strong>J3</strong></td><td>Interface</td><td>LS-12, LS-13, LS-14 — la restitution répond au retour de l'encadrant</td></tr>
+<tr><td><strong>J4</strong></td><td>En ligne</td><td>LS-24, LS-20, LS-18 — web et mobile accessibles avec données</td></tr>
+<tr><td><strong>J5</strong></td><td>Livrable</td><td>LS-34 à LS-37 — présentation, démonstration répétée, mémoire</td></tr>
+</table>
+
+<h4>Séquence indicative sur dix jours</h4>
+<table>
+<tr><th style="width:11%">Jour</th><th>Tâches</th><th style="width:16%">Rôle</th></tr>
+<tr><td>J1–J2</td><td>LS-01 · LS-31 · LS-28</td><td>back</td></tr>
+<tr><td>J3</td><td>LS-08 (équipe entière, en aveugle) · LS-02</td><td>tous</td></tr>
+<tr><td>J4–J5</td><td>LS-09 · LS-10 · LS-11</td><td>back</td></tr>
+<tr><td>J4–J5</td><td>LS-12 (en parallèle)</td><td>front</td></tr>
+<tr><td>J6–J7</td><td>LS-13 · LS-14 · LS-15</td><td>front</td></tr>
+<tr><td>J6–J7</td><td>LS-29 · LS-07 (en parallèle)</td><td>back</td></tr>
+<tr><td>J8</td><td>LS-18 · LS-19 · LS-20</td><td>mobile</td></tr>
+<tr><td>J9</td><td>LS-21 · LS-22 · LS-24 · LS-25 · LS-26 · LS-27</td><td>tous</td></tr>
+<tr><td>J10</td><td>LS-34 · LS-35 · LS-36</td><td>tous</td></tr>
+</table>
+
+<div class="encadre">
+<strong>Ordre de sacrifice, si le temps manque.</strong> Retirer dans cet ordre :
+LS-33, LS-17, LS-15, LS-04, LS-05, LS-06, LS-23, puis LS-03.
+<br>
+<strong>Ne jamais sacrifier :</strong> LS-01 (le score ne fonctionne pas sans),
+LS-08 à LS-10 (pas de résultat sans), LS-24 (pas de démonstration sans),
+LS-29 (obligation légale), LS-26 (perte irréversible).
+</div>
+
+<h2>9. Exploitation</h2>
+
+<table>
+<tr><th style="width:22%">Sujet</th><th>Cible à la livraison</th></tr>
+<tr><td>Environnements</td><td>Développement local (<code>docker compose</code>) · production Railway. Pas d'environnement intermédiaire — assumé pour la taille de l'équipe.</td></tr>
+<tr><td>Déploiement</td><td>Poussée sur <code>main</code> après revue. <code>dev</code> et <code>main</code> alignés, PR obligatoire.</td></tr>
+<tr><td>Base</td><td>PostgreSQL managé, migrations versionnées, sauvegarde quotidienne, restauration testée.</td></tr>
+<tr><td>Secrets</td><td>Variables d'environnement uniquement. <code>config.py</code> reste versionné et n'en contient aucun.</td></tr>
+<tr><td>Surveillance</td><td>Journalisation structurée, erreurs 5xx tracées, journaux consultables chez l'hébergeur.</td></tr>
+<tr><td>Recalcul du score</td><td>Traitement en lot hors ligne, déclenché à la main après chaque enrichissement. L'automatisation est hors périmètre.</td></tr>
+</table>
+
+<h2>10. Hors périmètre assumé</h2>
+
+<table>
+<tr><th style="width:30%">Écarté</th><th>Raison</th></tr>
+<tr><td>Migration vers AWS</td><td>Railway fonctionne et est déployé. Changer d'hébergeur à deux semaines de la remise est un risque sans contrepartie académique : un projet cassé sur une belle infrastructure se note plus mal qu'un projet qui tourne.</td></tr>
+<tr><td>Distribution iOS</td><td>99 € par an pour une démonstration que l'APK Android assure gratuitement.</td></tr>
+<tr><td>Ingestion OSM à la demande</td><td>Utile au produit, invisible pour le jury. Reporté après la remise.</td></tr>
+<tr><td>Interface restaurateur</td><td>Modèle économique annoncé, non nécessaire à la démonstration de l'hypothèse.</td></tr>
+<tr><td>Réservation transactionnelle</td><td>Un lien sortant suffit à la démonstration.</td></tr>
+<tr><td>Extension hors zone témoin</td><td>L'évaluation se joue sur le Quartier latin. Élargir dilue sans rien prouver.</td></tr>
+<tr><td>Environnement de pré-production</td><td>Coût de maintien supérieur au bénéfice pour une équipe de cinq sur deux semaines.</td></tr>
+</table>
+
+<div class="alerte">
+<strong>Le seul élément que personne ne peut faire à votre place.</strong> LS-08 et LS-09 —
+le jeu labellisé et la calibration — sont ce qui transforme « nous avons un algorithme » en
+« nous avons un résultat ». Tout le reste du plan améliore un produit ; ces deux-là décident
+si le mémoire répond à sa question de recherche.
+</div>
+
+<div class="pied">
+Local Signal — plan de livraison v1.0 · 37 éléments · ~24 jours-personne ·
+document interne · 9 septembre 2026
+</div>
+
+</body>
+</html>
