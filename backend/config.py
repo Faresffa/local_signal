@@ -66,7 +66,14 @@ ALLOWED_ORIGINS = [
 # pour mesurer la perte de précision d'extraction sur le jeu labellisé.
 VISION_PROVIDER = os.environ.get("VISION_PROVIDER", "groq")  # "groq" | "claude"
 
-GROQ_VISION_MODEL = "qwen/qwen3.6-27b"
+# LE CATALOGUE GROQ BOUGE SOUS LES PIEDS DU CODE, et une reference perimee ne
+# se voit pas : elle rend `404 model does not exist`, que le pipeline compte
+# comme « page non analysable ». Panne reelle du 15 septembre 2026 —
+# `qwen/qwen3.6-27b` retire en cours de recolte, 493 restaurants ayant une vraie
+# carte enregistres comme n'en ayant pas. Le nom vient donc de l'environnement,
+# et `python -m backend.ingestion.menu_scan.verifier` controle qu'il repond
+# avant de lancer une recolte de plusieurs heures.
+GROQ_VISION_MODEL = os.environ.get("GROQ_VISION_MODEL", "qwen/qwen3.8-27b")
 
 # Modele execute EN LOCAL via Ollama (D-032). Ni quota ni facture : c'est ce qui
 # rend la lecture des 1 120 pages du Quartier latin possible en quelques heures
