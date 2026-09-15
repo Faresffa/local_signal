@@ -163,6 +163,74 @@ TERCILES = (1 / 3, 2 / 3)
 INDICES_MINIMUM = 2
 
 
+
+# ---------------------------------------------------------------------------
+# DEUX SOURCES DE PLUS, DÉJÀ SUR LE DISQUE (LS-41).
+#
+# `subtypes` — les catégories que Google attribue au lieu, présentes pour 397
+# restaurants sur 398. La plupart ne disent que la cuisine et ne servent à rien
+# ici : « Restaurant italien » ne dit pas si les clients sont du quartier. On ne
+# garde que celles qui parlent d'un USAGE.
+#
+# `google_description` — le texte éditorial de Google, 189 restaurants. C'est
+# de la prose, pas des cases à cocher : on n'y cherche que des marqueurs
+# univoques. « Créé en 1845 » signale une institution qu'on visite ; « à
+# emporter » signale une habitude de quartier.
+#
+# PRUDENCE SUR CETTE DEUXIÈME SOURCE. Chercher des mots dans un texte
+# publicitaire, c'est fabriquer un classifieur de plus, à la main, avec mes
+# propres partis pris. On s'en tient donc à une poignée de marqueurs dont le
+# sens ne se discute pas, et on MESURE si l'ajout change quelque chose — plutôt
+# que de supposer que plus de signaux valent mieux.
+# ---------------------------------------------------------------------------
+
+SUBTYPES_INDICES = {
+    "restaurant gastronomique": (+1.0, "classé « gastronomique » — on s'y déplace"),
+    "attraction touristique": (+2.0, "Google le classe en attraction touristique"),
+    "restaurant de plats à emporter": (-1.0, "classé « à emporter »"),
+    "pizzas à emporter": (-0.8, "pizzas à emporter"),
+    "traiteur": (-0.8, "traiteur — clientèle qui repasse"),
+    "restaurant familial": (-0.5, "classé « familial »"),
+    "cantine": (-1.2, "classé « cantine »"),
+    "café": (-0.5, "café — on y revient"),
+}
+
+# Marqueurs dans la description. Le sens doit être univoque : rien
+# d'interprétable ne rentre ici.
+DESCRIPTION_INDICES = {
+    "vue sur": (+1.0, "vendu pour la vue"),
+    "touristique": (+1.5, "décrit comme touristique"),
+    "institution": (+1.2, "décrit comme une institution"),
+    "depuis 18": (+1.0, "établissement ancien, mis en avant comme tel"),
+    "créé en 18": (+1.0, "établissement ancien, mis en avant comme tel"),
+    "à emporter": (-0.8, "mis en avant pour la vente à emporter"),
+    "de quartier": (-1.5, "décrit comme un restaurant de quartier"),
+    "habitués": (-1.5, "la description parle d'habitués"),
+}
+
+
+def _indices_texte(conn: sqlite3.Connection, restaurant_id: str) -> list:
+    """Indices tirés des catégories Google et du texte éditorial."""
+    ligne = conn.execute(
+        "SELECT subtypes, google_description FROM restaurants WHERE id = ?",
+        (restaurant_id,),
+    ).fetchone()
+    if not ligne:
+        return []
+
+    trouves = []
+    sous = (ligne[0] or "").lower()
+    for motif, (poids, phrase) in SUBTYPES_INDICES.items():
+        if motif in sous:
+            trouves.append((poids, phrase))
+
+    texte = (ligne[1] or "").lower()
+    for motif, (poids, phrase) in DESCRIPTION_INDICES.items():
+        if motif in texte:
+            trouves.append((poids, phrase))
+
+    return trouves
+
 def frequentation(grille_json: str | None) -> tuple[float | None, str]:
     """
     Rapport entre le midi de semaine et le week-end, à partir de la grille.
@@ -223,6 +291,10 @@ def score_brut(conn: sqlite3.Connection, restaurant_id: str,
         if cle in attributs:
             score += poids
             preuves.append(f"{poids:+.2f} {phrase}")
+
+    for poids, phrase in _indices_texte(conn, restaurant_id):
+        score += poids
+        preuves.append(f"{poids:+.2f} {phrase}")
 
     ratio, phrase = frequentation(ligne[0] if ligne else None)
     if ratio is not None:
