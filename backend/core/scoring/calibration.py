@@ -24,11 +24,27 @@
 #
 # DEUX PIÈGES, ET CE QU'ON EN FAIT.
 #
-#   1. UN INDICATEUR MANQUANT N'EST PAS UN ZÉRO (D-012). Un restaurant sans
-#      avis a `langue = None`. Le remplacer par 0 apprendrait au modèle que
-#      « pas d'avis » veut dire « touristique » — exactement le paradoxe de
-#      l'invisibilité, réintroduit dans la calibration. On n'entraîne donc que
-#      sur les CAS COMPLETS, et on dit combien on en a.
+#   1. UN A PRIORI N'EST PAS UNE MESURE, et c'est le piège le plus vicieux
+#      parce qu'il ne ressemble pas à un trou.
+#
+#      L'indicateur de langue est lissé (D-003) : sans aucun avis, il rend
+#      `0,500` et se déclare DISPONIBLE. C'est juste pour le produit — mieux
+#      vaut une valeur neutre qu'un trou dans le classement. C'est faux pour la
+#      calibration : 425 restaurants sur 467 portent exactement `0,500`, non
+#      pas parce qu'on a mesuré la moitié d'avis français, mais parce qu'on n'a
+#      rien mesuré du tout.
+#
+#      Un modèle entraîné là-dessus verrait une colonne quasi constante,
+#      conclurait que « la langue n'explique rien », et lui donnerait un poids
+#      proche de zéro. On aurait alors DÉMONTRÉ que l'indicateur de langue est
+#      inutile, alors qu'on aurait seulement démontré qu'on ne l'a pas collecté.
+#
+#      On exige donc un avis AU MOINS, pas une valeur présente. Même logique
+#      pour tout indicateur qui saurait rendre un défaut.
+#
+#      Conséquence directe sur l'ordre des tâches : LA COLLECTE D'AVIS DOIT
+#      PRÉCÉDER LA CALIBRATION. Calibrer avant, c'est condamner l'indicateur
+#      qui pèse 0,30.
 #
 #   2. LES CLASSES SONT DÉSÉQUILIBRÉES. S'il y a trois fois plus de
 #      touristiques que de locaux, un modèle qui répond toujours
@@ -88,7 +104,8 @@ def jeu(conn: sqlite3.Connection, zone: str) -> tuple:
     """, (zone,)).fetchall()
 
     X, y, noms = [], [], []
-    ecartes = {"mixte": 0, "indicateur manquant": 0, "etiquette inconnue": 0}
+    ecartes = {"mixte": 0, "indicateur manquant": 0,
+               "langue non mesuree (a priori)": 0, "etiquette inconnue": 0}
 
     for ligne in lignes:
         etiquette = (ligne["label"] or "").strip().lower()
@@ -101,6 +118,14 @@ def jeu(conn: sqlite3.Connection, zone: str) -> tuple:
         if any(v is None for v in valeurs):
             # Voir le piège n°1 en tête de fichier.
             ecartes["indicateur manquant"] += 1
+            continue
+
+        # L'indicateur de langue se déclare disponible même sans un seul avis
+        # (il rend l'a priori du lissage). Une valeur posée par défaut n'est
+        # pas une observation : on l'écarte.
+        details = (signaux.get("language") or {}).get("details") or {}
+        if not details.get("review_count"):
+            ecartes["langue non mesuree (a priori)"] += 1
             continue
 
         X.append(valeurs)
