@@ -60,6 +60,24 @@ from backend import config
 # — ce serait jeter de l'information sur les restaurants bien pourvus.
 AVIS_PAR_RESTAURANT = 50
 
+# LA PROFONDEUR SE DECIDE AU BUDGET, PAS DANS LE CODE.
+#
+# 50 reste la valeur de reference (marge d'erreur de +/- 14 points, D-040).
+# Mais quand le solde est fixe, le vrai arbitrage n'est plus « quelle
+# precision » — c'est « combien de restaurants ». Mesure sur les 42 deja
+# collectes : passer de 0 a 10 avis divise par deux l'erreur sur le Local
+# Signal (10,4 -> 4,8 points sur 100) ; passer de 10 a 20 ne la reduit plus
+# que d'un tiers, pour le double du prix.
+#
+# Couvrir toute la zone peu profondement bat donc couvrir un quart profondement,
+# parce que pour les trois autres quarts l'alternative n'est pas « moins
+# precis », c'est RIEN : l'indicateur rend l'a priori et ne classe personne.
+#
+# ON NE PEUT PAS FAIRE MIEUX EN REPARTISSANT INEGALEMENT. Le cout est celui
+# des avis RENDUS, donc un etablissement qui n'en a que huit ne coute que
+# huit — sauf que dans cette zone la mediane est de 709 avis Google. Il n'y a
+# aucune economie a aller chercher : le cout est bien lineaire.
+
 # Lots envoyés en une requête. Le fournisseur accepte plusieurs requêtes à la
 # fois ; grouper réduit la latence sans changer le coût.
 TAILLE_LOT = 10
@@ -208,7 +226,8 @@ def candidats(conn: sqlite3.Connection, zone: str | None, limite: int | None,
 
 def recolter(conn: sqlite3.Connection, zone: str = None, limite: int = None,
              a_blanc: bool = False, langue: str = None, region: str = "FR",
-             plafond: int = PLAFOND_DEFAUT, ordre: str = "aleatoire") -> dict:
+             plafond: int = PLAFOND_DEFAUT, ordre: str = "aleatoire",
+             par_restaurant: int = AVIS_PAR_RESTAURANT) -> dict:
     """Récolte les avis et les range dans la table `reviews`."""
     if langue is None:
         langue = config.TARGET_LANGUAGE
@@ -219,7 +238,10 @@ def recolter(conn: sqlite3.Connection, zone: str = None, limite: int = None,
               f"(garde-fou de facturation, --plafond pour le lever)")
         restos = restos[:plafond]
 
-    print(f"[Avis] {len(restos)} restaurants, {AVIS_PAR_RESTAURANT} avis demandes chacun")
+    cout_max = len(restos) * par_restaurant * 0.003
+    print(f"[Avis] {len(restos)} restaurants, {par_restaurant} avis demandes chacun")
+    print(f"[Avis] cout maximal {cout_max:.2f} USD "
+          f"(facture sur les avis RENDUS, donc au plus ce montant)")
     if a_blanc:
         print("[Avis] A BLANC — aucune requete, aucune ecriture")
         for r in restos[:10]:
@@ -245,7 +267,7 @@ def recolter(conn: sqlite3.Connection, zone: str = None, limite: int = None,
         try:
             reponses = client.google_maps_reviews(
                 [_requete(r) for r in lot],
-                reviews_limit=AVIS_PAR_RESTAURANT,
+                reviews_limit=par_restaurant,
                 limit=1,
                 sort="newest",
                 ignore_empty=True,
@@ -311,6 +333,9 @@ def main() -> None:
     analyseur.add_argument("--zone", default=None)
     analyseur.add_argument("--limite", type=int, default=None)
     analyseur.add_argument("--plafond", type=int, default=PLAFOND_DEFAUT)
+    analyseur.add_argument("--par-restaurant", type=int, default=AVIS_PAR_RESTAURANT,
+                           help=f"avis demandes par restaurant "
+                                f"(defaut : {AVIS_PAR_RESTAURANT})")
     analyseur.add_argument("--ordre", choices=["aleatoire", "frequence"],
                            default="aleatoire",
                            help="aleatoire : echantillon non biaise (defaut). "
@@ -323,7 +348,7 @@ def main() -> None:
     try:
         res = recolter(conn, zone=args.zone, limite=args.limite,
                        a_blanc=args.a_blanc, plafond=args.plafond,
-                       ordre=args.ordre)
+                       ordre=args.ordre, par_restaurant=args.par_restaurant)
     except RuntimeError as e:
         print(f"[ERREUR] {e}", file=sys.stderr)
         sys.exit(1)
