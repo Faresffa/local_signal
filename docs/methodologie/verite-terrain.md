@@ -411,6 +411,56 @@ contrôles l'ont vu à chaque fois** — audit des justifications, corrélation 
 critères invoqués et accord, comparaison à un répondeur aléatoire simulé. Un
 panel sans ces contrôles aurait intégré ses réponses sans rien remarquer.
 
+### 5.10 « Vos annotateurs n'ont-ils pas répondu au hasard ? »
+
+C'est la première question qu'on pose à un étiquetage produit par des modèles.
+Elle se tranche par une mesure, pas par une affirmation.
+
+On simule cinq annotateurs répondant à pile ou face sur le même plan de
+comparaison, et on calcule le kappa qu'ils obtiendraient. Deux cents tirages :
+
+| | kappa |
+|---|---|
+| panel réel (campagne par paires) | **+0,423** |
+| cinq répondeurs aléatoires, moyenne | −0,002 (écart-type 0,032) |
+| meilleur des 200 tirages aléatoires | +0,079 |
+
+Le panel réel est à **treize écarts-types du hasard**. La mesure est en outre
+*sensible* : il suffit d'injecter **un seul** répondeur aléatoire dans le panel
+pour faire chuter le kappa de 0,423 à 0,271. Autrement dit, un annotateur qui
+aurait bâclé aurait été visible dans le chiffre.
+
+Le script est `docs/data/annotation-pilote/consolider.py` ; la simulation se
+rejoue en quelques lignes à partir du plan versionné.
+
+### 5.11 Ce que vaut l'indicateur de langue, et sur combien d'avis
+
+L'indicateur `language` est celui qui prédit le mieux la vérité terrain
+(rho = +0,501). Il faut dire sur quoi il est calculé, parce que la profondeur est
+très inégale :
+
+| profondeur | restaurants |
+|---|---|
+| 50 avis collectés | 42 |
+| 5 à 9 avis | 415 |
+| 2 à 4 avis | 1 |
+| aucun | 9 |
+
+Deux vagues de collecte (Outscraper, 5 833 avis pour environ 17,50 USD au tarif
+mesuré de 0,003 USD/avis) : la première a acheté de la **profondeur** sur 42
+restaurants, la seconde de la **couverture** sur 416.
+
+**Conséquence à assumer.** Pour 89 % de la zone, le ratio d'avis en langue locale
+est estimé sur 5 à 9 avis. Autour de 0,5, cela donne un intervalle de confiance
+d'environ **±35 points**, contre ±14 pour les 42 restaurants profonds.
+L'indicateur qui pèse 0,30 — et qui porte le signal — a donc deux régimes de
+précision très différents, et rien en base ne le signale aujourd'hui.
+
+Trois sorties possibles, à arbitrer avant de publier un coefficient : pondérer
+chaque restaurant par sa profondeur dans la régression, calibrer d'abord sur les
+42 profonds et vérifier la stabilité sur les autres, ou racheter de la profondeur
+(passer les 415 à 50 avis coûterait environ 55 USD).
+
 ---
 
 ## 6. Le piège de l'ancrage
