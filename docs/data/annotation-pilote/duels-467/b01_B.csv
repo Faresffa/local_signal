@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0001;B;moyenne;Verlaine a deux guides pour visiteurs (mindtrip.ai, trip.com) et un mythe littéraire vendeur, Il Gigolo n'a que de la presse locale
+P0002;A;forte;Verlaine cumule guides pour visiteurs et légende Verlaine/Hemingway, Vita Nuova n'a aucune presse ni guide
+P0003;B;forte;la Mosquée est classée par Tripadvisor comme une Attraction touristique, Vita Nuova reste une pizzeria de quartier sans presse
+P0004;A;forte;la Mosquée est un monument-restaurant référencé comme attraction, Toranj n'a ni presse ni guide et un site en français seul
+P0005;B;faible;les deux sont peu visibles, mais Abyssinie a un blog anglophone dédié aux visiteurs, Toranj n'a rien trouvé du tout
+P0006;B;faible;Abyssinie a un blog de visiteurs anglophone, Happiz n'a que Facebook mais cible aussi une clientèle de nécessité (sans gluten, vegan)
+P0007;A;forte;Vin Sobre est décrit par ses clients comme une institution de quartier avec campagne anti-fermeture des habitués, signal local très fort
+P0008;A;forte;Vin Sobre montre des habitués mobilisés pour sa survie, New Aqib a un avis explicite de voyageur de passage à Paris
+P0009;A;moyenne;Traiteur Asiatique a des avis de clients réguliers qui reviennent chercher leur déjeuner, New Aqib a un avis de voyageur en visite
+P0010;A;forte;Rosemonde est cherché via des listes 'meilleur brunch de Paris', Traiteur Asiatique a des clients fidèles de quartier
+P0011;B;faible;les deux sont ambigus, mais Rosemonde attire via des recherches de classements généralistes sans clientèle fidèle identifiée dans les avis
+P0012;A;moyenne;Bazurto est porté par un chef médiatisé et une ambiance festive destination, Hoki Sushi est décrit comme budget et familial
+P0013;B;moyenne;Le Vauquelin est décrit comme une institution tenue par une famille avec clients fidèles, Hoki Sushi reste plus anonyme et budget
+P0014;A;forte;Bistro des Lettres a un guide pour visiteurs et un concept pensé pour des clients de passage à Paris, Le Vauquelin est un bistrot familial local
+P0015;A;forte;Bistro des Lettres a un guide pour visiteurs et des avis très internationaux, Phô5 est quasi invisible en ligne
+P0016;A;faible;The Cod House a eu une couverture presse (même sur sa fermeture), Phô5 n'a aucune trace en ligne
+P0017;egalite;faible;aucun des deux n'a de presse ni de guide, signaux trop faibles pour départager
+P0018;B;faible;Sushiko a des clients réguliers qui commandent souvent pour le quartier, Octant n'a aucune preuve de clientèle identifiée
+P0019;B;forte;Allard est référencé par le Guide Michelin en version thaïlandaise et un site anglophone international de classement, Sushiko reste un resto de quartier sans presse
+P0020;B;forte;Allard a une couverture Michelin internationale et un chef médiatique, El Cervantes n'a que des avis courts génériques
+P0021;A;moyenne;les avis du Saint-Pierre insistent sur les voyages à Paris et sont très internationaux, El Cervantes est plus fréquenté par les étudiants du quartier
+P0022;B;moyenne;Selva a un blog de visiteurs anglophone dédié (HiP Paris) en plus de la presse francophone, signal plus explicite que celui du Saint-Pierre
+P0023;A;faible;Fourmi Ailée a un avis explicite de 'food tour' organisé en plus d'un guide, Selva a un blog visiteur mais pas de mention d'excursion organisée
+P0024;A;moyenne;Fourmi Ailée a un guide pour visiteurs et un avis de food tour, Veganil est surtout fréquenté par des étudiants du quartier selon les avis
+P0025;A;moyenne;les avis de Sorza montrent des clients anglophones fidèles qui ne reviennent qu'en visite à Paris depuis des années, Veganil est plus étudiant/local
+P0026;A;forte;Sorza a des clients fidèles mais de passage à Paris depuis des années, Izgara est un kebab de quartier basique
+P0027;A;faible;un avis de L'Épidon mentionne un déplacement de 350 km pour y retourner, signal de destination culinaire plus fort qu'Izgara
+P0028;B;moyenne;un avis dit explicitement de Taeng Thai que c'est 'un vrai lieu local' avec peu de touristes, L'Épidon paraît relativement plus orienté destination
+P0029;B;forte;Cucina Mutualité est couverte par la critique gastronomique et le Guide Michelin (groupe Ducasse), Taeng Thai est qualifié de lieu local par ses clients
+P0030;A;forte;Le Procope est référencé par l'office de tourisme officiel de Paris et la région, signal de guide pour visiteurs le plus fort du corpus
+P0031;A;forte;Le Procope cumule presse et guides officiels du tourisme parisien, El Sur reste un lieu culturel local peu couvert
+P0032;egalite;faible;India StreEAT est présenté par un blog francophone comme authentique pour Parisiens, El Sur est une institution culturelle de la diaspora ancrée localement depuis 20 ans, signaux comparables
+P0033;A;faible;Paris Antalya a une mention TikTok de découverte culinaire et l'attribut touristes déclaré, India StreEAT est plutôt défendu comme authentique par un blog pour Parisiens
+P0034;A;moyenne;Paris Antalya a un signal de découverte via créateur de contenu, Sumo est un buffet à volonté plutôt budget/familial
+P0035;B;moyenne;Dae Jang a des avis d'habitués fidèles qui reviennent régulièrement, Sumo cible plutôt un public de passage cherchant un buffet pas cher
+P0036;A;faible;La Soummam attire des visiteurs venus spécifiquement pour ses concerts de jazz manouche, Dae Jang a des habitués très fidèles
+P0037;A;forte;Le Petit Médicis a des avis massivement internationaux et un client le qualifie explicitement de 'plutôt touristique', La Soummam reste local
+P0038;A;forte;Le Petit Médicis a un fort ancrage international dans les avis, Raviolis Queen est plus modeste et local
+P0039;A;forte;un avis qualifie 5 Séverin explicitement de 'piège à touristes', signal direct fort, Raviolis Queen a des clients de passage plus discrets
+P0040;B;moyenne;5 Séverin a une accusation explicite de piège à touristes dans les avis, plus directe que le tourisme diffus d'Il Gigolo
+P0041;A;moyenne;Sorza attire des visiteurs fidèles qui ne reviennent qu'en séjour à Paris, Happiz cible plutôt une clientèle à contrainte alimentaire
+P0042;B;moyenne;Selva a un blog de visiteurs anglophone dédié, Happiz reste sur Facebook sans guide identifié
+P0043;B;moyenne;Selva a un guide pour visiteurs explicite (HiP Paris), New Aqib n'a que des avis et un classement TheFork
+P0044;egalite;faible;The Cod House a un statut incertain et aucun avis collecté, New Aqib a des indices mixtes mais pas de guide clair, signaux trop fragiles pour trancher
+P0045;B;moyenne;Taeng Thai est qualifié de lieu local par un avis explicite, The Cod House était un bar à cocktails conceptuel dans un quartier touristique de sorties
+P0046;A;forte;Cucina Mutualité est couverte par la critique gastronomique et le Guide Michelin, Izgara est un kebab de quartier sans aucune presse
+P0047;B;moyenne;El Sur est une institution culturelle locale ancienne, Izgara est un kebab basique sans aucun signal de notoriété
+P0048;B;moyenne;Dae Jang a des habitués très fidèles selon les avis, El Sur reste relativement plus modeste en ancrage local mesurable
+P0049;A;forte;Il Gigolo a des avis qui le qualifient eux-mêmes de touristique, Dae Jang a des habitués fidèles très marqués
+P0050;A;moyenne;Il Gigolo a un ancrage touristique plus visible dans les avis, La Soummam reste porté par sa programmation musicale locale
+P0051;A;forte;Verlaine a des guides pour visiteurs et une légende littéraire, La Soummam n'a ni presse ni guide
+P0052;B;forte;Verlaine a des guides pour visiteurs et une forte notoriété historique, Raviolis Queen reste modeste et local
+P0053;A;forte;Allard a une couverture Michelin internationale, Raviolis Queen est un petit restaurant local sans presse
+P0054;B;moyenne;Allard a un guide Michelin en langue étrangère et un site de classement international, Bazurto n'a que de la presse francophone
+P0055;A;moyenne;Bazurto est porté par un chef médiatique et une ambiance festive destination, Sumo cible un public budget/familial
+P0056;A;forte;la Mosquée est une attraction touristique répertoriée comme telle, Sumo est un buffet de quartier sans presse
+P0057;B;forte;la Mosquée est un monument-restaurant très identifié comme attraction, Sushiko est un resto de quartier sans presse
+P0058;A;faible;Veganil apparaît (avec incertitude signalée) dans des sélections vegan pour visiteurs, Sushiko n'a aucune presse ni guide
+P0059;A;moyenne;Rosemonde est recherché via des classements généralistes, Veganil reste plus ancré étudiant/quartier selon les avis
+P0060;A;moyenne;Rosemonde a l'attribut touristes déclaré et une clientèle attirée par des classements, Hoki Sushi est décrit comme budget/familial
+P0061;egalite;faible;Toranj et Hoki Sushi ont tous deux très peu de signal, aucune presse ni guide identifiable pour l'un ou l'autre
+P0062;B;moyenne;un avis de Vita Nuova se dit explicitement écrit pour des touristes hispanophones et l'attribut touristes est déclaré, Toranj paraît plus ancré communautaire
+P0063;A;moyenne;Vita Nuova a l'attribut touristes déclaré et un avis qui s'adresse explicitement aux touristes, Les Saveurs d'Abyssinie n'a qu'un blog visiteur ponctuel
+P0064;B;moyenne;les avis du Saint-Pierre insistent sur les voyages à Paris, Les Saveurs d'Abyssinie a des avis courts sans marqueur touristique fort
+P0065;A;forte;les avis du Saint-Pierre sont très internationaux et orientés voyage, Phô5 est quasiment invisible en ligne
+P0066;B;forte;5 Séverin est explicitement qualifié de piège à touristes dans les avis, Phô5 n'a aucun signal
+P0067;B;forte;5 Séverin a une accusation explicite de piège à touristes, India StreEAT est plutôt défendu comme authentique par un blog pour résidents
+P0068;B;moyenne;Traiteur Asiatique a des clients fidèles de quartier qui reviennent régulièrement, India StreEAT est plus jeune et orienté réseaux sociaux
+P0069;B;forte;Fourmi Ailée a un guide pour visiteurs et un avis de food tour organisé, Traiteur Asiatique est un comptoir de quartier fidèle
+P0070;A;moyenne;Fourmi Ailée a un guide pour visiteurs et un avis de food tour, L'Épidon reste un petit restaurant familial de proximité
+P0071;A;faible;Paris Antalya a un signal de découverte via créateur de contenu et l'attribut touristes déclaré, L'Épidon attire plutôt des habitués fidèles
+P0072;B;faible;Paris Antalya a un minimum de trace de découverte et l'attribut touristes déclaré, Octant n'a aucune preuve de clientèle identifiée
+P0073;A;forte;Bistro des Lettres a un guide pour visiteurs et un concept pensé pour les visiteurs, Octant n'a aucun avis collecté ni presse
+P0074;A;forte;Le Procope a des guides officiels de l'office du tourisme, signal plus fort que le blog visiteur unique de Bistro des Lettres
+P0075;B;forte;Le Procope est le signal touristique le plus fort du corpus avec des guides officiels de tourisme, Le Petit Médicis n'a que des avis internationaux
+P0076;A;moyenne;Le Petit Médicis a des avis massivement internationaux et un client le qualifie de touristique, El Cervantes est plus étudiant/local
+P0077;B;forte;Vin Sobre montre des habitués mobilisés en institution de quartier malgré l'attribut touristes déclaré, El Cervantes reste plus neutre
+P0078;egalite;moyenne;Vin Sobre et Le Vauquelin sont tous deux décrits par leurs clients comme des institutions de quartier tenues par des familles, signaux très proches
+P0079;A;forte;Sorza attire des clients fidèles mais qui ne reviennent qu'en séjour à Paris, Le Vauquelin est un bistrot de quartier très ancré localement

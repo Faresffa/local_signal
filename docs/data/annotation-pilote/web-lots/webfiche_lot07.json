@@ -1,0 +1,274 @@
+{
+  "osm_n2730945396": {
+    "nom": "Le Petit Prince de Paris",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié avec certitude dans les résultats de recherche",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "établissement situé sur le site d'anciens thermes gallo-romains, ancienne taverne datant de 1450 selon cityzeum.com (https://www.cityzeum.com/le-petit-prince-de-paris-1)",
+      "devenu restaurant emblématique en 1976 selon cityzeum.com (https://www.cityzeum.com/le-petit-prince-de-paris-1)"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n10083679400": {
+    "nom": "Atsushi Tanaka",
+    "presse_francophone": ["blog \"Through the foooding glass\" (Karin Shibata) : présente le chef comme \"another Japanese brilliant chef in Paris\" (https://shibatakarin.com/paris-restaurants/french-by-japanese-chefs/restaurant-a-t-atsushi-tanaka/)"],
+    "guides_visiteurs": ["The World's 50 Best Discovery (guide international anglophone) référence le restaurant A.T. (https://www.theworlds50best.com/discovery/Establishments/France/Paris/Restaurant-A-T.html)", "Vice (anglophone) : \"The Quiet Genius of the Most Underrated Japanese Chef in Paris\" (https://www.vice.com/en/article/the-quiet-genius-of-the-most-underrated-japanese-chef-in-paris/)"],
+    "site_officiel": "site personnel atsushitanaka.com trouvé mais contenu non consulté en détail (https://www.atsushitanaka.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "le restaurant est désigné \"A.T.\" ou \"Restaurant A.T\", situé près du Pont de la Tournelle sur l'Île Saint-Louis selon Vice (https://www.vice.com/en/article/the-quiet-genius-of-the-most-underrated-japanese-chef-in-paris/)",
+      "chef formé chez Pierre Gagnaire, qui le surnomme \"le Picasso de la cuisine\" selon Vice",
+      "parcours antérieur chez Quique Dacosta (Denia) et dans des cuisines scandinaves, néerlandaises et belges selon foodandwinegazette.com (https://www.foodandwinegazette.com/3783)"
+    ],
+    "incertitudes": "l'adresse du CSV (4bis rue du Cardinal Lemoine) diffère de la localisation \"près du Pont de la Tournelle, Île Saint-Louis\" trouvée dans les sources — à vérifier, possible confusion d'adresse ou déménagement"
+  },
+  "osm_n3351637400": {
+    "nom": "Allard",
+    "presse_francophone": ["Slate.fr : \"Allard, l'un des bistrots parisiens les plus gourmands, depuis 1932\" (https://www.slate.fr/story/238912/restaurant-cuisine-allard-adresse-gourmande-paris-alain-ducasse-laetitia-rouabah-bistronomie)"],
+    "guides_visiteurs": ["Michelin Guide (version thaïlandaise consultée, indique une diffusion internationale du guide) référence le restaurant (https://guide.michelin.com/th/th/ile-de-france/paris/restaurant/allard)", "Top25Restaurants.com (anglophone, classement international) (https://www.top25restaurants.com/france/paris/restaurant/allard-bistro-paris/)"],
+    "site_officiel": "site en français avec version anglaise (/en/), se présente comme bistrot parisien traditionnel repris par Alain Ducasse (https://www.restaurant-allard.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "fondé en 1932 par Marthe et Marcel Allard, à l'emplacement d'un bistrot antérieur \"La Halte de l'Éperon\" tenu par Vincent Candré selon Slate.fr",
+      "repris depuis par le groupe Alain Ducasse selon le site officiel et flavorsandsenses.com"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n4409264400": {
+    "nom": "La Table d'Hami",
+    "presse_francophone": ["Sortiraparis : \"La Table d'Hami: one-way meal to Korea\" (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/114964-la-table-d-hami-one-way-meal-to-korea) — noter que cette page Sortiraparis est en version anglaise", "Gault&Millau (guide francophone) fiche le restaurant avec la cheffe Hami Révois (https://fr.gaultmillau.com/en/restaurants/la-table-d-hami-restaurant)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "la-table-hami.fr, en français, se présente comme restaurant coréen (https://la-table-hami.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "cheffe Hami, cuisine coréenne apprise auprès de sa mère restauratrice à Séoul, perfectionnée à l'Institut de la Cuisine Coréenne Traditionnelle à l'École Ferrandi selon Sortiraparis",
+      "cuisine présentée comme \"nouvelle cuisine coréenne\", moins pimentée, mettant en avant légumes cuits et viandes marinées"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n703122402": {
+    "nom": "Le Foyer Vietnam",
+    "presse_francophone": ["blog evous.fr, rubrique \"Morceaux choisis\" (https://www.evous.fr/paris/Vivre-a-Paris/Infos-Paris/Blogs-sur-Paris/Morceaux-choisis/Le-Foyer-Vietnamien-Restaurant,1101273.html)", "blog \"A boulotter\" (https://aboulotter.wordpress.com/2014/05/13/foyer-vietnam-80-rue-monge-paris-5e/)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "le lieu abrite un espace associatif avec expositions et événements musicaux, des livres et journaux en français et en vietnamien, et propose des cours de langue et de cuisine vietnamiennes selon restaurantguru et petitfute"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n251671404": {
+    "nom": "Polidor",
+    "presse_francophone": ["ParisZigZag : \"Adoré par Verlaine, Rimbaud et Hemingway, ce restaurant de 1845 est l'un des plus anciens de Paris\" (https://www.pariszigzag.fr/bar-restaurant/restaurant/adore-par-verlaine-rimbaud-et-hemingway-ce-restaurant-de-1845-est-lun-des-plus-anciens-de-paris/)"],
+    "guides_visiteurs": ["Culture Travel (anglophone, orienté voyageurs) : \"Le Polidor Restaurant\" (https://culturetravel.com/le-polidor-restaurant/)"],
+    "site_officiel": "aucun site officiel identifié avec certitude dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "fromagerie fondée en 1845, transformée en bistrot en 1890, nom actuel depuis le début du XXe siècle selon Wikipedia (https://en.wikipedia.org/wiki/Polidor)",
+      "clientèle historique bohème du Quartier Latin : Verlaine, Rimbaud, James Joyce, André Gide, Hemingway selon Wikipedia",
+      "de 1948 à 1975, arrière-salle utilisée pour les réunions du Collège de 'Pataphysique selon Wikipedia",
+      "décor d'origine conservé, ce qui explique une fréquentation touristique \"comme un musée\" selon Wikipedia"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n4742842405": {
+    "nom": "L'Initial",
+    "presse_francophone": ["Gault&Millau (guide francophone) fiche le restaurant, chef Kazuyuki Fujinuma (https://fr.gaultmillau.com/en/restaurants/l-initial)"],
+    "guides_visiteurs": ["Michelin Guide (guide international, restaurant \"recommandé par les inspecteurs\") (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/l-initial)"],
+    "site_officiel": "aucun site officiel identifié avec certitude dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "chef japonais Kazuyuki Fujinuma, cuisine décrite comme réinterprétation de la tradition française selon Michelin",
+      "menu dîner \"initial\" en 6 étapes à 72€, menu déjeuner en 4 étapes à 48€ selon Michelin"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n7335623414": {
+    "nom": "Pacha",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "restaurant/fast-food turc et méditerranéen, certifié halal selon wanderlog.com et restaurantguru"
+    ],
+    "incertitudes": "seules des sources d'annuaires (Yelp, Mappy, petitfute) ont été trouvées, aucune presse ni guide identifié"
+  },
+  "osm_n2534780416": {
+    "nom": "Le Souvlaki Athénien",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "un avis Tripadvisor cité le décrit comme \"pas un grec 'touriste' qui rabat le client\", à prendre comme un avis client isolé et non une source de presse"
+    ],
+    "incertitudes": "l'adresse retrouvée dans les sources est 25 rue de la Huchette alors que le CSV indique seulement \"Rue de la Huchette\" sans numéro ; plusieurs établissements de la même rue partagent des identifiants OSM très proches (n2534780XXX), à confirmer qu'il ne s'agit pas d'une confusion de nœud OSM"
+  },
+  "osm_n5221190416": {
+    "nom": "L'Avant Comptoir de la Mer",
+    "presse_francophone": ["Le Fooding : fiche restaurant (https://lefooding.com/en/restaurants/restaurant-l-avant-comptoir-de-la-mer-paris-1) — page consultée en version anglaise du site Le Fooding", "Paris Bouge : \"L'Avant Comptoir de la mer : l'iode selon Yves Camdeborde\" (https://www.parisbouge.com/mag/articles/lavant-comptoir-de-la-mer-liode-selon-yves-camdeborde-2649)", "Time Out Paris FR (https://www.timeout.fr/paris/restaurants/lavant-comptoir-de-la-mer)"],
+    "guides_visiteurs": ["Time Out (version anglophone timeout.com) référence aussi l'établissement (https://www.timeout.com/paris/en/restaurants/lavant-comptoir-de-la-mer)"],
+    "site_officiel": "site du groupe Camdeborde, camdeborde.com, présente l'établissement (https://camdeborde.com/en/restaurants/avant-comptoir-de-la-mer)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "ouvert en 2016 par le chef Yves Camdeborde, décliné de son établissement \"Avant Comptoir\" existant, orienté produits de la mer selon lhotellerie-restauration.fr",
+      "concept debout au comptoir, dégustation de tapas, cartes de plats affichées en photos avec prix selon Time Out"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n10833345417": {
+    "nom": "Aux Délices du Liban",
+    "presse_francophone": ["Sortiraparis (https://www.sortiraparis.com/en/lieux/1834-aux-delices-du-liban) — page consultée en version anglaise"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "auxdelicesduliban.com trouvé (page réservations), langue et présentation non vérifiées en détail (https://auxdelicesduliban.com/reservations/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "établissement fondé en 1967, tenu par une famille libanaise selon foodavenue.fr",
+      "situé à quelques pas de la rue Mouffetard selon foodavenue.fr"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n2534780418": {
+    "nom": "Le Jardin du Roy",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "jardinduroy.fr trouvé, contenu non vérifié en détail (https://jardinduroy.fr/)",
+    "reseaux_sociaux": ["page Facebook \"Le Jardin du Roy | Paris\" (https://www.facebook.com/jardinduroy.restaurant)"],
+    "autres_faits": [
+      "brasserie associée à l'Hôtel du Mont-Blanc selon restogroupes.com (https://restogroupes.com/en/restaurant/ile-de-france/restaurant-le-jardin-du-roy-hotel-du-mont-blanc/)"
+    ],
+    "incertitudes": "seules des sources d'annuaires ont été trouvées, aucune presse ni guide identifié ; établissement situé rue de la Huchette comme plusieurs autres du lot, vigilance sur homonymie/confusion d'adresse"
+  },
+  "osm_n2534780419": {
+    "nom": "Maison de Gyros",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucune mention trouvée au-delà des plateformes d'avis (Tripadvisor, Yelp, Restaurantguru)"],
+    "incertitudes": "le CSV indique 26 rue de la Huchette alors que Yelp indique 17 rue de la Huchette pour un établissement du même nom, et il existe un autre \"La Maison de Gyros\" 21 rue de la Harpe à proximité — homonymie probable, à vérifier avant toute exploitation du score"
+  },
+  "osm_n4035146419": {
+    "nom": "Comme Chai Toi",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "commechaitoi.fr, avec version anglaise (/en) (https://commechaitoi.fr/en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "établissement en terrasse face à Notre-Dame de Paris selon petitfute et eatoutparis",
+      "mention \"voté 2e meilleur restaurant parisien de 2024\" trouvée sur des fiches agrégatrices (ex. commechaitoi.restaurants-us.com), source du classement non identifiée avec certitude — à traiter avec prudence"
+    ],
+    "incertitudes": "l'affirmation \"2e meilleur restaurant parisien de 2024\" n'est pas rattachée à un média identifié dans les résultats de recherche"
+  },
+  "osm_n2534780420": {
+    "nom": "Red Grill",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "redgrill.fr, présente l'établissement comme steakhouse (https://redgrill.fr/)",
+    "reseaux_sociaux": ["présence TikTok \"Red Grill Steakhouse Paris\" (https://www.tiktok.com/discover/red-grill-steakhouse-paris)", "vidéo Facebook de promotion \"RED GRILL - STEAK HOUSE!\" (https://www.facebook.com/61552760108313/videos/red-grill-steak-house-11-rue-de-la-huchette-steakhouse-paris-paris5-75005-ruedel/1344963177358380/)"],
+    "autres_faits": [],
+    "incertitudes": ""
+  },
+  "osm_n5222776420": {
+    "nom": "Khana",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "deux domaines trouvés, khana-restaurant.fr et khana-ilesaintlouis.com, en français, se présentant comme restaurant afghan (https://khana-restaurant.fr/) (https://www.khana-ilesaintlouis.com/)",
+    "reseaux_sociaux": ["page Facebook \"Khana | Paris\" (https://www.facebook.com/khana.saintlouis/)"],
+    "autres_faits": [
+      "restaurant ouvert pour présenter la cuisine afghane et des recettes familiales rapportées d'Afghanistan selon khana-restaurant.fr",
+      "spécialités citées : mantous, qabuli palaw, ashak selon khana-restaurant.fr"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n2534780421": {
+    "nom": "Chez Suzette",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "chez-suzette.fr, se présente comme crêperie bretonne, slogan \"l'authenticité bretonne servie avec amour\" (https://chez-suzette.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "galettes de sarrasin, présentées comme sans gluten selon atly.com et findmeglutenfree.com"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n4820656421": {
+    "nom": "Le Village Monge",
+    "presse_francophone": ["aucune mention trouvée en presse food, uniquement une fiche de salle de concert : Paris Jazz Club (https://www.parisjazzclub.net/en/1108/club/le-village-monge) — page consultée en version anglaise"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "levillage-monge.fr, langue non vérifiée en détail (http://www.levillage-monge.fr/)",
+    "reseaux_sociaux": ["page Facebook \"Le village monge\" (https://www.facebook.com/villagemonge/)"],
+    "autres_faits": [
+      "programmation jazz hebdomadaire le lundi et le jeudi soir selon Paris Jazz Club",
+      "situé entre le Jardin des Plantes et les Arènes de Lutèce selon novacircle.com"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n5325705422": {
+    "nom": "Le Village Ronsard",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "levillageronsard.fr, avec version anglaise (/en) (https://levillageronsard.fr/en)",
+    "reseaux_sociaux": ["page Facebook \"Le Village Ronsard\" (https://www.facebook.com/levillageronsard/)", "compte Instagram @levillageronsard (https://www.instagram.com/levillageronsard/)"],
+    "autres_faits": ["brasserie ouverte en continu de 6h à 2h selon les fiches d'annuaires"],
+    "incertitudes": ""
+  },
+  "osm_n2534780423": {
+    "nom": "Symposium",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "société (SARL Le Symposium) enregistrée en 2000 selon kompass.com (https://fr.kompass.com/c/le-symposium/fr0060942/)"
+    ],
+    "incertitudes": "seules des sources d'annuaires et de réservation (TheFork, Kompass) ont été trouvées"
+  },
+  "osm_n2534780424": {
+    "nom": "Maison Blanche",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [],
+    "incertitudes": "homonyme fréquent à Paris (\"Maison Blanche\" est un nom courant) ; aucune source de presse ou de guide distincte trouvée pour cet établissement précis de la rue de la Huchette"
+  },
+  "osm_n10064516428": {
+    "nom": "Sorza",
+    "presse_francophone": ["The Parisienne (blog quartier, 2009) : \"Sorza, le restaurant italien de la rue St Louis en l'Ile\" (https://www.theparisienne.fr/2009/11/sorza-le-restaurant-italien-de-la-rue-st-louis-en-lile/)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel dédié clairement identifié (une page eatbu.com trouvée, lesorzarestaurantparis4.eatbu.com, statut incertain)",
+    "reseaux_sociaux": ["compte Instagram @restaurantsorza (https://www.instagram.com/restaurantsorza/?hl=en)", "page Facebook \"Sorza Restaurant\" (https://www.facebook.com/p/Sorza-Restaurant-100063442616445/)"],
+    "autres_faits": [
+      "établissement situé dans l'Hôtel de Chenizot, bâtiment classé monument historique, selon ilesaintlouis-paris.com"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n251670428": {
+    "nom": "Bistro des Poèmes",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "bistrodeslettres.com, section dédiée avec version anglaise (/bistro-des-poemes-en) (https://bistrodeslettres.com/bistro-des-poemes)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "concept sœur du \"Bistro des Lettres\", thème littéraire/poétique : murs ornés de recueils de poésie, manuscrits encadrés, plats nommés d'après des poètes (\"Ode à la Bouillabaisse\", etc.) selon bistrodeslettres.com",
+      "situé face au Théâtre de l'Odéon selon bistrodeslettres.com"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n2320476429": {
+    "nom": "Bistroy… les Papilles",
+    "presse_francophone": ["Petit Futé (guide francophone) référence l'établissement (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c4-cuisine-francaise/c1-bistrot-brasserie/22132-les-papilles.html)"],
+    "guides_visiteurs": ["Paris By Mouth (guide anglophone orienté visiteurs) : \"Our Guide to Paris: Les Papilles\" (https://parisbymouth.com/our-guide-to-paris-les-papilles/)", "Paris Je T'aime (site touristique officiel de l'office de tourisme, version anglaise) (https://parisjetaime.com/eng/restaurant/les-papilles-p384)"],
+    "site_officiel": "lespapillesparis.fr, en français (http://www.lespapillesparis.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "concept bistrot/cave à vin/épicerie réuni en un même lieu selon lespapillesparis.fr",
+      "menu \"retour du marché\" composé selon les achats du matin, chef Bertrand Bluy, ardoise changeant chaque jour"
+    ],
+    "incertitudes": ""
+  }
+}

@@ -1,0 +1,79 @@
+paire;choix;confiance;raison
+P0393;A;forte;Le Petit Chatelet est reference par un guide anglophone et ses avis disent explicitement "whenever you visit Paris", la quand Rivieres d'Himalaya vit de livraison et de titres restaurant de quartier
+P0394;A;faible;Oulala est rue Mouffetard avec ouverture 19h-01h quand Rivieres d'Himalaya ferme le midi le lundi et fait de la livraison, signe d'un ancrage residentiel
+P0395;B;forte;Maison Blanche est ouverte 7j/7 de 11h30 a minuit sans coupure et sans aucune trace editoriale, profil pur de captage de passage, la ou Oulala se presente en francais comme adresse halal de quartier
+P0396;A;forte;Maison Blanche vit du flux continu quand April est une petite cantine sichuanaise sans site et avec file d'attente, typique d'une clientele qui sait ou elle va
+P0397;A;forte;Le Vigneron est decouvert "par hasard au cours d'une balade" selon plusieurs avis et ouvre en continu 7j/7, April est une cantine que l'on cherche
+P0398;A;forte;Le Vigneron n'a aucune trace editoriale et fonctionne au menu du jour et a la terrasse, Setopa est un choix editorial assume par Le Fooding, Pudlowski et Gault, donc une clientele qui vient expres
+P0399;A;moyenne;Setopa est un neo-bistrot de chef reserve a l'avance et couvert par le Michelin, Veg'anne vit du menu etudiant a 9 euros pres de Jussieu
+P0400;A;moyenne;La Truffiere joue la carte de la truffe avec un site en version anglaise et une cave voutee, Veg'anne est une cantine vegane etudiante
+P0401;A;forte;La Truffiere est un restaurant d'occasion avec site bilingue, Bo Bun 11 est une cantine vietnamienne a titres restaurant tenue par une patronne que les clients nomment
+P0402;A;forte;Relais Odeon est une grande brasserie ouverte jusqu'a 3h ou 5h avec terrasse et avis d'une ligne venus du monde entier, Bo Bun 11 est une cantine de quartier
+P0403;B;faible;Au Bistrot de la Montagne se vend en anglais comme salle de groupes de 20 a 200 couverts au decor medieval, ce qui est plus explicitement tourne vers le visiteur que la brasserie tout-venant du Relais Odeon
+P0404;A;moyenne;Le Bistrot de la Montagne est liste par l'office de tourisme et construit son modele sur les groupes, Kokodak recrute par TikTok une clientele jeune plutot locale
+P0405;A;faible;Rebalto n'a presque aucune information et son seul avis francais dit l'avoir trouve en se baladant rue Mouffetard, Kokodak a une identite de destination sur les reseaux
+P0406;B;faible;Piment thai est couvert par un blog food francophone qui ecrit pour des Parisiens, Rebalto repose sur l'Instagram et le passage de la rue Mouffetard
+P0407;A;faible;Chez Rene est une institution rive gauche couverte en critique francophone mais avec une salle qui tourne aussi au passage du boulevard, Piment thai est une adresse de specialite que l'on vient chercher
+P0408;B;faible;La Nouvelle Seine est une peniche dinez-spectacle face a Notre-Dame referencee par un guide anglophone, Chez Rene ferme dimanche et lundi comme un bistrot pour habitues
+P0409;B;forte;Le Petit Cluny ouvre 9h-2h 7j/7 rue de la Harpe, un avis dit lui-meme que le lieu est tres touristique et le service traite differemment les etrangers, la Nouvelle Seine programme de l'humour en francais
+P0410;B;forte;Le Petit Cluny est un cafe de flux sans site ni presse, La Sirena est tenue par deux freres depuis quarante ans et un avis note une ambiance d'habitues
+P0411;A;forte;Olympie a un "promoter" qui accroche les passants a l'exterieur selon un avis, c'est du rabattage pur, La Sirena vit d'une clientele reguliere
+P0412;A;forte;Olympie rabat dans la rue et ouvre 7j/7 sans trace editoriale, Terronia est un mi-bistrot mi-trattoria couvert par Gault et Millau, ferme deux jours et a carte renouvelee chaque mois
+P0413;B;moyenne;La Scarpetta ouvre 7j/7 avec terrasse et site bilingue sans aucune couverture editoriale, Terronia est un choix de rediger francophone et ses avis decrivent une relation au patron
+P0414;A;moyenne;La Scarpetta est une pizzeria de rue passante ouverte tous les jours, Inagiku est un teppanyaki en activite depuis 1994 dont les avis francais parlent de retours dix ans apres
+P0415;A;moyenne;Atsushi Tanaka est couvert par Vice et le World's 50 Best, guides internationaux qui amenent des gastronomes de passage, Inagiku ne vit que d'une clientele familiale francophone
+P0416;B;moyenne;Atsushi Tanaka attire par sa reputation internationale, Indonesia est une cooperative fondee en 1982 pour employer des refugies, modele de maison ancree
+P0417;A;faible;Indonesia declare une clientele groupes et touristes avec site bilingue, Le Village Monge a une programmation jazz hebdomadaire et des avis qui nomment la meme serveuse, marque d'habitues
+P0418;A;faible;Le Village Monge ouvre des 7h30 avec grande terrasse sur une rue passante, Poke Gourmand ferme a 20h et le dimanche, rythme de clientele de bureau et d'etudiants
+P0419;A;moyenne;Ha Noi 1988 a un site officiel en anglais qui met en avant l'accueil d'une clientele internationale, Poke Gourmand est une adresse a emporter sans site
+P0420;B;faible;Ha Noi 1988 est un groupe de cinq adresses avec site anglophone pres de l'ile Saint-Louis, Brasserie Celina vit du quartier Claude Bernard avec des clients assez chez eux pour denoncer une fausse pinte
+P0421;A;moyenne;Le Coupe-Chou se presente en bilingue comme maison du XVIIe du Quartier latin et est note par Time Out anglophone, Brasserie Celina est un bar de quartier ouvert jusqu'a 2h
+P0422;A;forte;Le Coupe-Chou vend un decor historique a des visiteurs, Saveurs d'Asie est un traiteur a emporter a 7,50 euros le menu dont les clients sont des voisins
+P0423;B;forte;Red Grill est un steakhouse rue de la Huchette ouvert jusqu'a 2h et promu par videos, Saveurs d'Asie est une cantine a emporter de quartier
+P0424;A;faible;Santorini pousse le rabattage jusqu'a faire recommander la maison dans la rue par un employe selon un avis, Red Grill capte le passage mais sans cette accroche active
+P0425;A;faible;Santorini est un piege sans identite, nom grec et cuisine francaise, ouvert 7j/7 en continu, Polidor conserve une couverture editoriale francophone malgre sa frequentation de musee
+P0426;A;forte;Polidor est decrit comme visite "comme un musee" pour son decor d'origine et sa clientele litteraire, Godjo est un ethiopien de 1995 ou des clients reviennent quinze ans apres
+P0427;B;forte;LM Restaurant vend sa grande terrasse face au Luxembourg 7j/7 en service continu sans aucune trace editoriale, Godjo est une adresse de specialite que l'on vient chercher
+P0428;A;moyenne;LM Restaurant est une terrasse de flux sans presse, Atelier d'Andre est couvert par cinq medias food francophones qui ecrivent pour des Parisiens
+P0429;A;moyenne;La Tour d'Argent est une destination mondiale portee par les offices de tourisme et les blogs pour expatries, Atelier d'Andre est une ouverture 2025 portee par la presse francophone
+P0430;B;moyenne;Flagrant Delice n'a ni site ni presse et vend des menus a prix fixe 7j/7 en continu, modele de captage integral, la Tour d'Argent se remplit par reservation et reputation
+P0431;A;moyenne;Flagrant Delice est un menu fixe de rue passante sans identite propre, Le Choupinet a le label Maitre Restaurateur et une carte defendue sur son site francais
+P0432;A;faible;Le Petit Chatelet cumule clientele touristes declaree et guide anglophone, Le Choupinet garde une carte et un label qui s'adressent d'abord a une clientele francaise
+P0433;B;faible;Flagrant Delice n'existe nulle part editorialement et ne tient que par sa rue et ses prix fixes, Polidor garde une legitimite francaise malgre sa notoriete
+P0434;B;forte;Polidor est une visite patrimoniale pour visiteurs, Atelier d'Andre est une adresse recente defendue par la presse food parisienne avec jazz manouche
+P0435;A;moyenne;Le Choupinet est mis en avant par un site anglophone pour voyageurs et tient une grande terrasse face au Luxembourg, Atelier d'Andre a un public parisien identifie
+P0436;B;moyenne;Le Choupinet vit d'une terrasse de boulevard tres passante ouverte tous les jours, La Truffiere se remplit sur reservation et ferme deux jours par semaine
+P0437;A;faible;La Truffiere a un site en version anglaise et une fiche Michelin qui parlent au visiteur, La Nouvelle Seine programme un spectacle en francais qui suppose un public local
+P0438;A;faible;Rebalto est une pinseria de la rue Mouffetard dont on pousse la porte en se baladant, La Nouvelle Seine vend des soirees humour francophones
+P0439;A;faible;Rebalto n'a presque aucune existence editoriale et depend de sa vitrine, Setopa est un projet de cheffe adoube par la presse food parisienne
+P0440;B;moyenne;Setopa attire par sa reputation et son referencement Michelin, Saveurs d'Asie sert des menus a 7,50 euros a des clients du quartier
+P0441;A;forte;La Sirena a terrasse et service du petit dejeuner au diner sur le boulevard, Saveurs d'Asie est un traiteur a emporter dont les habitues apportent les plats a leur famille
+P0442;A;moyenne;La Sirena est nettement plus frequentee le week-end et vit de la terrasse, Inagiku est un teppanyaki de 1994 a clientele familiale fidele
+P0443;B;faible;Godjo declare une clientele touristes et une amplitude 7j/7, Inagiku ne parle qu'en francais et compte des retours a dix ans d'intervalle
+P0444;A;faible;Indonesia declare groupes et touristes avec site bilingue, Godjo a des avis d'anciens Parisiens revenus, signe d'attachement durable
+P0445;A;faible;Indonesia a un site bilingue et une clientele groupes declaree, Bo Bun 11 est une cantine a titres restaurant pour etudiants et voisins
+P0446;A;forte;Red Grill est un steakhouse de rue tres passante ouvert jusqu'a 2h et promu en video, Bo Bun 11 vit du quartier
+P0447;B;forte;Red Grill capte le flux nocturne, Piment thai est defendu par un blog food francophone et vit de sa specialite
+P0448;A;moyenne;Le Vigneron est trouve par hasard en balade selon plusieurs avis et ouvre en continu, Piment thai a une couverture editoriale francophone
+P0449;A;faible;Le Vigneron ouvre 7j/7 dont six jours en continu et n'a ni site officiel ni presse, La Scarpetta ferme le dimanche et a au moins un site propre bilingue
+P0450;A;faible;Relais Odeon ouvre a 7h et jusqu'a 5h le samedi avec terrasse et brunch, machine a capter le flux, La Scarpetta reste une pizzeria de rue avec un service plus borne
+P0451;A;faible;Relais Odeon remplit litteralement sa salle par le passage du boulevard et ses avis sont des impressions d'une ligne, la Tour d'Argent se remplit par reservation anticipee
+P0452;A;faible;LM Restaurant ouvre 7j/7 en continu et vend sa terrasse face au Luxembourg sans aucune trace editoriale, la Tour d'Argent est une destination preparee
+P0453;B;moyenne;Le Petit Cluny ouvre 9h-2h tous les jours sans site ni presse et un avis dit le lieu tres touristique, LM Restaurant garde une carte et un menu du jour apprecies localement
+P0454;B;faible;Le Petit Cluny a l'amplitude la plus large et un traitement des clients denonce comme differencie, Olympie rabat activement mais garde un fond de clients reconnus de longue date
+P0455;B;faible;Santorini a un rabatteur et un decalage total entre son nom et sa cuisine, Olympie a au moins une constance de cuisine grecque et un patron implante depuis 28 ans
+P0456;B;forte;Santorini ouvre 7j/7 en continu sans identite culinaire stable, Terronia est une trattoria tenue par Lino avec carte saisonniere et couverture Gault et Millau
+P0457;A;moyenne;Brasserie Celina ouvre 9h-2h tous les jours avec grande terrasse et pas de site propre, Terronia ferme deux jours et se remplit sur reservation
+P0458;B;moyenne;Brasserie Celina est un bar de flux a tres large amplitude, Oulala est une petite table franco-italienne halal a clientele familiale qui nomme le gerant
+P0459;B;moyenne;Ha Noi 1988 a un site officiel anglophone qui revendique l'accueil international et appartient a un groupe de cinq adresses, Oulala reste une adresse de quartier
+P0460;A;faible;Poke Gourmand est oriente vente a emporter vers le jardin du Luxembourg, donc vers le promeneur, Veg'anne vit du menu etudiant de Jussieu
+P0461;B;forte;Le Coupe-Chou vend une maison du XVIIe en bilingue et figure dans Time Out anglophone, Veg'anne est une cantine vegane etudiante
+P0462;A;moyenne;Le Coupe-Chou met en avant son decor historique aupres des visiteurs, Chez Rene ferme dimanche et lundi et est traite en critique par la presse francophone
+P0463;A;moyenne;Chez Rene est une institution qui attire aussi par sa reputation et son emplacement de boulevard, April est une petite cantine sichuanaise sans site que l'on vient chercher
+P0464;A;faible;Rivieres d'Himalaya declare une clientele touristes et une amplitude 7j/7, April est un lieu exigu avec attente ou l'on revient
+P0465;A;forte;Le Bistrot de la Montagne est liste par l'office de tourisme et vit des groupes de 20 a 200 couverts, Rivieres d'Himalaya est un indien-nepalais de quartier avec livraison
+P0466;B;faible;Atsushi Tanaka attire une clientele internationale de gastronomes via Vice et le 50 Best, Kokodak recrute sur TikTok une clientele jeune plutot francophone
+P0467;B;moyenne;Le Petit Chatelet declare une clientele touristes et figure dans un guide anglophone, Atsushi Tanaka impose une reservation et un menu qui supposent une demarche
+P0468;A;moyenne;Maison Blanche n'a ni site ni presse et ouvre 7j/7 de 11h30 a minuit, captage integral, Le Petit Chatelet garde un site francais et une histoire familiale depuis 1951
+P0469;A;forte;Maison Blanche vit du flux continu sans aucune identite propre, Le Village Monge a une programmation jazz hebdomadaire et des avis d'habitues qui nomment le personnel
+P0470;B;forte;Flagrant Delice ouvre 7j/7 en continu avec menus a prix fixe et aucune existence editoriale, Le Village Monge est une brasserie de quartier a clientele fidele

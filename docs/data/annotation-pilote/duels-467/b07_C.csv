@@ -1,0 +1,79 @@
+paire;choix;confiance;raison
+P0471;A;moyenne;Pee Bee ouvre 09h-02h le dimanche et jusqu'a minuit le reste de la semaine avec livraison et clientele touristes declaree, amplitude de flux que la maison de raviolis n'a pas
+P0472;A;forte;Butumak ne sert que le midi du lundi au vendredi et prend les titres restaurant, modele de cantine de bureau pur, alors que les raviolis ouvrent 7j/7 dont le dimanche
+P0473;B;moyenne;Butumak ferme le week-end, Kitchen Ter(re) ferme dimanche et lundi mais vit de reservations sur une table signee d'un chef etoile qui draine des visiteurs
+P0474;A;moyenne;Chez Zareta ouvre 12h d'affilee six jours sur sept et accueille groupes et touristes, Kitchen Ter(re) travaille sur deux services courts et reservation obligatoire
+P0475;B;faible;Chez Zareta sert en continu de 10h30 a 22h30 quand Respiro coupe entre les services et ferme le lundi
+P0476;A;faible;Respiro ferme le lundi mais pousse jusqu'a 23h30 le week-end sur reservation de plateforme, le Buisson ardent fait 54% de son affluence en semaine et prend les titres restaurant
+P0477;B;forte;Le Jardin du Roy tourne 11h30-02h sept jours sur sept en service continu et depend d'un hotel, c'est du remplissage de passage a l'etat pur
+P0478;B;faible;Les deux sont des machines a flux 7j/7, La Bucherie pousse plus loin avec 15h par jour et une carte qui melange burgers et English breakfast pour attraper tout le monde
+P0479;A;forte;La Bucherie sert en continu 09h-00h toute la semaine avec happy hour, le Petit Bal perdu coupe entre services et ferme son service du soir hors saison le dimanche
+P0480;B;moyenne;Le Petit Bal perdu est porte par la presse food francophone et une terrasse de quartier, La Truffiere est une maison a reservation referencee dans les guides internationaux
+P0481;B;forte;Union Square aligne service continu 7j/7 et formule a 19,90 EUR, La Truffiere ferme dimanche et lundi ce qu'aucun etablissement de passage ne peut se permettre
+P0482;B;forte;Union Square remplit en continu avec une formule a prix fixe, Atsushi Tanaka ne fait que deux creneaux d'une heure sur reservation obligatoire cinq jours sur sept
+P0483;A;faible;Atsushi Tanaka vit d'une notoriete relayee par des medias etrangers pour gastronomes voyageurs, Racina ferme le dimanche et un avis decrit une salle d'habitues
+P0484;A;faible;Racina ouvre jusqu'a 23h30 six jours sur sept sans site propre, BigBang travaille sur deux services courts avec des clients qui reviennent une troisieme fois entre amis
+P0485;B;forte;L'Annexe ouvre 07h-23h sept jours sur sept et se rattache a une maison dont le site est en anglais par defaut, BigBang reste sur deux services et une clientele de bande de copains
+P0486;A;forte;L'Annexe tient 16h d'amplitude continue tous les jours, Roger de Beyrouth est une affaire familiale a services coupes qui prend cheques et titres restaurant
+P0487;A;faible;Roger de Beyrouth passe en service continu le samedi et le dimanche jusqu'a 23h, Bo Bun 11 ferme ses soirs du dimanche et du lundi et vit du midi et de l'emporte
+P0488;A;forte;Le Soufflot ouvre 06h30-01h sept jours sur sept, 18h d'amplitude que seul un flux de passage justifie, Bo Bun 11 est une cantine de midi
+P0489;B;forte;Messieurs Kim ferme le dimanche, coupe entre services et affiche un ticket moyen de 12 EUR, Le Soufflot tourne 18h par jour toute la semaine
+P0490;B;forte;LM Restaurant sert en continu 11h-23h sept jours sur sept avec grande terrasse et glaces a emporter, Messieurs Kim ferme le dimanche avec deux services courts
+P0491;B;moyenne;LM Restaurant ne ferme jamais et sert sans interruption, Otiamo coupe entre midi et soir et prend les titres restaurant
+P0492;A;faible;Otiamo ouvre midi et soir tous les jours avec livraison et terrasse, Celina est d'abord un bar de comptoir a happy hour sur une rue sans passage de promeneurs
+P0493;B;faible;Papilla a un site bilingue, une seconde adresse et des clients qui y reviennent cinq fois pendant un sejour, Celina vit de sa terrasse et de ses pintes
+P0494;A;moyenne;Olympie place un promoteur devant la porte pour accrocher les passants et improvise des plats hors carte, c'est la signature d'une salle remplie au racolage
+P0495;B;forte;Olympie racole a la porte et ouvre en continu le week-end, Au vieux cedre est un comptoir a emporter avec une clientele fidele
+P0496;B;faible;Saigon d'Antan fait tourner ses tables vite pour enchainer les services et ouvre six soirs sur sept, Au vieux cedre reste un comptoir de quartier
+P0497;A;forte;Anatolie Durum sert sans coupure jusqu'a minuit six jours sur sept avec un pic net le week-end, Saigon d'Antan fait 61% de son affluence en semaine
+P0498;B;moyenne;Anatolie Durum ouvre en continu jusqu'a minuit et se remplit le week-end, Li Thang ferme le dimanche avec deux services courts et sans site
+P0499;B;faible;Li Thang ouvre midi et soir six jours sur sept, Ribouldingue est une table d'abats a menu unique que la presse francophone suit et que le passage evite
+P0500;B;forte;Le Saint-Andre ouvre 07h-01h sept jours sur sept en service continu, Ribouldingue vit d'une cuisine de triperie et d'un petit service
+P0501;A;forte;Le Saint-Andre tient 18h d'amplitude tous les jours avec petit dejeuner et happy hour, Sushiyaki ferme le dimanche et coupe entre services
+P0502;A;faible;Sushiyaki passe en continu le samedi jusqu'a 23h et joue sur des menus rapides, L'Escarpolette ferme deux jours et vit d'un brunch de week-end relaye par la presse food francophone
+P0503;B;forte;L'Atelier Maitre Albert ouvre sept jours sur sept et figure dans les selections des offices de tourisme, L'Escarpolette ferme lundi et mardi
+P0504;B;forte;L'Atelier Maitre Albert est l'annexe d'un chef tres etoile referencee par les guides de visiteurs, Kootchi ferme le dimanche avec un menu midi a 12,50 EUR
+P0505;B;faible;La Scarpetta a un site bilingue et une salle remplie de familles de passage, Kootchi tient depuis 1996 avec un menu de midi bon marche et la presse food francophone
+P0506;B;moyenne;Le Petit Pantheon ouvre sept jours sur sept avec une formule trois plats a 17 EUR, machine a remplir deux services courts, La Scarpetta ferme le dimanche
+P0507;A;forte;Le Petit Pantheon ouvre tous les jours soir compris, La vie en fruits est un comptoir de dejeuner ouvert du lundi au vendredi avec titres restaurant
+P0508;A;faible;Les deux ferment le week-end, mais La Table de Colette est une table gastronomique presentee en anglais aux visiteurs alors que La vie en fruits nourrit les bureaux du midi
+P0509;A;forte;Le Petit Chatelet ouvre sept jours sur sept, vend l'histoire du batiment et se fait reprocher des plats prepares a l'avance, La Table de Colette ne travaille que du lundi au vendredi
+P0510;A;faible;Le Petit Chatelet ouvre tous les jours midi et soir tard et mise sur le decor historique, Pee Bee garde une part d'habitues de quartier et de livraison
+P0511;A;forte;Le Jardin du Roy tourne 14h30 en continu tous les jours et depend d'un hotel, Celina est un bar a happy hour de clientele locale
+P0512;B;moyenne;Otiamo a site propre, livraison et terrasse ouverte tous les jours, Racina ferme le dimanche et n'a qu'une page Facebook
+P0513;B;faible;Racina ouvre jusqu'a 23h30 en salle et en terrasse, Au vieux cedre est un comptoir a emporter avec des fideles
+P0514;A;faible;Kitchen Ter(re) est une table de chef referencee par un guide international qui fait venir les gens expres, Au vieux cedre vend des wraps a emporter
+P0515;A;faible;Kitchen Ter(re) attire par sa signature de chef et sa reservation obligatoire, L'Escarpolette ferme deux jours et vit du brunch
+P0516;A;moyenne;Respiro sert midi et soir six jours sur sept jusqu'a 23h30 via les plateformes de reservation, L'Escarpolette ferme lundi et mardi
+P0517;A;moyenne;LM Restaurant sert en continu 11h-23h sept jours sur sept avec une grande terrasse, Respiro ferme le lundi et coupe entre services
+P0518;A;moyenne;LM Restaurant n'a aucun jour de fermeture et sert sans coupure, La Truffiere ferme dimanche et lundi
+P0519;B;moyenne;Anatolie Durum ouvre jusqu'a minuit six jours sur sept avec un pic week-end marque, La Truffiere ferme deux jours et travaille sur reservation
+P0520;A;moyenne;Anatolie Durum sert sans coupure jusqu'a minuit et se remplit le week-end, Le Buisson ardent fait 54% de son affluence en semaine sur deux services courts
+P0521;A;moyenne;Le Buisson ardent ouvre sept jours sur sept avec happy hour et brunch, Sushiyaki ferme le dimanche
+P0522;A;faible;Kootchi est repris par un guide generaliste pour visiteurs, Sushiyaki est une affaire de couple a menus bon marche fermee le dimanche
+P0523;A;forte;Pee Bee ouvre jusqu'a 02h le dimanche avec restauration tardive et clientele touristes declaree, Kootchi ferme le dimanche avec un menu midi a 12,50 EUR
+P0524;B;forte;Pee Bee affiche 15h d'amplitude certains jours et une clientele de passage, Messieurs Kim ferme le dimanche avec deux services courts
+P0525;B;forte;Le Saint-Andre ouvre 07h-01h sept jours sur sept en continu, Messieurs Kim ne fait que deux services et ferme le dimanche
+P0526;B;forte;Le Saint-Andre tient 18h par jour toute la semaine, La vie en fruits ferme le week-end et ne sert que le dejeuner
+P0527;A;forte;Le Soufflot ouvre 06h30-01h sept jours sur sept, La vie en fruits est un comptoir de midi du lundi au vendredi
+P0528;B;faible;Les deux ont une amplitude enorme, L'Annexe se rattache a une maison dont le site est en anglais par defaut alors que Le Soufflot garde une clientele matinale d'habitues du quartier
+P0529;A;faible;Le Petit Chatelet vend le decor historique et se fait reprocher des plats prepares a l'avance, L'Annexe garde un service de petit dejeuner qui fixe des habitues
+P0530;A;forte;Le Petit Chatelet ouvre sept jours sur sept jusqu'a 22h45 en misant sur l'histoire du lieu, La Scarpetta ferme le dimanche
+P0531;B;moyenne;La Scarpetta ouvre six jours sur sept avec terrasse et site bilingue, Ribouldingue vit d'une cuisine d'abats qui n'attire que des connaisseurs
+P0532;B;moyenne;Le Petit Bal perdu ouvre sept jours sur sept avec terrasse et attente frequente, Ribouldingue reste une table d'abats confidentielle
+P0533;B;moyenne;Chez Zareta sert 12h d'affilee six jours sur sept et declare groupes et touristes, Le Petit Bal perdu est soutenu par la presse food francophone et coupe entre services
+P0534;B;moyenne;Union Square sert en continu 7j/7 avec formule a prix fixe et burgers, Chez Zareta reste une table familiale a specialites
+P0535;B;forte;Union Square ouvre en continu tous les jours jusqu'a minuit, Butumak ne sert que le midi du lundi au vendredi
+P0536;B;forte;La Bucherie sert 15h par jour sans interruption toute la semaine, Butumak ferme le week-end et le soir
+P0537;A;forte;La Bucherie ouvre 09h-00h sept jours sur sept avec une carte attrape-tout, Saigon d'Antan fait 61% de son affluence en semaine
+P0538;B;moyenne;Atsushi Tanaka est une destination gastronomique relayee par des medias etrangers, Saigon d'Antan ferme le lundi et se remplit surtout en semaine
+P0539;A;faible;Atsushi Tanaka ouvre le samedi et figure dans des selections internationales, La Table de Colette ferme tout le week-end ce qui exclut le visiteur
+P0540;A;forte;L'Atelier Maitre Albert ouvre sept jours sur sept et figure dans les selections des offices de tourisme, La Table de Colette ne travaille que du lundi au vendredi
+P0541;A;faible;L'Atelier Maitre Albert est reference par des guides de visiteurs et ouvre tous les jours, Papilla garde une clientele de quartier et une seconde adresse en banlieue
+P0542;A;forte;Olympie racole les passants a la porte et ouvre en continu le week-end, BigBang travaille sur deux services avec des tables de copains qui reviennent
+P0543;A;moyenne;Les raviolis ouvrent sept jours sur sept dont le dimanche avec service continu quatre jours, BigBang coupe entre midi et soir
+P0544;A;moyenne;Les raviolis ouvrent sept jours sur sept avec livraison sur trois plateformes et un etablissement tout juste cree, Roger de Beyrouth tient depuis des decennies avec des habitues
+P0545;A;faible;Roger de Beyrouth passe en continu le week-end jusqu'a 23h, Li Thang ferme le dimanche avec deux services courts
+P0546;A;forte;Le Petit Pantheon ouvre tous les jours avec une formule trois plats a 17 EUR et un guide anglophone, Li Thang ferme le dimanche sans site ni relais
+P0547;B;forte;Le Petit Pantheon ouvre sept jours sur sept avec formule a prix casse, Bo Bun 11 ferme ses soirs du dimanche et du lundi et vit du midi
+P0548;A;forte;Le Jardin du Roy tourne 11h30-02h sept jours sur sept en continu et depend d'un hotel, Bo Bun 11 est une cantine de midi tenue par une patronne avec des fideles

@@ -1,0 +1,79 @@
+paire;choix;confiance;raison
+P0156;B;moyenne;Safran est fiché par l'office du tourisme et vend des repas via une carte de réduction pour visiteurs, alors que Petit Gaston garde une part de clientèle étudiante et un service de bar en soirée
+P0157;B;moyenne;La Rose de Damas vit d'habitués de la communauté syrienne qui reviennent ("toujours un accueil chaleureux"), Safran est référencé comme adresse pour visiteurs sans aucun habitué visible
+P0158;A;moyenne;Sushi Fresh a des tarifs étudiants et des clients qui y viennent depuis dix ans, La Rose de Damas dépend davantage d'une clientèle de découverte même si elle a ses fidèles
+P0159;A;forte;Breizh Café est mis en avant par trois guides anglophones pour visiteurs et son site multilingue, quand Sushi Fresh fonctionne sur une formule étudiante et des habitués de longue date
+P0160;A;moyenne;Breizh Café est une enseigne à plusieurs adresses sélectionnée par le Michelin et des guides de voyage, la Crêperie des Pêcheurs remplit surtout avec des promotions de réservation
+P0161;B;moyenne;Tripletta est couverte par la presse food parisienne et ses avis parlent d'une adresse de quartier, la Crêperie des Pêcheurs s'appuie sur des remises de plateforme pour remplir
+P0162;B;moyenne;Tripletta a des clients qui en font leur pizzeria de référence, La Méditerranée est une table de destination avec voiturier et fiche Michelin
+P0163;B;faible;Le dossier Sanuki décrit une brasserie de rue animée qui refuse des clients et vend des plateaux de fruits de mer à des visiteurs de passage, La Méditerranée compte au moins des habitués revendiqués
+P0164;B;faible;Les deux vivent du passage, mais la griserie garde des retours d'habitués français quand le dossier Sanuki n'en montre aucun
+P0165;B;forte;Le Solstice est un étoilé de dix-huit couverts sur réservation obligatoire, fermé deux jours, où l'on ne pousse pas la porte par hasard, contrairement à la griserie dont les clients entrent "par hasard"
+P0166;B;forte;Signorvino est une chaîne italienne à site multilingue ouverte en continu jusqu'à minuit sept jours sur sept, Le Solstice ne sert que sur réservation
+P0167;B;forte;Signorvino appartient à un groupe international et sert en continu, Bonvivant se présente comme bistrot de quartier et est chroniqué par la presse food parisienne
+P0168;A;moyenne;L'Époque n'a aucune couverture destinée aux Parisiens et ses retours viennent de gens en séjour de quelques jours, Bonvivant a une clientèle suivie par des critiques locaux
+P0169;B;moyenne;Matsuya a des clients qui en font leur japonais préféré du 5e et accueille des étudiants, L'Époque n'a que des avis de personnes de passage
+P0170;B;moyenne;Pasta & Fagioli est décrite comme une trattoria d'étudiants et de journalistes du Monde avec des voisins réguliers, Matsuya joue davantage sur la terrasse et le passage
+P0171;A;faible;Les deux sont des adresses de quartier, mais Le Volcan a des habitués explicites qui y reviennent pour boire un verre et un patron connu, ce que Pasta & Fagioli a perdu selon un avis de voisin déçu
+P0172;B;moyenne;Le Volcan vit de l'happy hour et d'une clientèle fidèle du 5e, Au Père Louis accumule les retours de gens venus plusieurs fois pendant un séjour
+P0173;B;forte;L'Auberge Saint-Séverin enchaîne les menus à 12 et 14 euros, ouvre jusqu'à 2h sans site propre et accumule les plaintes de clients piégés, Au Père Louis garde une reconnaissance de la presse locale
+P0174;B;faible;Les deux vivent du passage, mais Le Latin ajoute le rabattage actif en rue signalé par plusieurs clients, ce qui est la forme la plus pure de dépendance au passage
+P0175;B;forte;Le Foyer Vietnam est une cantine associative payable en espèces, fermée le dimanche, avec des clients de quinze ans d'ancienneté, Le Latin alpague les passants avec des menus d'appel
+P0176;B;forte;Casimodo sert des pizzas surgelées avec vue et une salle mécontente qui ne revient pas, Le Foyer Vietnam fonctionne sur une fidélité associative
+P0177;A;forte;Casimodo ne peut vivre que de clients qui ne reviendront pas, Guang Ming a des clients qui y mangent depuis l'enfance et espèrent qu'il ne sera pas découvert
+P0178;A;faible;Les deux sont des adresses de fidèles, mais Les Arènes est déclarée accueillir des touristes et ouvre en continu jusqu'à 2h, Guang Ming ne déclare que des groupes et ferme entre les services
+P0179;A;faible;Les Arènes ferme le dimanche et dès 20h30 le samedi, marqueur d'une clientèle de semaine, Le Bluff bascule en bar à tapas festif le soir et capte davantage de passage
+P0180;B;faible;Baieta est une table étoilée que l'on vient chercher, citée par des guides anglophones de voyage, Le Bluff n'a qu'un site en français et vit de découvertes de proximité
+P0181;B;faible;Baieta attire une clientèle venue pour la cheffe, NA est un salon de thé fermé à 18h30 et le dimanche, donc calé sur les rythmes de semaine du quartier
+P0182;A;faible;Momo a des clients qui y déjeunent tous les midis et veulent garder l'adresse pour eux, NA n'a aucun avis et un format bubble tea diurne plus exposé au passage
+P0183;A;moyenne;Ravello ne déclare que des touristes comme clientèle et ses clients louent le fait que le personnel parle anglais, Momo vit de déjeuners d'habitués
+P0184;B;faible;Chez Nicos a des clients qui le fréquentent depuis des années, Ravello se présente explicitement comme accueillant pour visiteurs
+P0185;B;moyenne;Le Delmas est une brasserie de place à grande terrasse ouverte de 9h à 1h30, Chez Nicos garde un noyau d'étudiants et de fidèles au comptoir
+P0186;B;faible;Les deux captent le passage, mais La Petite Bouclerie n'a quasiment que des retours de gens en visite, Le Delmas est décrit comme mêlant habitués et étudiants
+P0187;A;moyenne;La Petite Bouclerie ouvre en continu jusqu'à minuit sept jours sur sept sans aucune clientèle fidèle visible, Les Pipos ferme le dimanche et fait 60% de son affluence en semaine
+P0188;A;faible;Les Pipos est cité par des médias vin anglophones et accumule des avis de visiteurs en escale, L'Atlas tient depuis 1985 avec une reconnaissance Gault&Millau et une clientèle couscous fidèle
+P0189;A;moyenne;L'Atlas est référencé dans un guide gastronomique et sert des repas de découverte, Café Jussieu est un café d'angle avec prises électriques où l'on vient travailler le matin
+P0190;B;moyenne;Café Jussieu n'a ni site ni presse et fonctionne sur les cafés du matin du quartier, Arrivederci a deux adresses, 11 000 abonnés Instagram et une communication food
+P0191;B;moyenne;Arrivederci ferme entre les services et communique en français, Pizza Sarno ouvre en continu jusqu'à minuit sept jours sur sept avec un classement Tripadvisor massif
+P0192;B;forte;La Fontaine Saint-Michel est un point de rassemblement de visiteurs par nature, Pizza Sarno garde au moins quelques réguliers qui y viennent souvent
+P0193;A;forte;La Fontaine Saint-Michel ne vit que du passage, The 3 Musketeers est un petit restaurant sur réservation obligatoire fermé deux jours avec une clientèle hispanophone installée à Paris
+P0194;B;faible;Xiu est une cantine vietnamienne fermée le dimanche et l'après-midi, calée sur les repas du quartier, The 3 Musketeers attire une clientèle venue pour un concept primé
+P0195;B;forte;Petit Gaston ouvre de 9h30 à 2h sept jours sur sept sur une place à terrasse et déclare une clientèle de touristes, Xiu ferme tôt et vit du déjeuner de proximité
+P0196;B;moyenne;Xiu ferme le dimanche et l'après-midi en semaine, Matsuya ouvre sept jours sur sept et met en avant sa terrasse avec vue
+P0197;B;faible;Les deux sont des adresses de quartier, mais Les Arènes ferme le dimanche et tôt le samedi alors que Xiu, en format street-food à emporter, capte un peu plus de passage diurne
+P0198;B;moyenne;Les Arènes est décrite comme le bistrot de quartier préféré de ses clients du 5e, La Rose de Damas attire une clientèle de découverte plus large
+P0199;A;moyenne;La griserie récolte des avis de gens entrés par hasard en visitant, La Rose de Damas a des habitués qui reviennent et une clientèle communautaire
+P0200;B;moyenne;Les deux vivent du passage, mais L'Auberge Saint-Séverin pousse des menus d'appel avec une carte à moitié indisponible et une salle mécontente, la griserie garde des retours de clients qui comptent revenir
+P0201;B;forte;L'Auberge Saint-Séverin fonctionne sur des menus d'appel sans site ni clientèle fidèle, Bonvivant est un bistrot suivi par la critique parisienne
+P0202;B;forte;Le Latin rabat les passants en rue avec des menus d'appel, Bonvivant se présente comme bistrot de quartier depuis neuf ans
+P0203;B;forte;Le Latin ne peut vivre que de clients qui ne reviendront pas, Le Bluff fait 62% de son affluence en semaine avec une carte qui change selon les arrivages
+P0204;A;moyenne;Les Pipos accumule les avis de visiteurs qui s'arrêtent avant une visite, Le Bluff est une découverte de proximité au site uniquement français
+P0205;A;faible;Baieta se remplit sur réservation avec une clientèle venue pour la cheffe, Les Pipos ouvre de 9h à 1h avec une porte que l'on pousse en passant
+P0206;B;faible;Deux étoilés comparables, mais Baieta est repris par des guides et critiques anglophones destinés aux voyageurs alors que Solstice n'est couvert que par la presse française
+P0207;A;moyenne;Ravello ne déclare que des touristes comme clientèle, Le Solstice impose la réservation et ferme trois jours par semaine
+P0208;A;faible;Petit Gaston ouvre de 9h30 à 2h sur une place à terrasse avec service continu, Ravello ferme entre les services et garde des retours de clients qui reviennent
+P0209;B;forte;Petit Gaston vit d'une terrasse de place ouverte seize heures par jour, Pasta & Fagioli est une trattoria d'étudiants et de voisins qui se vide en semaine
+P0210;A;forte;L'Époque n'a que des avis de gens en séjour et aucune reconnaissance locale, Pasta & Fagioli a des voisins et des étudiants réguliers
+P0211;A;faible;Le Delmas est décrit comme mêlant habitués, étudiants et touristes, L'Époque n'a aucun habitué visible et ne récolte que des retours de visiteurs de passage
+P0212;A;moyenne;Le Delmas est une brasserie de place à grande terrasse ouverte jusqu'à 1h30, L'Atlas tient depuis 1985 avec une clientèle de couscous fidèle et ferme le lundi
+P0213;B;moyenne;L'Atlas a une reconnaissance gastronomique française et des clients de longue date, Au Père Louis multiplie les retours de visiteurs venus plusieurs fois en un séjour
+P0214;A;faible;Au Père Louis ouvre en continu jusqu'à minuit et ses avis les plus enthousiastes viennent de gens en visite, la Crêperie des Pêcheurs ferme entre les services depuis quarante ans au même endroit
+P0215;B;forte;La Fontaine Saint-Michel ne vit que du passage, la Crêperie des Pêcheurs conserve une activité de midi avec formule et réservation
+P0216;A;forte;La Fontaine Saint-Michel est un lieu de rassemblement de visiteurs, NA ferme à 18h30 et le dimanche, rythme typique d'une clientèle de semaine
+P0217;A;faible;Arrivederci a deux adresses, une communication food très suivie et ouvre le dimanche, NA fonctionne en horaires diurnes de semaine sans notoriété
+P0218;B;faible;Le Volcan vit de l'happy hour et d'habitués qui y reviennent toujours, Arrivederci attire par sa visibilité en ligne et ouvre sept jours sur sept
+P0219;B;faible;Le Foyer Vietnam est une cantine associative en espèces avec des fidèles de quinze ans, Le Volcan garde une part de passage en terrasse et en happy hour
+P0220;B;forte;Breizh Café est sélectionné par le Michelin et trois guides pour visiteurs avec un site multilingue, Le Foyer Vietnam est une cantine associative fermée le dimanche
+P0221;A;forte;Safran est vendu via l'office du tourisme et une carte de réduction pour visiteurs, Sushi Fresh vit de formules étudiantes et de clients de dix ans d'ancienneté
+P0222;A;moyenne;Safran n'a aucune reconnaissance locale et est diffusé par des canaux destinés aux visiteurs, La Méditerranée a une critique française dédiée et des habitués revendiqués
+P0223;B;faible;Les deux vivent du passage, mais Casimodo ne peut compter sur aucun retour tant les clients en ressortent mécontents, le dossier Sanuki montre au moins des clients revenus dix ans après
+P0224;A;faible;Casimodo n'a aucune clientèle fidèle possible vu les retours, Signorvino est une chaîne qui peut aussi capter une clientèle de bar à vins en soirée
+P0225;B;forte;Signorvino est une enseigne de chaîne à site multilingue ouverte en continu, The 3 Musketeers est une petite table sur réservation fermée deux jours
+P0226;B;faible;Tripletta est chroniquée par la presse food parisienne et décrite comme une adresse du quartier, The 3 Musketeers attire une clientèle venue pour un concept primé
+P0227;B;moyenne;Tripletta a des clients qui en font leur pizzeria de référence, Chez Nicos est un comptoir ouvert jusqu'à 2h sans places assises, format taillé pour le passage
+P0228;B;moyenne;Chez Nicos garde des fidèles de longue date et des étudiants, La Petite Bouclerie n'a que des retours de visiteurs et ouvre en continu jusqu'à minuit
+P0229;A;faible;Les deux ouvrent en continu jusqu'à minuit, mais Pizza Sarno a des clients qui y viennent souvent et connaissent le patron, La Petite Bouclerie n'en montre aucun
+P0230;A;forte;Pizza Sarno ouvre en continu sept jours sur sept avec un fort volume de visiteurs, Café Jussieu est un café d'angle où l'on vient travailler et prendre son café le matin
+P0231;B;faible;Café Jussieu est un café de quartier sans notoriété, Momo est très local aussi mais sa carte de menus à petit prix attire aussi des passants du midi
+P0232;B;faible;Guang Ming a des clients qui y mangent depuis l'enfance et redoutent d'être découverts, Momo est aussi une cantine d'habitués mais avec des menus d'appel plus visibles
+P0233;A;forte;Matsuya ouvre sept jours sur sept et met en avant sa terrasse avec vue, Guang Ming ferme entre les services, ne déclare pas de clientèle touristique et vit de familles fidèles depuis des décennies

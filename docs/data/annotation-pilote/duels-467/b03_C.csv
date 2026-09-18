@@ -1,0 +1,79 @@
+paire;choix;confiance;raison
+P0156;A;faible;Les deux vivent du passage, mais Petit Gaston tourne 7j/7 de 9h30 a 2h en service continu avec terrasse et brunch, modele de flux pur, la ou Safran reste un restaurant a service assis en salle
+P0157;B;moyenne;La Rose de Damas a un vrai socle local (traiteur, epicerie, coupure entre services 4 jours sur 7) quand Safran vit de la formule pas chere et est reference par l'office du tourisme
+P0158;A;moyenne;Sushi Fresh a des tarifs etudiants, de la livraison et des clients qui y reviennent depuis dix ans, clientele captive de proximite, La Rose de Damas accueille groupes et touristes 7j/7
+P0159;A;forte;Breizh Cafe est une enseigne a plusieurs adresses, ouverte 7j/7 en continu, couverte par les guides pour visiteurs, alors que Sushi Fresh vit de la formule etudiante et de l'emporte
+P0160;B;moyenne;La Crepererie des Pecheurs coupe entre midi et soir et travaille la reservation et la formule midi, Breizh Cafe enchaine sans coupure 7j/7 avec une clientele de sejour
+P0161;A;moyenne;Tripletta est une enseigne de quartier saluee par la presse locale et citee comme adresse du coin, la creperie rue Saint-Andre vit de la remise TheFork et du passage attable
+P0162;B;moyenne;Tripletta ouvre des 9h en continu pour une clientele de proximite recurrente, La Mediterranee est une table de destination a deux services, voiturier et reservation conseillee
+P0163;B;faible;Dossier Sanuki incoherent (avis d'un autre etablissement) mais l'amplitude declaree 8h-2h 7j/7 signe un modele de flux, plus dependant du passage que les deux services de La Mediterranee
+P0164;A;faible;Sanuki affiche 18h d'amplitude sans coupure 7j/7, le Palais de la Griserie ferme le soir deux jours par semaine, ce qui suppose une clientele attendue plutot qu'un flux
+P0165;B;forte;Solstice ferme lundi, mardi et dimanche, 18 couverts sur reservation obligatoire, aucun modele de passage possible, contrairement a une grande salle asiatique ouverte 7j/7
+P0166;B;forte;Signorvino est l'antenne d'une chaine internationale ouverte 10h30-minuit en continu 7j/7, Solstice fait 18 couverts sur trois services hebdomadaires
+P0167;B;forte;Bonvivant est un bistrot de quartier suivi par la presse food locale avec un patron en salle, Signorvino est une enseigne de groupe calibree pour le flux continu
+P0168;A;moyenne;L'Epoque vit de formules tartare-burger et d'un site decline en treize langues, les temoignages sont ceux de sejours courts, Bonvivant a une clientele d'habitues et un chef identifie
+P0169;A;moyenne;Matsuya coupe entre les services et garde des habitues du 5e qui commandent a emporter, L'Epoque tourne sur des passages repetes de visiteurs en sejour
+P0170;B;moyenne;Pasta e Fagioli est decrit comme une trattoria d'etudiants et de journalistes, avec un creux avoue en semaine, Matsuya ouvre 7j/7 avec terrasse et livraison de quartier plus expose au passage
+P0171;A;faible;Le Volcan vit du happy hour et d'habitues qui reservent pour des anniversaires, Pasta e Fagioli travaille davantage le couvert de passage et les offres de reservation
+P0172;A;moyenne;Le Volcan est un bar de quartier a prix bas ou l'on revient, Au Pere Louis enchaine midi et soir jusqu'a minuit sur trois salles avec une clientele de sejour tres presente
+P0173;B;forte;L'Auberge Saint-Severin tient 15h d'amplitude jusqu'a 2h avec des menus a 12 et 14 euros et une carte a moitie indisponible, modele de volume de passage assume
+P0174;B;faible;Les deux vivent du racolage et du menu bon marche, mais l'Auberge pousse jusqu'a 2h du matin 7j/7 la ou Le Latin ferme a 23h
+P0175;B;forte;Le Foyer Vietnam est une cantine associative fermee le dimanche, au liquide uniquement, Le Latin alpague les passants avec un menu d'appel
+P0176;A;forte;Casimodo tourne 12h-minuit en continu 7j/7 avec pizzas surgelees et vue sur le fleuve, le Foyer Vietnam est une cantine associative a deux services fermee le dimanche
+P0177;A;forte;Guang Ming ferme le mercredi, sert des habitues venus depuis l'enfance et des clients qui redoutent d'etre submerges, Casimodo vit du passage en continu
+P0178;B;faible;Les deux sont des adresses de quartier, mais Les Arenes ouvre 7h30-2h avec terrasse et clientele touristes declaree, Guang Ming reste une salle a deux services fermee un jour
+P0179;B;faible;Le Bluff fait 62% de son affluence en semaine, restaurant le midi puis bar prive le soir, clientele de bureau, Les Arenes a une amplitude de brasserie et une terrasse de passage
+P0180;A;moyenne;Le Bluff vit du dejeuner de semaine et des privatisations, Baieta est une table etoilee relayee par la presse anglophone de voyage qui attire de loin
+P0181;A;moyenne;NA ferme le dimanche et ferme a 18h30, modele de salon de the pour etudiants et bureaux, Baieta remplit sur reputation exterieure
+P0182;B;faible;NA s'arrete a 18h30 sans service du soir, chez Momo sert midi et soir et est cite comme decouverte a garder, donc un peu plus expose au passage
+P0183;B;forte;Chez Momo vit des dejeuners quotidiens d'habitues, Ravello se decrit lui-meme comme accueillant pour les touristes avec un personnel anglophone et le plat du jour d'appel
+P0184;A;faible;Ravello assume la clientele de visiteurs et la reservation TheFork, Chez Nicos est un comptoir a emporter avec des fideles de longue date malgre son amplitude
+P0185;B;moyenne;Chez Nicos est un comptoir bon marche a forte clientele etudiante, Le Delmas est une brasserie a terrasse ouverte 9h-1h30 7j/7 avec seulement 41% d'affluence en semaine
+P0186;A;moyenne;La Petite Bouclerie tourne 11h-minuit en continu 7j/7 et ses retours viennent presque tous de sejours courts, Le Delmas garde une part d'etudiants et d'habitues
+P0187;B;forte;Les Pipos ferment le dimanche, font 60% de leur affluence en semaine et vivent des concerts et du bar a vin, La Petite Bouclerie est un continu 7j/7 de passage
+P0188;B;moyenne;Les Pipos sont un bar a vin ferme le dimanche avec clientele d'ecole et d'habitues, L'Atlas ouvre 7j/7 sauf lundi sur une grande artere avec une salle a decor de depaysement
+P0189;B;moyenne;Cafe Jussieu est un cafe d'angle ou l'on travaille au comptoir avec prises et wifi, clientele etudiante quotidienne, L'Atlas vit davantage du repas-decouverte
+P0190;A;faible;Arrivederci est une petite enseigne a deux adresses avec reservation conseillee aux deux services, Cafe Jussieu vit du cafe quotidien de quartier
+P0191;B;forte;Pizza Sarno ouvre 11h30-minuit en continu 7j/7 et ses retours viennent de familles de passage, Arrivederci coupe entre les services et communique en francais pour un public local
+P0192;A;faible;Le dossier decrit une fontaine et non un restaurant, mais la fiche associee est une brasserie de place ouverte jusqu'a 1h, encore plus dependante du flux que Pizza Sarno
+P0193;A;moyenne;Fiche incoherente cote A (monument) mais l'exploitation decrite est une brasserie de place ouverte tard, The 3 Musketeers ferme dimanche et lundi et tourne a deux personnes sur reservation
+P0194;A;faible;The 3 Musketeers vit de la decouverte et du repas d'affaires sur reservation obligatoire, Xiu est une cantine vietnamienne fermee le dimanche avec coupure de l'apres-midi
+P0195;A;forte;Petit Gaston enchaine 9h30-2h 7j/7 avec brunch, terrasse et clientele touristes declaree, Xiu ferme le dimanche et coupe l'apres-midi comme une cantine de quartier
+P0196;A;moyenne;Matsuya ouvre 7j/7 midi et soir avec terrasse et livraison, Xiu ferme le dimanche et l'apres-midi en debut de semaine, modele de midi de proximite
+P0197;A;faible;Xiu ouvre le samedi et jusqu'a 21h30 avec terrasse et emporte, Les Arenes ferment le dimanche et reduisent fortement le samedi, signe d'une clientele de semaine
+P0198;A;moyenne;Les Arenes ferment le dimanche et vivent du petit dejeuner au dernier verre pour un quartier, La Rose de Damas ouvre 7j/7 et affiche groupes et touristes
+P0199;A;moyenne;Le Palais de la Griserie recolte des entrees par hasard et se vend comme institution sur les plateformes, La Rose de Damas a un socle de traiteur, d'epicerie et d'habitues
+P0200;B;forte;L'Auberge Saint-Severin pousse a 15h d'amplitude jusqu'a 2h avec menus d'appel, la Griserie ferme le soir deux jours par semaine
+P0201;A;forte;L'Auberge vit du volume de menus bon marche 7j/7 jusqu'a 2h, Bonvivant est un bistrot de quartier a chef identifie suivi par la presse locale
+P0202;A;forte;Le Latin racole sur le trottoir avec un menu d'appel, Bonvivant travaille la reservation aux deux services avec une clientele de fideles
+P0203;B;forte;Le Bluff fait 62% de son affluence en semaine et vit du dejeuner de bureau puis des tapas du soir, Le Latin vit entierement du passant attrape
+P0204;B;faible;Les deux sont adosses a une clientele de semaine, mais Les Pipos ouvrent des 9h jusqu'a 1h avec concerts et terrasse, donc plus de passage que Le Bluff ferme au dela de 16h en restauration
+P0205;A;faible;Les Pipos vivent de l'ecole d'en face, des habitues et des concerts, Baieta remplit sur une notoriete qui depasse le quartier malgre sa fermeture dimanche et lundi
+P0206;A;faible;Les deux sont des tables de destination fermees deux jours, mais Baieta ouvre cinq services midi complets et accueille familles et groupes, Solstice fait 18 couverts sur reservation obligatoire
+P0207;B;forte;Ravello ouvre 7j/7 et revendique un accueil pour visiteurs anglophones avec plat du jour d'appel, Solstice ne fait que quelques services sur reservation
+P0208;A;moyenne;Petit Gaston tient 16h30 d'amplitude 7j/7 en continu avec terrasse sur place, Ravello coupe entre les services et garde une part de clientele de quartier
+P0209;B;forte;Pasta e Fagioli coupe entre les services et avoue un creux de semaine faute de clientele de passage, Petit Gaston vit du flux continu de 9h30 a 2h
+P0210;B;moyenne;Pasta e Fagioli est une trattoria d'etudiants et de bureaux voisins, L'Epoque vit de formules d'appel et de visiteurs en sejour court
+P0211;A;faible;Le Delmas garde des etudiants et des habitues du quartier malgre sa terrasse, L'Epoque tourne sur des sejours de quelques jours et une vitrine declinee en treize langues
+P0212;A;moyenne;Le Delmas ouvre 9h-1h30 7j/7 avec seulement 41% d'affluence en semaine, signe d'un modele de week-end et de passage, L'Atlas ferme le lundi et coupe entre les services
+P0213;B;moyenne;L'Atlas ferme le lundi, coupe entre les services et tient depuis 1985 avec une reference en guide francophone, Au Pere Louis enchaine en continu jusqu'a minuit six jours sur sept
+P0214;A;faible;Au Pere Louis sert en continu jusqu'a minuit 7j/7 sur trois espaces, la Creperie des Pecheurs coupe entre midi et soir et travaille la formule midi reservee
+P0215;B;moyenne;Fiche B incoherente (monument) mais l'exploitation decrite est une brasserie de place ouverte jusqu'a 1h, plus dependante du flux qu'une creperie a deux services
+P0216;B;forte;NA ferme le dimanche et a 18h30, modele de journee pour etudiants et bureaux, la fiche B decrit un lieu de passage permanent
+P0217;B;moyenne;NA s'arrete a 18h30 sans service du soir, Arrivederci fait deux services complets 7j/7 sur deux adresses avec reservation conseillee
+P0218;B;faible;Le Volcan vit du happy hour et des habitues avec un patron en salle, Arrivederci fait deux services complets tous les jours et communique sur les reseaux food
+P0219;B;moyenne;Le Foyer Vietnam est une cantine associative au liquide fermee le dimanche, Le Volcan ouvre presque toute l'annee avec terrasse et bar
+P0220;B;forte;Le Foyer Vietnam vit d'une communaute et d'activites associatives, Breizh Cafe est une enseigne multi-adresses ouverte 7j/7 en continu et relayee par les guides pour visiteurs
+P0221;B;forte;Sushi Fresh vit de la formule etudiante et de fideles de dix ans, Safran vit de la formule bon marche et de dispositifs de remise pour visiteurs
+P0222;A;moyenne;Safran fonctionne sur le menu pas cher et les cartes de reduction, La Mediterranee est une maison a deux services avec voiturier et une clientele d'habitues de longue date
+P0223;B;faible;Dossier Sanuki incoherent, mais Casimodo tient 12h-minuit sans coupure 7j/7 avec une qualite qui ne peut vivre que du client qui ne revient pas
+P0224;B;faible;Casimodo tourne 7j/7 en continu sur le flux, Signorvino fait de meme avec 13h30 d'amplitude en etant l'antenne d'une chaine internationale calibree pour le passage
+P0225;B;forte;The 3 Musketeers ferme dimanche et lundi et tourne a deux personnes, Signorvino est une enseigne de groupe ouverte 7j/7 en continu jusqu'a minuit
+P0226;B;moyenne;The 3 Musketeers impose la reservation et ferme deux jours, Tripletta ouvre 7j/7 des 9h en continu avec terrasse et grande capacite
+P0227;A;moyenne;Chez Nicos est un comptoir ouvert jusqu'a 2h 7j/7 avec 40% d'affluence en semaine seulement, Tripletta est saluee comme adresse du quartier par la presse locale
+P0228;B;moyenne;Chez Nicos garde une clientele etudiante et des fideles de longue date, La Petite Bouclerie tourne 11h-minuit en continu 7j/7 sur une clientele de sejour
+P0229;A;faible;Les deux sont des continus 7j/7 de la meme rue, mais La Petite Bouclerie ne montre aucune trace d'habitue quand Pizza Sarno a des clients qui viennent souvent et un patron connu
+P0230;A;forte;Pizza Sarno tient 12h30 d'amplitude sans coupure 7j/7 avec emporte et livraison de passage, Cafe Jussieu est un cafe d'angle a clientele etudiante quotidienne
+P0231;A;faible;Cafe Jussieu ouvre 7j/7 jusqu'a 23h30 avec terrasse et affiche une clientele touristes, chez Momo vit des dejeuners quotidiens d'habitues
+P0232;A;faible;Chez Momo a des clients qui y mangent tous les midis mais aussi une part de decouverte, Guang Ming ferme le mercredi et sert des familles venues depuis l'enfance
+P0233;B;forte;Guang Ming est une salle de quartier a deux services fermee un jour, Matsuya ouvre 7j/7 avec terrasse, livraison et reference en guide generaliste

@@ -1,0 +1,77 @@
+paire;choix;confiance;raison
+P0080;A;moyenne;La Capannina se presente elle-meme comme pres du Pantheon et vise une clientele multilingue sans aucune couverture presse, quand Hugo & co attire d'abord des amateurs de gastronomie via son chef reconnu
+P0081;A;moyenne;La Capannina cible frontalement les visiteurs de passage pres du Pantheon, la Creperie des Pecheurs se revendique juste comme bretonne authentique sans marketing touristique explicite
+P0082;B;faible;les deux sont des adresses passantes sans presse locale, mais la Creperie des Pecheurs cumule etiquette touristes et etudiants et des codes promo TheFork typiques d'une clientele de passage
+P0083;B;forte;Pavane a des clients fideles depuis des annees et une fiche Sortiraparis dediee, le Delmas ne remonte qu'une reservation OpenTable generique pour large public
+P0084;B;moyenne;Pavane cultive des habitues de longue date quand Tcham reste une petite adresse sans signal de fidelisation ni presse
+P0085;egalite;faible;aucun des deux dossiers ne fournit de signal editorial ou de clientele fiable pour les departager
+P0086;A;faible;un avis decrit Les Arenes comme le point de chute a chaque passage a Paris, signal absent pour Sanuki
+P0087;B;forte;Terra Nera est un lieu de tournage revendique d'Emily in Paris avec guides touristiques, comptes createurs et virilite TikTok dediee, rien de comparable pour Les Arenes
+P0088;A;forte;Terra Nera construit son identite entiere autour du tournage d'une serie suivie par des visiteurs internationaux, l'Epidon reste une petite adresse familiale sans aucune mention externe
+P0089;A;moyenne;Jardin des Pates figure sur le site officiel de l'office de tourisme de Paris et dans le guide Petit Fute, l'Epidon n'a aucune mention de guide
+P0090;A;moyenne;Jardin des Pates est reference par l'office de tourisme et un guide papier, Plante de Jade n'apparait que via un article Sortiraparis qui la presente comme une adresse cachee
+P0091;B;faible;Le Cedre beneficie d'une visibilite TikTok de createurs food, Plante de Jade est presentee comme cachee dans le quartier par la presse locale
+P0092;B;faible;aucun signal fort de part et d'autre, Pizza Verone n'a ni presse ni guide identifie tandis que Le Cedre au moins a un ancrage halal specialise
+P0093;A;moyenne;Sushirama a des clients qui se disent habitues depuis plusieurs annees, rien de tel n'apparait pour Pizza Verone
+P0094;A;forte;l'Auberge Saint-Severin propose des menus a prix fixe typiques d'une carte a rotation touristique et une clientele identifiee comme touristes, Sushirama a des habitues revendiques
+P0095;egalite;moyenne;les deux profils se ressemblent, cartes limitees ou indisponibles, avis tres critiques, aucune presse ni signal d'habitues identifiable pour l'un comme pour l'autre
+P0096;A;moyenne;l'Auberge Saint-Severin a une carte instable et une clientele etiquetee touristes, Yue Dore a au moins des clients decrits comme reguliers et un patron connu de ses habitues
+P0097;B;faible-moyenne;;El Cervantes est explicitement decrit comme frequente par des etudiants du quartier, aucun signal comparable pour Yue Dore
+P0098;A;faible;Ozumaki n'a strictement aucune trace locale ni avis, El Cervantes a au moins un ancrage etudiant de quartier documente
+P0099;B;faible;Taboule se presente comme une cuisine familiale libanaise et syrienne sans aucun signal touristique, Ozumaki reste sans aucune trace exploitable
+P0100;B;forte;Selva est mis en avant par un blog anglophone explicitement destine aux visiteurs de Paris, Taboule n'a aucune trace de ce type
+P0101;A;faible-moyenne;Selva cumule presse et blog de visiteurs avec des prix juges eleves, La Petite Bretonne n'a qu'une etiquette touristes generique sans couverture externe
+P0102;A;faible;La Petite Bretonne est etiquetee touristes et groupes, Seoul Mama n'a pas de mention confirmee a cette adresse precise
+P0103;egalite;faible;ni La Fontaine ni Seoul Mama n'ont de signal editorial ou de clientele exploitable pour cette adresse
+P0104;B;faible;La Fontaine a au moins une etiquette touristes tandis que Chez Nicos fonctionne en comptoir a emporter avec un avis de fidelite de longue date
+P0105;B;forte;un avis sur La Dolce Vita la compare explicitement a une cuisine imitee servie aux touristes, Chez Nicos a un avis de client fidele qui regrettera l'adresse en quittant Paris
+P0106;B;moyenne;La Dolce Vita est directement decrite par un avis comme une adresse pour touristes, La Parenthese Latine n'a que des avis chaleureux sans ce signal
+P0107;A;moyenne;Bistro des Lettres est mis en avant par un guide anglophone pour visiteurs avec un concept a usage unique pensé pour un souvenir de voyage, La Parenthese Latine n'a aucune couverture de ce type
+P0108;B;forte;Guang Ming a un avis de quartier qui espere ne pas etre submerge de touristes et un client depuis l'enfance, Bistro des Lettres cible les visiteurs via un guide anglophone et un concept memoriel
+P0109;B;forte;Guang Ming est decrit par ses propres clients comme un petit restaurant de quartier a preserver des touristes, Il Gigolo se decrit lui-meme comme touristique dans un avis
+P0110;B;faible;Casa Mia est reference au Michelin avec un menu a 105 euros vecu comme un voyage exceptionnel, Il Gigolo a au moins une couverture de presse parisienne locale malgre son propre aveu d'etre touristique
+P0111;B;moyenne;Casa Mia est une table gastronomique Michelin a haut prix pensee comme une experience evenementielle, Izgara reste un kebab de quartier sans signal touristique
+P0112;B;faible;India StreEAT est decrite par un blog francophone comme s'adressant aux Parisiens residents, Izgara n'a pas de signal comparable mais reste plus generique
+P0113;A;moyenne;Mirama figure sur le site officiel de l'office de tourisme de Paris, India StreEAT est au contraire presentee par un blog comme s'adressant aux residents parisiens
+P0114;A;faible;Mirama a une fiche sur le site de l'office de tourisme, Sunny n'a que des plateformes de livraison
+P0115;B;faible;Sunny a un avis d'un client qui revient specifiquement a chaque passage a Paris, signal absent pour Topoly
+P0116;B;faible;aucun signal fort pour les deux, mais Le Val de Grace reste trop incertain pour pencher vers un profil local franc
+P0117;B;moyenne;Chez l'oncle Lin a un avis tres explicite de client etudiant fidele sur tout un semestre, Le Val de Grace n'a aucun ancrage local clair et un statut meme incertain
+P0118;A;forte;Allard cumule Guide Michelin en plusieurs langues, classement international Top25Restaurants et reprise par le groupe Alain Ducasse, Chez l'oncle Lin est une petite cantine d'habitues
+P0119;A;faible-moyenne;Allard a une couverture de guides internationaux (Michelin, Top25Restaurants) plus large que celle d'Hugo & co qui reste surtout suivie par un guide anglophone et le Michelin
+P0120;B;faible;Chez Nicos a un avis de fidelite de longue date, Taboule n'a pas de signal comparable mais reste tout aussi peu touristique
+P0121;B;faible;Chez Nicos a un signal d'habitue clair, Seoul Mama reste ambigu sur son adresse et sa clientele
+P0122;egalite;faible;ni Yue Dore ni Seoul Mama n'ont de signal editorial ou de clientele suffisant pour trancher
+P0123;B;moyenne;Yue Dore a des clients qui parlent d'un patron sympathique et habitue, Sushirama a aussi des habitues mais Yue Dore vise en plus un service en anglais pour clientele etrangere
+P0124;A;moyenne;La Parenthese Latine a un avis d'un visiteur qui espere revenir specifiquement, Sushirama a des clients qui se disent habitues depuis des annees
+P0125;A;faible;La Parenthese Latine a un avis de visiteur qui prevoit de revenir a Paris pour ce lieu, Izgara reste un kebab de quartier neutre
+P0126;B;faible;la Creperie des Pecheurs cible touristes et etudiants avec des codes promo d'appli de reservation, Izgara n'a pas de signal comparable
+P0127;egalite;faible;Mirama et la Creperie des Pecheurs ont chacun un signal touristique modere sans permettre de trancher clairement
+P0128;B;faible;Mirama beneficie d'une fiche sur le site de l'office de tourisme de Paris, Topoly n'a aucune couverture de ce type
+P0129;B;forte;Allard cumule guides internationaux et reprise par un chef celebre, Topoly reste un snack libanais de quartier sans aucune couverture
+P0130;A;moyenne;Allard est une table touristique internationale reconnue par plusieurs guides, Plante de Jade est presentee comme une adresse cachee par la presse locale
+P0131;B;faible;Casimodo n'a aucun signal d'habitues et des avis tres negatifs sur des pizzas surgelees vendues sur la vue, Jardin des Pates a au moins une clientele visiblement plus etablie malgre sa mention par l'office de tourisme
+P0132;B;moyenne;Casimodo vend une vue sur Notre-Dame avec une cuisine jugee surgelee et sans fidelite affichee, Le Val de Grace reste trop incertain mais sans marqueur touristique aussi frontal
+P0133;B;forte;Terra Nera est un phenomene touristique construit autour d'une serie, Le Val de Grace reste une adresse incertaine sans aucun signal de ce type
+P0134;B;forte;Terra Nera domine largement en visibilite touristique via le tournage d'Emily in Paris, Pizza Verone n'a aucune couverture editoriale
+P0135;A;moyenne;Selva est mis en avant par un blog anglophone destine aux visiteurs avec des prix eleves notes par les clients, Le Cedre n'a qu'une presence social media generaliste
+P0136;B;faible;l'Auberge Saint-Severin propose des menus a prix fixe typiques d'une clientele de passage et une carte instable, Selva a au moins une double couverture presse et blog mais pas de signe de menu touristique standardise
+P0137;B;moyenne;l'Auberge Saint-Severin a des menus a prix fixe et une clientele etiquetee touristes avec un service tres inconsistant, Sunny n'a qu'un avis isole de visiteur fidele
+P0138;B;faible;Les Arenes a un avis de visiteur qui en fait son point de chute systematique a Paris, signal legerement plus fort que celui de Sunny
+P0139;B;faible;Les Arenes a un signal touristique un peu plus marque avec son avis de point de chute a Paris, Ozumaki reste sans aucune trace exploitable
+P0140;A;moyenne;Il Gigolo se decrit lui-meme dans un avis comme un lieu touristique et beneficie d'une presse locale qui note sa frequentation mixte, Ozumaki n'a rien de comparable mais reste surtout invisible
+P0141;A;moyenne;Il Gigolo a une couverture presse locale et un avis qui le qualifie lui-meme de touristique, India StreEAT est au contraire decrite par un blog comme s'adressant aux Parisiens residents
+P0142;egalite;faible;El Cervantes et India StreEAT ont chacun un ancrage local documente, etudiants de quartier pour l'un, blog pour residents pour l'autre, sans element pour les departager
+P0143;B;faible;El Cervantes a une etiquette touristes en plus de son ancrage etudiant, Chez l'oncle Lin n'a que des clients d'habitude tres marques
+P0144;A;forte;La Petite Bretonne porte l'etiquette touristes, groupes et etudiants, Chez l'oncle Lin est une cantine d'habitues au long cours sans aucun signal touristique
+P0145;B;forte;Guang Ming a un avis explicite de client qui espere que le lieu ne soit pas submerge de touristes, La Petite Bretonne porte au contraire l'etiquette touristes
+P0146;A;forte;La Dolce Vita est qualifiee de nourriture imitee pour touristes par un de ses propres clients, Guang Ming est au contraire protegee par ses habitues de la frequentation touristique
+P0147;A;moyenne;La Dolce Vita est explicitement identifiee comme touristique par un avis client, La Fontaine n'a qu'une etiquette touristes generique sans ce niveau de precision
+P0148;A;faible;Le Delmas a une reservation OpenTable orientee grand public, La Fontaine n'a qu'une page Facebook sans signal de reservation touristique
+P0149;egalite;faible;Le Delmas et Casa Mia ont chacun un profil different mais sans element suffisant pour les departager avec confiance
+P0150;B;moyenne;Bistro des Lettres cible les visiteurs via un guide anglophone et un concept memoriel pense pour un passage unique, Casa Mia reste une table gastronomique frequentee aussi pour des occasions locales
+P0151;B;moyenne;Bistro des Lettres a une couverture de guide pour visiteurs et un concept evenementiel, Sanuki n'a aucun signal de ce type malgre une confusion d'adresse possible
+P0152;B;faible;Hugo & co a une couverture de guide gastronomique pour visiteurs (Paris By Mouth) plus nette que celle de Sanuki qui reste tres incertaine
+P0153;A;moyenne-forte;La Capannina se positionne elle-meme pres du Pantheon pour une clientele multilingue de passage, l'Epidon reste une toute petite adresse familiale sans aucune couverture externe
+P0154;B;faible;Pavane a des habitues fideles depuis des annees et une fiche presse locale, l'Epidon n'a pas cette meme densite d'habitues mais n'a pas non plus de signal touristique
+P0155;A;faible;Tcham n'a aucun signal local fort et reste generique, Taboule au contraire se presente en famille sans aucun marqueur touristique

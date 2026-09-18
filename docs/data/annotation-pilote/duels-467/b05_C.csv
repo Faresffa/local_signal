@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0314;A;forte;Lilane ferme dimanche et lundi avec des clients qui reviennent depuis seize ans, modele de fidelite  - Au Petit Bistrot vit de reservations de passage et d'une terrasse d'ete
+P0315;A;faible;Les deux tournent au passage, mais Au Petit Bistrot n'a aucun signal de clientele reguliere alors qu'En face encaisse des titres restaurant et sert des le matin
+P0316;A;faible;Gladines est une antenne de chaine ouverte en continu 7j/7 jusqu'a 23h45 avec OpenTable et Tripadvisor tres fournis, plus tourne vers le flux qu'En face
+P0317;A;moyenne;Etoile Gourmet vit du karaoke KTV et des salles privatisees, reservation de groupe  - Gladines est une antenne de chaine en service continu tardif
+P0318;A;moyenne;Bistro des Poemes fait 28% de son affluence en semaine, donc l'essentiel le week-end  - Etoile Gourmet remplit a 51% en semaine avec du karaoke
+P0319;A;forte;Setopa ferme le dimanche et coupe entre les services, modele de table de reservation  - Bistro des Poemes ouvre en continu 7j/7 et pese sur le week-end
+P0320;B;moyenne;Le Thiossane ouvre 7j/7 en service continu jusqu'a minuit avec livraison et vente a emporter  - Setopa ferme le dimanche et coupe ses services
+P0321;B;moyenne;La Petite Perigourdine ouvre 7h-23h tous les jours en brasserie, un avis parle de chaine de montage et de salle tassee, modele de debit  - Le Thiossane reste une table de recommandation
+P0322;A;moyenne;Maison de Gyros est de la restauration rapide 11h-minuit 7j/7 sans site ni reservation, elle ne vit que du passage  - la Perigourdine garde une part de clientele de bureau
+P0323;B;faible;Le Bistrot de la Montagne vit surtout de groupes reserves a l'avance, y compris de familles locales  - Maison de Gyros n'a que le trottoir
+P0324;A;moyenne;Bolan ferme un jour, coupe ses services et se reserve  - le Bistrot de la Montagne ouvre en continu 7j/7 et se vend a des groupes via l'office de tourisme
+P0325;B;faible;Narro ferme le lundi avec une carte courte et une presse francophone qui parle aux Parisiens  - Bolan ouvre six jours et se positionne en anglais comme table proche du quartier
+P0326;B;forte;Bistrot 20 ouvre en continu 12h/jour 7j/7, se classe lui-meme en attraction touristique et vend fondue et raclette  - Narro ferme le lundi et vit d'une clientele de table
+P0327;B;forte;Bistrot 20 est ouvert en continu 7j/7 sur un modele d'attraction  - El Picaflor ferme le lundi, coupe ses services et fait aussi epicerie, ce qui suppose des habitues
+P0328;A;faible;Lhassa ferme le lundi, n'a ni site ni reservation et n'est ouvert que sur deux services courts  - El Picaflor a une amplitude plus large et des soirees musicales
+P0329;A;faible;Japorama ouvre le samedi et le dimanche en continu et n'a pas de site  - Lhassa tient deux services courts fermes le lundi, modele de tres petite salle d'habitues
+P0330;A;moyenne;Pizza Hut est une chaine ouverte 7j/7 avec livraison, elle ne fidelise rien  - Japorama a des clients qui disent y manger depuis vingt ans
+P0331;A;moyenne;Pizza Hut est une enseigne de chaine sans ancrage  - Girasole vit visiblement d'une patronne connue de ses clients reguliers
+P0332;A;faible;Le Village Monge a une programmation jazz hebdomadaire et des pots de depart de bureau, tres ancre, mais son amplitude 7h30-23h 7j/7 le rend plus expose au passage que Girasole
+P0333;B;moyenne;Cafe G ouvre 8h-2h tous les jours sur une place avec terrasse et soirees DJ  - le Village Monge fait 51% en semaine avec des habitues qui nomment le personnel
+P0334;B;faible;Cafe G vit de la terrasse et du verre pris en chemin sur dix-huit heures d'ouverture  - Sola ferme deux jours et travaille sur menus a 95 et 150 euros reserves a l'avance
+P0335;B;moyenne;Homer est un comptoir a lobster rolls ouvert en continu avec vente a emporter, c'est du volume de passage  - Sola ferme deux jours et fonctionne sur reservation
+P0336;A;moyenne;Homer est un concept de comptoir a emporter importe, sans reservation  - Little Napoli garde deux services coupes et une salle a fideliser
+P0337;A;forte;Sucrepice ferme un jour, ticket moyen 15 euros, prend les titres restaurant et vit des etudiants du quartier  - Little Napoli est classe sur Tripadvisor avec un site en anglais
+P0338;B;forte;Chez Kelly ouvre 11h-23h en continu 7j/7, sans site, avec une formule trois plats a 15 euros  - Sucrepice ferme un jour et vit d'etudiants et d'habitues
+P0339;A;forte;Chez Kelly n'a ni site ni identite, juste une formule d'appel et une ouverture continue  - Marco Polo coupe ses services, exige la reservation et a un patron identifie
+P0340;A;moyenne;Marco Polo ouvre 7j/7 midi et soir sur un positionnement haut de gamme avec terrasse toute l'annee  - Le nul part ailleurs ferme dimanche et lundi et vit d'habitues du quartier
+P0341;B;forte;Soho Trattoria ouvre en continu jusqu'a 1h le week-end avec livraison, brunch et happy hour  - Le nul part ailleurs ferme deux jours et n'a que ses habitues
+P0342;A;faible;Les deux vivent du trottoir, mais Le Petit Cluny ouvre 9h-2h tous les jours et facture le cafe selon l'heure, pratique de debit pur
+P0343;A;forte;Le Petit Cluny ouvre 9h-2h 7j/7 sans site ni identite  - X Lagrange prend les titres restaurant, exige la reservation et a des clients qui nomment le patron
+P0344;B;moyenne;X Lagrange ouvre en continu 7j/7 avec livraison  - Terronia ferme deux jours, coupe ses services et renouvelle sa carte chaque mois sous la main de son patron
+P0345;A;faible;Les deux sont tres ancres, mais Le Paradis des Amis ouvre sept jours sur sept quand Terronia en ferme deux
+P0346;B;forte;Red Grill ouvre jusqu'a 2h avec livraison, drive et promotion TikTok  - Le Paradis des Amis tient deux services courts sous un couple de patrons
+P0347;A;forte;Red Grill est un steakhouse ouvert tard avec drive et livraison  - Bicla ferme lundi et mardi, impose la reservation et a vingt places
+P0348;B;moyenne;Piment Thai a une terrasse de rue et une visibilite de passage  - Bicla ferme deux jours pleins et travaille sur reservation obligatoire
+P0349;B;faible;MONK ouvre 10h-2h tous les jours en bar a bieres avec cinquante references  - Piment Thai reste une table de restaurant, meme exposee
+P0350;B;moyenne;MONK ouvre tous les jours de 10h a 2h sur un modele de bar de debit  - La Nouvelle Seine vend d'abord des spectacles, donc des billets reserves a l'avance
+P0351;A;faible;La Nouvelle Seine remplit par la programmation, un public qui reserve  - La dedicace ferme le dimanche mais ses clients sont surtout des gens de passage qui l'ont decouverte en vacances
+P0352;A;faible;Les Crepes de Louis-Marie ferme le dimanche et ses avis nomment les serveurs, signe de retour  - La dedicace vit davantage de decouvertes ponctuelles
+P0353;B;moyenne;Les Crepes de Louis-Marie fait 33% de son affluence en semaine, donc l'essentiel le week-end  - Lilane ferme dimanche et lundi avec une formule midi et des fideles de seize ans
+P0354;B;forte;La Petite Perigourdine ouvre 7h-23h 7j/7 en brasserie a fort debit  - Lhassa tient deux services courts fermes le lundi
+P0355;B;moyenne;La Perigourdine ouvre tous les jours de 7h a 23h avec terrasse  - Marco Polo coupe ses services et travaille sur reservation
+P0356;B;moyenne;Bistro des Poemes fait 28% en semaine et ouvre en continu 7j/7  - Marco Polo coupe entre midi et soir et impose la reservation
+P0357;B;forte;Bistro des Poemes ouvre en continu 7j/7 et pese fortement sur le week-end  - Le Paradis des Amis tient deux services courts sous un couple de patrons
+P0358;B;moyenne;Sola vend des menus a 95 et 150 euros a une clientele qui vient expres, souvent de loin  - Le Paradis des Amis sert une carte du jour a prix modestes
+P0359;B;moyenne;Le Bistrot de la Montagne ouvre en continu 7j/7 et se vend aux groupes via l'office de tourisme  - Sola ferme deux jours et limite ses couverts
+P0360;A;forte;Le Bistrot de la Montagne ouvre en continu 7j/7 sur un modele de banquet et de groupe  - Setopa ferme le dimanche, coupe ses services et vit de la presse food francophone
+P0361;B;faible;Les deux ferment le dimanche, mais Les Crepes de Louis-Marie ne fait que 33% de son affluence en semaine, donc vit du week-end
+P0362;B;moyenne;Au Petit Bistrot vit de reservations et d'une terrasse d'ete sans aucune trace de clientele reguliere  - les Crepes ont des clients qui reviennent pour les memes serveurs
+P0363;A;forte;El Picaflor ferme le lundi, coupe ses services, fait epicerie et musique le week-end, modele de communaute  - Au Petit Bistrot n'a que le passage
+P0364;B;forte;Soho Trattoria ouvre en continu jusqu'a 1h avec livraison, brunch et restauration sur le pouce  - El Picaflor ferme un jour et fidelise une communaute peruvienne
+P0365;B;faible;Les deux sont des machines a passage  - Maison de Gyros va plus loin avec treize heures d'ouverture quotidienne, aucun site et aucune reservation
+P0366;A;faible;Bistrot 20 se classe lui-meme en attraction touristique et vend un plat de montagne en plein Paris  - Maison de Gyros garde une clientele etudiante declaree
+P0367;A;moyenne;Bistrot 20 est ouvert en continu 7j/7 et assume le statut d'attraction  - Chez Gladines encaisse des titres restaurant et fait 47% en semaine
+P0368;A;moyenne;Le Petit Cluny ouvre 9h-2h sans site ni reservation et module le prix du cafe selon l'heure  - Chez Gladines a au moins une clientele de midi en semaine
+P0369;B;forte;Le Petit Cluny ouvre 9h-2h 7j/7 en pur debit de terrasse  - Japorama a des clients qui y mangent depuis vingt ans et ferme le soir deux jours par semaine
+P0370;B;faible;La dedicace ouvre six jours avec deux services et des clients venus en vacances  - Japorama a des horaires erratiques et un noyau de fideles anciens
+P0371;A;moyenne;Cafe G ouvre 8h-2h 7j/7 sur une place avec terrasse et DJ  - La dedicace ferme le dimanche et tient deux services dans une rue calme
+P0372;B;moyenne;Chez Kelly ouvre 11h-23h en continu sans site avec une formule d'appel a 15 euros  - Cafe G garde un afterwork hebdomadaire, donc une clientele de bureau
+P0373;B;faible;Les deux ouvrent tard et longtemps  - Chez Kelly n'a ni site ni identite propre, seulement une formule affichee, ce qui ne retient personne
+P0374;B;moyenne;Red Grill ouvre jusqu'a 2h avec livraison, drive et promotion video  - Piment Thai reste une table de quartier relayee par un blog francophone
+P0375;B;forte;Piment Thai a une terrasse de rue et une exposition de passage  - Lilane ferme dimanche et lundi avec seize ans de clients fideles
+P0376;A;moyenne;X Lagrange ouvre en continu 7j/7 avec livraison et vente a emporter  - Lilane ferme deux jours et vit d'une formule midi et de fideles
+P0377;B;moyenne;MONK ouvre 10h-2h tous les jours en bar a bieres  - X Lagrange impose la reservation, prend les titres restaurant et fidelise autour d'un patron nomme
+P0378;B;faible;La Nouvelle Seine ouvre le dimanche et fonctionne en dinner-spectacle sur une peniche face au fleuve  - Etoile Gourmet fait 51% en semaine avec du karaoke et des salles privees
+P0379;A;faible;Les deux sont ancres, mais Etoile Gourmet ouvre en continu jusqu'a minuit 7j/7 quand le Village Monge ferme a 23h et programme du jazz pour un public local
+P0380;B;moyenne;Little Napoli est classe sur Tripadvisor avec un site en version anglaise  - Le Village Monge fait 51% en semaine avec pots de depart et habitues qui nomment le personnel
+P0381;B;moyenne;Little Napoli mise sur un classement Tripadvisor et une page anglaise  - Terronia ferme deux jours, coupe ses services et vit de la main de son patron
+P0382;A;forte;En face ouvre 7j/7 de 9h30 a 23h30 en continu, quatorze heures par jour, et pese sur le week-end  - Terronia ferme deux jours et n'ouvre que deux services courts
+P0383;B;moyenne;Homer est un comptoir a emporter sans reservation ni service a table  - En face garde une clientele de midi avec titres restaurant
+P0384;B;faible;Homer vit du comptoir et de la vente a emporter sur un produit d'appel  - Pizza Hut fait aussi de la livraison a domicile, ce qui suppose des clients residents
+P0385;B;moyenne;Pizza Hut est une chaine ouverte 7j/7 sans ancrage  - Bolan ferme un jour, coupe ses services et demande la reservation
+P0386;B;moyenne;Bolan ouvre six jours avec une communication anglophone  - Bicla ferme lundi et mardi, impose la reservation et tient une tres petite salle
+P0387;A;faible;Les deux sont tres ancres  - Narro ouvre six jours dont le dimanche midi et jusqu'a minuit, la ou Bicla ferme deux jours pleins
+P0388;B;faible;Narro ouvre jusqu'a minuit six jours et est relaye par des guides anglophones pour visiteurs  - Sucrepice ferme a 21h avec un ticket a 15 euros et des etudiants
+P0389;A;faible;Sucrepice ouvre en continu de midi a 21h avec livraison et vente a emporter  - Girasole vit manifestement du lien personnel avec sa patronne
+P0390;B;faible;Girasole n'a pas d'horaires publies et fonctionne sur la fidelite a la patronne, mais son site a une version anglaise  - Le nul part ailleurs ferme deux jours et n'a que des habitues
+P0391;B;moyenne;Le Thiossane ouvre 7j/7 en continu jusqu'a minuit avec livraison  - Le nul part ailleurs ferme dimanche et lundi et vit de ses habitues
+P0392;B;moyenne;Le Thiossane ouvre 7j/7 en service continu avec livraison et emporter  - Lhassa tient deux services courts et ferme le lundi

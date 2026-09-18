@@ -1,0 +1,222 @@
+{
+  "osm_n2575207515": {
+    "nom": "Le Nouveau Village chez Momo",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté comme un restaurant marocain (couscous) du Quartier latin, 7 rue Xavier Privas, selon une fiche d'annuaire (restoranking.fr)"],
+    "incertitudes": ""
+  },
+  "osm_n2575207516": {
+    "nom": "Maison de Gyros",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant rapide de kebabs/gyros à l'angle rue de la Harpe / rue Xavier Privas, selon un site spécialisé kebab (kebab-frites.com)"],
+    "incertitudes": "adresse donnée tantôt comme 8 rue Xavier Privas, tantôt comme 21 rue de la Harpe selon les sources (kebab-frites.com, Yelp) ; pourrait s'agir de la même enseigne à l'angle des deux rues"
+  },
+  "osm_n8827956517": {
+    "nom": "Sushi Fresh",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (sushifreshparis.fr), se présente comme restaurant de sushis avec livraison et vente à emporter (https://sushifreshparis.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["80 Bd Saint-Michel, 75006 Paris, cuisine japonaise (sushis, sashimis, makis, bento)"],
+    "incertitudes": "nom générique \"Sushi Fresh\" partagé par de nombreux restaurants ; identification faite via l'adresse exacte du CSV"
+  },
+  "osm_n2575207518": {
+    "nom": "Olympie",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant grec au 13 rue Xavier Privas, propose notamment une moussaka sans viande, selon une fiche d'annuaire (restoranking.fr)"],
+    "incertitudes": ""
+  },
+  "osm_n2575207519": {
+    "nom": "Pan Asie",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["13 rue Saint-Séverin, cuisine japonaise/chinoise en formule buffet"],
+    "incertitudes": ""
+  },
+  "osm_n2575207520": {
+    "nom": "Chez Zareta",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "page bilingue français/anglais (chez-zareta.eatbu.com), se présente comme restaurant familial de cuisine tchétchène/caucasienne (https://chez-zareta.eatbu.com/?lang=en)",
+    "reseaux_sociaux": ["compte Instagram @chez_zareta (https://www.instagram.com/chez_zareta/)", "vidéo YouTube d'un créateur food, \"Je teste le restaurant Tchétchène 'Chez Zareta' à Paris\" (https://www.youtube.com/shorts/2lh01qC48dI)"],
+    "autres_faits": ["11 rue Xavier Privas, cuisine tchétchène (spécialités : manty, galoupcy, plov, pelmeni), restaurant familial"],
+    "incertitudes": ""
+  },
+  "osm_n4811002521": {
+    "nom": "Pavane",
+    "presse_francophone": ["Sortiraparis, fiche dédiée au lieu (media francophone parisien) (https://www.sortiraparis.com/en/lieux/68995-cafe-pavane)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (cafepavane.fr), se présente comme salon de thé, première adresse de Manon Hévin, fille du chocolatier MOF Jean-Paul Hévin (https://cafepavane.fr/la-carte/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établissement identifié sous le nom \"Café Pavane\", 22 rue de Vaugirard, cuisine d'inspiration russe et pâtisseries du chocolatier Jean-Paul Hévin"],
+    "incertitudes": "le CSV indique \"Pavane\" ; l'enseigne trouvée à cette adresse se nomme \"Café Pavane\" — correspondance jugée fiable sur la base de l'adresse exacte"
+  },
+  "osm_n4873410521": {
+    "nom": "Le Vent d'Armor",
+    "presse_francophone": ["Le Bey (lebey.com), fiche dédiée dans un guide gastronomique francophone (https://www.lebey.com/les-adresses/restaurant/vent-darmor-le)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site bilingue français/anglais (le-vent-darmor.com), se présente comme restaurant de poissons (https://www.le-vent-darmor.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["25 Quai de la Tournelle, ouvert par le chef Nicolas Tribet (ancien du restaurant Jacques Le Divellec), sommelier Olivier Friant, poissons dits issus de pêcheurs bretons"],
+    "incertitudes": ""
+  },
+  "osm_n5485816521": {
+    "nom": "Kathmandu",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Petit Futé, catégorisé comme restaurant tibétain-népalais (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c1031-cuisines-du-monde/c1035-cuisine-d-asie/c63-restaurant-tibetain-nepalais/264849-kathmandu.html)"],
+    "site_officiel": "site avec version anglaise (restaurantkathmandu.fr/en/), se présente comme l'un des premiers restaurants népalais d'Europe, spécialisé en cuisine Newar de la vallée de Katmandou (https://restaurantkathmandu.fr/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["22 rue des Boulangers, spécialités Newar (momo, chatamari)"],
+    "incertitudes": ""
+  },
+  "osm_n2575207522": {
+    "nom": "Bistrot 20",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (bistrot-20.webflow.io), se présente comme \"restaurant savoyard au cœur de Paris\" (https://bistrot-20.webflow.io/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["20 rue Saint-Séverin, cuisine savoyarde (fondue, raclette), également désigné \"Le Vingt\" sur certaines fiches"],
+    "incertitudes": "double dénomination \"Bistrot 20\" / \"Le Vingt\" selon les sources"
+  },
+  "osm_n4810971522": {
+    "nom": "Localino",
+    "presse_francophone": [
+      "Le Fooding, fiche dédiée, version en ligne consultée en anglais du site (https://lefooding.com/en/restaurants/localino)",
+      "Paris Bouge, fiche dédiée (https://www.parisbouge.com/places/5658)",
+      "Italieaparis.net, article \"Localino, excellent restaurant italien à Odéon\", média francophone dédié à l'Italie à Paris (https://www.italieaparis.net/gastronomie/restaurants/localino-excellent-restaurant-italien-a-odeon-19476)"
+    ],
+    "guides_visiteurs": ["Indagare Travel, guide de voyage (https://indagare.com/restaurant/localino)"],
+    "site_officiel": "aucun site officiel propre identifié avec certitude",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["10 rue de l'Odéon, installé dans une ancienne librairie, cuisine dirigée par le chef Edoardo Cauda, décoration signée Rodaa Studio"],
+    "incertitudes": "la fiche Le Fooding a été consultée via sa version anglaise du site (lefooding.com/en/...) ; existence d'une version française non vérifiée directement"
+  },
+  "osm_n6972324522": {
+    "nom": "Le Paradis des Amis",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["72 rue Gay-Lussac, cuisine française traditionnelle présentée comme réalisée avec des produits frais préparés sur place"],
+    "incertitudes": ""
+  },
+  "osm_n4810971523": {
+    "nom": "La Méditerranée",
+    "presse_francophone": ["Les Restos (lesrestos.com), critique dédiée dans la rubrique \"tous les goûts\" (https://www.lesrestos.com/critiques/tous-les-gouts/beaucoup/article/la-mediterranee-75006)"],
+    "guides_visiteurs": ["Guide Michelin, fiche dédiée (guide international) (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/la-mediterranee)"],
+    "site_officiel": "site avec version anglaise (la-mediterranee.com/en), se présente comme restaurant de poissons face au théâtre de l'Odéon (https://www.la-mediterranee.com/en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["2 Place de l'Odéon, ouvert en 1942 par Jean Subrenat, décoration des assiettes et du logo signée Jean Cocteau, fresques murales par Christian Bérard et Marcel Vertès, fiche dans les collections Paris Musées (parismuseescollections.paris.fr)"],
+    "incertitudes": ""
+  },
+  "osm_n9755920523": {
+    "nom": "Sashimi Bar",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site trouvé (sashimibar.fr), langue et contenu détaillé non vérifiés au-delà de la page de mentions légales",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["4 rue des Fossés Saint-Jacques, cuisine japonaise en formule buffet"],
+    "incertitudes": "apparaît aussi sous le nom \"Sashimi\" (sans \"Bar\") à la même adresse selon Tripadvisor et Restaurant Guru — possible variation de nom de la même enseigne"
+  },
+  "osm_n8515978526": {
+    "nom": "Tcham",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "un site (restaurant-tcham.fr) est mentionné par une source secondaire mais n'a pas été consulté directement",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["50 rue Daubenton, restaurant coréen familial, spécialités japchae et jjajangmyeon"],
+    "incertitudes": ""
+  },
+  "osm_n6417011527": {
+    "nom": "Zaoka",
+    "presse_francophone": ["Time Out Paris FR, fiche dédiée (https://www.timeout.fr/paris/restaurants/zaoka)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (zaoka.onataste.fr) (https://zaoka.onataste.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["3 rue des Patriarches, cuisine taïwanaise fusion, spécialité gua bao, ouvert en 2016, le nom signifierait \"cuisine\" en taïwanais selon une source secondaire"],
+    "incertitudes": ""
+  },
+  "osm_n6098939534": {
+    "nom": "Bo Bun 11",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (bo-bun-11.onataste.fr) (https://bo-bun-11.onataste.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["11 rue Linné, cuisine vietnamienne, situé près du Jardin des Plantes"],
+    "incertitudes": ""
+  },
+  "osm_n1711318535": {
+    "nom": "Oulala",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (leoulalahalal.fr), se présente comme restaurant franco-italien 100% halal (https://www.leoulalahalal.fr/)",
+    "reseaux_sociaux": ["compte Instagram @leoulala (https://www.instagram.com/leoulala/)"],
+    "autres_faits": ["20 rue Mouffetard, ouvert en 2006, présenté sur son propre site comme le premier restaurant franco-italien 100% halal de Paris"],
+    "incertitudes": "le CSV indique \"Oulala\" ; l'enseigne se présente elle-même comme \"Le Oulala\""
+  },
+  "osm_n1905655545": {
+    "nom": "Le Petit Pont",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Paris je t'aime (parisjetaime.com), site de l'office du tourisme de Paris, fiche dédiée (https://parisjetaime.com/eng/restaurant/le-petit-pont-p602)", "Come to Paris (cometoparis.com), guide pour visiteurs, mention d'un dîner de la Saint-Sylvestre (https://www.cometoparis.com/cafe-le-petit-pont-m9001763)"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["café-brasserie situé face à Notre-Dame, tire son nom du pont éponyme (le plus petit pont de Paris), concerts organisés régulièrement selon une source (livetonight.fr)"],
+    "incertitudes": "le CSV donne uniquement \"75005 Paris\" comme adresse ; les sources situent l'établissement au 1 rue du Petit Pont — correspondance jugée probable mais non certaine faute d'adresse précise dans le CSV"
+  },
+  "osm_n3351650545": {
+    "nom": "Bistrot 31",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site avec version anglaise (bistrot31.fr/en), un second nom de domaine (bistrot31paris6.fr) renvoie apparemment au même établissement",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situé près de la place Saint-André des Arts, cuisine française, spécialités pierrade et raclette selon une source secondaire"],
+    "incertitudes": "présence de deux noms de domaine distincts (bistrot31.fr et bistrot31paris6.fr) pour ce qui semble être le même établissement, à vérifier ; rue Saint-André des Arts compte plusieurs bistrots aux noms proches (Café des Arts, Bistrot Saint-André)"
+  },
+  "osm_n1109677556": {
+    "nom": "Soho Trattoria",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Petit Futé, version anglaise du site, catégorisé comme restaurant italien (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c1031-cuisines-du-monde/c1036-cuisine-mediterraneenne/c82-restaurant-italien/2029227-soho-trattoria.html)"],
+    "site_officiel": "site en français (soho-trattoria-paris.fr) (https://soho-trattoria-paris.fr/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["33 rue Saint-Jacques, pizza napolitaine cuite au four à bois, cité comme l'une de \"10 trattorias\" par une source secondaire non identifiée précisément"],
+    "incertitudes": ""
+  },
+  "osm_n4986750556": {
+    "nom": "Hong Kong",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site trouvé (petithongkong.com), contenu non vérifié en détail (https://petithongkong.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["1 rue Hautefeuille, cuisine cantonaise (dim sum, nouilles sautées), anciennement nommé \"Le Petit Hong Kong\" selon plusieurs annuaires"],
+    "incertitudes": "nom très générique (\"Hong Kong\") largement partagé par d'autres restaurants chinois à Paris ; identification faite via l'adresse rue Hautefeuille, cohérente avec le 75006 du CSV, mais changement de nom depuis \"Le Petit Hong Kong\" non confirmé par une source primaire"
+  },
+  "osm_n4986750557": {
+    "nom": "L'Olivier",
+    "presse_francophone": ["Gilles Pudlowski, critique dédiée \"Paris 5e : le Liban de l'Olivier - Beyrouth\" (https://www.gillespudlowski.com/389915/restaurants/paris-5e-le-liban-de-lolivier-beyrouth)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (lolivierbeyrouth.fr) (https://lolivierbeyrouth.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["25 rue Francisque Gay, cuisine libanaise, les propriétaires géraient auparavant \"La Pause Libanaise\" à Saint-Lazare (2011-2019) avant d'ouvrir cette adresse à Saint-Michel"],
+    "incertitudes": "le CSV indique \"L'Olivier\" ; l'enseigne complète relevée est \"L'Olivier Beyrouth\" — correspondance jugée fiable sur la base de l'adresse exacte, mais la critique de Pudlowski date la référence \"Paris 5e\" alors que l'adresse est en 75006, à noter"
+  },
+  "osm_n779955564": {
+    "nom": "Breizh Café",
+    "presse_francophone": ["Gault&Millau, fiche dédiée (https://fr.gaultmillau.com/en/restaurants/breizh-cafe-odeon)"],
+    "guides_visiteurs": ["Paris By Mouth, contenu anglophone pour visiteurs (https://parisbymouth.com/breizh-cafe-odeon/)", "Time Out Paris, version anglaise du site (https://www.timeout.com/paris/en/restaurants/breizh-cafe-odeon)", "Do It In Paris, article \"Breizh Café Odéon, the best organic crêperie in France\", contenu anglophone (https://www.doitinparis.com/en/breizh-cafe-creperie-odeon-22970)"],
+    "site_officiel": "site multilingue, version anglaise consultée (en.breizhcafe.com), se présente comme réseau de crêperies fondé par Bertrand Larcher (https://en.breizhcafe.com/breizh-cafe-odeon)",
+    "reseaux_sociaux": ["aucune mention trouvée au-delà du site propre"],
+    "autres_faits": ["1 rue de l'Odéon, sélection Guide Michelin (un couvert), fondateur Bertrand Larcher, produits bretons (huîtres de Caroline Madec, cidres fermiers), fait partie d'une chaîne de crêperies Breizh Café présente à Paris et à l'international"],
+    "incertitudes": "Breizh Café est une enseigne multi-adresses (plusieurs restaurants à Paris et ailleurs) ; les faits rapportés concernent spécifiquement l'adresse Odéon confirmée par le site officiel et Gault&Millau"
+  }
+}

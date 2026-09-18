@@ -1,0 +1,218 @@
+{
+  "osm_n9041945080": {
+    "nom": "L'Ardoise",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié avec certitude pour cette adresse",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucun fait trouvé"],
+    "incertitudes": "Plusieurs établissements nommés « L'Ardoise » existent à Paris (28 rue du Mont Thabor 1er, un autre en 6e arrondissement fondé en 2012 par le chef Antoine Marchal, un autre 15e). Aucun résultat ne correspond à l'adresse Parvis Guillaume de Champeaux (5e) donnée dans le lot ; impossible de confirmer l'identité de cet établissement précis."
+  },
+  "osm_n582931082": {
+    "nom": "La Petite Périgourdine",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Petit Futé : fiche restaurant cuisine française, 39 rue des Écoles, 75005 (petitfute.co.uk)"],
+    "site_officiel": "restaurantlapetiteperigourdine.com, en français, se présente comme un bistrot-bar à vin servant une cuisine française classique fait-maison (confit de canard, andouillette, foie gras)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["existence d'un établissement voisin nommé « En Face de La Petite Périgourdine » et d'un autre « L'Authre Petite Périgourdine », suggérant un possible lien ou une scission d'enseigne, non confirmé"],
+    "incertitudes": "Adresse confirmée (39 rue des Écoles). Aucune presse food francophone identifiée dans les résultats, seulement des annuaires (Yelp, Petit Futé, Gralon, restaurantguru)."
+  },
+  "osm_n7202562085": {
+    "nom": "La Pie Noir",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Eat Out Paris (anglophone) : fiche profil du restaurant (eatoutparis.com)"],
+    "site_officiel": "lapienoir.com, site à vérifier en langue mais orienté restaurant français d'influence bretonne, adresse 5 rue de la Montagne Sainte-Geneviève, 75005",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine française d'influence bretonne (palourdes, tartare de bœuf, os à moelle, far breton, profiteroles) ; formules à 27€ le midi et 40€ le soir selon sources consultées"],
+    "incertitudes": ""
+  },
+  "osm_n7274734085": {
+    "nom": "Empire Céleste",
+    "presse_francophone": ["Sortiraparis (version anglophone du site) : présenté comme « the oldest Chinese restaurant in Paris », dirigé par la même famille depuis trois générations (sortiraparis.com/en/lieux/2252-celestial-empire)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "empireceleste.free.fr, site mentionné dans les fiches d'annuaire, langue et contenu non vérifiés directement",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté comme le plus vieux restaurant chinois de Paris et le plus ancien tenu par la même famille (Mapstr) ; anciennement fréquenté selon plusieurs sources par des personnalités (Yul Brynner, Robert Mitchum, Alain Cuny, Madeleine Robinson, Jean-Louis Trintignant) ; spécialité de raviolis maison servis uniquement le dimanche"],
+    "incertitudes": "La mention presse provient de la version anglaise de Sortiraparis ; une version française de l'article existe probablement mais n'a pas été directement consultée."
+  },
+  "osm_n582932088": {
+    "nom": "Le Coup de Torchon",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié dans les résultats (uniquement fiches d'annuaires : Guideboullenger, Restaurants-de-France, Eater Space)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["petit restaurant à quelques tables, cuisine traditionnelle française, décor pierres apparentes, situé près du jardin du Luxembourg et du Panthéon selon les fiches consultées"],
+    "incertitudes": ""
+  },
+  "osm_n4462302090": {
+    "nom": "Le Val de Grace",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine bistronomique française (souris d'agneau, wok de poulet) selon une fiche d'annuaire ; une autre source de registre d'entreprises indique un établissement actif au 15 rue du Val de Grâce d'avril 1991 à novembre 2016, ce qui suggère une possible fermeture ou un changement d'enseigne (un café semblerait occuper les lieux aujourd'hui)"],
+    "incertitudes": "Statut actuel incertain : une source évoque une activité arrêtée en 2016 à cette adresse et la présence actuelle d'un café ('Café Val de Grâce') plutôt que du restaurant recherché. À vérifier si l'établissement du lot est toujours en activité sous ce nom."
+  },
+  "osm_n322683091": {
+    "nom": "Thaiger",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["TheFork et Trip.com : fiches restaurant listant Thaiger dans le Quartier latin"],
+    "site_officiel": "thaigerparis.com, disponible au moins en français et anglais, se présente comme un « restaurant thaïlandais authentique » (« authentic Thai restaurant »)",
+    "reseaux_sociaux": ["aucune mention trouvée directement, présence probable vu la promotion de livraison sur Uber Eats"],
+    "autres_faits": ["plats mis en avant : Pad Thaï, Tom Yum, Green Curry"],
+    "incertitudes": "Les résultats de recherche situent Thaiger au 16 rue de la Harpe, alors que le lot indique 17 rue Saint-Séverin (rues adjacentes dans le Quartier latin) ; possible établissement avec deux entrées/adresses ou légère divergence entre l'adresse officielle et l'adresse OSM. Rating Tripadvisor 3.9/5 mentionné mais exclu ici (pas une source de presse)."
+  },
+  "osm_n6498943091": {
+    "nom": "X Lagrange",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée (fiches Tripadvisor/Trip.com/Sluurpy uniquement, non retenues comme guides éditoriaux)"],
+    "site_officiel": "xlagrange.com / restaurant10lagrange.com, se présente comme visant à offrir « une expérience culinaire chinoise authentique » à ses clients",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine chinoise (ramen, dumplings, poulet façon Sichuan, porc braisé, poisson grillé) selon le site et les fiches consultées"],
+    "incertitudes": ""
+  },
+  "osm_n2301351094": {
+    "nom": "Au vieux cèdre",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "page de réservation eatbu.com liée à l'établissement, se présentant comme offrant « an authentic taste of Lebanon » ; pas de site officiel indépendant clairement identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine libanaise (mezzés, houmous, falafels, keftas, chawarma, sandwich sujouk) selon les fiches consultées"],
+    "incertitudes": "Les résultats indiquent l'adresse 187 rue Saint-Jacques pour Au Vieux Cèdre, qui est exactement la même adresse trouvée pour un autre restaurant du lot (« Le Coup de Torchon »). Le lot ne donne pas de numéro pour Au vieux cèdre (seulement « Rue Saint-Jacques »). Il est possible que les deux établissements coexistent au même numéro (étages différents) ou qu'il y ait une confusion dans les données ; à vérifier."
+  },
+  "osm_n10869266096": {
+    "nom": "Dame",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié pour un établissement « Dame » rue Suger",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucun fait trouvé"],
+    "incertitudes": "Recherche infructueuse pour un restaurant « Dame » à l'adresse rue Suger, 75006. Deux homonymes distincts existent à Paris : « Dame » cuisine française, 38 rue Condorcet (9e, ouvert fin 2024, chef Matthieu Charriaud) et « Dame des Arts » cuisine mexicano-japonaise à l'Hôtel Dame des Arts, 4 rue Danton (6e). Aucun des deux ne correspond à l'adresse ni exactement au nom recherchés ; impossible de confirmer l'identité de cet établissement."
+  },
+  "osm_n2373094099": {
+    "nom": "Bambou",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["référencé comme « Traiteur Bambou » (traiteur asiatique) au 2 rue Royer-Collard, 75005, selon Geodruid et PagesJaunes ; à ne pas confondre avec le restaurant thaïlandais « Bambou » plus connu situé 23 rue des Jeûneurs (2e), sans lien apparent"],
+    "incertitudes": "Peu d'informations disponibles sur cet établissement précis ; aucune critique ou article dédié trouvé, seulement des fiches d'annuaire mentionnant un service traiteur."
+  },
+  "osm_n2939315101": {
+    "nom": "Le Relais Fac",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié (uniquement fiches d'annuaires : Zmenu, Foodyparis, Telephone.city)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["brasserie servant steaks, salades, poissons, tiramisu selon les fiches consultées ; adresse confirmée 13 boulevard Saint-Germain, 75005"],
+    "incertitudes": ""
+  },
+  "osm_n251474107": {
+    "nom": "Jardin des Pâtes",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Paris je t'aime (site officiel de l'office de tourisme de Paris) : fiche restaurant (parisjetaime.com/eng/restaurant/jardin-des-pates-p724) ; Petit Futé : fiche cuisine française"],
+    "site_officiel": "aucun site propre au restaurant identifié dans les résultats",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["spécialisé dans les pâtes fabriquées à partir de céréales complètes et bio (châtaigne, seigle, orge, sarrasin) ; situé face au Jardin des Plantes"],
+    "incertitudes": ""
+  },
+  "osm_n251474108": {
+    "nom": "La Tour d'Argent",
+    "presse_francophone": ["Sortiraparis (version anglophone) : article historique détaillé sur le restaurant et ses canards numérotés (sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/334640)"],
+    "guides_visiteurs": ["VisitParisRegion (office de tourisme régional) : fiche dédiée ; The Earful Tower (blog anglophone destiné aux expatriés/visiteurs) : article « 7 intriguing figures »"],
+    "site_officiel": "tourdargent.com, disponible en français et anglais, met en avant l'histoire du restaurant depuis 1582 et sa vue panoramique sur Paris",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établissement revendiquant une fondation en 1582 (sans documentation historique solide selon Wikipédia) ; racheté par André Terrail en 1911 ; salle de restaurant déplacée à l'étage supérieur en 1936 avec baies vitrées panoramiques ; spécialité du canard numéroté depuis 1890 (le millionième canard servi en 2003) ; une étoile au guide Michelin"],
+    "incertitudes": ""
+  },
+  "osm_n251474109": {
+    "nom": "Kusksi Original Couscous",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié (commandes via Uber Eats)",
+    "reseaux_sociaux": ["mention d'une annonce d'ouverture sur un groupe Facebook local, sans plus de détails (facebook.com/groups/1341849750498889)"],
+    "autres_faits": ["cuisine marocaine, méditerranéenne et algérienne centrée sur le couscous, selon les fiches consultées"],
+    "incertitudes": ""
+  },
+  "osm_n251474112": {
+    "nom": "All'Antico Vinaio",
+    "presse_francophone": ["aucune mention trouvée (presse consultée en italien/anglais uniquement)"],
+    "guides_visiteurs": ["mindtrip.ai et Tripadvisor : fiches restaurant en anglais destinées aux voyageurs"],
+    "site_officiel": "aucun site officiel propre en français identifié ; présence via un compte Instagram dédié à la France",
+    "reseaux_sociaux": ["Instagram @allanticovinaiofr, compte dédié à l'enseigne en France"],
+    "autres_faits": ["chaîne florentine de sandwicherie (schiacciata) fondée en 1991 ; l'ouverture parisienne au 3 rue du Petit Pont (novembre 2025) est présentée comme la 50e boutique de l'enseigne dans le monde selon la presse professionnelle italienne (efanews.eu, italianfood.net, foodserviceweb.it) ; environ 40 m², une douzaine de places assises en intérieur et 20 en extérieur"],
+    "incertitudes": ""
+  },
+  "osm_n6432767115": {
+    "nom": "Brasserie Célina",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié (uniquement Privateaser, Reservateur.fr, fiches d'annuaires)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine évoquant des influences méditerranéennes (couscous, pastillas, pizzas) selon une fiche d'annuaire ; grande terrasse extérieure mentionnée ; adresse confirmée 77 rue Claude Bernard, 75005"],
+    "incertitudes": ""
+  },
+  "osm_n9851849117": {
+    "nom": "Saïgon d'Antan",
+    "presse_francophone": ["Sortiraparis (version anglophone) : « the authentic Vietnamese restaurant Paris 6th arrondissement, near the Jardin du Luxembourg » (sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/302876)"],
+    "guides_visiteurs": ["aucune mention trouvée au-delà de la fiche Sortiraparis ci-dessus"],
+    "site_officiel": "saigondantan.com / saigondantan.fr, se présente comme un restaurant vietnamien traditionnel ; décor bois et cannage évoquant les ruelles de Saïgon selon la description du site",
+    "reseaux_sociaux": ["compte Facebook (facebook.com/saigondantanparis) et Instagram (@saigon.dantan)"],
+    "autres_faits": ["spécialités mises en avant : bò bún, phở, bánh cuốn, bánh xèo"],
+    "incertitudes": "Le lot indique 26 rue Monsieur le Prince, tandis que les résultats de recherche (Sortiraparis, Yelp, Eater Space, site officiel) donnent systématiquement l'adresse 24 rue Monsieur le Prince. Écart d'un numéro de rue à noter, mais il s'agit vraisemblablement du même établissement."
+  },
+  "osm_n10026947121": {
+    "nom": "La Fontaine Saint-Michel",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié (fiches PagesJaunes, Tripadvisor, Yelp uniquement)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["brasserie traditionnelle française avec terrasse, ouverte jusqu'à 1h du matin selon les fiches consultées ; adresse 11 place Saint-Michel, 75006 selon les sources (le lot indique 75005)"],
+    "incertitudes": "Léger écart d'arrondissement entre le lot (75005) et les fiches consultées (75006) pour la place Saint-Michel, qui est à la frontière des deux arrondissements ; probablement le même lieu."
+  },
+  "osm_n5325410121": {
+    "nom": "Saveurs d'Asie",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site propre à cette adresse identifié avec certitude (saveursdasie75005.fr existe pour une adresse voisine, Place Maubert, à vérifier si même enseigne)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant-traiteur vietnamien, adresse confirmée 31 rue Monge, 75005 ; établissement enregistré selon une source sous le nom « N. LIU » (SARL)"],
+    "incertitudes": "Plusieurs enseignes « Saveurs d'Asie » existent dans le même quartier (31 rue Monge, 31 place Maubert, 145 rue Saint-Dominique) ; possible chaîne ou franchise locale, lien entre les adresses non confirmé."
+  },
+  "osm_n5499480121": {
+    "nom": "Chez Suzette",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["findmeglutenfree.com (guide anglophone spécialisé sans gluten) : fiche crêperie"],
+    "site_officiel": "chez-suzette.fr, en français, se présente comme portant « l'authenticité bretonne » (page dédiée à l'adresse Harpe/Saint-Michel : chez-suzette.fr/harpe)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fait partie d'une chaîne de crêperies « Chez Suzette » avec plusieurs adresses à Paris (le site officiel liste une page dédiée par quartier, dont « Harpe / Saint-Michel »), spécialisée dans les galettes de sarrasin de Bretagne"],
+    "incertitudes": ""
+  },
+  "osm_n4745031123": {
+    "nom": "Sucrepice",
+    "presse_francophone": ["Le Fooding : fiche restaurant (lefooding.com/en/restaurants/restaurant-sucrepice-paris, version anglophone du site) ; Time Out Paris : fiche restaurant (timeout.fr/paris/restaurants/sucrepice)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "sucrepice.fr, restaurant chinois spécialisé cuisine du Sichuan, adresse confirmée 5 rue d'Arras, 75005",
+    "reseaux_sociaux": ["aucune mention trouvée directement, présence Mapstr notée (mapstr.com, recommandation communautaire plutôt que réseau social propre à l'enseigne)"],
+    "autres_faits": ["restaurant récemment rénové (passage à un carrelage blanc épuré) ; décrit comme fréquenté par des étudiants du quartier, amateurs de piment et natifs du Sichuan ; spécialités : nouilles personnalisables, porc croustillant, bœuf aux intestins de canard et jambon ; ticket moyen autour de 15€ selon une source"],
+    "incertitudes": ""
+  },
+  "osm_n13850401128": {
+    "nom": "Saveurs d'Asie",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site identifié pour cette adresse précise",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucun fait trouvé"],
+    "incertitudes": "Aucun établissement « Saveurs d'Asie » n'a pu être localisé au 31 rue des Boulangers, 75005 dans les résultats de recherche ; seules des adresses différentes (31 rue Monge, 31 place Maubert, 145 rue Saint-Dominique) sont documentées pour ce nom. Un restaurant tibéto-népalais a été repéré au 22 rue des Boulangers mais ne correspond pas au nom recherché. Cette fiche doit être distinguée de osm_n5325410121 (même nom, adresse rue Monge) : possible doublon de données OSM ou établissement non référencé en ligne — identité non confirmée."
+  },
+  "osm_n1769442128": {
+    "nom": "Le Solstice",
+    "presse_francophone": ["Lebey : fiche restaurant gastronomique (lebey.com/les-adresses/restaurant/solstice) ; Les Restos.com : fiche avec mention du chef (lesrestos.com/restaurant/fiche/paris/solstice)"],
+    "guides_visiteurs": ["Guide Michelin (guide.michelin.com) : une étoile"],
+    "site_officiel": "solsticeparis.com, restaurant gastronomique haut de gamme, met en avant le chef Éric Trochon, Meilleur Ouvrier de France, ancien designer culinaire pour Hermès",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant nommé « Solstice » (sans article « Le » selon la plupart des sources), 18 couverts, dirigé par le chef Éric Trochon et la manageuse Mi-Jin Ryu ; menus à 105€ et 155€ (omakase) ; une étoile au guide Michelin"],
+    "incertitudes": "Le lot nomme l'établissement « Le Solstice » alors que toutes les sources consultées (Michelin, Lebey, site officiel) l'appellent simplement « Solstice » — probablement une variation d'usage plutôt qu'un établissement différent, l'adresse (45 rue Claude Bernard) concorde parfaitement."
+  }
+}

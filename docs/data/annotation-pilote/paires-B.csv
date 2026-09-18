@@ -1,0 +1,87 @@
+paire;choix;confiance;raison
+P001;B;moyenne;Mr & Mrs Crab enchaîne le service de midi à minuit tous les jours avec des combos pensés pour des groupes, la crêperie reste sur des horaires coupés et mise sur des codes promo de plateforme
+P002;A;forte;Mr & Mrs Crab tourne en continu jusqu'à minuit avec des combos calibrés pour des tablées de passage, Brava Pizza reste une petite pizzeria familiale dont un avis salue le patron comme le ferait un habitué
+P003;B;moyenne;Les avis sur Yokorama sont des superlatifs brefs et ponctuels typiques d'un passage isolé, Brava Pizza reçoit des retours plus personnels envers le patron
+P004;B;moyenne;Arrivederci affiche 2351 photos publiées, un niveau de visibilité bien supérieur aux 167 de Yokorama
+P005;A;forte;Arrivederci cumule une visibilité exceptionnelle (2351 photos) et un avis qui cite même la notation Google, Pirosmani est décrit par un client comme un repère fréquenté depuis des années
+P006;B;moyenne;Pirosmani garde une visibilité nettement supérieure à L'Estrapade qui n'a qu'une seule photo publiée, malgré des habitués de longue date des deux côtés
+P007;B;forte;India StreEAT cumule 313 photos quand L'Estrapade n'en a qu'une seule, et un avis sur L'Estrapade décrit une salle vide à l'opposé des adresses bondées de visiteurs
+P008;egalite;faible;les deux dossiers montrent des habitués qui reviennent régulièrement et aucun signal net ne permet de départager avec les informations disponibles
+P009;A;forte;Arya Bhavan est décrit par un client comme visité au moins une fois par semaine, au point que la préparation vienne à manquer, un ancrage local plus fort que ce que montre Hoki Sushi
+P010;A;moyenne;Arya Bhavan a un client hebdomadaire régulier alors que Hon Ki, bien que modeste, garde des avis plus orientés séjour ponctuel
+P011;A;faible;Atelier Carmen ne sert que le soir et n'affiche pas d'attribut clientèle touriste, mais Hon Ki a une amplitude horaire encore plus réduite portée par un chef qui change son menu chaque semaine, l'écart est ténu
+P012;B;forte;Bonvivant ouvre de 10h à 1h du matin tous les jours et cumule 1293 photos, contre un service uniquement le soir pour Atelier Carmen
+P013;B;forte;Bonvivant reste ouvert en continu de 10h à 1h tous les jours avec 1293 photos, Sushiyaki ferme le dimanche
+P014;B;forte;un avis sur Taeng Thai affirme explicitement qu'il y a très peu de touristes et que c'est un vrai lieu local, un signal absent des avis sur Sushiyaki
+P015;B;forte;Taeng Thai est explicitement décrit par un client comme peu fréquenté par les touristes, Ya Bayté fonctionne en service rapide au comptoir plus propice à capter du passage
+P016;A;forte;Le Grenier cumule 1379 photos et une fréquentation nettement plus forte le week-end, deux signaux de flux de passage plus marqués que chez Ya Bayté
+P017;B;faible;les deux affichent une très forte visibilité, Au Père Louis pousse le service continu jusqu'à minuit six jours sur sept avec une carte de plats clichés, un signal à peine plus marqué
+P018;B;forte;Au Père Louis met en avant des plats clichés comme la soupe à l'oignon et un service quasi continu jusqu'à minuit toute la semaine, Sahara Café n'a même pas d'attribut clientèle déclaré
+P019;A;faible;les deux ne déclarent pas d'attribut touriste et ont peu de photos, mais Sahara Café accueille des soirées de groupe avec une offre tarifaire dédiée, l'écart reste faible
+P020;A;forte;L'Annexe ouvre de 7h à 23h tous les jours et un avis la qualifie explicitement de tourist trap, Le Bluff est plus fréquenté en semaine sans attribut touriste déclaré
+P021;egalite;faible;El Sur affiche un service continu et 745 photos tandis que L'Annexe ouvre de 7h à 23h avec un avis la qualifiant de piège à touristes, les deux montrent des signaux de flux comparables
+P022;A;moyenne;El Sur tourne en service continu toute la journée avec 745 photos publiées, Selva ferme lundi et mardi et un avis dit en avoir trouvé peu de comparables dans le quartier
+P023;B;forte;Selva cumule 1169 photos et un avis raconte l'avoir découvert en arpentant les rues au hasard, Bicla ne déclare pas d'attribut touriste et ferme deux jours entiers
+P024;B;forte;La Ferrandaise met en avant une cuisine auvergnate clichée avec 450 photos, Bicla n'a pas d'attribut touriste déclaré et une cliente mexicaine dit y retrouver l'ambiance de chez elle
+P025;A;moyenne;Mexi & Co tourne en continu de 11h30 à 23h30 tous les jours et des avis dénoncent une cuisine au micro-ondes cachée derrière un décor soigné, un signal plus fort que chez La Ferrandaise
+P026;A;faible;Mexi & Co ouvre en continu tous les jours et des avis critiquent une cuisine de façade, mais L'Époque a aussi un avis de touristes revenus trois fois en trois jours de séjour, l'écart est faible
+P027;B;forte;un avis sur L'Époque raconte que des visiteurs y sont retournés trois fois en trois jours de séjour à Paris, un signal plus net que les avis génériques sur Khaaw Hoom
+P028;B;moyenne;La Cava Voltini est un petit restaurant mené par le patron en personne selon les avis, Khaaw Hoom affiche des avis plus génériques et l'attribut touriste
+P029;B;forte;A Braccetto ouvre jusqu'à 15h par jour en moyenne, propose brunch, cabaret et concerts, et cumule 1181 photos, très loin du petit restaurant tenu par son patron qu'est La Cava Voltini
+P030;B;forte;A Braccetto ouvre jusqu'à 2h du matin certains soirs avec brunch et concerts, la crêperie reste sur des horaires coupés malgré ses codes promo de plateforme
+P031;egalite;faible;les deux affichent des avis courts typiques d'un passage ponctuel et un profil d'attributs très proche, sans signal net pour départager
+P032;B;forte;Yokorama ouvre 12h par jour tous les jours et récolte des avis superlatifs génériques, Hoki Sushi a des avis plus personnels citant les serveurs par leur prénom
+P033;B;forte;un avis sur Taeng Thai le présente explicitement comme un lieu local peu fréquenté par les touristes, ce qui manque dans les avis plus neutres sur Hoki Sushi
+P034;B;forte;Au Père Louis sert jusqu'à minuit six jours sur sept avec 1009 photos et une carte de plats clichés, Taeng Thai est au contraire décrit par un client comme peu fréquenté par les touristes
+P035;B;forte;Au Père Louis pousse le service continu jusqu'à minuit presque toute la semaine avec 1009 photos, contre un petit restaurant intimiste mené par son patron pour La Cava Voltini
+P036;A;moyenne;Brava Pizza ouvre 7 jours sur 7 avec un service tardif, La Cava Voltini reste un petit lieu porté par la présence du patron d'après les avis
+P037;B;forte;Brava Pizza ouvre tard tous les jours, L'Estrapade n'a qu'une photo publiée et un avis décrit la salle vide à l'arrivée du client
+P038;B;forte;Bonvivant ouvre de 10h à 1h du matin tous les jours avec 1293 photos, très loin de L'Estrapade qui n'a qu'une photo publiée et ferme deux jours par semaine
+P039;B;forte;Bonvivant tourne en continu de 10h à 1h tous les jours avec 1293 photos, Bicla ferme deux jours entiers et ne déclare pas d'attribut touriste
+P040;A;moyenne;les deux sont de petites adresses, mais Bicla ferme deux jours entiers par semaine et ne déclare pas d'attribut touriste, un cran plus local que Hon Ki
+P041;B;forte;un avis sur L'Époque décrit des visiteurs revenus trois fois en trois jours de séjour, un signal bien plus net que pour Hon Ki qui n'ouvre que 5.5h par jour en moyenne
+P042;A;forte;des touristes racontent être retournés trois fois chez L'Époque en trois jours de voyage, Sushiyaki ferme le dimanche et a des avis plus mesurés
+P043;egalite;faible;les deux ferment le dimanche, ont des horaires coupés et des avis courts et génériques de satisfaction sans signal distinctif
+P044;B;moyenne;Atelier Carmen ne sert que le soir et n'a pas d'attribut touriste déclaré, Khaaw Hoom affiche cet attribut et des avis plus génériques
+P045;A;moyenne;Ya Bayté déclare l'attribut touriste et fonctionne en service rapide au comptoir capable d'absorber un flux de passage, Atelier Carmen ne sert que le soir et n'a pas cet attribut
+P046;B;moyenne;Selva cumule 1169 photos et un avis raconte l'avoir trouvé au hasard d'une balade, un signal de découverte de passage plus fort que chez Ya Bayté
+P047;B;faible;La Ferrandaise met en avant une cuisine auvergnate clichée avec 450 photos contre 1169 pour Selva, mais Selva reste ouvert sur des horaires réduits, l'écart est faible
+P048;B;forte;La Ferrandaise affiche 450 photos et une carte clichée de spécialités auvergnates, Le Bluff est plus fréquenté en semaine et ne déclare pas d'attribut touriste
+P049;A;forte;India StreEAT cumule 313 photos et l'attribut touriste, Le Bluff est nettement plus fréquenté en semaine et ne déclare pas cet attribut
+P050;B;forte;Le Grenier cumule 1379 photos et une fréquentation nettement plus forte le week-end, deux signaux plus marqués que chez India StreEAT malgré ses clients qui reviennent six fois
+P051;A;moyenne;A Braccetto ouvre jusqu'à 15h par jour en moyenne avec brunch et concerts, un cran au-dessus du Grenier qui reste malgré tout très fréquenté le week-end
+P052;B;forte;A Braccetto ouvre jusqu'à 2h du matin avec brunch, cabaret et concerts et 1181 photos, un dispositif plus large que L'Annexe malgré son propre avis tourist trap
+P053;A;moyenne;Arrivederci cumule 2351 photos, un niveau de visibilité supérieur à L'Annexe malgré l'avis qui qualifie cette dernière de piège à touristes
+P054;B;forte;Arrivederci affiche 2351 photos, la plus forte visibilité du corpus, Sahara Café n'a même pas d'attribut clientèle déclaré
+P055;A;faible;les deux sont des lieux plutôt locaux, mais Sahara Café accueille des groupes qui viennent fêter des soirées avec une offre tarifaire dédiée, un signal de passage un peu plus marqué qu'Arya Bhavan
+P056;A;forte;El Sur tourne en service continu avec 745 photos publiées, Arya Bhavan a un client qui dit y aller au moins une fois par semaine
+P057;A;faible;Mr & Mrs Crab tourne en continu jusqu'à minuit avec 1502 photos et des combos pour groupes, un cran au-dessus d'El Sur qui garde malgré tout un ancrage communautaire visible dans ses avis
+P058;B;forte;Mr & Mrs Crab cumule 1502 photos et un service continu jusqu'à minuit avec des combos pour groupes, Pirosmani reste fréquenté par des habitués de longue date d'après les avis
+P059;A;forte;Mexi & Co tourne en continu tous les jours et des avis dénoncent une façade soignée cachant une cuisine au micro-ondes, Pirosmani est au contraire fréquenté par des habitués depuis des années
+P060;A;moyenne;Mexi & Co ouvre en continu de 11h30 à 23h30 tous les jours, la crêperie reste sur des horaires coupés malgré ses codes promo de plateforme
+P061;A;forte;Au Père Louis sert jusqu'à minuit presque toute la semaine avec 1009 photos et une carte de plats clichés, Atelier Carmen ne sert que le soir et n'a pas d'attribut touriste
+P062;A;faible;les deux tournent en continu et affichent une forte visibilité, Au Père Louis pousse le service jusqu'à minuit sur toute la semaine avec une carte de plats clichés, un cran au-dessus de Mexi & Co
+P063;B;moyenne;Le Grenier cumule 1379 photos et une fréquentation nettement plus forte le week-end, deux signaux plus marqués que la crêperie et ses codes promo
+P064;B;forte;A Braccetto ouvre jusqu'à 15h par jour en moyenne avec brunch, cabaret et concerts et 1181 photos, un dispositif bien plus large qu'India StreEAT
+P065;A;forte;A Braccetto ouvre jusqu'à 2h du matin avec brunch et concerts et 1181 photos, Le Bluff est plus fréquenté en semaine sans attribut touriste déclaré
+P066;A;faible;les deux ont des signaux plutôt locaux, mais Taeng Thai est explicitement qualifié de lieu peu fréquenté par les touristes dans un avis, un cran plus local que Le Bluff
+P067;A;forte;un avis sur Taeng Thai affirme explicitement qu'il y a peu de touristes et que c'est un lieu local, un signal absent des avis plus génériques sur Khaaw Hoom
+P068;B;faible;les deux ont un profil proche, mais Khaaw Hoom n'affiche aucun signal de clientèle fidèle dans ses avis génériques alors que Brava Pizza reçoit un avis chaleureux envers le patron, l'écart reste faible
+P069;B;forte;Bonvivant ouvre de 10h à 1h du matin tous les jours avec 1293 photos, Brava Pizza reste une petite pizzeria familiale d'après ses avis
+P070;egalite;faible;les deux tournent en continu tard le soir, cumulent plus de 1200 photos et reçoivent des avis courts et internationaux typiques d'un passage de visiteurs
+P071;B;moyenne;Mr & Mrs Crab cumule 1502 photos et des combos pensés pour des groupes avec un service continu jusqu'à minuit, un cran au-dessus de Selva
+P072;B;moyenne;Selva cumule 1169 photos et un avis raconte l'avoir découvert au hasard d'une balade, des signaux plus marqués que pour Hoki Sushi
+P073;B;moyenne;Pirosmani est décrit par un habitué comme fréquenté depuis des années malgré une salle vue récemment quasiment vide, un ancrage local plus net que les avis plus neutres sur Hoki Sushi
+P074;B;faible;les deux sont plutôt ancrés localement, Sahara Café n'a pas d'attribut clientèle déclaré ce qui le rend un peu plus local que Pirosmani et sa forte notoriété parmi les amateurs de cuisine géorgienne
+P075;A;moyenne;La Cava Voltini a des avis internationaux qui vantent un lieu mené par un patron chaleureux, Sahara Café n'a même pas d'attribut clientèle déclaré et accueille surtout des sorties entre amis
+P076;A;moyenne;La Cava Voltini attire des visiteurs enthousiastes selon ses avis, Arya Bhavan a un client qui déclare y aller au moins une fois par semaine, signe d'un ancrage plus local
+P077;A;moyenne;Ya Bayté déclare l'attribut touriste et fonctionne en service rapide au comptoir, Hon Ki n'ouvre que 5.5h par jour en moyenne autour d'un chef qui compose son menu chaque semaine
+P078;B;forte;un avis sur L'Époque décrit des visiteurs revenus trois fois en trois jours de séjour à Paris, un signal plus net que chez Ya Bayté
+P079;B;faible;les deux ont des signaux de passage marqués, un avis qualifiant L'Annexe de tourist trap et un autre décrivant des touristes revenus trois fois chez L'Époque en trois jours, l'écart est faible
+P080;A;forte;Arrivederci cumule 2351 photos, la plus forte visibilité du corpus, Bicla ferme deux jours entiers par semaine et ne déclare pas d'attribut touriste
+P081;B;forte;El Sur tourne en service continu avec 745 photos publiées, Bicla ferme deux jours entiers et ne déclare pas d'attribut touriste
+P082;B;faible;les deux affichent une forte visibilité, El Sur ajoute un service continu toute la journée alors que La Ferrandaise ferme le dimanche, l'écart est faible
+P083;A;forte;La Ferrandaise cumule 450 photos et une carte de cuisine auvergnate clichée, L'Estrapade n'a qu'une seule photo publiée et un avis décrit la salle vide à l'arrivée
+P084;B;forte;Sushiyaki ouvre 12h par jour tous les jours sauf dimanche avec des avis internationaux enthousiastes, L'Estrapade n'a qu'une photo publiée et un avis la décrit comme vide et à l'écart des lieux bondés de visiteurs
+P085;B;moyenne;Yokorama récolte des avis superlatifs génériques typiques d'un passage ponctuel, un ton légèrement plus marqué que Sushiyaki
+P086;A;forte;Yokorama ouvre 12h par jour tous les jours avec des avis superlatifs génériques, Atelier Carmen ne sert que le soir et n'a pas d'attribut touriste déclaré

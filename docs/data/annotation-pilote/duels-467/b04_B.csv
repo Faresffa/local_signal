@@ -1,0 +1,81 @@
+paire;choix;confiance;raison
+P0234;A;moyenne;Luciana declare une clientele touristes et ouvre 7j/7 sans aucune attache locale reperable, Xiu ferme l'apres-midi et vit d'un banh mi compare aux autres banh mi de Paris par des connaisseurs
+P0235;B;moyenne;Baieta est porte par une cheffe mediatisee et figure dans plusieurs guides et magazines destines aux voyageurs, Xiu reste une cantine de rue sans couverture editoriale
+P0236;B;moyenne;Homer est un concept importe des Etats-Unis, format snack a emporter et fiche dans un media anglophone pour visiteurs, Baieta impose la reservation et une table assise
+P0237;A;forte;Homer vend un lobster roll en service au comptoir a des gens de passage, Pasta e Fagioli est decrit comme une trattoria frequentee par les etudiants et les journalistes du quartier
+P0238;A;moyenne;Pasta e Fagioli est une salle a table avec terrasse et carte large, Saveurs d'Asie est un traiteur a emporter a menu 7,50 euros qui ne vit que du voisinage
+P0239;A;forte;Hong Kong ouvre 7j/7 en service continu de 11h a 23h avec menus a 7,90 euros et terrasse, format taille pour capter le flux, face a un simple traiteur de quartier
+P0240;A;moyenne;Hong Kong fonctionne en volume et service continu, Les Papilles impose une reservation, un menu unique du jour et ferme deux jours par semaine
+P0241;A;forte;All'Antico Vinaio est une enseigne florentine mondialisee dont les clients disent l'avoir connue ailleurs et venir par les videos Instagram, Les Papilles reste une table de reservation
+P0242;B;moyenne;L'Avant Comptoir vit aussi beaucoup de passage mais garde une signature de chef locale, All'Antico Vinaio est une chaine internationale a reconnaissance immediate
+P0243;A;forte;L'Avant Comptoir cumule les fiches dans des guides et agences de voyage etrangers et sert debout sans reservation, le couscous de la rue Thouin ferme le dimanche et n'a aucune visibilite
+P0244;A;faible;Les Delices du Liban ont une terrasse, une reservation en ligne et une page dans un media parisien, le couscous voisin ferme le dimanche et ne vit que d'habitues
+P0245;B;moyenne;Le Foyer Vietnam est une cantine associative payable en especes seulement et adossee a un lieu communautaire, signal de clientele captive, le libanais est plus ouvert au visiteur
+P0246;B;faible;Bicla a une presence Instagram active et un article de magazine, le Foyer Vietnam refuse la carte bancaire et ferme le dimanche
+P0247;B;forte;Au Petit Bistrot se presente comme le bistrot francais typique et ses clients le recommandent comme etape, Bicla ferme lundi et mardi et sert une clientele de connaisseurs de la cuisine mexicaine
+P0248;B;moyenne;La Creperie Genia est un kiosque a crepes bon marche relaye par des blogs voyage, format de consommation de passage par excellence, Au Petit Bistrot garde une salle et des reservations
+P0249;B;moyenne;Genia vend des menus a 8,50 euros au comptoir a des gens qui passent, L'ile de Crete a une salle, des assiettes et des clients qui reviennent en groupe
+P0250;A;moyenne;L'ile de Crete ouvre 7j/7 de 11h a 2h du matin en service continu, amplitude faite pour capter le flux, Brava Pizza est une pizzeria familiale avec livraison
+P0251;A;faible;Edogawa est un buffet a volonte a prix fixe, format qui capte le passant indecis, Brava vit davantage de commandes a emporter et de livraison de proximite
+P0252;B;forte;L'Epoque affiche un site decline en treize langues et se vend comme bistrot Belle Epoque avec tartares et burgers, Edogawa est un buffet bon marche pour etudiants
+P0253;A;moyenne;L'Epoque se met en scene en bistrot parisien pour visiteurs, La Mediterranee est une institution avec des habitues declares et une critique dans un media francophone
+P0254;B;faible;La Mediterranee a une grande terrasse, un decor patrimonial et une fiche Michelin qui attirent le visiteur, Gemini est une chaine de pizzas dont les clients sont surtout des reguliers du quartier
+P0255;A;forte;Aux anysetiers du roy vend un decor medieval et des classiques francais, plusieurs clients decrivent explicitement une mise en scene pour visiteurs, Gemini est une pizzeria de chaine banale
+P0256;A;forte;Meme raison, le decor XVIIe et les guides de voyage face a un vietnamien de rue sans aucune couverture
+P0257;B;moyenne;MONK est un pub a bieres avec concerts ouvert jusqu'a 2h dans une rue de sorties, Saigona est une salle de quartier a la carte vietnamienne classique
+P0258;B;moyenne;MONK capte le flux nocturne avec sa programmation live et son site bilingue, Mimi Ramen ferme le dimanche et coupe l'apres-midi
+P0259;B;forte;L'Escale de Notre-Dame ouvre 7j/7 en continu, vend un menu a 18 euros et son site est en anglais, Mimi Ramen est un ramen de quartier ferme le dimanche
+P0260;A;forte;Meme raison face a un tibetain minuscule ferme le lundi, sans site ni couverture
+P0261;A;moyenne;Hestia est une table gastronomique referencee par des guides et critiques internationaux avec un site consulte en anglais, Lhassa est une petite salle tibetaine sans aucune visibilite
+P0262;A;moyenne;Hestia vise une clientele de fine dining venue de loin, Le Paradis des Amis sert une cuisine traditionnelle du jour a des clients qui parlent du patron
+P0263;B;faible;Tran Tran Zai est couvert par un media parisien et fait partie d'un petit groupe local avec des clients qui reviennent, Le Paradis des Amis recoit des avis de visiteurs de passage varies
+P0264;B;moyenne;En face ouvre de 9h30 a 23h30 7j/7 avec une affluence nettement plus forte le week-end, Tran Tran Zai coupe l'apres-midi et vit de reguliers
+P0265;B;moyenne;Sushi Wasabi est un comptoir de vente au poids ouvert en continu sur un grand boulevard, format d'achat impulsif, En face est une salle avec reservation
+P0266;A;faible;Cafe Med est une petite table sur l'ile Saint-Louis avec une critique dans un blog anglophone pour visiteurs, Sushi Wasabi vend surtout a emporter a bas prix
+P0267;B;forte;Chantira est couvert par deux medias food parisiens, impose la reservation et ferme lundi et mardi, Cafe Med vit du flux de l'ile Saint-Louis
+P0268;A;moyenne;La dedicace recueille beaucoup d'avis de voyageurs qui la decrivent comme une decouverte de sejour, Chantira est une adresse de prescription parisienne fermee deux jours
+P0269;A;faible;Les Pipos figure dans des guides vin anglophones et declare une clientele touristes, La dedicace est dans une ruelle calme avec une carte courte a 22 euros
+P0270;A;forte;Les Pipos est ouvert jusqu'a 1h avec concerts et cumule fiches etrangeres, L'Oree du Parc n'ouvre que du lundi au vendredi et ses clients s'y decrivent comme habitues et collegues
+P0271;A;forte;La Petite Bouclerie ouvre 7j/7 de 11h a minuit en continu avec terrasse, amplitude de captation maximale, contre une brasserie fermee le week-end vivant de ses habitues
+P0272;B;forte;Meme raison, le tibetain Kokonor coupe l'apres-midi, ferme le dimanche et n'existe que par un vieux blog specialise
+P0273;B;moyenne;Pizzeria Luciana declare une clientele touristes, ouvre 7j/7 et ses avis sont ceux de clients uniques, Kokonor a un patron identifie et des clients qui annoncent revenir
+P0274;B;moyenne;Les Papilles cumule un guide anglophone pour visiteurs et une fiche de l'office de tourisme, avec des clients revenus dix ans apres pendant un sejour, le libanais reste une table de famille
+P0275;A;moyenne;Homer est un concept americain en service comptoir presente dans un media pour visiteurs, Les Papilles impose reservation et menu unique
+P0276;A;faible;Homer vend un produit signature a emporter reconnaissable de loin, Luciana est une pizzeria anonyme dont les avis se plaignent de salle vide
+P0277;A;forte;Luciana ouvre 7j/7 et affiche une clientele touristes, le Foyer Vietnam n'accepte que les especes et ferme le dimanche
+P0278;B;moyenne;Mimi Ramen declare une clientele touristes et etudiants avec une ambiance branchee, le Foyer Vietnam est une cantine associative a paiement en liquide
+P0279;B;forte;Cafe Med vit du flux de l'ile Saint-Louis et est recommande par un blog pour visiteurs, Mimi Ramen ferme le dimanche et reste un ramen de rue
+P0280;A;forte;Meme raison face a Xiu, cantine vietnamienne fermee l'apres-midi et jugee par des habitues du banh mi
+P0281;A;faible;Xiu declare une clientele touristes et etudiants et ouvre en continu le week-end, Le Paradis des Amis coupe entre les services et sert un menu du jour
+P0282;B;forte;L'Epoque affiche un site en treize langues et un decor Belle Epoque vendu comme experience, Le Paradis des Amis est une petite table de cuisine traditionnelle
+P0283;A;faible;La Petite Bouclerie ouvre en continu jusqu'a minuit tous les jours, ce que L'Epoque ne fait pas, malgre le site multilingue de ce dernier
+P0284;B;faible;All'Antico Vinaio est une enseigne mondiale que les visiteurs reconnaissent depuis Florence, la creperie reste un etablissement local malgre son amplitude
+P0285;B;forte;Meme raison face a une pizzeria de chaine parisienne dont les clients sont des reguliers du quartier
+P0286;A;faible;Gemini ouvre en salle avec service continu et carte standardisee, La dedicace est dans une ruelle a l'ecart avec une carte courte
+P0287;A;moyenne;Hestia est une table gastronomique referencee par des guides internationaux, La dedicace reste une petite adresse a 22 euros
+P0288;B;moyenne;Hestia vise une clientele qui vient expres de loin, Edogawa est un buffet a volonte bon marche frequente par les etudiants
+P0289;A;moyenne;L'ile de Crete ouvre 7j/7 jusqu'a 2h avec terrasse, Edogawa coupe entre les services et vit de son prix fixe pour etudiants
+P0290;B;moyenne;Meme raison, Kokonor ferme le dimanche, coupe l'apres-midi et a des clients qui nomment le patron
+P0291;B;forte;Au Petit Bistrot se vend comme le bistrot francais typique a ne pas manquer, Kokonor est un tibetain confidentiel
+P0292;A;forte;Meme raison face a un traiteur a emporter a menu 7,50 euros qui ne sert que le voisinage
+P0293;A;moyenne;Tran Tran Zai a une salle, une fresque, une couverture presse et trois adresses, Saveurs d'Asie est un simple comptoir a emporter
+P0294;B;faible;Tran Tran Zai attire au-dela du quartier grace a son concept et sa couverture, le couscous de la rue Thouin ferme le dimanche sans aucune visibilite
+P0295;B;forte;La Mediterranee est une institution avec grande terrasse, decor patrimonial et fiche Michelin, le couscous reste une adresse de voisinage
+P0296;A;faible;La Mediterranee ouvre 7j/7 avec une immense terrasse et un decor patrimonial qui se visite, Baieta ferme dimanche et lundi et fonctionne sur reservation
+P0297;A;moyenne;L'Avant Comptoir sert debout sans reservation 7j/7 et cumule les fiches dans des guides et agences de voyage etrangers, Baieta filtre par la reservation
+P0298;A;faible;L'Avant Comptoir est un passage oblige repertorie par plusieurs guides pour visiteurs, Sushi Wasabi vend surtout a bas prix a emporter
+P0299;B;forte;Sushi Wasabi est un comptoir en continu sur un grand boulevard, L'Oree du Parc ferme le week-end et ses clients s'y decrivent comme des habitues
+P0300;B;forte;MONK ouvre jusqu'a 2h avec concerts et site bilingue, L'Oree du Parc n'ouvre que du lundi au vendredi pour ses reguliers
+P0301;B;moyenne;MONK capte le flux nocturne de sortie, Brava Pizza est une pizzeria familiale tournee vers l'emporte et la livraison
+P0302;A;moyenne;Les Pipos declare une clientele touristes, ouvre jusqu'a 1h avec concerts et figure dans des fiches etrangeres, Brava vit de son quartier
+P0303;B;moyenne;Hong Kong ouvre 7j/7 en continu de 11h a 23h avec menus tres bas prix et terrasse, Les Pipos garde 60 pour cent de son affluence en semaine
+P0304;A;forte;Meme raison face a une trattoria decrite comme frequentee par les etudiants et les journalistes du quartier
+P0305;A;moyenne;Pasta e Fagioli ouvre 7j/7 avec terrasse et happy hour, Chantira ferme lundi et mardi, impose la reservation et est prescrit par la presse food parisienne
+P0306;A;forte;L'Escale de Notre-Dame ouvre 7j/7 en continu avec un site en anglais et un menu a 18 euros, Chantira est une adresse de prescription locale
+P0307;B;faible;Les deux vivent du flux, mais L'Escale a une salle a table avec menu formule et site en anglais quand Genia reste un comptoir bon marche aussi frequente par les etudiants
+P0308;B;faible;Genia capte le passant par le prix, Aux anysetiers du roy vend un decor mis en scene et des classiques francais que plusieurs clients decrivent comme un piege
+P0309;B;forte;Meme raison face a Bicla, ferme lundi et mardi, prescrit par un magazine francophone et frequente par des connaisseurs de cuisine mexicaine
+P0310;B;faible;Lhassa est dans une rue passante avec un decor typique qui attire le curieux, Bicla ferme deux jours et impose la reservation
+P0311;B;faible;Saigona ouvre 7j/7 avec une carte tres large et se presente sur son site comme vietnamien authentique, Lhassa ferme le lundi avec une carte etroite
+P0312;A;faible;En face ouvre de 9h30 a 23h30 7j/7 avec une affluence nettement plus forte le week-end, Saigona garde une coupure et une clientele plus reguliere
+P0313;B;moyenne;En face a une amplitude tres large, une terrasse et un pic de week-end, Les Delices du Liban ferment le mardi et vivent d'une clientele familiale fidele depuis 1967

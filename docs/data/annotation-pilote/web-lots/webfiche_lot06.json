@@ -1,0 +1,218 @@
+{
+  "osm_n5764283340": {
+    "nom": "Café Saint-Germain",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["ConcertHotels.com le présente comme une pizzeria décontractée près des salles de concert du centre de Paris, orientée visiteurs anglophones (https://www.concerthotels.com/restaurant/cafe-saint-germain/105079)", "Wanderlog (guide de voyage anglophone) référence l'adresse (https://wanderlog.com/place/details/13588845/caf%C3%A9-saint-germain)"],
+    "site_officiel": "un site existe (cafesaintgermain.metro.bar), en anglais, orienté réservation (https://cafesaintgermain.metro.bar/?lang=en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["se présente comme brasserie/pizzeria mixant cuisine méditerranéenne, viandes et pizzas, terrasse extérieure"],
+    "incertitudes": "adresse donnée dans les fiches en ligne comme '18 boulevard St Germain 75005' alors que Boulevard Saint-Germain à ce numéro est à la limite 5e/6e ; à vérifier si distinct d'autres 'Café Saint-Germain' homonymes ailleurs à Paris."
+  },
+  "osm_n3027567341": {
+    "nom": "Yue Dore",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié (page eatbu/réservation trouvée : yuedore.eatbu.com, pas un site propre)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["se présente comme restaurant cantonais raffiné, service en anglais mentionné, spécialités : dumplings de homard et crevette, bar noir sauce aux fèves noires"],
+    "incertitudes": ""
+  },
+  "osm_n1109569346": {
+    "nom": "Jardin Notre-Dame",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["multiples fiches génériques (Tripadvisor, Yelp, RestaurantGuru) orientées visiteurs, mettant en avant la vue sur Notre-Dame depuis la terrasse (https://www.tripadvisor.com/Restaurant_Review-g187147-d4290028-Reviews-Restaurant_Jardin_Notre_Dame-Paris_Ile_de_France.html)"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine française classique (filets de bœuf, escargots, foie gras, profiteroles), décor 'cosy et familial', situé juste en face de Notre-Dame"],
+    "incertitudes": ""
+  },
+  "osm_n4081895346": {
+    "nom": "The 3 Musketeers",
+    "presse_francophone": ["aucune mention en presse food francophone trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée dans des guides de voyage dédiés (au-delà des plateformes de réservation)"],
+    "site_officiel": "aucun site officiel indépendant identifié, présence surtout via TheFork/Uber Eats/Deliveroo",
+    "reseaux_sociaux": ["compte TikTok @the.3.musketeers.fr, contenu en français avec hashtags orientés food Paris (#foodguideparis, #foodtiktok) (https://www.tiktok.com/@the.3.musketeers.fr/video/7232789944836656410)"],
+    "autres_faits": ["restaurant récent regroupant trois concepts sous un même toit : Peru Brasa (poulet rôti péruvien), Mr. Pulpo (poulpe grillé péruvien), Waikiki Brothers (poke hawaïen) ; a reçu le 'Prix du Public' 2025 aux TheFork Awards ; chef mentionné Javier Jiménez"],
+    "incertitudes": ""
+  },
+  "osm_n9849070354": {
+    "nom": "Rosemonde",
+    "presse_francophone": ["aucune mention en presse food francophone dédiée trouvée (Fooding, Time Out, Sortiraparis)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "présence via page réservation Privateaser, pas de site propre identifié ; se présente en français comme brasserie parisienne mêlant tradition française et touches italiennes (https://www.privateaser.com/lieu/49573-rosemonde)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["nom rendant hommage à la poétesse Rosemonde Gérard, épouse d'Edmond Rostand, dont le portrait est à l'entrée ; brunch tous les dimanches ; capacité bar jusqu'à 130 personnes pour événements privés"],
+    "incertitudes": "exploité sous le nom 'Rosemonde by Patrol' sur certaines fiches (Tripadvisor) — possible lien avec un groupe 'Patrol' à vérifier."
+  },
+  "osm_n2534780358": {
+    "nom": "Il Gigolo",
+    "presse_francophone": ["Paris Bouge référence l'établissement dans ses adresses (média food francophone orienté parisiens) (https://www.parisbouge.com/places/3804)", "Unidivers (média culturel) : article 'Le restaurant Il Gigolo ou la cuisine italienne gourmande' (https://unidivers.fr/paris-restaurant-il-gigolo/)"],
+    "guides_visiteurs": ["aucune mention spécifique trouvée au-delà des plateformes d'avis génériques (Tripadvisor, Yelp)"],
+    "site_officiel": "aucun site officiel propre identifié, présence via Uber Eats et Mapstr",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert depuis 2010, trattoria italienne rue de la Huchette, clientèle mixte parisiens/touristes selon Unidivers, spécialités : tagliolini au pesto, caponatina, penne carbonara, tiramisu"],
+    "incertitudes": ""
+  },
+  "osm_n783272359": {
+    "nom": "Le Choupinet",
+    "presse_francophone": ["aucune mention en presse food francophone dédiée trouvée"],
+    "guides_visiteurs": ["YWT France (site anglophone 'Your Way To France' orienté voyageurs) : article 'Le Choupinet Paris: A Timeless French Brasserie Experience' (https://yourwaytofrance.com/le-choupinet-paris-a-timeless-french-brasserie-experience/)"],
+    "site_officiel": "site officiel en français, lechoupinet.com, présente la carte et le titre de Maître Restaurateur (https://lechoupinet.com/lacarte)",
+    "reseaux_sociaux": ["page Facebook active (https://www.facebook.com/lechoupinetparis/)"],
+    "autres_faits": ["établi en 2019, dirigé par Benjamin Artis, titulaire du label 'Maître Restaurateur' (garantie gouvernementale de cuisine faite sur place à partir de produits bruts), rôtisserie visible en salle, terrasse place Edmond Rostand face au Jardin du Luxembourg"],
+    "incertitudes": ""
+  },
+  "osm_n5426991360": {
+    "nom": "Toppoki",
+    "presse_francophone": ["aucune mention en presse food francophone dédiée trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site officiel en français, toppoki.fr, se présente comme 'Restaurant Coréen Street Food' (https://www.toppoki.fr/)",
+    "reseaux_sociaux": ["forte présence TikTok, comptes @toppoki168 et relais par des comptes food comme @resto.halal, contenu orienté recommandations 'bonnes adresses' à petit prix (https://www.tiktok.com/@toppoki168/video/7583868017436609814 ; https://www.tiktok.com/@resto.halal/video/7522049296036810006)"],
+    "autres_faits": ["cuisine coréenne de rue (tteokbokki, corn-dog, poulet frit coréen, bibimbap), options halal, vegan et végétarien mentionnées"],
+    "incertitudes": ""
+  },
+  "osm_n3864583361": {
+    "nom": "Eleni",
+    "presse_francophone": ["aucune mention en presse food francophone dédiée trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant grec familial, ancien nom 'Tzeferakos' à la même adresse et avec le même menu selon plusieurs fiches (mindtrip.ai, restaurantguru), spécialités moussaka, spanakopita, salade grecque"],
+    "incertitudes": "le changement de nom Tzeferakos → Eleni n'est mentionné que par des fiches d'agrégateurs, à confirmer si source plus fiable disponible."
+  },
+  "osm_n3703077369": {
+    "nom": "Ha Noi 1988",
+    "presse_francophone": ["Sortiraparis a couvert le concept annexe 'Ha Noi 1988 Flowers & Archives' (coffee shop/fleuriste), média francophone orienté grand public parisien (https://www.sortiraparis.com/en/where-to-eat-in-paris/brunch-cafe-tea-time/articles/325819-hanoi-1988-flowers-archives-the-vietnamese-coffee-shop-ceramic-florist-and-diy-workshops-video)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site officiel viet-eat.com, en anglais, met en avant l'accueil en anglais pour clientèle internationale (https://www.viet-eat.com/en)",
+    "reseaux_sociaux": ["page Facebook 'vieteat.hanoi1988' (https://www.facebook.com/vieteat.hanoi1988/)"],
+    "autres_faits": ["fait partie d'un groupe de 4 (puis 5 avec le concept fleuriste/café) adresses à Paris, adresse d'origine mentionnée au 72 Quai des Orfèvres, situé près de l'Île Saint-Louis"],
+    "incertitudes": "adresse du lot (Rue le Regrattier) correspond à une des succursales du groupe, pas l'adresse d'origine — à noter que 'Ha Noi 1988' peut désigner plusieurs établissements du même groupe."
+  },
+  "osm_n1731675378": {
+    "nom": "O. Isso",
+    "presse_francophone": ["aucune mention en presse food francophone dédiée trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site de réservation eatbu (oissorestaurant.eatbu.com), en anglais, pas de site propre identifié",
+    "reseaux_sociaux": ["compte Instagram @oisso_restaurant identifié (https://www.instagram.com/oisso_restaurant/)"],
+    "autres_faits": ["restaurant coréen, service en anglais mentionné pour clientèle internationale, spécialités poulet frit sauce yangnyeom, dumplings grillés, bibimbap, BBQ coréen"],
+    "incertitudes": "un établissement homonyme 'O.I.SSO' existe aussi Paris 17e (Pereire Malesherbes) selon Deliveroo —à ne pas confondre avec celui du 5e."
+  },
+  "osm_n8075852378": {
+    "nom": "Restaurant Boutebrie",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié ; fiche officielle sur paris.fr sous le nom 'Restaurant Emeraude Boutebrie' (https://www.paris.fr/lieux/restaurant-emeraude-boutebrie-19232)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["identifié comme 'Restaurant Emeraude Boutebrie', un restaurant solidaire/d'entreprise géré par le CASVP (Centre d'Action Sociale de la Ville de Paris), horaires restreints (lundi-samedi 14h-18h) — ce n'est pas un restaurant commercial classique"],
+    "incertitudes": "à vérifier que l'établissement du CSV correspond bien à l'entrée du CSV 'Restaurant Boutebrie' du lot ; le type d'établissement (restaurant social/collectif) diffère nettement d'un restaurant commercial standard."
+  },
+  "osm_n1731675379": {
+    "nom": "La Truffière",
+    "presse_francophone": ["aucune mention en presse food francophone grand public (Fooding, Time Out) trouvée, mais couvert par Gault&Millau (16/20) (https://fr.gaultmillau.com/restaurants/la-truffiere-restaurant)", "blog critique indépendant 'Restos sur le Grill' : 'La Truffière (Paris 5) : l'excellence française' (https://restos-sur-le-grill.fr/2020/08/la-truffiere-paris-5-l-excellence-francaise.html)", "7detable.com (média food pro francophone) : article sur l'arrivée du chef Aurélien Braguier (https://www.7detable.com/article/nos-cantines/avec-l-arrivee-d-aurelien-braguier-la-truffiere-prend-la-direction-sud/2139)"],
+    "guides_visiteurs": ["référencé au Guide MICHELIN (https://guide.michelin.com/be/fr/ile-de-france/paris/restaurant/la-truffiere)"],
+    "site_officiel": "site officiel bilingue (la-truffiere.fr / la-truffiere-paris.com), version anglaise disponible, se présente comme restaurant de la truffe et cave à vins depuis 1983 (https://www.la-truffiere.fr/ ; https://la-truffiere-paris.com/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert depuis 1983, cave voûtée du XVIIe siècle, carte des vins de 4200 références, changement de direction récent avec l'arrivée du chef Aurélien Braguier selon 7detable.com"],
+    "incertitudes": ""
+  },
+  "osm_n3296495381": {
+    "nom": "Tashi-Delek",
+    "presse_francophone": ["Parisianavores (blog/média francophone sorties Paris) : article 'Tashi Delek, resto tibétain, à la découverte des TSELMOK' (https://parisianavores.paris/tashi-delek-resto-tibetain-a-la-decouverte-des-tselmok/)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établissement créé le 1er janvier 1989 selon le registre des entreprises (annuaire-entreprises.data.gouv.fr), un des plus anciens restaurants tibétains de Paris, spécialités tsamthoug (soupe à l'orge grillée) et momoka (dumplings vapeur au bœuf)"],
+    "incertitudes": ""
+  },
+  "osm_n3296495382": {
+    "nom": "Mano Nera",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site officiel manonera.fr, en français, se présente comme restaurant italien 'Mano Nera Panthéon' (https://manonera.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["pizza romaine, pâtes fraîches et glace artisanale, situé près du Panthéon"],
+    "incertitudes": "un établissement homonyme/voisin 'Terra Nera' existe juste à côté au 18 rue des Fossés Saint-Jacques (même rue) — attention à ne pas confondre les deux dans les sources."
+  },
+  "osm_n7681213385": {
+    "nom": "Tran Tran Zai",
+    "presse_francophone": ["Sortiraparis (média francophone grand public parisien) : article 'TrantranZai Montparnasse, for spicy Sichuan noodles and ravioli in Paris!' — couvre le concept, avec mention du premier établissement du Quartier latin (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/295491-trantranzai-montparnasse-for-spicy-sichuan-noodles-and-ravioli-in-paris)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["premier restaurant du groupe ouvert en 2019 au 3 rue de l'École Polytechnique (Quartier latin), spécialités nouilles fraîches et raviolis du Sichuan avec niveaux de piment réglables (0 à 6), grande fresque murale représentant les cuisines du Sichuan et de Chongqing ; deux autres adresses ouvertes ensuite (94 rue Saint-Denis en 2021, 47 bd du Montparnasse en 2022)"],
+    "incertitudes": ""
+  },
+  "osm_n6097105387": {
+    "nom": "SOS Chef",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["se présente comme cuisine à emporter/livraison à base de produits bio, plutôt orienté vente à emporter que restaurant assis selon les fiches consultées"],
+    "incertitudes": "plusieurs établissements nommés 'Chef, SOS Chef !' existent à Paris (mention d'un à Paris 12e distinct) — à confirmer que la fiche correspond bien à celui de la rue Suger (6e)."
+  },
+  "osm_n6226490387": {
+    "nom": "Les Crêpes de Louis-Marie",
+    "presse_francophone": ["aucune mention en presse food francophone dédiée trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["crêperie mêlant traditions bretonnes, chef prénommé 'Loulou' selon TheFork, options végétariennes et sans gluten"],
+    "incertitudes": ""
+  },
+  "osm_n2534780388": {
+    "nom": "Rosie's Smokehouse",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention spécifique trouvée au-delà des plateformes d'avis génériques orientées à la fois locaux et touristes"],
+    "site_officiel": "site officiel en français/anglais (rosies-smokehouse-paris.fr), présente le concept 'sports bar' (https://rosies-smokehouse-paris.fr/en)",
+    "reseaux_sociaux": ["page Facebook 'rsmkhouse' (https://www.facebook.com/rsmkhouse/)"],
+    "autres_faits": ["restaurant américain/BBQ et sports bar, grands écrans pour événements sportifs, plus de 100 places, spécialités ribs et brisket fumés"],
+    "incertitudes": ""
+  },
+  "osm_n4460781390": {
+    "nom": "Bazurto",
+    "presse_francophone": ["Best Restaurant Paris (média critique food francophone) : 'On a testé Bazurto, la Colombie festive de Juan Arbelaez à Paris' (https://bestrestaurantsparis.com/fr/restaurant-colombien-paris-bazurto/)", "Paris Capitale (média francophone) : 'Bazurto, le resto colombien de Juan Arbelaez' (https://pariscapitale.com/non-classe/bazurto-le-resto-colombien)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site officiel bilingue bazurtorestaurant.com, met en avant le chef Juan Arbeláez et une deuxième adresse à Tignes (https://www.bazurtorestaurant.com/en)",
+    "reseaux_sociaux": ["aucune mention trouvée spécifiquement, mais forte identité de marque autour du chef médiatique Juan Arbeláez"],
+    "autres_faits": ["ouvert en juin 2021, restaurant du chef colombien Juan Arbeláez (personnalité connue en France via la télévision), cuisine cuite au feu de bois, ambiance festive avec DJ sets jeudi-samedi ; avis en ligne mitigés évoquant un établissement 'survendu' avec prix élevés pour qualité jugée moyenne par certains clients"],
+    "incertitudes": ""
+  },
+  "osm_n6097105390": {
+    "nom": "Le Saint-André",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["brasserie/bar cuisine française et italienne (tartare, risotto, tiramisu, pain perdu), situé au cœur du quartier Saint-Michel, accueille petit-déjeuner en terrasse"],
+    "incertitudes": ""
+  },
+  "osm_n3350297393": {
+    "nom": "La Bûcherie",
+    "presse_francophone": ["aucune mention en presse food francophone dédiée trouvée"],
+    "guides_visiteurs": ["plusieurs fiches d'agrégateurs anglophones décrivent l'ambiance jugée 'plutôt touristique' avec vue sur Notre-Dame (via synthèse d'avis Tripadvisor/Yelp)"],
+    "site_officiel": "site officiel labucherieparis.com, en anglais/français, présente une brasserie face à Notre-Dame (https://www.labucherieparis.com/en)",
+    "reseaux_sociaux": ["page Facebook et compte Instagram 'labucheriecafe' identifiés (https://www.facebook.com/Labucheriecafe/ ; https://www.instagram.com/labucheriecafe/)"],
+    "autres_faits": ["terrasse chauffée l'hiver face à Notre-Dame, carte mêlant plats français (tartare, magret) et internationaux (burgers, pizza, English breakfast)"],
+    "incertitudes": ""
+  },
+  "osm_n4326240394": {
+    "nom": "Gomaya",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site officiel gomaya-paris.com, version anglaise disponible (https://www.gomaya-paris.com/en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant japonais, sushis et brochettes grillées au feu de bois, mini-terrasse, situé au cœur du Quartier latin"],
+    "incertitudes": ""
+  },
+  "osm_n6516343395": {
+    "nom": "La Fontaine",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["page Facebook 'lafontainecuvier' identifiée (https://www.facebook.com/lafontainecuvier/)"],
+    "autres_faits": ["brasserie française située face à l'entrée Porte Linné du Jardin des Plantes, à côté de la Fontaine Georges Cuvier, spécialités salades, poissons, andouille, tarte tatin"],
+    "incertitudes": "nom très générique ('La Fontaine') largement partagé par d'autres établissements à Paris — vérifier systématiquement l'adresse (20 rue Cuvier) en cas de recoupement."
+  }
+}

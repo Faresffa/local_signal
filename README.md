@@ -2,6 +2,16 @@
 
 [![CI](https://github.com/Faresffa/local_signal/actions/workflows/ci.yml/badge.svg)](https://github.com/Faresffa/local_signal/actions/workflows/ci.yml)
 
+> **Chantier en cours — à lire avant de reprendre le travail :**
+> [`docs/REPRENDRE-ICI.md`](docs/REPRENDRE-ICI.md)
+>
+> La vérité terrain existe depuis le 18 septembre 2026 : **328 restaurants sur 467**
+> classés du plus local au plus dépendant de la clientèle de passage, accord
+> inter-annotateurs 0,713. Le score actuel prédit ce classement, mais la
+> pondération est mal répartie — la langue porte presque tout le signal, le menu
+> et la zone touristique ne sont pas significatifs. **La prochaine étape est la
+> recalibration**, pas une nouvelle campagne d'annotation.
+
 Quand on voyage, on veut souvent découvrir une ville **comme un local**.
 Cela passe évidemment par la nourriture et les restaurants que fréquentent réellement les habitants.
 

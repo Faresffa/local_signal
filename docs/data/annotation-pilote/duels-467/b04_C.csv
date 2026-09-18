@@ -1,0 +1,81 @@
+paire;choix;confiance;raison
+P0234;A;moyenne;Luciana ouvre 7j/7 et affiche une clientele touristes sans aucun habitue identifiable, quand Xiu ferme le dimanche et vit de banh mi a emporter du quartier
+P0235;A;moyenne;Baieta vit de couverts reserves a l'avance dont une part de visiteurs de passage, Xiu est une cantine de rue fermee le dimanche et coupee l'apres-midi
+P0236;B;forte;Homer sert en continu de midi a 23h au comptoir sur un format snack a emporter, modele de flux pur, la ou Baieta ferme deux jours et remplit sur reservation
+P0237;A;forte;Homer est un comptoir de lobster rolls ouvert en continu, Pasta e Fagioli est une trattoria de voisins et d'etudiants avec coupure et creux de semaine assume
+P0238;B;moyenne;Saveurs d'Asie est un traiteur a emporter a 8 euros le menu avec des clients qui rapportent les plats chez eux, Pasta e Fagioli a une salle a remplir midi et soir
+P0239;A;forte;Hong Kong ouvre 7j/7 de 11h a 23h sans coupure avec terrasse et menu a 7,90, modele de debit continu, contre un traiteur de rue residentielle
+P0240;A;moyenne;Hong Kong tourne en service continu 12h par jour, Les Papilles ferme dimanche et lundi et impose la reservation sur un menu unique
+P0241;A;forte;All'Antico Vinaio est la 50e boutique d'une chaine florentine sur 40 m2 ouverte 7j/7 en continu, rotation de passage maximale
+P0242;B;moyenne;Les deux vivent du debout et du sans-reservation, mais l'enseigne de chaine a notoriete internationale bat le comptoir de Camdeborde qui garde une clientele de fideles
+P0243;A;forte;L'Avant Comptoir sert debout sans reservation 7j/7 jusqu'a 23h, Kusksi ferme le dimanche et travaille en deux services courts
+P0244;B;faible;Aux Delices du Liban est ouvert le dimanche et ferme le mardi, Kusksi fait l'inverse en fermant le dimanche, jour de passage par excellence
+P0245;A;moyenne;Le Foyer Vietnam est une cantine associative en especes uniquement, fermee le dimanche, avec des clients qui y viennent depuis quinze ans
+P0246;B;faible;Bicla ouvre le dimanche midi en service continu quand le Foyer ferme, et le Foyer cumule cours de langue et vie associative qui fixent une clientele
+P0247;A;moyenne;Au Petit Bistrot fonctionne sur reservation de visiteurs en terrasse d'ete, Bicla ferme lundi et mardi et complete son chiffre par le traiteur et l'evenementiel
+P0248;A;moyenne;La Creperie Genia est un kiosque a commande au comptoir ouvert jusqu'a 23h30 avec menu a 8,50 et personnel polyglotte, debit de passage contre une salle de bistrot a reserver
+P0249;B;faible;Les deux vivent du debit, mais Genia encaisse au comptoir sur des tickets a 8,50 quand L'ile de Crete garde un service a table et des assiettes qui fidelisent
+P0250;A;forte;L'ile de Crete ouvre 7j/7 de 11h a 2h du matin sans coupure, quinze heures d'amplitude, contre une pizzeria a deux services qui vit aussi de la livraison
+P0251;B;moyenne;Edogawa fonctionne en buffet a volonte a prix fixe, modele de volume, Brava Pizza est une affaire de couple avec livraison et clientele de quartier
+P0252;A;moyenne;Des avis decrivent trois passages en trois jours de sejour chez L'Epoque, signature d'une clientele de sejour, quand Edogawa remplit sur un buffet bon marche
+P0253;A;moyenne;L'Epoque fait du tartare-burger avec un site decline en treize langues, La Mediterranee garde une clientele installee avec des habitues de longue date
+P0254;B;faible;Gemini est la sixieme adresse d'un groupe, modele de volume duplique, quand La Mediterranee vit d'une clientele fidele venue cent fois
+P0255;B;forte;Aux Anysetiers du Roy vend un decor medieval reconstitue 7j/7 et ses propres clients y decrivent un piege a touristes
+P0256;A;forte;Anysetiers vit du decor et du passage sur l'Ile Saint-Louis, Saigona est un vietnamien de quartier sans aucune visibilite editoriale
+P0257;A;moyenne;MONK ouvre de 10h a 2h tous les jours avec concerts et cinquante bieres, modele de bar a flux, contre un vietnamien a deux services
+P0258;A;forte;MONK cumule seize heures d'amplitude et programmation musicale quand Mimi Ramen ferme le dimanche et travaille deux services courts
+P0259;A;forte;L'Escale sert en continu 7j/7 un menu a 18 euros et ses clients disent etre entres en passant attires par l'odeur, rabattage de flux
+P0260;B;forte;Lhassa ferme le lundi, deux services courts, aucune presence en ligne, quand L'Escale tourne en continu sept jours sur sept
+P0261;B;moyenne;Hestia est reference par des guides internationaux et vit d'une table gastronomique a menu unique, Lhassa est une petite salle de quartier sans site
+P0262;A;faible;Hestia attire une clientele de sejour via les guides internationaux, Le Paradis des Amis tourne sur un menu du jour et des proprietaires en salle
+P0263;B;faible;Le Paradis des Amis ouvre le dimanche soir avec une amplitude plus large, Tran Tran Zai garde des habitues qui nomment les serveuses et une clientele etudiante
+P0264;A;moyenne;En face ouvre de 9h30 a 23h30 sans coupure avec une frequentation nettement weekend, Tran Tran Zai fait deux services courts pour le quartier
+P0265;A;faible;En face cumule quatorze heures d'amplitude et un pic de week-end marque, Sushi Wasabi vend au poids au comptoir mais sur une plage plus courte
+P0266;A;faible;Sushi Wasabi sert en continu de 10h30 a 22h30, Cafe Med coupe entre les services et tient une douzaine de tables en affaire familiale
+P0267;B;forte;Chantira ferme lundi et mardi, reservation obligatoire, couvert par la presse food parisienne, Cafe Med vit du passage sur l'Ile Saint-Louis
+P0268;B;moyenne;La Dedicace ouvre six jours avec deux services et une terrasse qui capte, Chantira ne fait que cinq jours sur reservation obligatoire
+P0269;B;faible;Les Pipos ouvre de 9h a 1h du matin avec concerts le week-end, amplitude de bar, quand La Dedicace reste sur deux services de restaurant
+P0270;A;forte;L'Oree du Parc n'ouvre que du lundi au vendredi et vit d'un happy hour de collegues qui en ont fait leur QG, modele de bureau pur
+P0271;A;forte;La Petite Bouclerie ouvre 7j/7 de 11h a minuit en continu, L'Oree du Parc ferme le week-end entier
+P0272;B;forte;La Petite Bouclerie tourne treize heures par jour sans coupure sept jours sur sept, Kokonor ferme le dimanche et fait deux services
+P0273;A;moyenne;Luciana ouvre sept jours sur sept sans habitues reperables, Kokonor ferme le dimanche et ses clients citent le gerant par son nom
+P0274;B;moyenne;Les Papilles est recense par l'office de tourisme et des guides anglophones avec des clients qui reviennent d'un sejour a l'autre, Aux Delices du Liban est une affaire familiale de 1967
+P0275;A;forte;Homer sert en continu au comptoir un produit snack, Les Papilles ferme deux jours et remplit sur reservation d'un menu unique
+P0276;A;moyenne;Homer ouvre en continu de midi a 23h en service comptoir, Luciana coupe l'apres-midi et fait deux services a table
+P0277;A;forte;Luciana ouvre sept jours sur sept avec clientele touristes declaree, le Foyer Vietnam est une cantine associative fermee le dimanche et payable en especes
+P0278;A;faible;Mimi Ramen accepte les cartes et les reservations avec une salle a remplir, le Foyer Vietnam vit d'une communaute et d'habitues de quinze ans
+P0279;B;moyenne;Cafe Med capte les promeneurs sur l'Ile Saint-Louis et n'a de visibilite que dans un blog pour visiteurs, Mimi Ramen ferme le dimanche pour une clientele etudiante
+P0280;A;forte;Cafe Med vit du passage et de la decouverte fortuite, Xiu est un comptoir de street-food ferme le dimanche et l'apres-midi
+P0281;B;faible;Le Paradis des Amis ouvre sept jours sur sept avec une amplitude plus large, Xiu ferme le dimanche et coupe de 15h a 18h
+P0282;A;moyenne;L'Epoque affiche un site en treize langues et des clients revenus trois fois en un sejour, Le Paradis des Amis tourne au menu du jour
+P0283;A;faible;La Petite Bouclerie ouvre jusqu'a minuit sept jours sur sept en continu, L'Epoque conserve deux services classiques
+P0284;B;faible;All'Antico Vinaio est une enseigne de chaine a rotation rapide sur 40 m2, La Petite Bouclerie garde un service a table et une amplitude comparable mais moins de debit
+P0285;A;forte;All'Antico Vinaio vit de la rotation d'une enseigne internationale, Gemini est une chaine parisienne qui garde des clientes regulieres
+P0286;A;faible;Gemini est la sixieme adresse d'un groupe qui cherche le volume, La Dedicace est une petite carte a terrasse calme fermee le dimanche
+P0287;A;faible;Hestia est reference par Michelin, Falstaff et la critique anglophone, La Dedicace n'a qu'un site francais et une clientele de bouche a oreille
+P0288;A;faible;Hestia attire par les guides internationaux, Edogawa remplit un buffet a volonte bon marche pour des etudiants du quartier
+P0289;B;moyenne;L'ile de Crete ouvre quinze heures par jour jusqu'a 2h du matin sept jours sur sept, Edogawa fait deux services avec coupure
+P0290;B;forte;L'ile de Crete tourne en continu jusqu'a 2h sept jours sur sept, Kokonor ferme le dimanche et fait deux services courts
+P0291;A;moyenne;Au Petit Bistrot vit de reservations de visiteurs en terrasse, Kokonor est une petite salle tibetaine fermee le dimanche
+P0292;A;forte;Au Petit Bistrot remplit une terrasse de passage, Saveurs d'Asie est un traiteur a emporter a 8 euros pour le voisinage
+P0293;B;moyenne;Tran Tran Zai a une salle a table ouverte sept jours sur sept et une enseigne dupliquee sur trois adresses, Saveurs d'Asie ne fait que de la vente a emporter
+P0294;B;faible;Tran Tran Zai ouvre le dimanche quand Kusksi ferme ce jour-la, et son enseigne s'est dupliquee sur trois adresses
+P0295;B;moyenne;La Mediterranee ouvre sept jours sur sept avec voiturier, terrasse immense et fiche Michelin, Kusksi ferme le dimanche sans aucune visibilite
+P0296;B;moyenne;La Mediterranee ouvre sept jours sur sept avec une grande terrasse, Baieta ferme dimanche et lundi et travaille sur reservation obligatoire
+P0297;A;forte;L'Avant Comptoir sert debout sans reservation 7j/7 jusqu'a 23h, Baieta ferme deux jours et remplit des couverts reserves
+P0298;A;faible;L'Avant Comptoir sert debout sans reservation jusqu'a 23h tous les jours, Sushi Wasabi ferme plus tot et vend surtout au poids
+P0299;A;forte;Sushi Wasabi sert en continu de 10h30 a 22h30 au comptoir, L'Oree du Parc ferme tout le week-end pour une clientele de bureau
+P0300;B;forte;MONK ouvre de 10h a 2h tous les jours avec concerts, L'Oree du Parc ne travaille que du lundi au vendredi
+P0301;B;moyenne;MONK cumule seize heures d'amplitude, sept jours et programmation live, Brava Pizza fait deux services et de la livraison de quartier
+P0302;B;faible;Les Pipos ouvre de 9h a 1h avec concerts le week-end et une salle a remplir tard, Brava Pizza vit de deux services et de la livraison
+P0303;A;moyenne;Hong Kong tourne en continu douze heures par jour sept jours sur sept, Les Pipos fait 60 pour cent de son affluence en semaine, signature d'une clientele de bureau et d'ecole
+P0304;B;moyenne;Hong Kong sert en continu sept jours sur sept, Pasta e Fagioli est une trattoria de voisins qui reconnait un creux de semaine
+P0305;B;moyenne;Pasta e Fagioli a une salle a remplir midi et soir tous les jours, Chantira ferme lundi et mardi sur reservation obligatoire
+P0306;B;forte;L'Escale sert un menu a 18 euros en continu sept jours sur sept et capte les passants a l'odeur, Chantira ne fait que cinq jours sur reservation
+P0307;A;faible;L'Escale ouvre en continu sept jours sur sept avec une frequentation nettement week-end, Genia ferme plus tot le lundi et encaisse au comptoir
+P0308;B;faible;Aux Anysetiers vend un decor reconstitue que ses propres clients denoncent comme piege a touristes, Genia vit d'un debit a bas prix qui capte aussi des etudiants
+P0309;A;forte;Aux Anysetiers vit du decor medieval et du passage, Bicla ferme lundi et mardi et complete par le traiteur et l'evenementiel
+P0310;A;faible;Lhassa ouvre le dimanche quand Bicla ferme deux jours pleins, et Bicla a une presse food parisienne et des clients mexicains fideles
+P0311;B;moyenne;Saigona ouvre sept jours sur sept avec une amplitude de onze heures, Lhassa ferme le lundi et fait deux services courts
+P0312;B;moyenne;En face ouvre de 9h30 a 23h30 sans coupure avec un pic de week-end marque, Saigona garde deux services classiques
+P0313;B;forte;En face cumule quatorze heures d'amplitude sept jours sur sept et 60 pour cent d'affluence le week-end, Aux Delices du Liban est une affaire familiale de 1967 fermee le mardi

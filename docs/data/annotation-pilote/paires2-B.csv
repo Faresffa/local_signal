@@ -1,0 +1,87 @@
+paire;choix;confiance;raison
+P001;B;forte;Mr & Mrs Crab est un phenomene TikTok viral avec 110k abonnes et des visites d'influenceurs, signe clair d'une clientele de passage attiree par la tendance
+P002;A;forte;Mr & Mrs Crab est un lieu viral sur TikTok visite par des createurs de contenu alors que Brava Pizza n'a aucune couverture presse ni virale, juste une pizzeria de livraison familiale
+P003;B;faible;Brava Pizza a au moins un signal de commerce familial dans les avis alors que Yokorama n'a aucun ancrage identifiable, ni presse ni communaute, et son nom de domaine a ete recupere par un tiers
+P004;B;faible;Arrivederci Pizzeria mene une communication active sur TikTok avec des hashtags orientes decouverte parisienne, un effort de visibilite que Yokorama n'a pas du tout
+P005;A;moyenne;Arrivederci Pizzeria mise sur une communication Instagram et TikTok suivie alors que Pirosmani reste un lieu confidentiel connu seulement par de petits blogs de niche
+P006;A;faible;L'Estrapade a un site en treize langues clairement tourne vers une clientele internationale, alors que Pirosmani n'a meme pas de site officiel et vit sur une reputation confidentielle
+P007;B;moyenne;India StreEAT a un site en quinze langues, signal fort de ciblage international, alors que L'Estrapade beneficie d'une couverture repetee par un critique gastronomique francophone reconnu
+P008;B;moyenne;India StreEAT cible explicitement une audience internationale via son site en quinze langues, alors que Hoki Sushi est decrit comme une adresse a volonte pour etudiants et familles du quartier
+P009;B;forte;Arya Bhavan se presente elle-meme sur son site officiel comme s'adressant explicitement aux touristes du quartier, en plus d'etre une enseigne a succursales multiples
+P010;B;forte;Arya Bhavan revendique explicitement les touristes du quartier comme cible sur son site, un signal direct que Hon Ki n'a pas
+P011;B;faible;Atelier Carnem beneficie d'une vraie couverture par la presse gastronomique francophone alors que Hon Ki n'a aucune couverture presse et repose sur le bouche-a-oreille des avis
+P012;A;moyenne;Bonvivant est decrit en detail par un critique gastronomique francophone comme un lieu de rassemblement, avec neuf ans d'existence et un ancrage dans un groupe de bistrots parisiens
+P013;A;faible;Bonvivant a un ancrage local bien documente par la critique gastronomique francophone alors que Sushiyaki n'a aucune couverture presse
+P014;B;moyenne;Taeng Thai se presente lui-meme comme seduisant les habitues du quartier et un avis mentionne explicitement peu de touristes, un signal plus direct que ce qu'on a sur Sushiyaki
+P015;B;faible;Taeng Thai revendique explicitement une clientele d'habitues, un signal plus direct que la reconnaissance critique de Ya Bayte qui porte sur la qualite de la cuisine plus que sur le profil de clientele
+P016;B;faible;Le Grenier de Notre Dame est le plus ancien restaurant vegetarien de France, meme fournisseurs depuis 1978, un ancrage plus profond que Ya Bayte qui est une declinaison recente d'une enseigne existante
+P017;B;faible;Le Grenier de Notre Dame a un ancrage historique et une chaine d'approvisionnement locale depuis 1978, plus fort que la reconnaissance bistrotiere plus generaliste d'Au Pere Louis
+P018;B;faible;Sahara Cafe n'a aucune strategie de communication et semble servir une clientele de proximite, alors qu'Au Pere Louis est identifie par plusieurs medias culinaires comme une adresse bistrotiere a part entiere
+P019;egalite;faible;Les deux lieux n'ont aucune couverture presse ni communication touristique identifiee, et les signaux disponibles ne permettent pas de les departager avec confiance
+P020;A;moyenne;L'Annexe est une adresse a l'identite floue avec un avis qualifiant explicitement l'endroit de piege a touristes, alors que Le Bluff est nettement plus frequente en semaine, signe d'une clientele d'habitues
+P021;B;moyenne;El Sur fonctionne comme un lieu culturel communautaire avec concerts et cours de tango, alors que L'Annexe reste une adresse mal definie sans presse dediee et avec un avis la qualifiant de piege a touristes
+P022;B;forte;Selva est explicitement selectionne par un guide anglophone destine aux visiteurs de Paris et son site est en onze langues, deux signaux directs que El Sur n'a pas
+P023;B;forte;Selva est recommande par un guide pour touristes et son site est en onze langues, alors que Bicla est salue par la presse francophone pour son engagement social et cible les actifs en pause dejeuner
+P024;B;faible;La Ferrandaise est citee par le Petit Fute, guide a vocation touristique autant que gastronomique, alors que Bicla est loue par la presse francophone pour cibler les travailleurs du quartier
+P025;B;faible;La Ferrandaise figure dans le Petit Fute, guide a orientation touristique, alors que Mexi & Co est decrit par un blog local comme une option pas chere pour Parisiens plutot que comme une destination
+P026;B;moyenne;L'Epoque a un site officiel en douze langues sans aucune couverture par la presse gastronomique francophone, signe d'un ciblage international plus marque que Mexi & Co
+P027;B;forte;Khaaw Hoom se presente comme un petit restaurant de quartier, alors que L'Epoque cible clairement une clientele internationale avec un site en douze langues et aucun ancrage dans la presse locale
+P028;A;moyenne;Khaaw Hoom se revendique restaurant de quartier alors que La Cava Voltini, societe tres recente et deja en liquidation judiciaire, n'a construit aucun ancrage local identifiable
+P029;B;moyenne;A Braccetto est mis en avant par un blog d'hotels parisiens et fait l'objet d'un partenariat remunere avec un compte TikTok food, signaux orientes clientele de passage que La Cava Voltini n'a pas
+P030;B;moyenne;A Braccetto est presente par un blog d'hotels et un article au ton explicitement touristique, un signal plus fort que la communication generique bilingue de la Creperie des Pecheurs
+P031;A;faible;La Creperie des Pecheurs communique en anglais et n'a aucune couverture presse malgre 40 ans d'existence, ce qui suggere une dependance au passage, alors que Yokorama est simplement invisible sans qu'on puisse trancher
+P032;B;faible;Hoki Sushi est decrit comme une adresse a volonte frequentee par etudiants et familles, un ancrage local plus net que le silence total autour de Yokorama
+P033;B;moyenne;Taeng Thai revendique explicitement des habitues du quartier alors que Hoki Sushi, adresse a volonte bon marche, n'a pas de signal aussi direct de fidelisation locale
+P034;B;moyenne;Taeng Thai a le signal le plus direct de dependance aux habitues, alors qu'Au Pere Louis, bien que couvert par la presse bistrotiere francophone, reste une adresse plus generaliste
+P035;A;faible;Au Pere Louis beneficie d'une couverture par la presse gastronomique francophone depuis plusieurs annees, alors que La Cava Voltini n'a construit aucun ancrage identifiable avant sa liquidation judiciaire
+P036;B;faible;Brava Pizza a un signal de commerce familial dans les avis, alors que La Cava Voltini n'a aucun signal d'ancrage local identifiable
+P037;A;faible;L'Estrapade investit dans un site en treize langues malgre une reconnaissance critique francophone reelle, alors que Brava Pizza reste une pizzeria de livraison sans communication au-dela du fonctionnel
+P038;A;faible;Bonvivant est ancre dans un groupe de bistrots parisiens et loue comme lieu de rassemblement par la critique francophone, un ancrage plus net que L'Estrapade qui cible aussi un public international via son site en treize langues
+P039;egalite;faible;Les deux adresses beneficient d'une reconnaissance appuyee par la presse gastronomique francophone et d'un positionnement clairement local, sans signal suffisant pour les departager
+P040;A;moyenne;Bicla est salue par la presse francophone pour son engagement social et cible les actifs du quartier en pause dejeuner, alors que Hon Ki n'a aucune couverture presse et un ancrage local incertain
+P041;B;moyenne;L'Epoque cible une clientele internationale via un site en douze langues sans aucune presse locale, alors que Hon Ki reste une petite adresse portee par le bouche-a-oreille
+P042;A;moyenne;L'Epoque a un site en douze langues et aucune presse locale identifiee, alors que Sushiyaki est decrit comme une petite adresse japonaise simple et sans pretention par ses avis
+P043;B;faible;Khaaw Hoom se presente explicitement comme un restaurant de quartier, un signal que Sushiyaki n'a pas malgre un profil egalement modeste
+P044;A;faible;Atelier Carnem est presente comme une adresse gastronomique a ne pas manquer par la presse francophone, un positionnement plus destination que le restaurant de quartier revendique par Khaaw Hoom
+P045;B;faible;Atelier Carnem est positionne comme une adresse gastronomique incontournable par la presse, alors que Ya Bayte beneficie d'une reconnaissance centree sur l'authenticite de la street-food libanaise plutot que sur un statut de destination
+P046;B;forte;Selva est mis en avant par un guide destine aux visiteurs et son site est en onze langues, alors que Ya Bayte est couvert en profondeur par un critique gastronomique francophone qui s'adresse a des lecteurs parisiens
+P047;A;moyenne;Selva est recommande par un guide anglophone pour touristes et affiche un site en onze langues, un signal plus direct que la presence de La Ferrandaise dans des guides gourmands francophones
+P048;B;faible;La Ferrandaise figure dans le Petit Fute a vocation touristique, alors que Le Bluff affiche une frequentation nettement plus forte en semaine, signe d'une clientele de travailleurs ou d'habitues
+P049;A;moyenne;India StreEAT cible une audience internationale via son site en quinze langues, alors que Le Bluff est nettement plus frequente en semaine et n'a aucune communication tournee vers les visiteurs
+P050;A;moyenne;India StreEAT a un site en quinze langues qui cible une audience large, alors que Le Grenier de Notre Dame est le plus ancien restaurant vegetarien de France avec un approvisionnement local inchange depuis 1978
+P051;A;forte;A Braccetto est mis en avant par un blog d'hotels parisiens et un partenariat TikTok remunere, signaux orientes passage, alors que Le Grenier de Notre Dame est ancre depuis 1978 avec les memes producteurs
+P052;B;moyenne;A Braccetto cumule un blog d'hotels parisiens et un partenariat TikTok remunere, signaux plus explicites que le simple flou identitaire de L'Annexe
+P053;B;faible;L'Annexe reste une adresse mal definie, sans presse dediee, avec un avis la qualifiant explicitement de piege a touristes, alors qu'Arrivederci mise sur une communication artisanale assumee
+P054;B;moyenne;Arrivederci Pizzeria mene une communication active sur les reseaux sociaux orientee decouverte, alors que Sahara Cafe n'a aucune strategie de visibilite et semble servir une clientele de proximite
+P055;B;forte;Arya Bhavan revendique explicitement les touristes du quartier comme cible sur son site officiel, alors que Sahara Cafe est un lieu confidentiel sans communication touristique
+P056;B;forte;Arya Bhavan cible explicitement les touristes du quartier dans sa communication officielle, alors qu'El Sur fonctionne comme un lieu culturel communautaire
+P057;A;forte;Mr & Mrs Crab est un phenomene viral sur TikTok, alors qu'El Sur est un lieu culturel communautaire tourne vers la diaspora sud-americaine
+P058;B;forte;Mr & Mrs Crab cumule des millions de vues sur TikTok et des visites d'influenceurs food, un signal de dependance au passage bien plus fort que celui de Pirosmani, reste confidentiel
+P059;A;faible;Mexi & Co a fait l'objet d'un article de blog positionne comme une decouverte a petit prix pour Parisiens, un signal legerement plus tourne vers la decouverte que le tres confidentiel Pirosmani
+P060;B;moyenne;La Creperie des Pecheurs communique en anglais et n'a aucune presse locale malgre 40 ans d'existence, alors que Mexi & Co est decrit par un blog comme une option abordable pour Parisiens
+P061;B;faible;Atelier Carnem est presente par la presse comme une adresse gastronomique incontournable, un positionnement plus destination que le bistrot de quartier au ton plus modeste d'Au Pere Louis
+P062;A;faible;Mexi & Co fait aussi office d'epicerie de quartier, une fonction de service de proximite que n'a pas Au Pere Louis, davantage identifie comme une adresse bistrotiere par la presse
+P063;A;moyenne;La Creperie des Pecheurs communique en anglais sans aucune presse locale malgre 40 ans d'existence, alors que Le Grenier de Notre Dame est le plus ancien restaurant vegetarien de France, ancre depuis 1978
+P064;B;moyenne;A Braccetto cumule un blog d'hotels parisiens et un partenariat TikTok remunere, signaux plus directs de dependance au passage que le site multilingue d'India StreEAT
+P065;A;forte;A Braccetto est mis en avant par un blog d'hotels et un partenariat TikTok remunere, alors que Le Bluff est nettement plus frequente en semaine sans aucune communication touristique
+P066;A;faible;Taeng Thai revendique explicitement des habitues du quartier et un avis souligne l'absence de touristes, un signal plus direct que celui du Bluff
+P067;A;faible;Taeng Thai a le signal le plus explicite de fidelisation locale des deux, entre sa propre communication et un avis notant l'absence de touristes
+P068;A;faible;Khaaw Hoom se presente explicitement comme un restaurant de quartier, un signal que n'a pas Brava Pizza, simple pizzeria de livraison sans communication
+P069;A;faible;Bonvivant beneficie d'un ancrage local documente par la critique gastronomique francophone, plus net que celui de Brava Pizza qui n'a aucune couverture presse
+P070;B;forte;Mr & Mrs Crab est un phenomene viral sur TikTok avec des millions de vues, alors que Bonvivant est loue par la critique gastronomique francophone comme un lieu de rassemblement local
+P071;B;moyenne;Les deux adresses ont des signaux orientes visiteurs, mais la viralite TikTok de Mr & Mrs Crab est plus extreme que la mention de Selva dans un guide pour visiteurs
+P072;B;moyenne;Selva est recommande par un guide anglophone pour touristes et affiche un site en onze langues, alors que Hoki Sushi est une adresse a volonte frequentee par etudiants et familles
+P073;B;faible;Hoki Sushi, adresse a volonte bon marche, semble tourne vers un flux de clientele de passage plus large que le tres confidentiel Pirosmani
+P074;B;faible;Pirosmani a au moins une existence en ligne via quelques blogs de niche, alors que Sahara Cafe n'a aucune communication et semble purement une adresse de proximite
+P075;A;moyenne;Sahara Cafe semble une adresse de proximite sans aucune ambition de visibilite, alors que La Cava Voltini, societe tres recente et deja liquidee, n'a construit aucun ancrage local identifiable
+P076;B;moyenne;Arya Bhavan cible explicitement les touristes du quartier dans sa communication officielle, un signal que n'a pas La Cava Voltini
+P077;B;faible;Ya Bayte beneficie d'une couverture approfondie par la critique gastronomique francophone, alors que Hon Ki n'a aucune presse et un ancrage local incertain
+P078;B;forte;L'Epoque cible une clientele internationale via un site en douze langues sans aucune presse locale, alors que Ya Bayte est couvert en profondeur par la critique gastronomique francophone
+P079;B;faible;Les deux adresses ont un profil flou et oriente international, mais L'Epoque a le signal le plus direct avec son site en douze langues et l'absence totale de presse locale
+P080;A;moyenne;Arrivederci mene une communication active sur les reseaux sociaux orientee decouverte, alors que Bicla est salue par la presse francophone pour cibler les actifs du quartier en pause dejeuner
+P081;B;faible;Bicla est explicitement decrit par la presse comme ciblant les actifs du quartier en pause dejeuner, un signal legerement plus net que le positionnement culturel communautaire d'El Sur
+P082;A;faible;La Ferrandaise figure dans le Petit Fute a vocation touristique en plus du Gault&Millau, alors qu'El Sur reste avant tout un lieu culturel communautaire pour la diaspora sud-americaine
+P083;egalite;faible;Les deux adresses sont reconnues par la presse gastronomique francophone sans mention dans un guide pour visiteurs, et les nuances entre elles ne permettent pas de trancher avec confiance
+P084;A;faible;L'Estrapade investit dans un site en treize langues malgre sa reconnaissance critique francophone, alors que Sushiyaki reste une petite adresse simple sans aucune communication
+P085;B;faible;Sushiyaki est decrit par un avis comme une petite adresse sans pretention, un ancrage local plus net que le silence total autour de Yokorama
+P086;A;faible;Atelier Carnem beneficie d'une couverture par la presse gastronomique francophone qui l'ancre dans le paysage local, alors que Yokorama reste totalement invisible en ligne

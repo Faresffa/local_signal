@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0705;A;faible;Balzar figure dans un guide de voyage anglophone dedie a la rive gauche, contre aucune presse pour L'Ecritoire
+P0706;B;faible;L'Ecritoire tourne en continu 7j/7 du matin au soir, Amore e Gusto accepte les titres-restaurant signe de clientele de bureau
+P0707;A;faible;dossier Dame incoherent (avis sur un monument) mais horaires coupees comme un resto local, Amore e Gusto a un signal travailleurs plus net via les titres-restaurant
+P0708;A;moyenne;Luisa Maria affiche explicitement une clientele touristes et un accolade presse meilleures pizzerias
+P0709;A;faible;Thaiger ouvre en continu 7j/7 et vise des plateformes de reservation touristiques (TheFork, Trip.com)
+P0710;B;forte;la Creperie du Cloitre est explicitement qualifiee de piege a touristes et vend la vue sur Notre-Dame
+P0711;B;forte;piege a touristes explicite pour la Creperie du Cloitre contre La Pie Noir fermee deux jours et frequentee en semaine
+P0712;B;forte;La Sarrasine ouvre 7j/7 en continu et declare une clientele touristes, La Pie Noir ferme deux jours
+P0713;A;forte;La Sarrasine ouvre 7j/7 avec clientele touristes declaree, Bonjour Viet Nam ferme le mardi et loue par la presse locale
+P0714;A;faible;Royal Bombay n'a aucune donnee fiable, Bonjour Viet Nam ferme un jour et salue par la presse pour sa cuisine maison
+P0715;B;moyenne;Les Fetes Galantes est relayee par un forum de voyage americain et declare une clientele touristes
+P0716;A;faible;Les Fetes Galantes a une validation touristique explicite plus forte que le simple buffet de Pan Asie
+P0717;A;faible;Panda Wok cible aussi les etudiants via des remises explicites, Pan Asie n'a pas ce signal local
+P0718;A;forte;Restaurant Boutebrie est un restaurant social pour seniors, sans lien avec le tourisme
+P0719;A;forte;meme raison, restaurant social CASVP sans clientele de passage
+P0720;B;moyenne;Chez le Libanais ouvre 7j/7 en continu en zone de flux, La Table d'Hami ferme le dimanche et vise une presse gastronomique
+P0721;A;faible;Chez le Libanais capte un flux en continu, Hebe (dossier incoherent) semble un restaurant haut de gamme sur reservation
+P0722;B;faible;Hebe apparait dans un guide anglophone, Atelier Carnem n'a qu'une presse gastronomique francophone
+P0723;A;moyenne;Le Petit Prince de Paris etait construit autour d'une experience parisienne pour visiteurs (cabaret, concerts)
+P0724;B;forte;Bouillon Racine est partenaire officiel de l'Office du Tourisme de Paris
+P0725;A;forte;partenariat officiel avec l'Office du Tourisme pour Bouillon Racine contre un petit resto sans presse
+P0726;A;faible;Le Lac de l'Ouest ouvre en continu tres tard et declare une clientele touristes, I Diavoletti a un client fidele depuis dix ans
+P0727;A;faible;I Diavoletti ouvre tous les jours midi et soir avec clientele touristes declaree, Muku est sur reservation le soir seulement
+P0728;A;moyenne;Muku est ouvert cinq soirs et viral sur les reseaux, Savannah Cafe n'ouvre que deux jours pour une clientele fidele depuis 40 ans
+P0729;A;forte;Le Souvlaki Athenien tourne tres tard dans une rue de restaurants grecs concurrents, Savannah Cafe vit sur sa fidelite
+P0730;B;faible;Le Souvlaki Athenien capte un flux nocturne continu, Le Grenier de Notre Dame recommande la reservation pour le diner
+P0731;A;moyenne;Cafe Latin tourne en continu jusqu'a 2h avec happy hour quotidien et un guide de voyage anglophone dedie
+P0732;B;faible;Cafe Latin a des signaux touristiques explicites, Pura Vida manque presque totalement de donnees
+P0733;B;faible;Loulou' est presentee par la presse comme un concept original, Pura Vida reste tres peu documente
+P0734;B;moyenne;Loulou' beneficie d'une presse dediee et d'horaires tres etendus, Foyer mon Vietnam ferme le dimanche
+P0735;B;moyenne;Le Berthoud figure dans un tour gastronomique payant destine aux touristes
+P0736;A;moyenne;un avis mentionne Pacha juste en face de l'hotel du client, et l'amplitude horaire est quasi continue
+P0737;A;faible;Pacha a des horaires quasi continus jour et nuit, Maison de Gyros n'a pas d'horaires connus
+P0738;B;faible;dossier Les Balkans incoherent (cuisine indonesienne malgre le type pizza), Maison de Gyros est reference dans un guide halal pour voyageurs
+P0739;A;faible;les avis du dossier Les Balkans (incoherent) decrivent une experience de voyage culinaire qui attire les visiteurs, Les Baux est un bar a cocktails sans presse
+P0740;B;moyenne;Mr & Mrs Crab est un phenomene viral tres recent qui attire une clientele de passage
+P0741;A;moyenne;viralite de Mr & Mrs Crab contre le bar sportif de quartier Le Petit Cardinal
+P0742;A;moyenne;La Bobine ouvre 18h par jour 7j/7 et un avis la recommande explicitement comme adresse pour touristes
+P0743;B;moyenne;La Bobine capte un flux tres etendu et est vantee par des touristes, Mexi & Co vise plutot les petits budgets locaux
+P0744;A;moyenne;Balzar est cite dans un guide de voyage anglophone dedie a la rive gauche et est une institution tres frequentee
+P0745;A;faible;L'Ecritoire tourne en continu du matin au soir tous les jours, Hebe fonctionne sur reservation
+P0746;A;forte;Restaurant Boutebrie est un restaurant social, sans clientele de passage
+P0747;A;forte;restaurant social contre un bistrot cite dans un tour gastronomique payant
+P0748;A;moyenne;Les Fetes Galantes est relayee par un forum de voyage americain, Foyer mon Vietnam ferme le dimanche
+P0749;B;forte;partenariat officiel avec l'Office du Tourisme pour Bouillon Racine
+P0750;B;forte;partenariat touristique officiel de Bouillon Racine contre le signal travailleurs d'Amore e Gusto
+P0751;A;moyenne;Le Souvlaki Athenien tourne tard dans une rue de concurrents touristiques, Amore e Gusto accepte les titres-restaurant
+P0752;A;faible;Le Souvlaki Athenien a des signaux touristiques reels, Pura Vida manque de donnees
+P0753;B;forte;Mr & Mrs Crab est un phenomene viral tres recent
+P0754;B;moyenne;viralite de Mr & Mrs Crab contre le buffet generique de Pan Asie
+P0755;A;faible;Pan Asie declare explicitement une clientele touristes, Mexi & Co vise les petits budgets locaux
+P0756;B;faible;les avis de Mexi & Co suggerent une clientele venue pour le decor plutot qu'un public fidele, I Diavoletti a un client fidele depuis dix ans
+P0757;A;moyenne;Balzar est une institution touristique documentee, I Diavoletti a un signal de fidelite locale
+P0758;A;moyenne;Balzar est une institution touristique bien documentee, le dossier Dame est incoherent
+P0759;B;faible;Savannah Cafe vit sur une fidelite de 40 ans deux jours par semaine, le dossier Dame reste incertain mais suit un rythme de restaurant classique
+P0760;B;faible;dossier Les Balkans incoherent mais les avis decrivent une experience de voyage culinaire, Savannah Cafe vit sur sa fidelite
+P0761;B;faible;Muku est viral et repere par le Michelin, le dossier Les Balkans reste incoherent
+P0762;A;moyenne;Muku beneficie d'une reconnaissance internationale (Michelin, viralite), Panda Wok reste un buffet de quartier peu classe
+P0763;B;faible;Maison de Gyros est referencee dans un guide halal pour voyageurs, Panda Wok a aussi un signal etudiant local
+P0764;B;faible;Luisa Maria cumule attribut touristes et accolade presse, Maison de Gyros n'a qu'un guide de niche
+P0765;A;moyenne;Luisa Maria est explicitement designee touristique, Bonjour Viet Nam est loue par la presse locale pour sa cuisine maison
+P0766;A;faible;Le Grenier de Notre Dame est plus frequente le week-end, signe d'une clientele de loisirs plutot que de bureau
+P0767;B;forte;piege a touristes explicite pour la Creperie du Cloitre contre le simple decalage weekend du Grenier
+P0768;A;moyenne;le piege a touristes de la Creperie du Cloitre est un signal actuel et explicite, Le Petit Prince de Paris est ferme
+P0769;A;faible;Le Petit Prince de Paris etait construit comme une experience pour visiteurs, Chez le Libanais reste un flux de vente a emporter
+P0770;A;faible;Loulou' a une presse dediee bilingue presentant un concept original, Chez le Libanais reste un fast-food classique
+P0771;B;faible;La Sarrasine declare une clientele touristes et un site au ton commercial generique
+P0772;B;faible;La Sarrasine a des signaux plus explicites que le bar a cocktails Les Baux
+P0773;B;moyenne;Thaiger tourne en continu et vise des plateformes de reservation touristiques
+P0774;A;moyenne;Thaiger capte un flux continu, La Table d'Hami ferme le dimanche et vise une presse gastronomique
+P0775;A;forte;La Bobine tourne 18h par jour et est explicitement recommandee par des touristes
+P0776;B;forte;La Bobine contre Atelier Carnem qui ne vise qu'une presse gastronomique francophone
+P0777;B;faible;Atelier Carnem semble deliberement tourne vers une clientele gastronomique francaise, Royal Bombay manque de donnees fiables
+P0778;B;faible;Le Petit Cardinal a un signal de bar de quartier (matchs de foot), Royal Bombay manque de donnees
+P0779;B;faible;La Pie Noir ferme deux jours par semaine, Le Petit Cardinal ouvre tous les jours en continu
+P0780;B;forte;Le Lac de l'Ouest ouvre en continu tres tard avec clientele touristes declaree, La Pie Noir ferme deux jours
+P0781;B;faible;Cafe Latin a un guide de voyage dedie et un happy hour quotidien, Le Lac de l'Ouest n'a pas de presse
+P0782;B;moyenne;Pacha a un horaire quasi continu et un avis mentionne l'hotel juste en face
+P0783;A;faible;Pacha a un horaire quasi continu et un signal hotelier explicite, L'Ecritoire n'a pas de presse mais tourne aussi en continu

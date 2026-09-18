@@ -1,0 +1,218 @@
+{
+  "osm_n11264778281": {
+    "nom": "Le Vauquelin",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel distinct trouvé, seulement des fiches annuaire (restoaparis.com, pagesjaunes.fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["café-restaurant situé près de l'ancienne École de physique et de chimie industrielles, cuisine traditionnelle française (restoaparis.com)"],
+    "incertitudes": "peu de sources indépendantes trouvées au-delà des annuaires ; aucune presse ou guide identifié"
+  },
+  "osm_n6136775281": {
+    "nom": "Cèpe & Figue",
+    "presse_francophone": ["Hotels Paris Rive Gauche (blog), 24/04/2024 : \"restaurant Cèpe et Figue - authentique cuisine française à un prix abordable\" (https://www.hotels-paris-rive-gauche.com/blog/2024/04/24/restaurant-cepe-figue-paris-hotels/)"],
+    "guides_visiteurs": ["Le Relais du Louvre (blog d'hôtel, en anglais) : \"Cèpe and Figue in the Saint Germain district\" (https://www.relaisdulouvre.com/en/cepe-et-figue-restaurant-saint-germain-des-pres-paris/)"],
+    "site_officiel": "cepeetfigue.fr, en français, se présente comme restaurant français gastronomique, cuisine dirigée par le chef Benjamin Lubin (https://www.cepeetfigue.fr/)",
+    "reseaux_sociaux": ["TikTok @leats_paris : vidéo présentant le restaurant comme une petite adresse française familiale cachée dans la Cour du Commerce (https://www.tiktok.com/@leats_paris/video/7327229853000944929)"],
+    "autres_faits": ["décor rétro évoqué (jazz années 1960, affiches vintage) selon Le Relais du Louvre", "petite salle au rez-de-chaussée (environ 15 places) et salle plus grande à l'étage"],
+    "incertitudes": ""
+  },
+  "osm_n10017125283": {
+    "nom": "Le Petit Panthéon",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Novacircle (site de voyage, en anglais) : \"Le Petit Pantheon: Authentic French Cuisine Near Paris Latin Quarter\" (https://www.novacircle.com/spots/europe/france/ile-de-france/paris/paris/le-petit-pantheon-3524dc)"],
+    "site_officiel": "lepetitpantheon.fr, en français (https://lepetitpantheon.fr/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["petite brasserie près des Arènes de Lutèce, décor de bistrot à l'ancienne, carte courte et renouvelée quotidiennement (restoaparis.com)"],
+    "incertitudes": ""
+  },
+  "osm_n9667186285": {
+    "nom": "Terronia",
+    "presse_francophone": ["Gault&Millau : \"Restaurant Terronia – Italian cuisine in Paris\" (https://fr.gaultmillau.com/en/restaurants/terronia)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "terronia.fr, en français, slogan \"Là où tout est fait maison, avec grand amour\" (https://www.terronia.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["mi-bistrot mi-trattoria près de Jussieu, tenu par \"Lino\", cuisine italienne, carte renouvelée chaque mois selon la saison (bonjour-ratp.fr)"],
+    "incertitudes": ""
+  },
+  "osm_n11816823286": {
+    "nom": "Brasserie des Prés",
+    "presse_francophone": ["Sortiraparis (version anglophone du média français) : \"Brasserie des Prés, charming and affordable, the hidden gem of Saint-Germain-des-Prés\" (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/295184-brasserie-des-pres-charming-and-affordable-the-hidden-gem-of-saint-germain-des-pres)"],
+    "guides_visiteurs": ["Paris by Mouth (guide gastronomique en anglais pour visiteurs) (https://parisbymouth.com/brasserie-des-pres/)"],
+    "site_officiel": "aucun site propre distinct trouvé ; présenté sur le site du groupe \"La Nouvelle Garde\" (https://lanouvellegarde.com/en/brasserie-des-pres/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fait partie du groupe La Nouvelle Garde, qui comprend aussi Brasserie Dubillot et Brasserie Bellanger", "installée dans la cour du Commerce Saint-André, 180 places en salle et 40 en terrasse (lanouvellegarde.com)"],
+    "incertitudes": ""
+  },
+  "osm_n6219096286": {
+    "nom": "Les Fêtes Galantes",
+    "presse_francophone": ["Sortiraparis : fiche lieu \"Les Fêtes Galantes - Paris 5\" (https://www.sortiraparis.com/en/lieux/1603-les-fetes-galantes)"],
+    "guides_visiteurs": ["Rick Steves Travel Forum (forum de voyage anglophone) : \"Unpretentious, Inexpensive, and Delicious in Latin Quarter Paris\" (https://community.ricksteves.com/travel-forum/france-reviews/unpretentious-inexpensive-and-delicious-in-latin-quarter-paris)"],
+    "site_officiel": "aucun site officiel indépendant clairement identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["en activité depuis 40 ans selon une source directoire ; le chef est le mari, l'épouse assure le service (goto-where.com)", "cuisine française avec influences du Sud-Ouest"],
+    "incertitudes": ""
+  },
+  "osm_n9173357290": {
+    "nom": "L'Escarpolette",
+    "presse_francophone": ["Sortiraparis : \"L'Escarpolette, le coffee shop au tea time pas cher de folie\" (https://www.sortiraparis.com/en/where-to-eat-in-paris/brunch-cafe-tea-time/articles/287354-l-escarpolette-le-coffee-shop-au-tea-time-pas-cher-de-folie)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "lescarpolette-paris.fr (https://www.lescarpolette-paris.fr/)",
+    "reseaux_sociaux": ["TikTok @sortiraparis.com : vidéo tea time (https://www.tiktok.com/@sortiraparis.com/video/7182987191382002950)", "TikTok @hungryconsti : vidéo food sur l'adresse (https://www.tiktok.com/@hungryconsti/video/7259419842204224794)"],
+    "autres_faits": ["\"escarpolette\" est un ancien nom français pour la balançoire", "salon de thé / brunch dans le 5e, ouvert tous les jours"],
+    "incertitudes": ""
+  },
+  "osm_n3350341294": {
+    "nom": "Les Galandines",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "lesgalandines.fr, site bilingue français/anglais (https://www.lesgalandines.fr/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["crêperie familiale depuis 2011, près de Notre-Dame de Paris", "galettes de sarrasin bio, sans gluten, moulues sur meule de pierre selon le site officiel"],
+    "incertitudes": ""
+  },
+  "osm_n9993744296": {
+    "nom": "Petit Saïgon",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "deux domaines trouvés se présentant comme le site du restaurant : petit-saigon-paris.com (version /en) et petit-saigon.com, en français/anglais",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situé entre Notre-Dame et le Panthéon", "cuisine vietnamienne, fermé le lundi"],
+    "incertitudes": "deux domaines web distincts semblent revendiquer être le site officiel (petit-saigon-paris.com et petit-saigon.com) ; possible confusion avec un établissement homonyme ailleurs à Paris, non vérifié"
+  },
+  "osm_n7131523297": {
+    "nom": "El Picaflor",
+    "presse_francophone": ["Lumières en Arts Magazine : \"EL PICAFLOR, Le Restaurant Atypique Péruvien à Paris!\" (https://www.lumieresenarts.fr/el-picaflore/)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "picaflor.fr, en français, restaurant péruvien ouvert depuis 1994, présenté comme le premier restaurant péruvien de Paris (https://www.picaflor.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["musiciens (salsa, samba, musique traditionnelle) le vendredi et samedi soir", "fait aussi office d'épicerie péruvienne", "prix international en 2008 (catégorie Restaurant/Dessert) décerné par l'université San Martín de Porres de Lima pour des \"Profiteroles de pommes de terre\""],
+    "incertitudes": ""
+  },
+  "osm_n11627968300": {
+    "nom": "Osteria Brutto",
+    "presse_francophone": ["Sortiraparis : fiche lieu \"Osteria Brutto\" (https://www.sortiraparis.com/en/lieux/78658-osteria-brutto)", "Paris Frivole : \"Osteria Brutto, le resto Italien le plus new-yorkais de Paris !\" (https://paris-frivole.com/osteria-brutto-le-resto-italien-le-plus-new-yorkais-de-paris/)"],
+    "guides_visiteurs": ["Do It In Paris (guide en anglais) : \"Osteria Brutto: The New Italian Restaurant in the Quartier Latin\" (https://www.doitinparis.com/en/osteria-brutto-paris-26522)"],
+    "site_officiel": "osteria-brutto.com (https://www.osteria-brutto.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert en janvier 2023", "fondé par trois cousins, David Soussan, Ruben Nedjar et Samuel Franko, qui ont vécu ensemble à New York et voyagé en Italie pour sourcer produits et artisans (doitinparis.com)", "décor inspiré d'adresses culte new-yorkaises, affiches d'Obama et Danny DeVito mentionnées"],
+    "incertitudes": ""
+  },
+  "osm_n13100725303": {
+    "nom": "Casimodo",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel distinct trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situé quai de la Tournelle avec vue sur la Seine et Notre-Dame selon plusieurs fiches annuaire"],
+    "incertitudes": "quasiment aucune source indépendante trouvée, uniquement des annuaires (Tripadvisor, Foursquare, pages jaunes, etc.) ; presse et guides absents des résultats"
+  },
+  "osm_n7450348314": {
+    "nom": "Traiteur Asiatique",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucune mention trouvée"],
+    "incertitudes": "le nom dans le CSV (\"Traiteur Asiatique\") est générique et l'adresse ne comporte pas de numéro ; la recherche fait surtout remonter \"Fufa traiteur asiatique\" au 34 rue du Cardinal Lemoine, mais rien ne confirme qu'il s'agit du même établissement — identification non fiable, aucune fiche n'a été rattachée avec certitude"
+  },
+  "osm_n7450348315": {
+    "nom": "La Voie lactée",
+    "presse_francophone": ["Ideoz Voyages (blog) : \"La Voie Lactée ; un vrai restaurant turc à Paris\" (https://voyages.ideoz.fr/la-voie-lactee-restaurant-turc-paris-5/)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "alavoielactee.fr (https://alavoielactee.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert depuis 1985 selon Ideoz Voyages", "établissement en deux parties : un côté kebab à emporter, un côté restaurant assis", "un pianiste jouerait parfois sur place selon la même source"],
+    "incertitudes": ""
+  },
+  "osm_n5225343321": {
+    "nom": "Hanami Ramen",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "hanamiramenparis.fr (https://hanamiramenparis.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situé à proximité de la station RER B Luxembourg"],
+    "incertitudes": ""
+  },
+  "osm_n8999742321": {
+    "nom": "Phô5",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "pho-5.com-fnb.com se présente comme le site du restaurant, mais l'URL évoque un site généré automatiquement plutôt qu'un site officiel propre",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucune mention trouvée"],
+    "incertitudes": "aucun site officiel clairement authentique identifié ; aucune presse ni guide visiteur trouvés"
+  },
+  "osm_n4751246322": {
+    "nom": "Sésame",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucune mention trouvée"],
+    "incertitudes": "aucun établissement \"Sésame\" confirmé précisément rue Danton (75006) dans les résultats ; plusieurs homonymes trouvés ailleurs à Paris (22 rue du Dragon 75006, carrefour de l'Odéon 75006, canal Saint-Martin 75010) — impossible de rattacher une source fiable à cette adresse précise sans risque de confusion"
+  },
+  "osm_n8999742322": {
+    "nom": "Saigona",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "saigona.fr, en français, se présente comme \"Restaurant Vietnamien Authentique à Paris\" (https://saigona.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["proche de la station de métro Cluny - La Sorbonne"],
+    "incertitudes": ""
+  },
+  "osm_n8999742323": {
+    "nom": "April",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel distinct trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décrit comme une cantine asiatique proposant une cuisine fusion mêlant plusieurs cuisines asiatiques, plutôt que strictement chinoise (eat-list.fr, tripadvisor)"],
+    "incertitudes": ""
+  },
+  "osm_n8999742324": {
+    "nom": "Piment thaï",
+    "presse_francophone": ["Sortiraparis : \"Piment Thaï 21: a Thai & Hong Kong restaurant near Notre-Dame\" (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/325889-piment-thai-21-a-thai-hong-kong-restaurant-near-notre-dame)", "Parisianavores (blog food/lifestyle francophone) : \"Piment Thaï, les larmes du Tigre rue Saint-Jacques\" (https://parisianavores.paris/piment-thai-les-larmes-du-tigre-rue-saint-jacques/)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre trouvé ; seulement une page de commande/réservation (wa-cafe.com)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine thaïlandaise et hongkongaise (Sortiraparis)"],
+    "incertitudes": "l'adresse du CSV ne comporte pas de numéro de rue ; les sources trouvées désignent \"Piment Thaï 21\" au 21 rue Saint-Jacques, correspondance probable mais non certaine à 100 %"
+  },
+  "osm_w618750324": {
+    "nom": "La Nouvelle Seine",
+    "presse_francophone": ["Sortiraparis : fiche lieu \"La Nouvelle Seine\" (https://www.sortiraparis.com/en/lieux/54637-la-nouvelle-seine)"],
+    "guides_visiteurs": ["Eutouring (guide de voyage en anglais) : \"Paris La Nouvelle Seine Restaurant and Theatre\" (https://www.eutouring.com/la_nouvelle_seine.html)"],
+    "site_officiel": "lanouvelleseine.com, en français, se présente comme \"péniche dîner-spectacle\" (https://lanouvelleseine.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant-bar-théâtre installé sur une péniche en face de Notre-Dame depuis 2013 selon le site officiel", "propose spectacles d'humour et concerts en plus de la restauration"],
+    "incertitudes": ""
+  },
+  "osm_n9755996325": {
+    "nom": "BigBang",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "deux domaines trouvés : bigbangparis.fr et bigbang-restaurant.fr, tous deux en français",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant coréen situé près du jardin du Luxembourg", "grills intégrés aux tables pour le barbecue selon les fiches consultées"],
+    "incertitudes": "deux domaines web distincts se présentent comme site officiel (bigbangparis.fr et bigbang-restaurant.fr) ; probablement liés (même enseigne ou groupe), non confirmé avec certitude"
+  },
+  "osm_n9675535336": {
+    "nom": "Asia Room",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "pas de site officiel indépendant identifié, seulement une page de réservation (asiaroom.eatbu.com)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant spécialisé en cuisine sichuanaise selon plusieurs fiches (mapstr.com, yelp)"],
+    "incertitudes": ""
+  },
+  "osm_n6188270337": {
+    "nom": "Toranj",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "toranj-restaurant.fr, en français, cuisine persane/iranienne authentique et halal (https://toranj-restaurant.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucune mention trouvée"],
+    "incertitudes": "l'adresse du CSV (1 Pl. Alphonse Laveran, 75005) diffère de l'adresse trouvée dans les sources (285/287 rue Saint-Jacques, 75005), qui est toute proche (même angle de rue) ; correspondance probable mais non certaine. Un établissement homonyme distinct, \"Toranj d'Or\", existe également à Paris — à ne pas confondre"
+  }
+}

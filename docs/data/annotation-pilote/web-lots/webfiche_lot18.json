@@ -1,0 +1,249 @@
+{
+  "osm_n1142802917": {
+    "nom": "L'Orée du Parc",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (pas de site propre identifié)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décrit sur plusieurs sites d'avis (Tripadvisor, Yelp) comme un petit bistrot/brasserie indépendant avec terrasse, le patron gérant personnellement le service (https://www.tripadvisor.com/Restaurant_Review-g187147-d2557897-Reviews-L_Oree_du_Parc-Paris_Ile_de_France.html)"],
+    "incertitudes": ""
+  },
+  "osm_n9178798917": {
+    "nom": "Muku",
+    "presse_francophone": [
+      "Time Out Paris FR : « Muku, le Japon de poche » (https://www.timeout.fr/paris/restaurants/muku)",
+      "CECJ2 (blog critique de restaurants japonais), octobre 2025 : critique détaillée du menu et du cadre (https://cecj2.com/2025/10/10/muku-comptoir-japonais-8-rue-suger-75006-paris-france/)"
+    ],
+    "guides_visiteurs": ["Guide Michelin référence l'établissement (guide.michelin.com), portée internationale plutôt que ciblée visiteurs (https://guide.michelin.com/be/fr/ile-de-france/paris/restaurant/shu260596)"],
+    "site_officiel": "muku-paris.fr, disponible en français et en anglais (page /en), se présente comme un izakaya japonais tenu par le chef Ryota Suzuki, formé à Tokyo et Paris (https://www.muku-paris.fr/en)",
+    "reseaux_sociaux": [
+      "Instagram @muku.paris, environ 19 000 abonnés, se décrit comme un comptoir japonais façon tapas (https://www.instagram.com/muku.paris/)",
+      "présence TikTok, notamment une vidéo du créateur @alifromparis (https://www.tiktok.com/@alifromparis/video/7545160606471441686)"
+    ],
+    "autres_faits": ["établissement présenté comme récent (post Threads 2025 le qualifiant de « nouveau restaurant japonais atypique »), chef Ryota Suzuki (https://www.threads.com/@vincent.lanon/post/DOL500hiBbO)"],
+    "incertitudes": ""
+  },
+  "osm_n4040161918": {
+    "nom": "Vendredi Gourmand",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "en.vendredigourmand.com, se présente comme lié à l'émission de talk-show coréenne « News Factory » ; version anglaise du site identifiée, langue française non confirmée directement (https://en.vendredigourmand.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["concept fondé sur l'émission télé coréenne : un nouveau plat conçu chaque vendredi, 107 plats au total, plat signature un filet de bœuf au ganjang (sauce soja traditionnelle coréenne) (https://en.vendredigourmand.com/)"],
+    "incertitudes": ""
+  },
+  "osm_n10869077924": {
+    "nom": "Ravello",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["note de 9,4/10 sur TheFork (source de réservation, pas de presse) (https://www.thefork.fr/restaurant/ravello-r863016)"],
+    "incertitudes": "un établissement « Terra Nera » apparaît à une adresse très proche (18 rue des Fossés Saint-Jacques) dans les résultats de recherche ; possible lien de succession ou simple voisinage, non vérifié"
+  },
+  "osm_n2440496924": {
+    "nom": "The Cod House",
+    "presse_francophone": ["Sortiraparis : « The Cod House, the Japanese tapas bar in Paris », titre de l'article indiquant une fermeture définitive (https://www.sortiraparis.com/en/where-to-eat-in-paris/bars-cafes/articles/152673-the-cod-house-the-japanese-tapas-bar-definitely-closed)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert en septembre 2017, izakaya bar japonais contemporain près d'Odéon, connu pour ses cocktails maison au yuzu et matcha (https://www.secretaddresses.com/blog/2018/7/14/the-cod-house-les-tapas-la-japonaise)"],
+    "incertitudes": "statut ouvert/fermé incertain : un article Sortiraparis indique une fermeture définitive, mais une fiche Yelp mise à jour en septembre 2026 suggère une activité toujours en cours — à vérifier sur place ou via une source plus récente"
+  },
+  "osm_n3734869925": {
+    "nom": "Maison de la Lozère",
+    "presse_francophone": ["aucune mention trouvée (uniquement sites d'annuaire et institutionnels)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "lozere-a-paris.com, en français, se présente comme l'ambassade culinaire et culturelle du département de la Lozère à Paris (https://lozere.fr/la-lozere/tourisme/la-maison-de-la-lozere-paris.html)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "ouvert en 1974 rue Hautefeuille, 38 couverts (https://www.restoaparis.com/fiche-restaurant-paris/maison-de-la-lozere.html)",
+      "chef Patrick Bioulac, produits (viandes, charcuteries, fromages) sourcés en Lozère, spécialité aligot le jeudi soir (https://www.yelp.com/biz/maison-de-la-loz%C3%A8re-paris)"
+    ],
+    "incertitudes": "l'adresse du CSV indique 1bis rue Hautefeuille, alors que la plupart des sources trouvées donnent 4 rue Hautefeuille pour ce même établissement — probable écart de numérotation, correspondance jugée fiable par ailleurs (nom, quartier, description identiques)"
+  },
+  "osm_n251125928": {
+    "nom": "Le Lutétia Île Saint-Louis",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["brasserie avec terrasse donnant sur la Seine, ouverte tous les jours de 6h30 à 23h (https://www.ilesaintlouis-paris.com/brasserie-le-lutetia)"],
+    "incertitudes": ""
+  },
+  "osm_n4467072930": {
+    "nom": "Les délices d'Aphrodite",
+    "presse_francophone": ["Gault&Millau : fiche restaurant avec récompense (https://fr.gaultmillau.com/en/restaurants/les-delices-d-aphrodite)"],
+    "guides_visiteurs": ["Guide Michelin, référencé comme « coup de cœur des inspecteurs » (https://guide.michelin.com/en/ile-de-france/paris/restaurant/les-delices-d-aphrodite)"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine grecque et méditerranéenne, spécialités : pikilias (assortiment de 8 mezze), calamars farcis, moussaka (https://parisjetaime.com/eng/restaurant/les-delices-d-aphrodite-p489)"],
+    "incertitudes": ""
+  },
+  "osm_n6606414943": {
+    "nom": "Phô Cardinal",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["note de 9,2/10 sur TheFork (179 avis), présenté comme adapté au déjeuner de travail rapide (https://www.thefork.fr/restaurant/pho-cardinal-r837531)"],
+    "incertitudes": ""
+  },
+  "osm_n1145811945": {
+    "nom": "Amore e Gusto",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site disponible en français et en anglais (amore-e-gusto-paris-5.site.bykomdab.com/en/), se présente comme pizzeria napolitaine (pizzas 32 cm) (https://amore-e-gusto-paris-5.site.bykomdab.com/en/)",
+    "reseaux_sociaux": ["Instagram @amore.gusto (https://www.instagram.com/amore.gusto/?hl=en)"],
+    "autres_faits": ["quartier Saint-Victor, accepte les titres-restaurant Pluxee, Bimpli et Ticket Restaurant (https://www.tripadvisor.com/Restaurant_Review-g187147-d21328052-Reviews-Amore_e_Gusto-Paris_Ile_de_France.html)"],
+    "incertitudes": ""
+  },
+  "osm_n1684658949": {
+    "nom": "Otto",
+    "presse_francophone": [
+      "Le Fooding, fiche restaurant (https://lefooding.com/en/restaurants/otto)",
+      "Gault&Millau, fiche restaurant (https://fr.gaultmillau.com/en/restaurants/otto-75005)",
+      "Paris Secret : « On a testé Otto, nouvelle table de la rue Mouffetard ! » (https://parissecret.com/otto-nouvelle-table-chef-eric-trochon-rue-mouffetard-paris/)",
+      "Hotels Paris Rive Gauche (blog), décembre 2022 : « OTTO, a designer restaurant on rue Mouffetard » (https://www.hotels-paris-rive-gauche.com/blog/2022/12/01/otto-designer-restaurant-paris-rue-mouffetard-hotels/)"
+    ],
+    "guides_visiteurs": [
+      "Paris by Mouth, guide gastronomique anglophone pour visiteurs/expatriés (https://parisbymouth.com/otto/)",
+      "Guide Michelin (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/otto-1205489)"
+    ],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert par le chef Éric Trochon, Meilleur Ouvrier de France 2011, ex-chef du restaurant Solstice, avec ses associés Stéphane Offner et Tony Alvarez-Parage ; décor minimaliste inspiré des izakayas japonais (https://lefooding.com/en/restaurants/otto)"],
+    "incertitudes": ""
+  },
+  "osm_n1142802952": {
+    "nom": "Seoul Mama",
+    "presse_francophone": ["aucune mention trouvée pour cette adresse précise (voir incertitudes)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "seoulmama.paris, langue non vérifiée en détail (https://www.seoulmama.paris/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert par le chef Manoj Sharma et son épouse Sangmi Lee, présenté comme leur « second » Seoul Mama à Paris, cuisine coréenne mêlée d'influences françaises et de street food (https://www.lesrestos.com/restaurant/fiche/paris/seoul-mama-luxembourg)"],
+    "incertitudes": "plusieurs adresses « Seoul Mama » existent à Paris (au moins une dans le 15e/Vaugirard, une autre dite « Luxembourg » près du 5e correspondant à l'adresse du lot) ; la seule couverture presse trouvée (blog de Gilles Pudlowski) concerne explicitement le « Seoul Mama, Paris 15e », donc probablement une adresse différente de celle du CSV (245 bis rue Saint-Jacques) — à ne pas attribuer par erreur à cette fiche"
+  },
+  "osm_n1684658954": {
+    "nom": "Van April",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "vanapril.fr, se présente comme spécialiste de cuisine belge (burgers, frites, fricadelle, sauce joppie) (https://vanapril.fr/burger-et-snack)",
+    "reseaux_sociaux": ["présence sur Mapstr, présenté par des utilisateurs comme « le meilleur restaurant de street food à Paris » (https://mapstr.com/place/6EMDP6XhXdg/van-april-latelier-des-frites-paris-restaurant-burger-frites-street_food-fast_food)"],
+    "autres_faits": ["livraison via Deliveroo et Uber Eats"],
+    "incertitudes": "adresse du CSV incomplète (« 3, 75005 Paris ») ; déduite comme 3 rue Mouffetard d'après les fiches trouvées (Yelp, Van April site)"
+  },
+  "osm_n1129920957": {
+    "nom": "Kitchen Ter(re)",
+    "presse_francophone": [
+      "Le Fooding, fiche restaurant (https://lefooding.com/en/restaurants/restaurant-kitchen-ter-re-paris)",
+      "Gault&Millau, fiche restaurant (https://fr.gaultmillau.com/en/restaurants/kitchen-ter-re)"
+    ],
+    "guides_visiteurs": ["Guide Michelin (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/kitchen-ter-re)"],
+    "site_officiel": "zekitchengalerie.fr/en/restaurant/kitchen-terre-en/, version anglaise disponible, présenté comme la 3e adresse du chef William Ledeuil dédiée aux pâtes (https://zekitchengalerie.fr/en/restaurant/kitchen-terre-en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["chef William Ledeuil (également derrière Ze Kitchen Galerie), pâtes artisanales fournies par le meunier Roland Feuillas, chef en cuisine Julien Jéquier, influences asiatiques (galangal, wasabi, algues japonaises) (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/kitchen-ter-re)"],
+    "incertitudes": ""
+  },
+  "osm_n1696042960": {
+    "nom": "Toscanino",
+    "presse_francophone": ["Sortiraparis : « Toscanino, the schiacciate restaurant in street food mode in the rue Mouffetard » (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/272981-toscanino-schiacciate-s-street-food-restaurant-on-rue-mouffetard)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["Instagram @toscanino.paris (https://www.instagram.com/toscanino.paris/?hl=fr)"],
+    "autres_faits": ["ouvert en janvier 2020, spécialité schiacciate (pain plat italien en sandwich), porchetta (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/272981-toscanino-schiacciate-s-street-food-restaurant-on-rue-mouffetard)"],
+    "incertitudes": ""
+  },
+  "osm_n1696042961": {
+    "nom": "Le Cèdre",
+    "presse_francophone": ["aucune mention trouvée en presse food identifiée ; seulement des blogs d'affiliation/SEO peu identifiables comme presse (Gourmandises et Bavardages, La Table de Jeanne, Conseils Cuisine)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "lecedreparis.fr, en français, page intitulée « meilleur restaurant libanais de Paris ? » (https://www.lecedreparis.fr/actualites/meilleur-restaurant-libanais-de-paris)",
+    "reseaux_sociaux": [
+      "Instagram @lecedre.paris, environ 4000 abonnés (https://www.instagram.com/lecedre.paris/)",
+      "présence TikTok avec plusieurs vidéos de créateurs food (une vidéo notant l'établissement 8/10) (https://www.tiktok.com/discover/le-cedre-mouffetard)"
+    ],
+    "autres_faits": [
+      "ouvert en 1998 par un immigré libanais ayant investi ses économies, cuisine exclusivement halal sans alcool (https://www.lecedreparis.fr/actualites/meilleur-restaurant-libanais-de-paris)",
+      "deuxième adresse de l'enseigne au Kremlin-Bicêtre, 2 rue Roger Salengro",
+      "plus de 3500 avis Google avec une note de 4,9/5 (source secondaire, non vérifiée directement)"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n1696042962": {
+    "nom": "Oi Sushi",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "oisushi-mouffetard.fr, en français (https://oisushi-mouffetard.fr/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situé près de la place de la Contrescarpe (https://oi-sushi-75005-paris.goto-where.com/)"],
+    "incertitudes": ""
+  },
+  "osm_n2613703963": {
+    "nom": "La Jacobine",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["« Lavender and Lime » (tandysinclair.com), blog de voyage/food anglophone, orienté visiteurs (https://tandysinclair.com/la-jacobine/)"],
+    "site_officiel": "lajacobine.fr, langue non vérifiée en détail (https://lajacobine.fr/)",
+    "reseaux_sociaux": ["Instagram @lajacobine (https://www.instagram.com/lajacobine/?hl=en)"],
+    "autres_faits": ["décor traditionnel français (peintures, photographies), plats classiques : soupe à l'oignon, escargots, confit de canard, bœuf bourguignon (https://www.tripadvisor.com/Restaurant_Review-g187147-d742400-Reviews-La_Jacobine-Paris_Ile_de_France.html)"],
+    "incertitudes": ""
+  },
+  "osm_n2494246968": {
+    "nom": "Tripletta",
+    "presse_francophone": [
+      "Sortiraparis : « Tripletta Quartier Latin » (https://www.sortiraparis.com/en/lieux/71708-tripletta-latin-quarter)",
+      "Sortiraparis : « Tripletta and its Neapolitan pizzas set up shop in Paris's Latin Quarter » (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/231244-tripletta-and-its-neapolitan-pizzas-set-up-shop-in-paris-s-latin-quarter)",
+      "Kiss My Chef : « Tripletta Latin, jamais deux sans trois ! » (https://kissmychef.com/adresses/tripletta-latin-jamais-deux-sans-trois/)"
+    ],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "triplettapizza.com, en français (https://www.triplettapizza.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["3e adresse parisienne de l'enseigne Tripletta (après Belleville et Montparnasse), ouverte en juillet 2020, présentée par la presse comme référence de la pizza napolitaine à Paris, four à bois (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/231244-tripletta-and-its-neapolitan-pizzas-set-up-shop-in-paris-s-latin-quarter)"],
+    "incertitudes": ""
+  },
+  "osm_n2534816972": {
+    "nom": "L'Atelier des Nouilles",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "atelier-des.webflow.io, en français, se présente comme restaurant chinois de nouilles (https://atelier-des.webflow.io/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fiche entreprise officielle au nom de la société VAWI, exploitant « L'Atelier des Nouilles », enregistrée à Paris 75006 (https://annuaire-entreprises.data.gouv.fr/entreprise/vawi-l-atelier-des-nouilles-821123890)"],
+    "incertitudes": "le CSV classe ce restaurant en cuisine « japanese », mais toutes les sources trouvées (site officiel, annuaires) le décrivent comme un restaurant chinois spécialisé en nouilles — écart de catégorisation à signaler"
+  },
+  "osm_n4074851972": {
+    "nom": "Sushi Wasabi",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["adresse précise trouvée : 86 boulevard Saint-Germain (le CSV n'indique pas de numéro) (https://www.tripadvisor.com/Restaurant_Review-g187147-d2718321-Reviews-Sushi_Wasabi-Paris_Ile_de_France.html)"],
+    "incertitudes": ""
+  },
+  "osm_n10093658973": {
+    "nom": "Gyoza Mura",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présent sur Uber Eats, propose gyozas grillées (poulet, crevette, bœuf, légumes, porc) et bols donburi (https://www.ubereats.com/fr-en/store/gyoza-mura/qM7uMS3hQi-GMTDvp0ssRg)"],
+    "incertitudes": "recherche rendue difficile par l'homonymie avec « Gyoza Bar » (passage des Panoramas) et « Gyoza Hohei », établissements distincts et beaucoup mieux couverts par la presse (Sortiraparis, Doitinparis) ; peu d'informations fiables trouvées spécifiquement sur Gyoza Mura, 5 rue du Pot de Fer — à ne pas confondre avec ces autres enseignes"
+  },
+  "osm_n5764283980": {
+    "nom": "Crêperie Bobo",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée (uniquement annuaires spécialisés sans gluten : HappyCow/Atly, Find Me Gluten Free)"],
+    "site_officiel": "bo-bo.fr (https://www.corner.inc/place/619149)",
+    "reseaux_sociaux": ["page Facebook « Crêperie Bobo » (https://www.facebook.com/creperiebobo)"],
+    "autres_faits": ["spécialisée dans les galettes et crêpes sans gluten (sarrasin), paiement en espèces uniquement, horaires tardifs (jusqu'à 1h le week-end) (https://acceslibre.beta.gouv.fr/app/75-paris/a/restaurant/erp/creperie-bobo/rpa_pdf)"],
+    "incertitudes": ""
+  },
+  "osm_n6594894986": {
+    "nom": "Gemini Family",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "restaurantgemini.fr, en français, se présente comme la 6e adresse du groupe Gemini Family, revendiquant des racines familiales italiennes (https://restaurantgemini.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["groupe/chaîne « Gemini Family » fondé en 2012, plusieurs adresses à Paris, pizzas au four à pierre et pâtes fraîches faites à la main (https://fr.newtable.com/restaurant-gemini-odeon-4753.php)"],
+    "incertitudes": "l'établissement fait partie d'une chaîne à plusieurs adresses (« Gemini Odéon » est le nom parfois utilisé pour cette adresse précise) — à garder en tête pour ne pas confondre avec une autre adresse du même groupe"
+  }
+}

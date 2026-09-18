@@ -1,0 +1,74 @@
+{
+  "osm_n4403810989": {
+    "nom": "Raviolis Queen",
+    "presse_francophone": ["aucune mention trouvée (Le Fooding, Time Out, Sortiraparis non trouvés dans les recherches)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié — présence surtout sur agrégateurs (PagesJaunes, Uber Eats, Tripadvisor) et Instagram (https://www.instagram.com/ravioliqueen.paris/)",
+    "reseaux_sociaux": ["Compte Instagram @ravioliqueen.paris (https://www.instagram.com/ravioliqueen.paris/)"],
+    "autres_faits": [
+      "Deux adresses à Paris : 13 rue de la Montagne Sainte-Geneviève (75005) et 27 rue Augereau (75007), selon Tripadvisor et Mapstr",
+      "Restaurant chinois, spécialités raviolis/dumplings faits maison, canard laqué, bœuf Sichuan, selon description agrégateurs (https://www.pagesjaunes.fr/pros/63512413)"
+    ],
+    "incertitudes": "Deux fiches distinctes sur Tripadvisor pour deux adresses différentes (13 rue Montagne Sainte-Geneviève et 27 rue Augereau) — possible qu'il s'agisse de deux établissements liés (même enseigne) plutôt que d'un seul ; à vérifier si l'un des deux est bien celui du CSV."
+  },
+  "osm_n7636205992": {
+    "nom": "Le Saint-Pierre",
+    "presse_francophone": ["aucune mention trouvée (aucun résultat direct sur Le Fooding, Sortiraparis, Time Out pour cet établissement précis)"],
+    "guides_visiteurs": ["Sortiraparis référence des guides généraux \"restaurants du Quartier Latin / Panthéon\" et \"restaurants du 5e arrondissement\" qui pourraient inclure l'établissement, mais aucune mention nominative confirmée dans les résultats (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/guides/320907-restaurants-latin-quarter-saint-michel-pantheon-paris)"],
+    "site_officiel": "site en français, se présente comme restaurant de cuisine bistronomique française avec produits locaux et de saison (https://restaurantlesaintpierreparis.fr/)",
+    "reseaux_sociaux": ["Page Facebook \"Le Saint Pierre - Restaurant\" (https://www.facebook.com/restaurant.le.st.pierre)"],
+    "autres_faits": [
+      "Adresse selon recherche : 44 rue de la Montagne Sainte-Geneviève, 75005 Paris, à proximité du Panthéon — décor pierre apparente et poutres",
+      "Adresse CSV indique seulement \"75005 Paris\" sans numéro de rue précis"
+    ],
+    "incertitudes": "Nom très courant (plusieurs \"Le/Restaurant Saint-Pierre\" en France, dont un établissement étoilé à Singapour et un autre à Boos/Grau-du-Roi qui apparaissent dans les résultats). L'adresse exacte du CSV n'étant pas fournie, l'identification avec le restaurant du 44 rue de la Montagne Sainte-Geneviève n'est pas certaine à 100 %."
+  },
+  "osm_n3457445993": {
+    "nom": "Terra Nera",
+    "presse_francophone": ["aucune mention trouvée sur Le Fooding, Time Out FR ou Sortiraparis dans les recherches effectuées"],
+    "guides_visiteurs": [
+      "VoiceMap, tour audio autoguidé \"Emily in Paris Tour\" à Paris, inclut Terra Nera comme site (https://voicemap.me/tour/paris/emily-in-paris-tour-the-unofficial-guide/sites/terra-nera)",
+      "Daily Waffle (site anglophone) : \"Bistro Terra Nera featured in Emily in Paris is one of the most popular TV show restaurants\", déc. 2024 (https://www.dailywaffle.co.uk/2024/12/bistro-terra-nera-featured-in-emily-in-paris-is-one-of-the-most-popular-tv-show-restaurants/)",
+      "nss G-Club (lifestyle) : article sur le restaurant de Gabriel dans Emily in Paris (https://www.nssgclub.com/en/lifestyle/31847/restaurant-gabriel-emily-in-paris-location-terra-nera)",
+      "Sceen-it : fiche lieu de tournage Emily in Paris (https://www.sceen-it.com/sceen/4505/Emily-in-Paris/Terra-Nera-restaurant)"
+    ],
+    "site_officiel": "site en français, se présente comme \"restaurant italien Paris 5e — lieu de tournage Emily in Paris\", met en avant son rôle dans la série (https://terranera.fr/)",
+    "reseaux_sociaux": [
+      "Compte Instagram @terra_nera, \"Les deux compères\" (https://www.instagram.com/terra_nera/)",
+      "Nombreuses vidéos TikTok de visiteurs (\"Terra Nera Paris Review\") évoquant une forte viralité liée à Emily in Paris (https://www.tiktok.com/discover/terra-nera-paris-review)"
+    ],
+    "autres_faits": [
+      "Ancienne boucherie parisienne du XIXe siècle reconvertie en restaurant, selon le site officiel (https://terranera.fr/)",
+      "Lieu de tournage récurrent depuis 2020 pour le restaurant du personnage Gabriel dans Emily in Paris ; le nom affiché à l'écran change selon les saisons (Les Deux Compères, Chez Lavaux, L'Esprit de Gigi) mais la façade rouge reste la même, selon nss G-Club"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n3457466993": {
+    "nom": "Le Soufflot",
+    "presse_francophone": ["Lumières en Arts Magazine : \"Le Soufflot, Le Café élégant à Paris\" (https://www.lumieresenarts.fr/le-soufflot-le-cafe-elegant-a-paris/)"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage anglophone identifié ; described dans les résultats comme spot pratique pour visiteurs du Quartier Latin/Panthéon sans source de guide nommée précise"],
+    "site_officiel": "aucun site officiel propre identifié (le domaine soufflot.com correspond à \"Le Soufflot Café\", à vérifier s'il s'agit du même établissement) ; menu en ligne via QR code avec version anglaise disponible, selon un article tiers (http://www.soufflot.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Brasserie/café parisien classique avec terrasse orientée sud face au Panthéon, entre Panthéon et jardin du Luxembourg, selon plusieurs sources agrégateurs",
+      "Clientèle mentionnée comme mêlant professeurs et étudiants du quartier (Sorbonne à proximité), selon résultats de recherche"
+    ],
+    "incertitudes": "Deux entités proches en nom et en zone apparaissent dans les résultats : \"Le Soufflot\" et \"Le Soufflot Café\" (Tripadvisor liste \"LE SOUFFLOT CAFE\") — possible qu'il s'agisse du même lieu sous deux appellations, à confirmer."
+  },
+  "osm_n3476340993": {
+    "nom": "Sumo",
+    "presse_francophone": ["aucune mention trouvée (Le Fooding, Sortiraparis, Time Out non trouvés dans les recherches)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les résultats — présence surtout via Facebook, Tripadvisor, Yelp et Instagram",
+    "reseaux_sociaux": [
+      "Page Facebook \"Sumo - restaurant gastronomique asiatique\" (https://www.facebook.com/SumoParis/)",
+      "Compte Instagram @sumobuffetparis, \"Sumo Alitas & Sushi Buffet - Paris\" (https://www.instagram.com/sumobuffetparis/)",
+      "Fiche lieu Instagram \"Sumo - restaurant gastronomique asiatique\" (https://www.instagram.com/explore/locations/238970425/sumo---restaurant-gastronomique-asiatique/)"
+    ],
+    "autres_faits": [
+      "Restaurant japonais situé sur une rue piétonne intime, décor évoquant le bleu du Pacifique, selon description agrégateur (https://restaurantguru.com/Sumo-Paris)",
+      "Formule buffet à volonté sushi mentionnée par un compte Instagram tiers (@sumobuffetparis)"
+    ],
+    "incertitudes": "Le compte Instagram @sumobuffetparis (\"Sumo Alitas & Sushi Buffet\") pourrait correspondre à un établissement différent portant un nom proche plutôt qu'au restaurant du 7 rue du Sommerard ; non confirmé avec certitude."
+  }
+}

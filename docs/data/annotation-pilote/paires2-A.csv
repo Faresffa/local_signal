@@ -1,0 +1,87 @@
+paire;choix;confiance;raison
+P001;B;moyenne;Les deux vivent du flux mais Mr & Mrs Crab est un concept ouvert fin 2024 porte par un compte TikTok a 110k abonnes et 2,6M de likes, servi en sachets, ouvert en continu jusqu'a minuit
+P002;B;forte;Brava fait de la livraison, du drive et accepte tous les titres restaurant, c'est une pizzeria de riverains - Mr & Mrs Crab est un concept viral recent
+P003;A;faible;Brava vit de la commande a emporter et des tickets resto du quartier, Yokorama a plus d'amplitude et de rotation en salle, mais l'ecart est mince
+P004;A;faible;Arrivederci est une petite enseigne a deux adresses avec 11k abonnes et du contenu foodies, Yokorama est une cantine japonaise a tickets resto sans vitrine soignee
+P005;B;faible;L'Estrapade affiche un site officiel en treize langues, Pirosmani n'a pas de site du tout et 99 abonnes, avec des avis d'habitues de longue date
+P006;B;faible;Pirosmani tourne sur trente couverts et des amateurs fideles de cuisine georgienne, L'Estrapade se presente en treize langues malgre sa presse francophone
+P007;B;faible;India StreEAT ferme dimanche et lundi avec des services tres courts, signe d'une clientele qui revient - L'Estrapade se traduit en treize langues
+P008;A;faible;Hoki Sushi est une enseigne a volonte presente a quatre adresses, format qui capte du passage - India StreEAT est un petit indien aux horaires serres avec des clients qui en sont a leur sixieme visite
+P009;A;moyenne;Arya Bhavan est une succursale d'enseigne internationale dont le site cible explicitement les touristes du quartier, Hoki Sushi est un a volonte etudiant
+P010;A;forte;Hon Ki n'ouvre que 5,5 h par jour, surtout le midi, et ferme dimanche : impossible de vivre du passage - Arya Bhavan est une chaine qui vise nommement les visiteurs
+P011;B;faible;Atelier Carnem n'ouvre que le soir sur 32 couverts, ce qui en fait une destination - Hon Ki est un midi de semaine sans site ni presse
+P012;B;moyenne;Atelier Carnem est une table du soir montee par deux commercants de la rue avec un site uniquement en francais - Bonvivant appartient a un groupe, ouvre 10h-1h sept jours sur sept et se presente en anglais
+P013;B;moyenne;Sushiyaki n'a aucun site, ferme le dimanche et vit de prix bas - Bonvivant est une brasserie de groupe ouverte en continu, plus remplie le week-end
+P014;B;faible;Taeng Thai revendique ses habitues du quartier sur un site en francais seulement, Sushiyaki est un peu plus expose par son amplitude et sa rotation
+P015;B;moyenne;Taeng Thai est une affaire familiale de place de marche - Ya Bayte fonctionne en street food sur borne avec tres peu d'assises, format qui tourne beaucoup au passage
+P016;B;faible;Ya Bayte a une vraie assise de presse francophone et une maison mere locale - Le Grenier est nettement plus rempli le week-end et ouvre des 9h le samedi et le dimanche
+P017;A;moyenne;Au Pere Louis sert soupe a l'oignon et escargots en continu jusqu'a minuit sept jours sur sept, avec des clients qui y reviennent trois fois pendant un sejour - Le Grenier est une destination vegetarienne historique
+P018;A;forte;Sahara Cafe est un bar a chicha de 14h30 a 2h sans site ni couverture, vivant d'habitues - Au Pere Louis est une machine a services continus
+P019;B;faible;Le Bluff fait 62% de son affluence en semaine, c'est le signal le plus net du lot pour une clientele de riverains et de bureaux - Sahara Cafe est lui aussi tres local mais ouvert tard tous les jours
+P020;A;forte;L'Annexe depend d'une maison mere dont le site s'affiche en anglais par defaut dans onze langues, avec du confit et du foie gras - Le Bluff remplit sa salle en semaine avec une ardoise selon arrivages
+P021;B;moyenne;El Sur est un lieu de communaute avec concerts, tango et vingt ans d'histoire racontee en francais - L'Annexe releve d'une enseigne calibree pour les visiteurs
+P022;A;faible;Selva se presente en onze langues, pratique des tarifs eleves et a ete mis en avant par un blog anglophone destine aux expatries et visiteurs - El Sur a une clientele de diaspora et d'habitues
+P023;A;moyenne;Bicla ferme deux jours, impose la reservation sur une toute petite salle et fait venir des Mexicains de Paris - Selva est une table plus chere et plus exposee aux visiteurs
+P024;B;moyenne;Bicla est un tacos de canasta de quartier sur reservation - La Ferrandaise est une table de terroir de destination dont la fiche ne declare que la clientele touristes
+P025;A;moyenne;Mexi & Co tourne en continu douze heures par jour avec une belle deco et une cuisine reconnue rechauffee, profil d'adresse a forte rotation - La Ferrandaise ferme le dimanche et se reserve
+P026;A;faible;L'Epoque decline son site en treize langues et recolte des sejours ou l'on revient trois fois en trois jours - Mexi & Co garde une epicerie et une clientele etudiante
+P027;B;forte;Khaaw Hoom est un petit thai de la rue des Boulangers, site en francais seulement, ferme le dimanche, aucune couverture - L'Epoque se traduit en treize langues
+P028;A;moyenne;La Cava Voltini est une affaire de 2024 sans ancrage, liquidee depuis, positionnee restauration rapide - Khaaw Hoom vit d'habitues sur des services courts
+P029;A;forte;A Braccetto ouvre de 9h a 2h, se presente en trois langues, a ete relaye par un blog d'hoteliers et une video TikTok sponsorisee - La Cava Voltini restait une petite table sans relais
+P030;A;faible;Les deux vivent du flux : A Braccetto un peu plus, avec son amplitude de 15 h, son brunch et sa promotion payee
+P031;B;forte;Yokorama est une cantine a tickets resto pour etudiants - la creperie affiche 40 ans sur une rue de flanerie et se vend avec des remises TheFork
+P032;B;faible;Deux cantines japonaises a prix bas - Yokorama ouvre plus largement et sert en salle, Hoki Sushi est un a volonte etudiant
+P033;B;faible;Taeng Thai est decrit par ses propres clients comme un endroit sans touristes - Hoki Sushi capte un peu plus par son format a volonte
+P034;B;forte;Taeng Thai revendique ses habitues et ferme le dimanche - Au Pere Louis sert les classiques francais en continu jusqu'a minuit toute la semaine
+P035;A;moyenne;Au Pere Louis est bati pour la rotation continue - La Cava Voltini etait une petite table de quartier, trop recente pour s'etre installee
+P036;A;moyenne;La Cava Voltini se positionnait en restauration rapide et epicerie fine sans clientele etablie - Brava vit de livraison et de tickets resto de riverains
+P037;B;faible;Brava est une pizzeria de commande a emporter du quartier - L'Estrapade se decline en treize langues malgre son statut de bistrot historique
+P038;A;faible;Bonvivant est un etablissement de groupe ouvert jusqu'a 1h et plus rempli le week-end - L'Estrapade ferme deux jours et garde une cuisine de bistrot pour Parisiens
+P039;A;moyenne;Bonvivant appartient a une famille de restaurants et ouvre en continu - Bicla est un minuscule mexicain sur reservation ferme deux jours
+P040;B;faible;Hon Ki n'ouvre presque que le midi en semaine, c'est le profil le plus casanier qui soit - Bicla recoit un peu plus le soir et le dimanche
+P041;A;forte;L'Epoque se traduit en treize langues et accueille des sejours repetes - Hon Ki ferme le dimanche et ne sert le soir que deux jours
+P042;A;forte;Sushiyaki n'a meme pas de site et pratique des prix de cantine - L'Epoque est un bistrot retro calibre pour les visiteurs
+P043;B;faible;Khaaw Hoom ferme le dimanche avec des services tres courts - Sushiyaki ouvre plus large et le samedi en continu
+P044;A;faible;Atelier Carnem est une table du soir sur une rue animee, avec relais dans la presse parisienne - Khaaw Hoom est un thai de quartier sans relais
+P045;A;moyenne;Ya Bayte fonctionne en commande sur borne avec presque pas d'assises, format de passage - Atelier Carnem est une table de reservation du soir
+P046;A;faible;Selva se presente en onze langues avec des cocktails a 15 euros et un relais dans un blog pour expatries - Ya Bayte reste une street food avec une clientele de proximite
+P047;A;faible;La Ferrandaise ferme le dimanche et se reserve - Selva est plus chere, plus traduite et plus relayee vers un public de passage
+P048;A;forte;Le Bluff remplit surtout en semaine avec une ardoise d'arrivages et un site en francais seulement - La Ferrandaise est une table de terroir qui se reserve
+P049;A;faible;Les deux sont des adresses de quartier - Le Bluff avec ses 62% de semaine est encore plus adosse aux riverains que le petit indien de la rue Monge
+P050;A;moyenne;Le Grenier est un vegetarien historique devenu destination, nettement plus rempli le week-end - India StreEAT ferme deux jours et compte des clients a leur sixieme visite
+P051;B;moyenne;Le Grenier attire les vegetariens de partout mais sans promotion - A Braccetto ouvre 15 h par jour, se traduit en trois langues et paie de la visibilite
+P052;B;faible;Les deux sont tournes vers le flux - A Braccetto pousse plus loin avec son amplitude, son brunch et sa promotion payee
+P053;A;forte;L'Annexe depend d'une maison calibree pour les visiteurs - Arrivederci communique uniquement en francais vers des foodies parisiens
+P054;B;moyenne;Sahara Cafe est un bar a chicha d'habitues sans aucune vitrine - Arrivederci a deux adresses et une vraie machine de contenu
+P055;B;forte;Sahara Cafe ne s'adresse a personne d'autre qu'a ses reguliers - Arya Bhavan est une chaine internationale qui cible nommement les touristes du quartier
+P056;B;faible;El Sur a sa communaute argentine et sa programmation culturelle - Arya Bhavan est une succursale de chaine qui vise explicitement les visiteurs
+P057;A;forte;Mr & Mrs Crab est un concept viral de deux ans ouvert jusqu'a minuit - El Sur a vingt ans de vie de quartier et une programmation culturelle
+P058;A;forte;Pirosmani tourne a trente couverts sur des habitues de longue date - Mr & Mrs Crab vit de la visibilite TikTok
+P059;A;forte;Mexi & Co tourne douze heures en continu sur une deco et des plats reconnus rechauffes - Pirosmani est un petit georgien ferme le dimanche
+P060;A;faible;Les deux captent du flux - la creperie le fait davantage avec ses remises TheFork et sa rue de promenade, Mexi & Co garde son epicerie et ses etudiants
+P061;A;forte;Au Pere Louis sert les classiques en continu jusqu'a minuit sept jours sur sept - Atelier Carnem n'ouvre que le soir pour 32 couverts
+P062;B;faible;Au Pere Louis est plus systematiquement ouvert et plus explicitement centre sur les plats attendus par les visiteurs que Mexi & Co
+P063;B;faible;Le Grenier est une destination vegetarienne qui se remplit le week-end - la creperie vend de la remise sur plateforme dans une rue de flanerie, ce qui la rend un peu plus dependante
+P064;B;forte;India StreEAT ferme deux jours avec des services de deux heures et demie - A Braccetto ouvre 15 h par jour et achete de la visibilite
+P065;A;forte;A Braccetto est un etablissement d'amplitude maximale et de promotion payee - Le Bluff fait 62% de son chiffre en semaine
+P066;B;faible;Le Bluff est le plus adosse a la semaine de tout le lot - Taeng Thai a une terrasse et un service continu qui laissent passer un peu plus de monde
+P067;A;faible;Khaaw Hoom est enfoui dans une rue residentielle et ferme le dimanche - Taeng Thai est sur une place de marche avec terrasse et service continu
+P068;A;faible;Brava fait de la livraison mais reste sur une rue passante avec beaucoup d'emporte - Khaaw Hoom ne vit que de ses reguliers
+P069;B;moyenne;Brava est une pizzeria a tickets resto et livraison - Bonvivant est un bistrot de groupe ouvert en continu jusqu'a 1h
+P070;B;forte;Bonvivant garde une identite de bistrot pour Parisiens malgre le groupe - Mr & Mrs Crab est un concept a viralite assumee
+P071;A;forte;Selva est une table chere et traduite mais qui se remplit sur reservation - Mr & Mrs Crab vit du flux et de la video
+P072;B;moyenne;Hoki Sushi est un a volonte etudiant sans vitrine - Selva est cher, traduit en onze langues et relaye vers les visiteurs
+P073;A;faible;Hoki Sushi est une enseigne a quatre adresses dont le format a volonte capte du passage - Pirosmani est un trente couverts d'habitues ferme le dimanche
+P074;B;faible;Sahara Cafe est un bar a chicha sans aucune vitrine - Pirosmani recoit un peu plus de decouverte ponctuelle
+P075;B;moyenne;Sahara Cafe ne vit que de ses reguliers - La Cava Voltini etait une adresse recente en restauration rapide, sans clientele installee
+P076;A;faible;Arya Bhavan est une chaine qui cible nommement les touristes du quartier - La Cava Voltini restait une petite table sans relais
+P077;B;moyenne;Hon Ki n'ouvre presque que le midi en semaine - Ya Bayte sert sur borne avec tres peu d'assises et un flux rapide
+P078;B;faible;Ya Bayte a une assise de presse francophone et une maison mere locale - L'Epoque se decline en treize langues
+P079;B;faible;Les deux sont tournes vers les visiteurs - L'Annexe depend d'une maison mere qui s'affiche en anglais par defaut, mais elle ouvre des 7h pour le cafe du matin du quartier, ce qui la retient un peu
+P080;A;faible;Arrivederci a deux adresses, 11k abonnes et du contenu foodies - Bicla est un minuscule mexicain sur reservation ferme deux jours
+P081;B;moyenne;Bicla fait venir les Mexicains de Paris sur reservation - El Sur est un cafe ouvert en continu sur un boulevard avec happy hour et restauration sur le pouce
+P082;B;faible;El Sur a sa communaute et ses concerts - La Ferrandaise ne declare que la clientele touristes, se reserve midi et soir et sert le terroir attendu
+P083;B;faible;L'Estrapade est traduite en treize langues mais reste un bistrot d'habitues ferme deux jours - La Ferrandaise est plus explicitement une table de terroir de destination
+P084;B;faible;Sushiyaki est une cantine sans site aux prix bas - L'Estrapade est traduite en treize langues et vend son authenticite de bistrot
+P085;A;faible;Yokorama ouvre plus large avec terrasse de service continu et livraison - Sushiyaki ferme le dimanche et n'a aucune vitrine
+P086;A;faible;Yokorama tourne toute la journee sur une rue passante - Atelier Carnem ne fait que le soir sur 32 couverts reserves

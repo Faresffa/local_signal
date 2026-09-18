@@ -2370,3 +2370,505 @@ compte (D-038).
 - **Toute base exportée avant le 14 septembre 2026 est à considérer comme
   contenant les comptes.** Si un fichier a circulé, il faut le reprendre et le
   remplacer — et les mots de passe concernés sont à changer.
+
+---
+
+## D-042 — Panel d'agents pour la vérité terrain : le pilote mesure un accord négligeable, on n'étend pas
+
+**Date :** 2026-09-17 · **Statut :** actif
+
+### Contexte
+
+`etiquette_finale` est vide sur les 467 lignes de
+`docs/data/verite-terrain-quartier-latin.csv`. Tout le reste est prêt : 5 833 avis
+collectés sur 458 restaurants (D-040), les quatre indicateurs calculés, et
+`backend/core/scoring/calibration.py` en attente. **L'étiquetage est le dernier
+verrou du chemin critique.** L'annotation humaine par les cinq membres de l'équipe
+(§5.2 du protocole) n'a pas commencé.
+
+Idée évaluée : remplacer les cinq annotateurs humains par cinq agents LLM, chacun
+doté d'un profil et d'un modèle distincts, allant chercher l'information sur le web.
+
+### Problème identifié
+
+Trois objections étaient connues avant de lancer, et une quatrième est apparue.
+
+1. **L'accord inter-annotateurs perd son sens** si les cinq juges sont des
+   instances corrélées. C'est pourtant le chiffre qui rend un étiquetage
+   défendable. Atténuation retenue : cinq profils distincts (riverain, voyageur,
+   restaurateur, journaliste food, sceptique) sur trois modèles différents.
+2. **Le statut de la donnée change.** Ce ne peut pas être la §5.2 du protocole.
+   C'est au mieux une §5.1 enrichie — une pré-annotation, pas une vérité terrain.
+3. **La circularité** : lire les avis pour juger, c'est faire dériver l'étiquette
+   de l'indicateur `language`. Les quatre interdits du §4 ont donc été inscrits
+   dans chaque consigne, et un audit automatique des justifications a été prévu.
+4. **Apparu au dépouillement : l'instrument lui-même ne discrimine pas.**
+
+Un choix de protocole a été ajouté : **jugement à l'aveugle**, sans voir la
+`proposition` machine ni ses `indices`. Le §6 identifie l'ancrage comme risque
+principal ; le supprimer d'emblée donne une mesure d'accord non polluée.
+
+### Ce qui a été mesuré
+
+Pilote sur les 30 premiers rangs, cinq agents, 150 jugements.
+
+| agent | modèle | local | mixte | touristique | ? |
+|---|---|---|---|---|---|
+| A riverain | Opus | 20 | 8 | 1 | 1 |
+| B voyageur | Sonnet | 15 | 9 | 4 | 2 |
+| C restaurateur | Sonnet | 12 | 9 | 2 | 7 |
+| D journaliste | Opus | 21 | 7 | 1 | 1 |
+| E sceptique | Haiku | 21 | 7 | 2 | 0 |
+
+**Accord inter-annotateurs — le résultat principal :**
+
+| mesure | valeur |
+|---|---|
+| accord observé, toutes paires | 50 % (150/300) |
+| accord attendu par hasard | 43 % |
+| **kappa de Fleiss, 4 catégories** | **0,118** |
+| kappa, 3 catégories, sujets tranchés (n=21) | 0,182 |
+| kappa, binaire local / non-local | 0,130 |
+| kappa, binaire, sujets sans « je ne sais pas » (n=21) | 0,200 |
+
+Accord par paire de 37 % (B–D) à 77 % (A–D). Sur l'échelle de Landis & Koch,
+toutes les variantes tombent en accord **négligeable** à **faible**.
+
+**La cause est identifiée, et ce n'est pas le panel.** 59 % des 150 jugements
+disent `local`, 7 % seulement disent `touristique`. La question du §3 — *« si on
+retirait tous les touristes de Paris demain, ce restaurant survivrait-il ? »* —
+est **asymétrique** : il faut un cas extrême pour répondre « il fermerait ».
+Presque tout établissement survit en perdant une partie de son chiffre. La
+question est décidable, comme voulu, mais elle ne **sépare** pas.
+
+Deux conséquences se cumulent. L'accord attendu par hasard monte à 43 % du seul
+fait du déséquilibre, ce qui écrase le kappa (paradoxe du kappa,
+Feinstein & Cicchetti 1990) — mais l'accord observé lui-même n'est que de 50 %,
+donc l'effondrement n'est **pas** un simple artefact statistique. Les deux
+problèmes sont réels et il faut le dire ainsi.
+
+**Audit des interdits.** Les justifications ont été passées au filtre
+automatiquement. Une violation franche de l'interdit n°4 (raisonnement par la
+zone) sur 150 jugements, chez l'agent E : *« MAIS rue de la Bûcherie est rue
+ultra-touristique face Notre-Dame »*, et *« location disqualifie »* — dans les
+deux cas la géographie tranche l'étiquette. Les autres occurrences relevées sont
+licites (autoprésentation de l'établissement, description d'un lieu de vie).
+C'est le profil « sceptique », qui pousse à chercher des preuves à charge, sur le
+modèle le plus léger du panel.
+
+**Face à la pré-annotation machine :** 43 % d'accord sur 23 restaurants
+comparables, donc 57 % de désaccord. Non exploitable comme taux de correction au
+sens du §6, puisque les agents ne s'accordent eux-mêmes qu'à 50 %.
+
+**Ce qui tient malgré tout :** 4 restaurants unanimes 5/5 et 9 à 4/5. Sur les cas
+francs, le panel converge. Le socle solide existe, il est petit.
+
+### Décision
+
+1. **Ne pas étendre aux 467.** Dérouler les 437 restants produirait environ 2 200
+   jugements dont l'accord est déjà mesuré comme négligeable. Le pilote a fait
+   exactement ce qu'on lui demandait : il a coûté 150 jugements et en a évité
+   2 200 inutilisables.
+2. **Les étiquettes produites ne sont pas importées en base.** Aucun `label`
+   n'est écrit. Le jeu reste vide plutôt que rempli de bruit.
+3. **La cause identifiée est l'instrument, pas les annotateurs.** La question du
+   §3 doit être remplacée avant toute nouvelle campagne, humaine ou non.
+4. **Tout est conservé et versionné** dans `docs/data/annotation-pilote/` : les
+   cinq annotations brutes avec justifications et sources, le consolidé, le lot
+   soumis et le script de consolidation. Le résultat est négatif, il est publiable
+   tel quel.
+
+### Conséquences
+
+- **Le chemin critique reste bloqué au même endroit**, mais on sait maintenant
+  pourquoi, avec un chiffre. C'est un progrès réel : « notre question
+  d'annotation ne sépare pas, kappa = 0,118 » est défendable ; « on a annoté 467
+  restaurants » sans ce chiffre ne l'était pas.
+- **Piste recommandée pour la suite : la comparaison par paires.** Au lieu d'une
+  étiquette absolue, demander « entre A et B, lequel dépend le plus des
+  visiteurs ? ». L'accord sur des comparaisons est structurellement plus élevé que
+  sur des classes, et l'agrégation (Bradley-Terry, ou Elo) produit **directement
+  le classement continu** que cherche la §5.3 du protocole — et dont
+  `precision@10` a besoin. Le détour par trois classes était peut-être le
+  problème depuis le début.
+- **Piste secondaire :** reformuler avec un seuil quantifié — « quelle part du
+  chiffre d'affaires vient des visiteurs ? » en tranches. Force la discrimination
+  mais demande une estimation que l'annotateur ne peut pas faire de façon fiable.
+- **À corriger dans la donnée source :** le rang 23 est nommé « Atelier Carmen »
+  dans OSM ; l'établissement au 5 rue du Pot de Fer est « L'Atelier Carnem ».
+  Trouvé indépendamment par deux annotateurs.
+- **Si une campagne par agents est reprise**, écarter le profil « sceptique » sous
+  sa forme actuelle, ou le maintenir sur un modèle capable de tenir une consigne
+  négative — c'est lui qui a produit la seule violation d'interdit mesurée.
+- `docs/methodologie/verite-terrain.md` est mis à jour en conséquence (§5.4).
+
+---
+
+## D-043 — La comparaison par paires remplace l'étiquetage en classes
+
+**Date :** 2026-09-17 · **Statut :** actif · **Remplace l'instrument de** [D-042](#d-042)
+
+### Contexte
+
+D-042 a mesuré un kappa de Fleiss de **0,118** sur l'étiquetage en trois classes
+et identifié la cause : la question du §3 — *« si on retirait tous les touristes,
+ce restaurant survivrait-il ? »* — est asymétrique. 59 % des jugements tombaient
+sur `local`. Elle est décidable, elle ne sépare pas.
+
+### Problème identifié
+
+Deux problèmes distincts, traités ensemble parce qu'ils ont la même racine — on
+demandait à l'annotateur un jugement absolu sur des informations non contrôlées.
+
+1. **L'instrument ne discrimine pas.** Une classe absolue exige que deux
+   annotateurs placent la même frontière au même endroit. C'est beaucoup
+   demander, et inutile : ce que le projet veut produire est un **classement**,
+   pas une taxonomie.
+2. **Les interdits reposaient sur une consigne.** D-042 a mesuré ce que vaut une
+   consigne : un annotateur faisant basculer son étiquette sur « rue
+   ultra-touristique face Notre-Dame ».
+
+### Décision
+
+**Trois changements, appliqués ensemble.**
+
+**1. La question devient relative.** *« Lequel de ces deux restaurants dépend le
+plus de la clientèle de passage ? »* Il n'y a pas de réponse par défaut : on ne
+peut pas répondre `local` soixante fois de suite.
+
+**2. Le dossier remplace la consigne** (`backend/db/dossier_annotation.py`).
+L'annotateur ne reçoit plus une fiche complète assortie d'interdits : il reçoit
+un dossier d'où les quatre indicateurs ont été **retirés**. « Ces informations
+étaient absentes du dossier » est vérifiable ; « nous avions interdit ce
+raisonnement » ne l'est pas. Effet secondaire décisif : **l'annotation devient
+reproductible**, puisqu'elle ne dépend plus de ce que le web renvoyait ce jour-là.
+
+**3. Le plan de comparaison est construit, pas tiré au hasard**
+(`backend/db/paires.py`). k permutations refermées en cycle : graphe connexe par
+construction — un tirage aléatoire risquerait deux groupes jamais comparés, donc
+deux classements sans échelle commune. Coût k×n au lieu de n(n−1)/2, chaque objet
+vu exactement 2k fois. Graine fixe, plan rejouable. L'ordre gauche/droite est
+tiré **indépendamment par annotateur**, ce qui neutralise le biais de position et
+permet de le mesurer.
+
+L'agrégation est un Bradley-Terry régularisé (`backend/db/bradley_terry.py`),
+descente de gradient à la main comme `calibration.py`, pour les mêmes raisons.
+
+### Ce qui a été mesuré
+
+Même panel qu'en D-042 — mêmes profils, mêmes modèles — pour n'isoler qu'une
+variable : l'instrument. 30 restaurants, 86 duels, 430 jugements.
+
+| panel | accord observé | kappa |
+|---|---|---|
+| *D-042, étiquetage 3 classes* | *50 %* | *0,118 — négligeable* |
+| A+B+C+D+E | 71 % | **0,423 — modéré** |
+| A+B+C+D (sans l'annotateur contaminé) | 76 % | **0,519 — modéré** |
+| A+B+D | 80 % | **0,605 — substantiel** |
+
+**Biais de position : aucun.** 42 % à 57 % de réponses « celui de gauche », tous
+sous le seuil d'alerte. La randomisation par annotateur a fait son travail.
+
+**Un champ n'est pas neutre parce qu'on l'a jugé neutre.** `photos_count`
+figurait dans la première version du dossier : il semblait décrire l'activité
+d'un lieu. L'audit des justifications a montré que l'annotateur E en avait fait
+**98 % de ses motifs** — contre 13 % pour A et 1 % pour D — et que son accord
+avec les autres chutait d'autant (58–66 % contre 74–84 %). Le nombre de photos
+est un proxy de notoriété, au même titre que `review_count` : un restaurant
+invisible a peu de photos **parce qu'il est invisible** (D-001). Le champ a été
+retiré du module. La leçon générale est écrite dans le code : un champ est neutre
+quand on a regardé ce que les annotateurs en font, pas quand on l'a décrété.
+
+### Le résultat qui compte pour le mémoire
+
+Corrélation de Spearman entre le classement de la vérité terrain et le score
+actuel, sur les 30 restaurants :
+
+| | poids | rho | couverture |
+|---|---|---|---|
+| **`local_signal` (score global)** | — | **+0,081** · IC95 % [−0,29 ; +0,43] | 30/30 |
+| menu | 0,40 | +0,266 | 22/30 |
+| langue | 0,30 | −0,003 | 30/30 |
+| prix | 0,15 | **+0,459** | 16/30 |
+| zone touristique | 0,15 | +0,112 | 30/30 |
+
+**Le Local Signal actuel n'a aucun pouvoir prédictif mesurable** sur ce pilote.
+Le résultat est robuste au choix du panel (+0,006 à +0,081 selon les
+combinaisons). Le classement machine de `classement.py`, construit sur les
+attributs Google, fait mieux (+0,324).
+
+**Et la pondération semble inversée.** Les deux indicateurs qui portent 0,45 du
+poids — langue et zone — ne corrèlent pas. Celui qui corrèle le mieux, le prix,
+en porte 0,15 et n'est couvert qu'à 53 %.
+
+**Trois réserves, à écrire dans le mémoire plutôt qu'à laisser trouver.**
+n = 30 : tous les intervalles de confiance contiennent zéro, aucune corrélation
+n'est significative isolément. Les corrélations marginales ne donnent pas les
+coefficients d'une régression multiple. Et la vérité terrain est ici **agentique,
+pas humaine** — voir ci-dessous.
+
+### Conséquences
+
+- **L'instrument est validé, la vérité terrain ne l'est pas.** Un kappa de 0,423
+  à 0,605 rend la campagne exploitable ; il ne transforme pas cinq agents en
+  cinq humains. Ce qui est établi, c'est que **la question par paires fonctionne
+  là où la question par classes échouait** — et ce constat vaut pour le panel
+  humain, qui devrait adopter le même instrument.
+- **Aucune étiquette n'est entrée en base.** Le classement produit est un jeu de
+  référence candidat, pas un `label`.
+- **La calibration est désormais justifiée par une mesure**, plus seulement par
+  un principe : « avant calibration, rho = +0,08 » est le point de départ dont
+  le chapitre avait besoin.
+- **Étendre aux 467** coûterait, au même plan (k=3), environ 1 400 duels par
+  annotateur. C'est la décision suivante, et elle demande un arbitrage de budget.
+- Tout est versionné dans `docs/data/annotation-pilote/`.
+
+---
+
+## D-044 — Séparer la collecte du jugement, et ce que le web apporte vraiment
+
+**Date :** 2026-09-17 · **Statut :** actif · **Complète** [D-043](#d-043)
+
+### Contexte
+
+D-043 a validé la comparaison par paires, mais sur des dossiers construits
+**uniquement depuis la base** : j'avais coupé l'accès au web pour gagner la
+reproductibilité. C'était un arbitrage non demandé — l'intention initiale était
+que les annotateurs croisent la base **et** des sources extérieures.
+
+### Problème identifié
+
+Faire chercher le web à chaque duel est intenable : sur 467 restaurants au plan
+k=3, cela ferait environ 7 000 recherches. Et une annotation adossée à des
+recherches faites en direct n'est pas rejouable — ce que le web renvoie
+aujourd'hui, il ne le renverra pas dans six mois.
+
+### Décision
+
+**Séparer la collecte du jugement**, en deux phases.
+
+**Phase 1 — des documentalistes.** Une recherche web **par restaurant**, pas par
+duel : 467 recherches au lieu de 7 000. Leur consigne tient en une règle —
+**ils observent, ils ne jugent pas**. Ils rapportent presse francophone, guides
+pour visiteurs, site officiel, réseaux sociaux, avec les URL, et écrivent
+« aucune mention trouvée » quand il n'y a rien. C'est le principe de D-014
+appliqué à une autre tâche : le modèle qui observe n'est pas celui qui note.
+
+**Phase 2 — les juges.** Les mêmes duels, sur le dossier enrichi. Le dossier
+étant figé une fois pour toutes, **l'annotation reste rejouable** : on garde les
+deux avantages au lieu de choisir.
+
+### Ce qui a été mesuré
+
+Trois conditions sur les 30 mêmes restaurants, même panel, mêmes 86 duels.
+
+| condition | base | web | accord | kappa |
+|---|---|---|---|---|
+| 1 — étiquettes en 3 classes | non | oui | 50 % | 0,118 |
+| 2 — duels | oui | non | 76 % | 0,519 |
+| **3 — duels enrichis** | **oui** | **oui** | **83 %** | **0,655 — substantiel** |
+
+*(panels A+B+C+D ; E écarté, voir plus bas)*
+
+**Le web apporte de l'information, il n'ajoute pas du bruit.** Chaque annotateur
+a révisé environ **27 % de ses duels**, et l'accord entre eux a **monté**. Du
+bruit produirait l'inverse : beaucoup de changements, moins d'accord. L'accord
+A–D passe de 84 % à 90 %.
+
+**Le classement final en est nettement modifié** : les deux classements ne
+corrèlent entre eux qu'à **rho = +0,562**. Le choix des sources n'est donc pas un
+réglage de second ordre, il déplace le résultat — et doit être documenté comme
+tel dans le mémoire.
+
+**Ce qui n'a pas bougé : le score.**
+
+| | condition 2 | condition 3 |
+|---|---|---|
+| `local_signal` | +0,037 | **+0,007** |
+| menu (0,40) | +0,229 | +0,057 |
+| langue (0,30) | −0,037 | +0,097 |
+| prix (0,15) | +0,397 | +0,232 |
+| zone (0,15) | +0,055 | +0,047 |
+
+Le Local Signal n'a de pouvoir prédictif dans aucune des deux conditions. Le
+résultat de D-043 est donc **robuste à la façon de construire la vérité
+terrain**, ce qui le renforce.
+
+Une crainte a été levée au passage : le nombre de langues d'un site officiel
+étant proche de l'indicateur menu, on pouvait redouter que la campagne web gonfle
+artificiellement la corrélation du menu. C'est l'inverse qui se produit —
++0,229 → +0,057. Mieux informés, les annotateurs s'**éloignent** de ce que mesure
+la carte.
+
+### Trois observations de terrain, à conserver
+
+**Le faux signal du site multilingue.** Trois établissements déclinent leur site
+dans une liste de langues quasi identique : c'est un **template de prestataire
+web**, pas un choix éditorial. Un annotateur s'en est servi pour reclasser deux
+restaurants, un autre l'a repéré et neutralisé. À écarter explicitement des
+consignes de la campagne complète.
+
+**Une hypothèse séduisante et fausse.** Un annotateur a affirmé que la presse
+food francophone favorise les restaurants français au détriment des cuisines
+étrangères — ce qui, si c'était vrai, invaliderait la couverture différentielle
+du README. Vérifié : **44 % de couverture pour les cuisines européennes, 42 %
+pour les autres.** L'hypothèse ne tient pas sur ce corpus. À reposer sur 467, où
+les effectifs le permettront.
+
+**La couverture différentielle ne fonctionne que d'un côté.** 13 restaurants sur
+30 ont une mention en presse francophone, 5 en guides pour visiteurs. La
+soustraction `presse locale − guides touristiques` se réduit donc en pratique à
+`presse locale`, ce qui rouvre le biais de notoriété que D-001 interdit. À dire,
+et à ne pas utiliser seul.
+
+### L'annotateur E, trois échecs, trois causes
+
+| campagne | mode d'échec |
+|---|---|
+| 1 | viole l'interdit n°4 — « rue ultra-touristique face Notre-Dame » tranche son étiquette |
+| 2 | fonde 98 % de ses jugements sur le nombre de photos, un proxy de notoriété |
+| 3 | **comprend la question à l'envers** — son rapport écrit « B = dépend MOINS », la question demandait le plus |
+
+En condition 3 son accord tombe à 43–47 %, c'est-à-dire **sous le hasard**.
+Inverser mécaniquement ses réponses ne le sauve pas (57 % au mieux) : la
+confusion est inconsistante, pas systématique. C'est le seul agent du panel sur
+le modèle le plus léger.
+
+**Décision : E est écarté des mesures de D-044**, et le profil « sceptique » sur
+modèle léger ne doit pas être reconduit. Ses fichiers restent versionnés — un
+échec documenté vaut mieux qu'un échec effacé.
+
+### Conséquences
+
+- **L'architecture en deux phases est ce qui rend les 467 atteignables.** Sans
+  elle, le coût en recherches web est prohibitif.
+- **Avant la campagne complète, un nettoyage s'impose.** Audit sur les 467 :
+  47 sans adresse, 37 sans horaires, 54 jamais appariés à Google, **26 cumulant
+  les trois** — inannotables en l'état. Et l'audit technique ne voit pas les
+  erreurs d'identité : sur 30 restaurants, les documentalistes ont signalé
+  **14 doutes** (homonymes, noms erronés). Cas avéré : *La Cava Voltini*, en
+  liquidation judiciaire depuis le 06/02/2026, donc probablement fermée.
+- **Le classement de référence retenu** est celui de la condition 3, panel
+  A+B+C+D — `docs/data/annotation-pilote/classement-web.csv`.
+
+---
+
+## D-045 — La campagne sur la zone : 328 restaurants classés, et ce que le score vaut face à eux
+
+**Date :** 2026-09-18 · **Statut :** actif · **Applique** [D-043](#d-043) et [D-044](#d-044)
+
+### Contexte
+
+D-044 avait validé l'instrument sur 30 restaurants : comparaison par paires,
+dossier d'où les quatre indicateurs sont retirés, recherche web séparée du
+jugement. Restait à l'appliquer à la zone.
+
+### Ce qui a été fait
+
+**Trois étapes, dans cet ordre.**
+
+**Nettoyage.** Géocodage inverse OpenStreetMap sur les 47 restaurants sans
+adresse : 47/47 retrouvées, base sauvegardée avant écriture. Audit de la zone :
+403 fiches propres sur 467, 26 cumulant trois défauts.
+
+**Collecte web.** 467 fiches, une recherche **par restaurant** et non par duel —
+467 recherches au lieu des ~7 000 qu'aurait coûtées l'autre méthode. C'est ce
+découpage qui rend l'échelle atteignable. Couverture : site officiel 93 %,
+guides visiteurs 30 %, presse francophone 25 %, réseaux sociaux 29 %.
+
+**Jugement.** Plan en 15 blocs de 40 restaurants se chevauchant de 8 — les 112
+restaurants partagés servent d'ancres et alignent les échelles. Graphe vérifié
+connexe (une seule composante de 467 nœuds). **10 blocs sur 15 ont été traités :
+3 132 jugements, 328 restaurants classés.**
+
+### Ce qui a été mesuré
+
+| | valeur |
+|---|---|
+| restaurants classés | **328 / 467 (70 %)** |
+| jugements | 3 132 |
+| accord observé | 86 % |
+| **kappa global** | **0,713 — substantiel** |
+
+**Le score face à la vérité terrain** (Spearman, n = 328) :
+
+| indicateur | poids | rho | IC 95 % |
+|---|---|---|---|
+| **`local_signal`** | — | **+0,234** | [+0,129 ; +0,334] |
+| menu | **0,40** | +0,121 | [−0,002 ; +0,241] — **non significatif** |
+| **langue** | 0,30 | **+0,501** | [+0,416 ; +0,578] |
+| prix | 0,15 | +0,254 | [+0,123 ; +0,376] |
+| zone touristique | 0,15 | +0,049 | [−0,059 ; +0,157] — **non significatif** |
+
+**Le score prédit, et c'est acquis** : l'intervalle exclut zéro, ce qui n'était
+pas le cas sur le pilote de 30. **Mais la pondération est mal répartie** : les
+deux indicateurs qui portent 0,55 du poids ne sont pas significatifs, et la
+langue porte presque tout le signal à elle seule.
+
+**L'échantillon est suffisant.** Entre n = 168 et n = 328, le score global passe
+de +0,300 à +0,234 et la langue de +0,508 à +0,501. Les 139 restaurants restants
+resserreraient les intervalles sans changer les conclusions — ce qui justifie de
+s'arrêter à 70 % plutôt que d'épuiser le budget.
+
+### Le modèle d'annotation compte, et plus que la consigne
+
+C'était une hypothèse, elle a été testée.
+
+| blocs | configuration | kappa |
+|---|---|---|
+| 01–02 | Sonnet, consigne permissive sur les égalités | 0,696 / 0,232 |
+| 03–08 | **Opus** | 0,778 à **0,957** |
+| 09 | panel mixte | 0,584 |
+| 10 | **Sonnet, consigne corrigée** | **0,536** |
+
+Le bloc 02 s'était effondré à 0,232 avec 30 duels sur 76 portant une égalité. J'ai
+attribué cette chute à la consigne et l'ai resserrée. Le bloc 10 montre que
+**c'était surtout le modèle** : à consigne identique, Sonnet plafonne à 0,536 là
+où Opus tient 0,78–0,96. Les blocs portent des restaurants différents, donc ce
+n'est pas un test parfaitement contrôlé — mais l'écart est net sur dix blocs.
+
+**Conséquence : les campagnes futures se font en Opus.** Haiku est exclu (trois
+modes d'échec distincts, D-042 et D-044).
+
+### Deux défauts de données découverts par les annotateurs
+
+**Un bug dans le générateur de dossiers.** La source encode un jour fermé par la
+chaîne `"Fermé"`, pas par une liste vide. Le module comptait donc ces jours comme
+ouverts : **56 restaurants sur 467** étaient annoncés « ouverts 7 jours sur 7 »
+alors qu'ils ferment un ou deux jours — et c'est le signal que les annotateurs
+utilisent en priorité. Repéré par un juge voyant le résumé contredire le détail,
+corrigé au bloc 10. La version soumise aux blocs 1–9 est archivée sous
+`dossiers-v1-avec-bug-horaires.json` : la campagne reste rejouable et l'écart
+mesurable.
+
+**Des avis échangés entre établissements.** Trois paires identifiées par
+recoupement entre juges : Li Thang / Anatolie Dürüm, Le Mékong / CROUS Censier,
+et un restaurant nommé « Dame » portant les avis de **la cathédrale Notre-Dame**.
+Ce n'est pas anecdotique : c'est un défaut d'appariement de la collecte Outscraper,
+et il faut le chercher systématiquement avant d'exploiter les avis. L'inventaire
+est dans `docs/data/annotation-pilote/dossiers-douteux.md`.
+
+### Une circularité à ne pas créer
+
+Les horaires corrèlent fortement avec le classement (service continu : rho =
++0,765, bien au-dessus de tous les indicateurs du modèle). **C'est circulaire** :
+les horaires figuraient dans le dossier et les juges déclarent tous s'en être
+servis en priorité. Mesurer cette corrélation, c'est mesurer qu'ils ont appliqué
+leur propre méthode.
+
+Cela éclaire en revanche la valeur du dispositif : les **quatre indicateurs du
+modèle**, eux, ont été retirés du dossier par construction. Leurs corrélations
+sont propres. Si un indicateur « régime d'exploitation » devait être ajouté un
+jour, il faudrait une campagne où les horaires sont masqués.
+
+### Conséquences
+
+- **La recalibration est débloquée** — c'était l'objectif de D-006 et LS-09.
+- **L'importeur et le module de calibration sont à adapter** : ils attendent trois
+  classes, le classement est continu. Voir `docs/REPRENDRE-ICI.md` §2.
+- **Le menu et la zone touristique sont à rouvrir.** Le menu pèse 0,40 sans être
+  significatif ; la zone est gelée depuis D-027 et ne prédit rien.
+- **La vérité terrain reste agentique.** Un sous-échantillon validé par des
+  humains reste la condition pour la présenter comme vérité terrain au sens plein.
+- `docs/REPRENDRE-ICI.md` est le point d'entrée pour toute reprise du chantier, et
+  `CLAUDE.md` y renvoie en tête.

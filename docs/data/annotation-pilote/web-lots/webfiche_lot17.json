@@ -1,0 +1,218 @@
+{
+  "osm_n3457454893": {
+    "nom": "Kehribar",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["mon-resto-halal.com le référence comme restaurant turc/halal du 5e ; halalfoodle.com (annuaire anglophone) le liste aussi (https://halalfoodle.com/restaurants/france/paris/kehribar-1-rue-des-fosses-saint-jacques)"],
+    "site_officiel": "aucune mention trouvée (pas de site propre identifié ; présence sur Uber Eats et annuaires uniquement)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine turque et grecque, mezze, döner, grillades, börek, baklava (https://www.foodyparis.com/places/12461974/kehribar-istanbul)", "aussi référencé sous le nom \"Kehribar-Istanbul\" sur Tripadvisor (https://www.tripadvisor.com/Restaurant_Review-g187147-d7075912-Reviews-Kehribar_Istanbul-Paris_Ile_de_France.html)"],
+    "incertitudes": "le nom apparaît parfois complété en \"Kehribar-Istanbul\" selon les plateformes ; pas confirmé s'il s'agit du même établissement ou d'un changement de nom"
+  },
+  "osm_n3621462893": {
+    "nom": "Taboulé",
+    "presse_francophone": ["aucune mention trouvée (Le Fooding / Sortiraparis non trouvés)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "tabouleparis.fr, en français, se présente comme restaurant libanais/syrien avec plats faits maison (https://tabouleparis.fr/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["spécialités libanaises et syriennes, carte récemment mise à jour selon des avis (https://www.thefork.fr/restaurant/taboule-r838631)", "noté 4.3 sur Google, 8.9/10 sur TheFork selon les agrégateurs (https://www.yelp.com/biz/taboul%C3%A9-paris)"],
+    "incertitudes": "un domaine taboule.net distinct apparaît hors service (\"Site Offline\"), à ne pas confondre avec tabouleparis.fr"
+  },
+  "osm_n12403457895": {
+    "nom": "Crêperie du Cloître",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Tripadvisor la classe parmi les \"10 Best Restaurants in Notre-Dame Paris\" pour les crêpes (https://www.tripadvisor.com/Restaurants-g187147-zfd20317-zfn15621562-Paris_Ile_de_France-Crepes.html)", "backpackbees.com (blog de voyage anglophone) la mentionne (https://backpackbees.com/tag/creperie-du-cloitre/)"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situ473ée à environ 6 mètres du mur latéral de Notre-Dame, permet de déjeuner avec vue sur la cathédrale (https://backpackbees.com/tag/creperie-du-cloitre/)", "paiement en espèces requis selon un avis, crêpes autour de 5 euros", "notée en dessous de la moyenne sur Google selon un commentateur, avis contrastés"],
+    "incertitudes": "un établissement voisin \"À l'Ombre de Notre Dame\" (20 rue du Cloître Notre Dame) apparaît dans les mêmes résultats de recherche ; ne pas confondre"
+  },
+  "osm_n1145811897": {
+    "nom": "La Maison de Verlaine",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["mindtrip.ai (guide IA anglophone) et trip.com (guide de voyage chinois/anglophone) la référencent comme adresse touristique (https://mindtrip.ai/restaurant/paris-ile-de-france/la-maison-de-verlaine/re-LPQtOpri ; https://us.trip.com/travel-guide/foods/paris-308-restaurant/la-maison-de-verlaine-17121338)"],
+    "site_officiel": "maisondeverlaine.com mentionné, contenu non consulté en détail",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établie dans l'immeuble où le poète Paul Verlaine est mort en 1896, et où Ernest Hemingway aurait écrit \"Paris est une fête\" (https://www.yelp.com/biz/la-maison-de-verlaine-paris)", "cuisine française traditionnelle (escargots, foie gras, crème brûlée), terrasse fleurie"],
+    "incertitudes": ""
+  },
+  "osm_n2445522897": {
+    "nom": "La Cochonaille",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert depuis 1965, cuisine française traditionnelle centrée sur le porc (\"la Petite Cochonne\" évoqué comme origine du nom) (https://www.privateaser.com/lieu/42617-la-cochonnaille)", "orthographié \"La Cochonnaille\" (deux n) dans la plupart des sources, alors que le CSV du projet indique \"La Cochonaille\"", "noté 3.5/5 sur Tripadvisor, avis clients mitigés sur qualité/service"],
+    "incertitudes": "orthographe du nom incertaine : \"La Cochonaille\" (CSV) vs \"La Cochonnaille\" (sources trouvées) ; probablement le même établissement au 21 rue de la Harpe"
+  },
+  "osm_n4225805897": {
+    "nom": "Japorama",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Tripadvisor le classe dans le quartier \"Quartier Latin\" avec menu et prix en ligne, plutôt orienté visiteurs anglophones (https://www.tripadvisor.com/Restaurant_Review-g187147-d2366825-Reviews-Japorama-Paris_Ile_de_France.html)"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine japonaise (sushi, makis, sashimi) et yakitori, ambiance zen (https://www.bonjour-ratp.fr/poi/5141052e84ae5f0e26ca46d2/)", "avis soulignent un accueil chaleureux jugé rare pour un restaurant japonais parisien"],
+    "incertitudes": ""
+  },
+  "osm_n8143294897": {
+    "nom": "Au Port du Salut",
+    "presse_francophone": ["aucune mention trouvée directement, mais histoire bien documentée en français sur des sites d'annuaire (restoaparis.com) (https://www.restoaparis.com/fiche-restaurant-paris/au-port-salut.html)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "auportdusalut.fr mentionné, non consulté en détail",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ancienne auberge parisienne, célèbre cabaret des années 1950 jusqu'en 1982, où se sont produits Barbara, Jean Ferrat, Gainsbourg, Coluche (https://www.france-voyage.com/restaurants-guide/restaurant-paris-156765.htm)", "façade classée monument historique", "cuisine française contemporaine, concerts tous les soirs (chanson française, jazz afro-cubain)"],
+    "incertitudes": ""
+  },
+  "osm_n4154116899": {
+    "nom": "Chieng Mai",
+    "presse_francophone": ["Sortiraparis (fiche lieu, sans date précise) : décrit comme un des premiers restaurants thaïlandais de Paris, cuisine authentique, décor bois élégant, carte autour de 30 euros (https://www.sortiraparis.com/en/lieux/2739-chieng-mai)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté comme l'un des tout premiers restaurants thaïlandais de Paris (https://www.tripadvisor.in/ShowUserReviews-g187147-d715009-r1010642456-Restaurant_Chieng_Mai-Paris_Ile_de_France.html)", "178 avis sur Tripadvisor, classé #3026 sur environ 21 000 restaurants parisiens"],
+    "incertitudes": "orthographe variable : \"Chieng Mai\" (CSV, Sortiraparis) vs \"Chiang Mai\" (Yelp) ; même adresse (12 rue Frédéric Sauton), probablement le même établissement"
+  },
+  "osm_n4225805899": {
+    "nom": "L'Épidon de l'Odéon",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "lepidon.fr mentionné, se présente en français comme restaurant bio de cuisine familiale (non consulté en détail)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant bio, tenu par un couple (cuisinier et serveuse), un seul cuisinier et un seul serveur pour ~30 couverts (https://www.yelp.com/biz/l-%C3%A9pidon-paris-6)", "noté 9.1/10 sur TheFork"],
+    "incertitudes": "nommé \"L'Epidon\" ou \"L'Épidon\" selon les sources, parfois \"L'Epidon Restaurant Bio et Cave à Vins\" sur Tripadvisor ; probablement le même établissement que \"L'Épidon de l'Odéon\" du CSV"
+  },
+  "osm_n3351692900": {
+    "nom": "Chez Germain",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "chezgermain.fr, se présente en français (et section \"About Us\" en anglais) comme crêperie artisanale bretonne, ingrédients bio et locaux (https://www.chezgermain.fr/en/about-us)",
+    "reseaux_sociaux": ["page Facebook \"Chez Germain Crêperie\" active (https://www.facebook.com/ChezGermainCuisineVegetarienne/)"],
+    "autres_faits": ["présent depuis plus de 40 ans rue Saint-André des Arts, dans le 6e arrondissement (et non 75005 comme suggéré par le CSV) (https://www.yelp.com/biz/chez-germain-paris)", "1219 avis sur TheFork, note 9.2/10, prix moyen 16 euros", "identifié comme \"dog friendly\", options végétariennes et sans gluten"],
+    "incertitudes": "un établissement voisin \"Crêperie Saint-Germain\" (même adresse, 33 rue Saint-André des Arts) apparaît comme fermé (\"CLOSED\") sur Yelp — possible ancien nom ou voisin distinct de Chez Germain, à vérifier"
+  },
+  "osm_n4040161900": {
+    "nom": "Panda Wok 01",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Tripadvisor (fiche en anglais) le classe #9138 sur environ 21 600 restaurants parisiens, avec avis \"What a surprise!\" (https://www.tripadvisor.co.uk/ShowUserReviews-g187147-d17205781-r978054262-Panda_Wok_01-Paris_Ile_de_France.html)"],
+    "site_officiel": "aucune mention trouvée (page eatbu.com trouvée mais générique)",
+    "reseaux_sociaux": ["page Facebook \"Panda wok 01\" existante (https://www.facebook.com/p/Panda-wok-01-100048940668113/)"],
+    "autres_faits": ["buffet à volonté, cuisine coréenne/japonaise/chinoise/végane, prix 5-18 livres selon Tripadvisor (https://www.tripadvisor.com/Restaurant_Review-g187147-d17205781-Reviews-Panda_Wok_01-Paris_Ile_de_France.html)", "avis soulignent bon rapport qualité-prix pour un lieu \"pas chic\""],
+    "incertitudes": ""
+  },
+  "osm_n4154116900": {
+    "nom": "Beaurepaire",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "beaurepaire.eatbu.com mentionné (page de réservation, pas un site éditorial à proprement parler)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["spécialités basques : charcuterie de porc Kintoa, bœuf Txogitxu de Saint-Sébastien, axoa de veau (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c4-cuisine-francaise/c1-bistrot-brasserie/21181-beaurepaire.html)", "situé sur une petite place tranquille face à Notre-Dame, mobilier vintage de bouquinistes et antiquaires", "aussi référencé sous les noms \"Beaurepaire Café\" et \"Beaurepaire Ambassade du Béarn\" selon les sources"],
+    "incertitudes": "plusieurs variantes de nom trouvées (\"Beaurepaire Restaurant\", \"Beaurepaire Café\", \"Beaurepaire Ambassade du Béarn\", \"Beaurepaire Notre Dame\") pour la même adresse (1 rue de la Bûcherie) — probablement des renommages successifs du même lieu"
+  },
+  "osm_n2864996901": {
+    "nom": "L'Écritoire",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "www.ecritoire.fr mentionné, non consulté en détail",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situé juste à l'entrée de la Sorbonne, décor où les livres tiennent une place importante (https://mapstr.com/place/jZQ80rferFg/lecritoire-paris-bar-cafe-restaurant-terrasse-francais)", "cuisine bistrot traditionnelle (steak frites, lotte, escargots), menu à 32 euros évoqué"],
+    "incertitudes": ""
+  },
+  "osm_n4154116901": {
+    "nom": "Le nul part ailleurs",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décrit comme bar-restaurant corse, avec vins corses et terrasse \"guinguette\" (https://mapstr.com/place/Y6vcBOSZ0Jg/le-nul-part-ailleurs-paris-bar-corse-restaurant-cafe-terrasse)", "présenté comme un lieu calme en dehors de l'agitation du Quartier latin, fréquenté par des jeunes et des habitués du quartier", "nom commercial complet apparu dans une source : \"Le Nul Part Ailleurs LES 2R\""],
+    "incertitudes": "nom légèrement différent selon les sources (\"LES 2R\" en complément) ; à confirmer s'il s'agit du même établissement que celui du CSV (3 rue du Haut Pavé)"
+  },
+  "osm_n4040161903": {
+    "nom": "Pizzeria Luciana",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "pizzerialuciana.eatbu.com mentionné (page de réservation)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["pizza au four à bois visible depuis les tables, pizzas préparées rapidement selon des avis (https://www.tripadvisor.com/ShowUserReviews-g187147-d1986563-r116952613-Pizzeria_Luciana-Paris_Ile_de_France.html)", "le personnel, probablement les propriétaires eux-mêmes selon des avis clients, est décrit comme très gentil et attentionné"],
+    "incertitudes": "une fiche Uber Eats liste l'établissement sous le nom \"Restaurant Luciana\" (sans \"Pizzeria\") à la même adresse — probablement le même établissement"
+  },
+  "osm_n10103193904": {
+    "nom": "NA",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établissement identifié sous la raison sociale \"SARL NA\" et le nom commercial \"NA\" ou \"Le NA\", cuisine chinoise et taïwanaise, salon de thé, bubble tea et matcha (https://www.foodyparis.com/places/12464140/le-na)", "fermé le dimanche, ouvert 11h30-18h30 le reste de la semaine selon une fiche annuaire", "noté 4.8/5 sur FoodyParis"],
+    "incertitudes": "le CSV ne fournit pas de nom (\"NA\" comme valeur manquante, ambiguë avec le nom commercial réel \"NA\" trouvé au 48 rue Gay-Lussac) ; à confirmer que ce \"NA\"/\"Le NA\" correspond bien à l'entrée sans nom du lot, l'adresse coïncidant exactement"
+  },
+  "osm_n4040161904": {
+    "nom": "Au Vieux Cèdre",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine libanaise et méditerranéenne, shawarma et sandwichs sujouk mis en avant par des avis (https://mapstr.com/place/liX2ISRXgXg/au-vieux-cedre-paris-restaurant-libanais--viande-halal)", "noté 4.6/5 sur la base de 1011 recommandations selon une source agrégée", "identifié comme viande halal sur Mapstr"],
+    "incertitudes": "même adresse (187 rue Saint-Jacques) que Pizzeria Luciana dans le CSV — à vérifier s'il s'agit de deux commerces distincts au même numéro ou d'une erreur d'adresse dans les données"
+  },
+  "osm_n12856836906": {
+    "nom": "Little Respiro",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "respiro-paris.fr, existe aussi en version .fr et .com (respiro-trattoria-pizzeria.fr/en), non consulté en détail",
+    "reseaux_sociaux": ["compte Instagram @respiro_paris identifié (https://www.instagram.com/respiro_paris/)"],
+    "autres_faits": ["établi par Francesco Casisa, cuisine sicilienne (pizza et pâtes), terrasse (https://www.tripadvisor.com/Restaurant_Review-g187147-d17912334-Reviews-Respiro_Trattoria_Pizzeria-Paris_Ile_de_France.html)", "noté 4.7/5 sur Tripadvisor (#208 sur environ 16 300 restaurants), 9/10 sur TheFork", "personnel décrit comme parlant italien, ambiance conviviale de trattoria"],
+    "incertitudes": "le restaurant trouvé s'appelle simplement \"Respiro\" (ou \"Respiro, Trattoria - Pizzeria\"), pas \"Little Respiro\" comme dans le CSV ; même adresse (18 rue Maître Albert), probablement le même établissement sous un nom simplifié"
+  },
+  "osm_n3359519906": {
+    "nom": "Le Buisson ardent",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "le-buisson-ardent-paris.fr, en français (non consulté en détail)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ancien relais de poste du XVIIIe siècle, boiseries et fresques murales de 1925 conservées (https://www.tripadvisor.com/Restaurant_Review-g187147-d719054-Reviews-Le_Buisson_Ardent-Paris_Ile_de_France.html)", "cuisine bistrot classique française, noté 8.1/10 sur TheFork"],
+    "incertitudes": ""
+  },
+  "osm_n1145811910": {
+    "nom": "Quartier Latin",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "restaurant-quartierlatin.fr, existe aussi en version anglaise (/en/), non consulté en détail",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine italienne (pizzas, pâtes, vins italiens), décor \"chic et branché\" en sous-sol avec piano pour soirées piano-bar (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c1031-cuisines-du-monde/c1036-cuisine-mediterraneenne/c82-restaurant-italien/362971-le-quartier-latin.html)", "noté 9.7/10 sur TheFork, 4.9/5 sur Restaurant Guru (2658 avis)"],
+    "incertitudes": "nom du restaurant identique au nom du quartier (\"Quartier Latin\"), ce qui complique la recherche ciblée ; le nom commercial complet varie (\"Quartier Latin\", \"Le Quartier Latin\", \"Quartier Latin - Restaurant Pizzeria\")"
+  },
+  "osm_n9851839910": {
+    "nom": "New Aqib",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["page Facebook \"Restaurant New AQIB\" existante (https://www.facebook.com/newaqib/)"],
+    "autres_faits": ["cuisine indienne et pakistanaise, plats cuits au tandoor, spécialités de la région du Bengale occidental (https://mon-resto-halal.com/restaurant/new-aqib-paris)", "noté 9.4/10 sur TheFork", "identifié comme halal sur un annuaire spécialisé"],
+    "incertitudes": ""
+  },
+  "osm_n9851839913": {
+    "nom": "Je Ju",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établissement anciennement connu sous le nom \"Gwiyaomi\", désormais renommé \"Jeju\" selon Restaurant Guru (https://restaurantguru.com/GWIYAOMI-%EA%B7%80%EC%9A%94%EB%AF%B8-Paris)", "cuisine coréenne (bibimbap, barbecue, poulet frit, bulgogi), décrit comme calme et à l'écart de l'agitation touristique", "noté 4.5/5 sur Restaurant Guru (647 avis)"],
+    "incertitudes": "orthographe \"Je Ju\" (CSV) vs \"Jeju\" (sources) ; ancien nom \"Gwiyaomi\" à la même adresse (26 rue Monsieur le Prince) — probablement un changement d'enseigne du même établissement"
+  },
+  "osm_n715507915": {
+    "nom": "Atelier Maître Albert",
+    "presse_francophone": ["Sortiraparis : \"L'Atelier Maître Albert, la rôtisserie de Guy Savoy\", présentation du concept, du menu et des prix (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/206778-l-atelier-maitre-albert-guy-savoy-s-rotisserie)", "Slate.fr : article sur Guy Savoy et ses restaurants parisiens, dont celui-ci (https://www.slate.fr/story/220332/guy-savoy-deux-restaurants-paris-atelier-maitre-albert-chiberta)"],
+    "guides_visiteurs": ["Guide MICHELIN (fiche établissement) (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/atelier-maitre-albert)", "Time Out Paris (édition anglophone) : \"the extremely prolific, multi-Michelin-starred chef Guy Savoy's outfit... hits the mid-way mark between quality and price\" (https://www.timeout.com/paris/en/restaurants/atelier-maitre-albert)", "France.fr (site officiel du tourisme français, version anglaise) : article dédié (https://www.france.fr/en/article/gastronomy-with-the-chef-guy-savoy-in-his-paris-restaurant-atelier-maitre/)", "Paris Je T'Aime (office de tourisme de Paris) le référence (https://parisjetaime.com/eng/restaurant/atelier-maitre-albert-p729)"],
+    "site_officiel": "ateliermaitrealbert.com, non consulté en détail",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["annexe de la maison Guy Savoy (chef triplement étoilé Michelin), rôtisserie tenue avec le chef Emmanuel Monsallier (https://happyinparis.com/restaurants-cafes/restaurants/latelier-maitre-albert-la-rotisserie-dexcellence-signee-guy-savoy/)", "bâtiment datant d'environ 1400, décoré par l'architecte Jean-Michel Wilmotte, cheminée médiévale visible"],
+    "incertitudes": ""
+  },
+  "osm_n1314226916": {
+    "nom": "La Crète",
+    "presse_francophone": ["aucune mention trouvée (recherche ciblée Fooding/Sortiraparis infructueuse)"],
+    "guides_visiteurs": ["Tripadvisor (avis en français mais plateforme à vocation internationale) : \"le meilleur restaurant grec de la rue Mouffetard\" (https://www.tripadvisor.fr/ShowUserReviews-g187147-d2476001-r163656127-La_Crete-Paris_Ile_de_France.html)"],
+    "site_officiel": "restaurantlacreteparis.com, non consulté en détail",
+    "reseaux_sociaux": ["page Facebook \"Restaurant La Crete. Rue Mouffetard\" existante (https://www.facebook.com/p/Restaurant-La-Crete-Rue-Mouffetard-100063482776469/)"],
+    "autres_faits": ["ouvert depuis 1971, tenu par deux frères, décrit comme une institution de la rue Mouffetard (https://mapstr.com/place/VLzZbA9OI4g/la-crete-paris-restaurant-grec--grecque-greek)", "cuisine crétoise, grecque et chypriote"],
+    "incertitudes": ""
+  }
+}

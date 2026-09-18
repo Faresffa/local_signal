@@ -1,0 +1,218 @@
+{
+  "osm_n2788471656": {
+    "nom": "Bistrot 88",
+    "presse_francophone": ["aucune mention trouvée dans la presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé ; fiche de réservation sur reservateur.fr (https://reservateur.fr/etablissement/610/Bistrot-88)",
+    "reseaux_sociaux": ["aucune mention trouvée de compte food notable"],
+    "autres_faits": ["présenté comme bar-restaurant avec happy hour, piste de danse, capacité 100 personnes, ferme à 2h (Time To Bar, https://timetobar.com/sites/bistrot-88)"],
+    "incertitudes": ""
+  },
+  "osm_n2545292657": {
+    "nom": "Rim Café",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["mentionné dans des listes génériques 'best restaurants near' sur Tripadvisor et Wanderlog, orientées visiteurs (https://www.tripadvisor.com/RestaurantsNear-g187147-d1219492-Studio_Apartments_rue_de_la_Harpe-Paris_Ile_de_France.html ; https://wanderlog.com/place/details/2453487/rim-caf%C3%A9)"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["trattoria italienne à l'angle rue Saint-Séverin / rue de la Harpe, quartier très touristique proche Notre-Dame (Yelp le situe au 38 rue Saint-Séverin, https://www.yelp.com/biz/rim-cafe-paris)"],
+    "incertitudes": "adresse divergente entre le CSV (Rue de la Harpe) et Yelp (38 rue Saint-Séverin) ; possible confusion d'adresse pour un même établissement d'angle"
+  },
+  "osm_n6097031658": {
+    "nom": "Crêperie des Arts",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["décrite comme destination appréciée 'par les locaux et les touristes' selon des fiches agrégatrices anglophones type mindtrip (https://mindtrip.ai/restaurant/paris-ile-de-france/creperie-des-arts/re-0fURwxlV)"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établie en 1973 selon plusieurs fiches agrégatrices ; à la même adresse (27 rue Saint-André des Arts) une fiche Yelp indique l'établissement 'CLOSED' sous ce nom, et une autre entité 'Crêperie des Pêcheurs' apparaît à la même adresse"],
+    "incertitudes": "confusion possible entre plusieurs enseignes successives au 27 rue Saint-André des Arts (Crêperie des Arts / Crêperie des Pêcheurs / Crêperie Saint-André des Arts) ; statut ouvert/fermé incertain selon les sources"
+  },
+  "osm_n6097031659": {
+    "nom": "L'Isolotto",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage anglophone dédié"],
+    "site_officiel": "site officiel en français, lisolotto.fr, se présente comme restaurant italien authentique sur deux niveaux (https://wanderlog.com/place/details/5218739/lisolotto cite le site)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant italien sur deux niveaux (salon rustique à l'étage, bistrot moderne au rez-de-chaussée) près du métro Saint-Michel"],
+    "incertitudes": ""
+  },
+  "osm_n6097031660": {
+    "nom": "Topoly",
+    "presse_francophone": ["aucune mention en presse food francophone identifiée (Fooding, Lebonbon, Sortiraparis) malgré recherche ciblée"],
+    "guides_visiteurs": ["aucun guide de voyage anglophone identifié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["petit snack libanais, pain fait sur place, cuisine visible en vitrine ('spectacle' de cuisson), présenté comme prix démocratiques par les fiches d'annuaires (Tripadvisor, Yelp)"],
+    "incertitudes": ""
+  },
+  "osm_n2788471663": {
+    "nom": "Flocon",
+    "presse_francophone": ["Le Fooding : décrit comme « néobistrot des frères Flocon, havre bleu-blanc-bois doté d'une cour végétalisée » (lefooding.com, cité via recherche web, url non capturée directement)", "Gault&Millau : « une courte carte de saison, toujours bien inspirée, produits sans luxe mais de première fraîcheur » (https://fr.gaultmillau.com/en/restaurants/flocon)", "doitinparis.com : présenté comme « le nouveau restaurant bistronomique rue Mouffetard » (https://www.doitinparis.com/fr/restaurant-flocon-paris-24707)", "hotels-paris-rive-gauche.com (blog) : « un véritable restaurant pour gourmets, rue Mouffetard » (https://www.hotels-paris-rive-gauche.com/blog/2022/09/28/restaurant-flocon-paris-mouffetard-hotels/)"],
+    "guides_visiteurs": ["fiche Michelin Guide, disponible en de nombreuses langues (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/flocon)", "Paris by Mouth (guide anglophone) : décrit comme adresse 'sincère et locavore' tenue par deux frères (https://parisbymouth.com/flocon/)"],
+    "site_officiel": "site officiel en français/anglais, restaurantflocon.com, se présente comme 'cuisine française traditionnelle' quartier Mouffetard (https://www.restaurantflocon.com/en)",
+    "reseaux_sociaux": ["page Facebook officielle Restaurant Flocon (https://www.facebook.com/restaurantflocon/)"],
+    "autres_faits": ["ouvert en 2019 par le chef Josselin Flocon, ancien chef des Pantins, tenu avec son frère Alexis en salle ; cuisine de produits locaux et pêche responsable"],
+    "incertitudes": ""
+  },
+  "osm_n2517526665": {
+    "nom": "Inagiku",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage anglophone dédié"],
+    "site_officiel": "site officiel en français, inagiku-paris.fr, se présente comme 'détour en Orient incontournable dans Paris 5' (https://www.inagiku-paris.fr/)",
+    "reseaux_sociaux": ["page Facebook Inagiku (https://www.facebook.com/p/Inagiku-61552909450229/)"],
+    "autres_faits": ["restaurant japonais teppanyaki (et non un simple bar à sushi), en activité depuis 1994, salle récemment rénovée"],
+    "incertitudes": ""
+  },
+  "osm_n2788471668": {
+    "nom": "Les Baux",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ex-restaurant grec à cette adresse devenu 'Les Baux de Paris', bar à tapas méditerranéen avec soirées scène ouverte / piano-bar du jeudi au samedi (restaurants-paris.fr, eater.space)"],
+    "incertitudes": "nom complet 'Les Baux de Paris' dans la plupart des sources contre 'Les Baux' dans le CSV ; probablement le même établissement"
+  },
+  "osm_n10048944672": {
+    "nom": "Wad Thaï",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["fiches Trip.com et cityseeker (agrégateurs orientés visiteurs internationaux), sans avis éditorial substantiel (https://us.trip.com/restaurant/france/paris/detail/wad-thai-136500221 ; https://cityseeker.com/paris/1323008-wad-thai)"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant thaï de quartier près du Panthéon et du métro Cardinal-Lemoine, note 4,2/5 sur Uber Eats avec plus de 900 avis"],
+    "incertitudes": ""
+  },
+  "osm_n1109569673": {
+    "nom": "Welcome to Istanbul",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["novacircle.com le présente en anglais comme 'Authentic Turkish Cuisine Near Notre Dame', destination clairement orientée visiteurs (https://www.novacircle.com/spots/europe/france/ile-de-france/paris/paris/istanbul-restaurant-d1d79a)", "cityseeker.com, autre fiche anglophone orientée visiteurs (https://cityseeker.com/paris/877757-welcome-to-istanbul)"],
+    "site_officiel": "aucun site officiel propre clairement identifié (des sites menu-buzz.com / .shop trouvés semblent être des pages agrégatrices tierces plutôt qu'un site officiel)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant turc situé dans l'axe touristique Petit Pont / Notre-Dame, mis en avant pour sa vue sur la cathédrale"],
+    "incertitudes": "le caractère 'officiel' des sites menu-buzz.com et welcometoistanbul.shop n'est pas certain, possiblement des pages générées automatiquement"
+  },
+  "osm_n10048944674": {
+    "nom": "Chez l'oncle Lin",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant chinois exploité par la société RICHELIN (nom commercial 'Chez l'oncle Lin'), immatriculée le 28 septembre 2021, 1 à 2 salariés en 2023 (annuaire-entreprises.data.gouv.fr, https://annuaire-entreprises.data.gouv.fr/entreprise/richelin-chez-l-oncle-lin-903705416)"],
+    "incertitudes": ""
+  },
+  "osm_n10048944675": {
+    "nom": "La Table de Colette",
+    "presse_francophone": ["Gault&Millau : présenté comme restaurant de 'healthy cooking' (https://fr.gaultmillau.com/en/restaurants/la-table-de-colette)"],
+    "guides_visiteurs": ["Paris by Mouth (guide anglophone) note l'établissement 'GOOD' deux étoiles (https://parisbymouth.substack.com/p/la-table-de-colette)", "novacircle.com le présente en anglais comme 'Fine Dining in Paris' 5th Arrondissement' pour un public de visiteurs (https://www.novacircle.com/spots/europe/france/ile-de-france-region/paris-municipality/paris/la-table-de-colette-1096fc)"],
+    "site_officiel": "site officiel bilingue français/anglais, latabledecolette.fr, se présente comme 'restaurant gastronomique éco-responsable' (https://latabledecolette.fr/en)",
+    "reseaux_sociaux": ["page Facebook officielle (https://www.facebook.com/latabledecolette/)"],
+    "autres_faits": ["ouvert en 2019 par le chef Josselin Marie (Breton, ex-chef de l'Hôtel Vendôme dès 2012) ; cuisine centrée sur le végétal, options végane/sans gluten/sans lactose sur demande"],
+    "incertitudes": "à ne pas confondre avec le chef Josselin Flocon du restaurant Flocon (même prénom, établissements et personnes différents selon les sources)"
+  },
+  "osm_n2788471676": {
+    "nom": "Li Beyrouth",
+    "presse_francophone": ["Le Bonbon : « Cet incroyable buffet à volonté libanais à 16€ se trouve dans le 5e » (https://www.lebonbon.fr/paris/actu/buffet-libanais-100-maison-abordable-5e/)", "paris-friendly.fr (blog) : « Cuisine libanaise à volonté chez Li Beyrouth ! » (https://www.paris-friendly.fr/Li-Beyrouth-restaurant-buffet-a-volonte-libanais.html)"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage anglophone dédié"],
+    "site_officiel": "aucun site officiel propre identifié ; un site proche 'C Beyrouth' (c-beyrouth.fr) existe pour une adresse voisine mais semble être un établissement distinct",
+    "reseaux_sociaux": ["compte Instagram @restaurant_libeyrouth (https://www.instagram.com/restaurant_libeyrouth/)"],
+    "autres_faits": ["formule buffet libanais à volonté, 15,90€ le midi en semaine / 19,90€ le soir et week-end, cuisine annoncée 'faite maison'"],
+    "incertitudes": "distinction à vérifier entre 'Li Beyrouth' (72 rue Mouffetard) et 'C Beyrouth', enseigne au nom proche trouvée dans les mêmes résultats de recherche"
+  },
+  "osm_n5298105683": {
+    "nom": "Roger de Beyrouth",
+    "presse_francophone": ["aucune mention en presse food francophone identifiée malgré recherche ciblée (Fooding, Lebonbon, Sortiraparis)"],
+    "guides_visiteurs": ["aucun guide de voyage anglophone dédié identifié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["page Facebook (https://www.facebook.com/p/Roger-de-Beyrouth-100063856230839/)"],
+    "autres_faits": ["petit restaurant libanais familial, présenté par les avis clients comme constant 'depuis des décennies', patron prénommé Roger selon les avis"],
+    "incertitudes": ""
+  },
+  "osm_n5442586683": {
+    "nom": "Racina",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["compte Instagram @racinafoodsicilienne (https://www.instagram.com/racinafoodsicilienne/?hl=fr)"],
+    "autres_faits": ["restaurant italien à spécialités siciliennes, situé derrière le Panthéon"],
+    "incertitudes": ""
+  },
+  "osm_n2788471685": {
+    "nom": "Sushiko",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant japonais établi en 2008 selon une fiche agrégatrice (foodyparis.com), près du métro Place Monge"],
+    "incertitudes": ""
+  },
+  "osm_n8679340685": {
+    "nom": "Poké Gourmand",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["société SAS créée le 17 décembre 2019, 3 à 5 salariés en 2023 (annuaire-entreprises.data.gouv.fr, https://annuaire-entreprises.data.gouv.fr/etablissement/88000677000015) ; cuisine hawaïenne (poke bowls), quelques tables sur place, orienté vente à emporter vers le jardin du Luxembourg"],
+    "incertitudes": ""
+  },
+  "osm_n1407190689": {
+    "nom": "Wadon",
+    "presse_francophone": ["Sortiraparis : « Wadon Izakaya, a Japanese restaurant with a 5-course tasting menu at 39€ in Paris » — média francophone principalement destiné aux Parisiens, mais article ici en version anglaise (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/306464-wadon-izakaya-a-japanese-restaurant-with-5-course-tasting-menu-at-39-in-paris)", "Zoom Japon (média franco-japonais) référence le restaurant (https://zoomjapon.info/restaurants-japonais/wadon/)"],
+    "guides_visiteurs": ["aucun guide de voyage anglophone dédié identifié en dehors de fiches d'agrégateurs génériques"],
+    "site_officiel": "site officiel en français, wadon.cover.page/fr (https://wadon.cover.page/fr)",
+    "reseaux_sociaux": ["compte Instagram @wadon75005, 2595 abonnés selon la recherche (https://www.instagram.com/wadon75005/ cité via recherche web)"],
+    "autres_faits": ["restaurant japonais spécialisé dans les 'don' (bols de riz), chef Ayumi Wada originaire de la préfecture d'Aichi ; co-dirigé par Yuya Hashimoto (ex-sommelier du restaurant étoilé Alliance) et François Zheng (ex-directeur de salle d'Affinité) ; une source mentionne une adresse alternative 33 rue de Bièvre suggérant un possible déménagement récent"],
+    "incertitudes": "possible déménagement de 3 rue de Poissy vers 33 rue de Bièvre selon une source (littleboboon.com), à vérifier"
+  },
+  "osm_n4040163689": {
+    "nom": "Ozumaki",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["enseigne commerciale 'Ozumaki Luxembourg', société immatriculée sous SIREN 918811670 ; livraison via Deliveroo"],
+    "incertitudes": ""
+  },
+  "osm_n3350341693": {
+    "nom": "Loufoque",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["bar à jeux de société (plus de 500 jeux, 5€/personne en illimité), cuisine internationale (tapas, plats, desserts), quiz les vendredis, brunch le dimanche"],
+    "incertitudes": "établissement à dominante 'bar à jeux' plus que restaurant classique ; à noter pour la lecture du signal menu"
+  },
+  "osm_n3373098693": {
+    "nom": "Kootchi",
+    "presse_francophone": ["Namasaya (blog food) : « Escale afghane chez Kootchi » (https://www.namasaya.fr/lieux/escale-afghane-chez-kootchi/)"],
+    "guides_visiteurs": ["Petit Futé, guide généraliste franco-anglais, le référence dans sa catégorie restaurant afghan (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c1031-cuisines-du-monde/c1037-cuisine-du-proche-et-moyen-orient/c94-restaurant-afghan/264905-kootchi.html)", "Time Out Paris le référence dans sa liste de restaurants à Jussieu (https://www.timeout.fr/paris/restaurant/kootchi) — média food francophone mais liste generaliste par quartier, à la frontière presse locale / guide"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["page Facebook (https://www.facebook.com/Kootchi-1550191091919070/)"],
+    "autres_faits": ["restaurant familial afghan ouvert depuis 1996 selon une fiche agrégatrice ; patron prénommé Farad, originaire de Kaboul, arrivé en France fin des années 1980 ; décor de tapis orientaux et instruments de musique traditionnels"],
+    "incertitudes": ""
+  },
+  "osm_n4153944693": {
+    "nom": "Matsuya",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée"],
+    "guides_visiteurs": ["Petit Futé (guide généraliste franco-anglais) le référence dans sa catégorie restaurant japonais (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c1031-cuisines-du-monde/c1035-cuisine-d-asie/c56-restaurant-japonais/690534-matsuya.html)"],
+    "site_officiel": "site officiel en français, matsuya75005.fr (https://matsuya75005.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant japonais ouvert 7j/7, livraison vers les arrondissements voisins, proche des stations Saint-Michel / Maubert-Mutualité"],
+    "incertitudes": ""
+  },
+  "osm_n2788471694": {
+    "nom": "Bistro Italien",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée pour cet établissement précis"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fiche Tripadvisor le classe très bas (2,8/5, #15604 sur 16513 restaurants à Paris) ; à l'adresse indiquée (54 rue Mouffetard) une autre source situe plutôt 'Le Vieux Bistrot' (bistrot français, indiqué fermé sur Yelp), ce qui interroge sur l'adresse exacte de Bistro Italien"],
+    "incertitudes": "adresse 54 rue Mouffetard associée par les moteurs de recherche à 'Le Vieux Bistrot' (fermé) plutôt qu'à 'Bistrot Italien' ; homonymie/emplacement à vérifier avant toute exploitation du score"
+  },
+  "osm_n3350341694": {
+    "nom": "Le Dante",
+    "presse_francophone": ["aucune mention de presse food francophone identifiée pour l'établissement du 2 rue Dante"],
+    "guides_visiteurs": ["aucune mention trouvée dans un guide de voyage dédié"],
+    "site_officiel": "aucun site officiel identifié avec certitude ; des pages 'le-dante.shop' et 'cafe-le-dante.edan.io' trouvées semblent être des pages agrégatrices tierces plutôt qu'un site officiel",
+    "reseaux_sociaux": ["page Facebook 'Bistrot Le Dante' (https://www.facebook.com/Bistrot.Le.Dante/)"],
+    "autres_faits": ["bistrot traditionnel français, prix annoncés entre 16 et 20€, terrasse, animaux acceptés selon les fiches d'annuaires"],
+    "incertitudes": "homonymie forte avec un autre restaurant 'Dante' (bistronomique, ex-Alain Passard) situé rue de Paradis dans un autre arrondissement — bien distinct de l'établissement du 2 rue Dante (5e) mais à ne pas confondre dans les sources"
+  }
+}
