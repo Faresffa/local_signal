@@ -1,4 +1,4 @@
-# Reprendre le chantier vérité terrain — état au 18 septembre 2026
+# Reprendre le chantier vérité terrain — état au 22 septembre 2026
 
 **Ce document s'adresse à quelqu'un — humain ou agent — qui arrive sans rien
 savoir de ce qui précède.** Il dit où en est le chantier, ce qui est acquis, ce
@@ -7,7 +7,7 @@ qui reste, et comment le faire. Lis-le en entier avant d'agir.
 Le contexte général du projet est dans [`CLAUDE.md`](../CLAUDE.md). Le raisonnement
 derrière chaque choix est dans [`DECISIONS.md`](DECISIONS.md), entrées **D-042 à
 D-045**. Le protocole d'annotation est dans
-[`methodologie/verite-terrain.md`](methodologie/verite-terrain.md), sections 5.4 à 5.9.
+[`methodologie/verite-terrain.md`](methodologie/verite-terrain.md), sections 5.4 à 5.11.
 
 ---
 
@@ -71,8 +71,8 @@ corrélation de rang est plus adaptée.
 **107 restaurants sur 467 ne sont pas classés** — les blocs 12 à 15 du plan.
 
 C'est optionnel : les corrélations n'ont quasiment plus bougé entre n = 168 et
-n = 328 (le score global est passé de +0,300 à +0,234, la langue de +0,508 à
-+0,501). **L'échantillon est suffisant pour calibrer.** Les 139 restants
+n = 360 (le score global est passé de +0,300 à +0,229, la langue de +0,508 à
++0,510). **L'échantillon est suffisant pour calibrer.** Les 107 restants
 resserreraient les intervalles, sans changer les conclusions.
 
 Si tu veux quand même les faire, tout est prêt :
@@ -139,7 +139,7 @@ les laisser trouver.
    encode un jour fermé par la chaîne `"Fermé"`, que le générateur comptait comme
    un jour d'ouverture. Corrigé au bloc 10. La version soumise est archivée sous
    `dossiers-v1-avec-bug-horaires.json` — la campagne reste rejouable.
-3. **Le modèle d'annotation compte**, et plus que la consigne : Opus 0,78–0,96,
+3. **Le modèle d'annotation compte**, et plus que la consigne : Opus 0,75–0,96,
    Sonnet 0,23–0,70.
 4. **Des dossiers sont mal appariés**, en nombre non négligeable — voir
    [`dossiers-douteux.md`](data/annotation-pilote/dossiers-douteux.md). Trois cas
@@ -158,9 +158,9 @@ les laisser trouver.
 docs/
   REPRENDRE-ICI.md                    ce fichier
   DECISIONS.md                        D-042 à D-045 : tout le raisonnement
-  methodologie/verite-terrain.md      §5.4 à 5.9 : le protocole et ses mesures
+  methodologie/verite-terrain.md      §5.4 à 5.11 : le protocole et ses mesures
   data/annotation-pilote/
-    classement-467.csv                LE RÉSULTAT — 328 restaurants classés
+    classement-467.csv                LE RÉSULTAT — 360 restaurants classés
     dossiers-douteux.md               les fiches à écarter et pourquoi
     dossiers-quartier-latin.json      les 467 dossiers (version corrigée)
     dossiers-v1-avec-bug-horaires.json  la version réellement soumise aux blocs 1-9
