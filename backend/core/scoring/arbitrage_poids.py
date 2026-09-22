@@ -134,14 +134,24 @@ def evaluer(zone: str, melange: float = None, plancher: float = None) -> dict:
     print("-" * 78)
     reference = next(r for m, pl, p, r in lignes if (m, pl) == (0.0, 0.00))
     brute = next((r for m, pl, p, r in lignes if (m, pl) == (1.0, 0.00)), None)
-    if brute is not None:
-        print(f"\nL'ecart total a recuperer est de {brute - reference:+.3f}.")
-        for m, pl, p, r in lignes:
-            if pl >= 0.20 and m >= 0.5:
-                part = 100 * (r - reference) / (brute - reference)
-                print(f"   melange {m:.1f} / plancher {pl:.2f} en recupere "
-                      f"{part:.0f} % tout en gardant {pl:.2f} partout")
-                break
+    if brute is not None and brute > reference:
+        print()
+        print(f"Ecart total a recuperer : {brute - reference:+.3f}")
+        print()
+        # UN PLANCHER TROP HAUT EST PIRE QUE PAS DE PLANCHER, et il faut le
+        # montrer plutot que le laisser decouvrir. Avec quatre indicateurs,
+        # un plancher de 0,20 immobilise 80 % du budget : tous les poids se
+        # rapprochent de 0,25, la ponderation devient presque uniforme, et
+        # elle fait MOINS bien que celle qu'on avait.
+        vus = set()
+        for m, pl, p, r in sorted(lignes, key=lambda x: -x[1]):
+            if pl <= 0 or pl in vus:
+                continue
+            vus.add(pl)
+            part = 100 * (r - reference) / (brute - reference)
+            verdict = (f"recupere {part:.0f} % de l'ecart" if part > 0
+                       else f"PERD {abs(part):.0f} % — pire que l'actuel")
+            print(f"   plancher {pl:.2f} : rho {r:+.3f}  ->  {verdict}")
 
     print()
     print("Aucune de ces lignes n'est ecrite dans config.py. Le choix se")
