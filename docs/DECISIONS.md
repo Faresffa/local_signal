@@ -2972,3 +2972,83 @@ les appliquerait à ceux qui ne le sont pas.
   signe attendu.
 - Toute recalibration future doit rapporter **la composition de son échantillon**,
   pas seulement ses coefficients.
+
+---
+
+## D-047 — Un indicateur faible est-il mauvais, ou mal mesuré ?
+
+**Date :** 22 septembre 2026 · **Statut :** actif
+
+### Contexte
+
+La calibration (D-046) rend 0,13 sur le menu et 0,87 sur la langue. Objection
+posée en revue : le menu ne prédit peut-être pas parce qu'on le **mesure mal
+aujourd'hui** — quelques photos par restaurant, pas de menus soumis par les
+utilisateurs, pas encore d'interface restaurateur. Caler les poids sur cette
+pauvreté reviendrait à la graver dans le produit.
+
+L'objection est sérieuse et **testable** : si le menu est faible par défaut de
+mesure, il doit mieux prédire là où on le mesure bien.
+
+### Mesure
+
+| sous-groupe | n | rho contre la vérité terrain |
+|---|---|---|
+| menu, 1 à 2 photos (mal mesuré) | 73 | −0,063 |
+| menu, 4 photos ou plus | 151 | +0,143 |
+| **menu, 5 photos ou plus (le mieux mesuré)** | 94 | **−0,028** |
+| langue, 9 avis ou moins | 320 | **+0,484** |
+| langue, 40 avis ou plus | 32 | +0,316 |
+
+**Mieux mesurer le menu ne le fait pas mieux prédire.** Là où la carte est la
+plus complète, la corrélation est nulle. Et la langue prédit déjà fortement avec
+neuf avis : elle n'attend pas d'en avoir cinquante.
+
+**Réserve, à rapporter avec le résultat :** « plus de photos » n'est pas
+exactement « mieux mesuré ». Le nombre de photos corrèle lui-même avec la
+notoriété (rho −0,133 avec la localité), donc les sous-groupes diffèrent
+systématiquement. Le test est indicatif, pas décisif.
+
+### Défaut trouvé au passage
+
+L'indicateur menu corrèle à **−0,201** (p = 1,4·10⁻⁴) avec le simple **nombre de
+photos disponibles**. Un restaurant à une photo rend 8 plats médians, à cinq
+photos 52 — et l'amplitude de la carte entre dans le score. Une part de
+l'indicateur mesure donc **combien Google avait de photos**, pas ce qu'il y a sur
+la carte. C'est un défaut de construction, et il rend l'indicateur moins fiable,
+pas plus.
+
+### Décision
+
+**La pondération retenue est un PARI PRODUIT, pas le résultat de la
+calibration — et elle est nommée comme tel.**
+
+La calibration dit ce que les données disent aujourd'hui. Le produit, lui, est
+construit pour un moment où les menus seront soumis par les utilisateurs et par
+les restaurateurs eux-mêmes. Une pondération à 0,87 sur la langue serait fragile
+à ce changement, et retirerait au menu toute chance de faire ses preuves —
+un indicateur à poids nul n'est plus mesuré, donc ne peut plus jamais remonter.
+
+Le coût de chaque pari est mesuré et affiché
+(`backend/core/scoring/arbitrage_poids.py`) :
+
+| pondération | menu | langue | prix | zone | rho |
+|---|---|---|---|---|---|
+| actuelle | 0,40 | 0,30 | 0,15 | 0,15 | +0,277 |
+| **pari retenu** | **0,30** | **0,50** | **0,10** | **0,10** | **+0,394** |
+| plancher 0,10 (calibré) | 0,18 | 0,62 | 0,10 | 0,10 | +0,407 |
+| calibration brute | 0,13 | 0,87 | 0,00 | 0,00 | +0,470 |
+
+Le pari récupère **61 % de l'écart disponible** tout en gardant le menu à 0,30.
+
+### Conséquences
+
+- Le mémoire présente **les deux** : la pondération calibrée (ce que les données
+  disent) et la pondération retenue (ce que le produit fait), avec l'écart de
+  rho entre elles. Présenter la seconde comme un résultat de calibration serait
+  faux.
+- Le défaut du nombre de photos doit être corrigé avant toute nouvelle
+  calibration du menu : tant qu'il est là, l'indicateur mesure en partie la
+  documentation disponible.
+- Le pari devra être **réévalué** quand les menus soumis arriveront. C'est une
+  hypothèse datée, pas une constante.
