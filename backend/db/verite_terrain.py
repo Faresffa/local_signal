@@ -178,6 +178,75 @@ def importer(chemin: str) -> dict:
     return {"ecrits": ecrits, "desaccords": desaccords, "vides": vides}
 
 
+# =============================================================================
+# CLASSEMENT CONTINU (D-042 à D-045)
+# =============================================================================
+#
+# POURQUOI UNE SECONDE VOIE D'IMPORT. `importer()` ci-dessus attend trois
+# classes — local / mixte / touristique — héritées du protocole absolu, celui
+# qui a échoué : 59 % de réponses « local » et un kappa de 0,118 (D-042).
+#
+# L'instrument qui a fonctionné pose une question RELATIVE (« lequel des deux
+# dépend le plus de la clientèle de passage ? ») et produit, via Bradley-Terry,
+# un CLASSEMENT CONTINU : un rang et un `theta` par restaurant. C'est plus riche
+# qu'une étiquette, et le réduire à trois classes jetterait précisément
+# l'information que la comparaison par paires a permis de gagner.
+#
+# CONVENTION DE SIGNE, à ne pas se tromper : `theta` BAS = plus LOCAL.
+# Le rang 1 (Le Foyer Vietnam, theta −0,574) est le plus local ; le dernier
+# (La Bûcherie, theta +0,586) le plus dépendant du passage. La « localité »
+# vaut donc **−theta**, et c'est sous cette forme qu'elle sert de cible.
+
+
+def importer_classement(chemin: str) -> dict:
+    """
+    Écrit le rang et le `theta` du classement par paires dans la base.
+
+    Les deux colonnes sont créées au besoin. `label` n'est PAS renseigné : une
+    étiquette catégorielle déduite d'un classement continu par un seuil choisi
+    après coup ne serait pas une observation, mais une décision déguisée.
+    """
+    conn = get_connection()
+    for colonne in ("rang_verite_terrain INTEGER", "theta_verite_terrain REAL"):
+        try:
+            conn.execute(f"ALTER TABLE restaurants ADD COLUMN {colonne}")
+        except sqlite3.OperationalError:
+            pass  # déjà présente
+
+    ecrits = inconnus = 0
+    with open(chemin, encoding="utf-8-sig", newline="") as f:
+        for ligne in csv.DictReader(f, delimiter=";"):
+            identifiant = (ligne.get("id") or "").strip()
+            if not identifiant:
+                continue
+            try:
+                rang = int(ligne["rang"])
+                theta = float(ligne["theta"])
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            curseur = conn.execute(
+                "UPDATE restaurants SET rang_verite_terrain = ?, "
+                "theta_verite_terrain = ? WHERE id = ?",
+                (rang, theta, identifiant),
+            )
+            if curseur.rowcount:
+                ecrits += 1
+            else:
+                inconnus += 1
+
+    conn.commit()
+    total = conn.execute(
+        "SELECT COUNT(*) FROM restaurants WHERE theta_verite_terrain IS NOT NULL"
+    ).fetchone()[0]
+    conn.close()
+
+    print(f"[Verite terrain] {ecrits} classements ecrits, {total} en base")
+    if inconnus:
+        print(f"   {inconnus} identifiants absents de la base — a verifier")
+    return {"ecrits": ecrits, "inconnus": inconnus, "total": total}
+
+
 def main() -> None:
     a = argparse.ArgumentParser(description="Jeu labellise (LS-08).")
     a.add_argument("--zone", default="quartier-latin")
@@ -185,9 +254,13 @@ def main() -> None:
                    help="taille de l'echantillon (minimum du protocole : 150)")
     a.add_argument("--importer", metavar="CSV",
                    help="relire un fichier annote et ecrire les etiquettes")
+    a.add_argument("--importer-classement", metavar="CSV",
+                   help="ecrire le rang et le theta du classement par paires")
     args = a.parse_args()
 
-    if args.importer:
+    if args.importer_classement:
+        importer_classement(args.importer_classement)
+    elif args.importer:
         importer(args.importer)
     else:
         exporter(args.zone, args.taille)

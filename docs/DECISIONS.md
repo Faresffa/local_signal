@@ -2872,3 +2872,103 @@ jour, il faudrait une campagne où les horaires sont masqués.
   humains reste la condition pour la présenter comme vérité terrain au sens plein.
 - `docs/REPRENDRE-ICI.md` est le point d'entrée pour toute reprise du chantier, et
   `CLAUDE.md` y renvoie en tête.
+
+---
+
+## D-046 — Les pondérations dérivées, et pourquoi on ne les adopte pas telles quelles
+
+**Date :** 22 septembre 2026 · **Statut :** actif
+
+### Contexte
+
+Le classement par paires (D-042 à D-045) a produit une vérité terrain continue :
+360 restaurants ordonnés, `theta` de Bradley-Terry, kappa 0,717. L'objectif de
+D-006 devenait enfin atteignable — **dériver les quatre pondérations au lieu de
+les poser à la main**.
+
+`backend/core/scoring/recalibration.py` : moindres carrés sur indicateurs
+centrés-réduits, cible `−theta` (plus haut = plus local), intervalles par
+rééchantillonnage, et surtout **validation hors échantillon**.
+
+### Résultat
+
+| indicateur | poids actuel | poids dérivé | intervalle 90 % | rho seul |
+|---|---|---|---|---|
+| carte du restaurant | 0,40 | **0,13** | [0,00 ; 0,29] | +0,135 |
+| langue des avis | 0,30 | **0,87** | [0,67 ; 1,00] | +0,457 |
+| prix face au quartier | 0,15 | **0,00** | [0,00 ; 0,12] | **−0,062** |
+| hors zone touristique | 0,15 | **0,00** | [0,00 ; 0,03] | +0,061 |
+
+Et l'amélioration est **établie hors échantillon**, ce qui est le seul test qui
+compte :
+
+```
+pondération actuelle    rho = +0,277
+pondération dérivée     rho = +0,470
+gain hors échantillon   +0,173  [+0,041 ; +0,307]   positif dans 99 % des partages
+```
+
+L'intervalle exclut zéro. Ce n'est pas un effet d'apprentissage sur ses propres
+données : la pondération dérivée prédit réellement mieux.
+
+### Le problème, et il est sérieux
+
+**Trois indicateurs sur quatre s'effondrent, et la langue absorbe tout.**
+
+Le prix a même une corrélation **négative** (−0,062) : il pousse vers
+« touristique » là où le score le compte comme un signe de localité. Son poids
+est mis à zéro plutôt qu'inversé — un indicateur qui pointe à l'envers ne se
+répare pas en le pondérant, il se comprend d'abord.
+
+Adopter ces poids reviendrait à faire du Local Signal **un indicateur de
+proportion d'avis en français, et rien d'autre**. Or :
+
+**Un restaurant sans avis n'aurait plus de score du tout.** L'indicateur de
+langue rend alors l'a priori `0,500`, et avec un poids de 0,87 le score entier
+devient cet a priori. C'est-à-dire que le modèle cesserait de fonctionner
+exactement pour les restaurants que le projet existe pour révéler (D-001, la
+contrainte n°1 du projet).
+
+### Et le biais de l'échantillon de calibration
+
+**130 restaurants sur 360 ont été écartés** faute d'indicateur complet. Ils ne
+sont pas un tirage au hasard :
+
+| | médiane des avis Google | médiane du `theta` |
+|---|---|---|
+| retenus (230) | **915** | +0,016 |
+| écartés (130) | **264** | −0,051 |
+
+Les deux écarts sont significatifs (p = 1,6·10⁻¹⁷ pour la notoriété, p = 0,011
+pour la localité). **Les restaurants écartés sont moins connus ET plus locaux.**
+
+C'est le paradoxe de l'invisibilité reparu à l'intérieur de la calibration
+elle-même : on dérive des poids sur les établissements bien documentés, et on
+les appliquerait à ceux qui ne le sont pas.
+
+### Décision
+
+**Les poids dérivés sont publiés comme résultat, pas appliqués au produit.**
+
+`config.py` reste à 0,40 / 0,30 / 0,15 / 0,15. Ce qui est acquis et rapportable :
+
+1. La méthode fonctionne — la pondération dérivée prédit mieux, hors échantillon,
+   et c'est mesuré.
+2. **Deux indicateurs sur quatre n'expliquent rien**, et le prix va à l'envers.
+   C'est un résultat, pas un échec : il dit où porter l'effort.
+3. La calibration ne peut pas se faire sur les seuls cas complets sans
+   reproduire le biais que le projet combat.
+
+### Conséquences
+
+- Le mémoire rapporte **les deux pondérations** et l'écart entre elles, pas une
+  seule présentée comme la bonne.
+- Le signal menu, qui porte 0,40 et ne corrèle qu'à +0,135, doit être réexaminé :
+  soit l'indicateur est mal construit, soit les cartes récoltées sur le web ne
+  disent pas ce qu'on croit. C'est le chantier suivant, pas une retouche de poids.
+- Le prix négatif demande une explication avant toute correction. Hypothèse à
+  tester : dans le Quartier latin, les adresses bon marché sont aussi les plus
+  tournées vers le passage (kebabs, crêperies de rue), ce qui inverserait le
+  signe attendu.
+- Toute recalibration future doit rapporter **la composition de son échantillon**,
+  pas seulement ses coefficients.
