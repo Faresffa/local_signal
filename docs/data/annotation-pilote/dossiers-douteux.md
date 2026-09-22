@@ -113,3 +113,87 @@ tous fermés le dimanche.
    projet consomme cette base, autant l'améliorer.
 4. **Recalculer l'accord inter-annotateurs sans ces fiches** — c'est la mesure
    propre, celle qui dit ce que vaut le protocole plutôt que ce que vaut la donnée.
+
+---
+
+# Blocs 12 à 15 — ce que la fin de campagne a fait remonter
+
+*Ajouté le 22 septembre 2026, à l'achèvement des 467.*
+
+Même protocole que ci-dessus : chaque annotateur signale ce qui lui paraît
+incohérent et baisse sa confiance plutôt que d'inventer un jugement. **Aucun des
+quatre ne voit ce que les autres écrivent.** Quand les quatre désignent la même
+fiche, ce n'est pas une impression.
+
+## Avis appartenant à un autre établissement
+
+Le défaut d'appariement de la collecte, déjà constaté sur les blocs 6 à 10, se
+retrouve intact jusqu'à la fin de la zone.
+
+| établissement | ce que dit la fiche | ce que disent les avis | signalé par |
+|---|---|---|---|
+| **Salvia** (rue Cujas) | café-restaurant d'hôtel | un **éditeur de progiciels immobiliers** — « hotline injoignable », « leader en gestion de la dette » | A, B, C |
+| **Vita** (rue de l'École de Médecine) | restaurant italien, chef Angelo Cavalieri | couscous, tajines, et un établissement nommé **« La Soummam »** | A, B, C |
+| **Café de la Tourelle** | « plats français de tradition », bar en zinc | lasagnes végétariennes, soba, tiramisu pistache, et le nom **« bouillon de l'île »** | les 4 (blocs 14 et 15) |
+| **L'Avant Comptoir de la Mer** | enseigne « de la Mer » | un avis décrit **« De la Terre »** et son ouverture en 2010 ; le champ site web pointe vers `/avant-comptoir-de-la-terre` | B, C, D |
+| **Hanoï** | vietnamien familial | des avis du **Petit Châtelet** (steaks au feu de bois) | A, D |
+| **Bouillon de l'île** | — | des avis de **« Vita Ristorante »** | A, B, C, D |
+| **Ayadi Gourmet** | — | une mention de **« Hebe »** | A, D |
+| **SOS Chef** (rue Suger) | cuisine bio à emporter | un avis loue **« le service de réception des colis »** | les 4 |
+
+**Le cas « Café de la Tourelle » mérite d'être raconté dans le mémoire.** Les
+quatre annotateurs l'ont désigné, sur deux blocs différents, et trois d'entre eux
+ont repéré que le mot « bouillon de l'île » — nom d'un *autre* établissement du
+corpus — apparaissait dans ses avis. Le défaut circule donc **entre deux fiches
+qui sont toutes deux dans le jeu**.
+
+## Identité non résolue
+
+| établissement | problème |
+|---|---|
+| **Maison de Gyros** | **deux fiches distinctes** portent ce nom (26 rue de la Huchette et rue de la Harpe) alors que les duels n'en désignent qu'une. Les quatre annotateurs ont jugé sur le profil commun aux deux — même format, même amplitude — mais l'appariement reste ambigu |
+| **L'Ardoise** (parvis Guillaume de Champeaux) | horaires en base limités au midi en semaine, avis décrivant des dîners et situant le lieu près du Louvre. Correspond vraisemblablement à l'homonyme du 1ᵉʳ |
+| **La Rôtisserie** (quai de la Tournelle) | les sources web pointent **La Rôtisserie d'Argent**, annexe d'un étoilé ; les avis décrivent une **rôtisserie-traiteur de quartier** (poulets à emporter, actifs du voisinage). Les deux profils sont incompatibles et mènent à des positions opposées dans le classement |
+| **Sésame** (rue Danton) | aucune source rattachée à l'adresse ; dossier sans horaires ni attributs |
+| **Quartier Général** | identification non confirmée entre « Quartier Général » et « Café Le Quartier Général » |
+| **Au Vieux Cèdre** | partage l'adresse 187 rue Saint-Jacques avec **Pizzeria Luciana** dans la base |
+
+## Établissements possiblement fermés
+
+**Mo Sarpi** (un avis « 好像关店了 », un autre décrivant un changement
+d'exploitant en mars 2024) et **Sabraj** (statut contradictoire entre Yelp et le
+site officiel). Si ces établissements n'existent plus, leurs duels devraient
+sortir du corpus — un classement qui ordonne des restaurants fermés ordonne du
+vide.
+
+## Erreurs de catégorie, sans mélange d'établissement
+
+- **L'Atelier des Nouilles** — classé `japanese` en base, décrit partout comme
+  chinois (nouilles de Lanzhou).
+- **Kokoro** — cuisine `japanese`, sous-type « Restaurant français ». Cohérent
+  avec une table franco-japonaise, mais **de nature à fausser un indicateur menu
+  automatique** qui lirait la catégorie.
+- **Loufoque** — bar à jeux avant d'être un restaurant ; jugé sur son modèle
+  économique (réservation obligatoire, 5 €/personne pour les jeux).
+
+## Dossiers trop pauvres pour être comparés aux autres
+
+**Mo Sarpi**, **Quartier Général** et **Sésame** n'ont ni horaires, ni attributs
+Google, ni catégorie. Les jugements qui les impliquent reposent presque
+uniquement sur le contenu des avis. Les annotateurs ont baissé leur confiance en
+conséquence — c'est précisément à quoi sert ce champ — mais si un désaccord
+apparaît dans l'agrégation, c'est là qu'il faut regarder d'abord.
+
+**Rocaille** n'a aucun avis collecté du tout.
+
+## Ce qu'il faut en retenir pour le mémoire
+
+Le contrôle par annotateurs **trouve ce que l'audit technique ne voit pas**. Une
+vérification automatique de la base ne détecte aucun de ces cas : les champs sont
+remplis, les types sont bons, les identifiants existent. C'est la lecture par
+quelqu'un qui cherche à comprendre l'établissement qui fait apparaître qu'un
+restaurant vietnamien porte les avis d'un steakhouse.
+
+Et le défaut est **systématique, pas anecdotique** : il traverse les quinze blocs,
+des premiers aux derniers. Ce n'est pas une poignée de fiches à corriger à la
+main, c'est l'appariement de la collecte externe qu'il faut revoir.
