@@ -93,6 +93,26 @@ function Carte({ item, onOpen, isDark, index }) {
           photoUrl={item.photo_url}
           isDark={isDark}
         />
+        {/* Rang dans le classement : la liste est déjà verticale, un par un,
+            le chiffre le rend explicite plutôt que déductible de l'ordre
+            (LS-refonte, cohérent avec la carte web). */}
+        <View
+          style={[
+            s.rang,
+            {
+              backgroundColor: index === 0 ? colors.brand : colors.surface,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              s.rangText,
+              { color: index === 0 ? colors.onBrand : colors.text },
+            ]}
+          >
+            {index + 1}
+          </Text>
+        </View>
         {dist && (
           <View style={[s.distance, { backgroundColor: colors.surface }]}>
             <Text style={[s.distanceText, { color: colors.text }]}>{dist}</Text>
@@ -244,19 +264,22 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
           {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
         </Text>
 
-        {/* ACCÈS AU COMPTE SANS TROISIÈME ONGLET (D-037). L'initiale d'un
-            utilisateur connecté vaut confirmation silencieuse : on voit d'un
-            coup d'œil que la session tient, sans ligne de texte en plus. */}
+        {/* ACCÈS AU COMPTE SANS TROISIÈME ONGLET (D-037). Connecté, l'initiale
+            vaut confirmation silencieuse : on voit d'un coup d'œil que la
+            session tient, sans ligne de texte en plus. Déconnecté en revanche,
+            une icône seule se perdait dans l'en-tête — personne n'y voyait un
+            accès à la création de compte (retour utilisateur). Le libellé le
+            rend explicite, comme "Se connecter" dans la nav du web. */}
         <Pressable
           onPress={onCompte}
           accessibilityRole="button"
           accessibilityLabel={user ? "Mon compte" : "Se connecter"}
           hitSlop={8}
           style={[
-            s.compte,
+            user ? s.compte : s.compteInvite,
             {
-              backgroundColor: user ? colors.brand : colors.surface,
-              borderColor: user ? colors.brand : colors.border,
+              backgroundColor: user ? colors.brand : colors.brandSoft,
+              borderColor: user ? colors.brand : colors.brand,
             },
           ]}
         >
@@ -265,7 +288,12 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
               {(user.name || user.email).trim().charAt(0).toUpperCase()}
             </Text>
           ) : (
-            <Feather name="user" size={18} color={colors.textMuted} />
+            <>
+              <Feather name="user" size={15} color={colors.brand} />
+              <Text style={[s.compteInviteText, { color: colors.brand }]}>
+                Se connecter
+              </Text>
+            </>
           )}
         </Pressable>
       </View>
@@ -407,6 +435,16 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   compteInitiale: { fontSize: 16, fontWeight: "700" },
+  compteInvite: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    minHeight: 40,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+  },
+  compteInviteText: { fontSize: 13, fontWeight: "700" },
   lede: { fontSize: 15, marginTop: 4, lineHeight: 21 },
 
   chips: { gap: 8, paddingVertical: spacing.md },
@@ -463,4 +501,16 @@ const s = StyleSheet.create({
     borderRadius: radius.pill,
   },
   distanceText: { fontSize: 12, fontWeight: "600" },
+
+  rang: {
+    position: "absolute",
+    left: 12,
+    top: 12,
+    width: 24,
+    height: 24,
+    borderRadius: radius.pill,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rangText: { fontSize: 12, fontWeight: "700" },
 });

@@ -3052,3 +3052,60 @@ Le pari récupère **61 % de l'écart disponible** tout en gardant le menu à 0,
   documentation disponible.
 - Le pari devra être **réévalué** quand les menus soumis arriveront. C'est une
   hypothèse datée, pas une constante.
+
+---
+
+## D-048 — Import partiel du dump `C:\slop` : comptes et consultations, pas restaurants/menus
+
+**Date :** 2026-09-22 · **Statut :** actif
+
+### Contexte
+
+Un coéquipier a exporté six tables depuis une instance Postgres/Supabase
+séparée (`users`, `sessions`, `consultations`, `tourist_sites`, `menus`,
+`restaurants`, horodatées `202609151210`) et les a transmises en dehors du
+dépôt (`C:\slop`, hors suivi Git). La demande initiale était formulée comme
+« les tables que je n'ai pas » — en réalité les six tables existaient déjà
+dans `backend/db/models.py` et dans `local_signal.db`, avec des données : la
+base locale portait déjà 58 comptes, 60 sessions, 130 consultations, 677
+sites touristiques, 10 642 restaurants et 1 149 menus.
+
+### Problème identifié
+
+Deux dangers concrets, vérifiés avant toute exécution :
+
+1. **Le dump `sessions` référence des `user_id` (1, 2) propres à l'instance
+   Postgres d'origine.** En local, ces identifiants appartenaient déjà à
+   d'autres comptes (`nouveau0@test.fr`, `nouveau1@test.fr`). Rejouer le SQL
+   tel quel aurait attaché les jetons de session de Sebastian et Fares à de
+   mauvais comptes locaux.
+2. **`restaurants.sql` (8,7 Mo) et `menus.sql` (1,7 Mo) sont un instantané du
+   15/09**, antérieur au travail d'annotation et de recalibration en cours
+   (D-043 à D-047, poursuivi les 17-18/09). Les rejouer aurait écrasé des
+   scores et labels locaux plus récents par une version périmée.
+
+### Décision
+
+**Import scindé, pas d'exécution brute du dump.**
+
+- `users` et `consultations` : exécutés tels quels (pas de référence croisée
+  fragile) — 2 comptes et 35 consultations ajoutés.
+- `sessions` : les 3 lignes du dump sont réinsérées avec le `user_id` **remappé**
+  vers les identifiants réellement attribués aux deux nouveaux comptes lors de
+  l'import local, pas ceux du dump.
+- `restaurants.sql`, `menus.sql`, `tourist_sites.sql` : **non importés**.
+  Périmés par rapport à l'état local, et hors du périmètre réel de la demande
+  (« comptes utilisateurs »).
+- Sauvegarde de `local_signal.db` prise avant l'opération, retirée du dépôt
+  après vérification (le nom ne matchait pas `*.db` dans `.gitignore`).
+
+### Conséquences
+
+- `backend/config.py` porte déjà `DATABASE_URL` : si l'équipe bascule un jour
+  sur l'instance Postgres/Supabase du coéquipier plutôt que d'y réimporter des
+  fragments, c'est la bascule normale, pas un nouvel import.
+- Si `restaurants.sql`/`menus.sql` doivent un jour être exploités (comparaison,
+  audit), le faire dans une base à part — jamais un `executescript` direct sur
+  `local_signal.db`, dont l'état a déjà divergé de ce dump.
+- Prochain chantier annoncé par l'utilisateur : types de comptes (admin,
+  utilisateur normal, utilisateur abonné) sur la table `users` déjà en place.

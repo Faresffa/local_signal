@@ -7,13 +7,15 @@
 // type de cuisine, jusqu'où marcher.
 
 import { useEffect, useRef, useState } from "react";
-import { MagnifyingGlass, Trophy, X } from "@phosphor-icons/react";
+import { MagnifyingGlass, MapTrifold, Trophy, X } from "@phosphor-icons/react";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
 import Filtres from "../components/Filtres";
 import LocationPicker from "../components/LocationPicker";
 import RestaurantCard from "../components/RestaurantCard";
 import LockedCard from "../components/LockedCard";
+import ResultsMap from "../components/ResultsMap";
+import StatsPanel from "../components/StatsPanel";
 import {
   EmptyState,
   ErrorState,
@@ -64,6 +66,9 @@ export default function Discover({
   const [classementOuvert, setClassementOuvert] = useState(false);
   const [podium, setPodium] = useState([]);
   const ouvrirClassement = useRef(false);
+  // Carte et répartition : toujours visibles en colonne à partir de 1100px,
+  // repliées derrière un bouton en dessous (voir .discover__railBody en CSS).
+  const [railOuvert, setRailOuvert] = useState(false);
 
   // Les filtres proposés viennent de la base : on ne propose jamais un filtre
   // qui ne renverrait aucun résultat.
@@ -144,16 +149,14 @@ export default function Discover({
   return (
     <>
       <section className="search">
-        <h1 className="search__title enter" style={{ "--enter-delay": "60ms" }}>
+        {/* Retirée puis redemandée, en plus petit cette fois (retour
+            utilisateur) : l'amorce reste, mais sans manger la hauteur qui
+            revient aux résultats — voir `.search__title--compact` en CSS. */}
+        <h1 className="search__title search__title--compact enter" style={{ "--enter-delay": "60ms" }}>
           Mangez là où mangent <em>les habitants</em>
         </h1>
-        <p className="search__lede enter" style={{ "--enter-delay": "170ms" }}>
-          Les vrais restaurants de quartier sont rarement les plus visibles.
-          <br />
-          Local Signal les fait remonter grâce à notre <b>score</b> calculé.
-        </p>
 
-        <div className="searchbar enter" style={{ "--enter-delay": "280ms" }}>
+        <div className="searchbar enter" style={{ "--enter-delay": "170ms" }}>
           <div className="field">
             <LocationPicker
               value={
@@ -228,73 +231,95 @@ export default function Discover({
         )}
       </section>
 
-      <div
-        className="discover__filters enter"
-        style={{ "--enter-delay": "380ms" }}
-      >
-        <Filtres
-          valeurs={filtres}
-          onChange={onFiltresChange}
-          cuisines={cuisineOptions}
-          nbResultats={status === "ready" ? restaurants.length : null}
-          chargement={status === "loading"}
-        />
-      </div>
-
-      <section>
-        <div className="results__head">
-          <h2
-            className="detail__title"
-            style={{ fontSize: "var(--font-size-xl)" }}
-          >
-            {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
-          </h2>
-          <div className="results__summary">
-            <span className="results__sort">Triés par score</span>
-            {status === "ready" && masques > 0 && (
-              <span className="results__count">
-                {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""} affiché
-                {restaurants.length > 1 ? "s" : ""} sur {total}
-              </span>
-            )}
-            {status === "ready" && masques === 0 && (
-              <span className="results__count">
-                {restaurants.length} restaurant
-                {restaurants.length > 1 ? "s" : ""}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {status === "loading" && <ResultsSkeleton />}
-        {status === "error" && (
-          <ErrorState message={error} onRetry={relancer} />
-        )}
-        {status === "ready" && restaurants.length === 0 && (
-          // Un lieu choisi explicitement qui ne renvoie rien, sans filtre actif,
-          // signale une zone non relevée plutôt que des critères trop stricts.
-          <EmptyState
-            onReset={reset}
-            horsCouverture={Boolean(lieu) && !cuisine && radius >= 1500}
-            lieu={lieu?.label}
+      <div className="discover__layout">
+        <aside
+          className="discover__aside enter"
+          style={{ "--enter-delay": "380ms" }}
+        >
+          <Filtres
+            valeurs={filtres}
+            onChange={onFiltresChange}
+            cuisines={cuisineOptions}
+            nbResultats={status === "ready" ? restaurants.length : null}
+            chargement={status === "loading"}
           />
-        )}
-        {status === "ready" && restaurants.length > 0 && (
-          <div className="grid">
-            {restaurants.map((r, i) => (
-              <RestaurantCard
-                key={i < 3 ? `${r.id}-${versionResultats}` : r.id}
-                restaurant={r}
-                index={i}
-                onOpen={onOpen}
-              />
-            ))}
-            {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) }).map((_, i) => (
-              <LockedCard key={`locked-${i}`} onUnlock={onUnlock} />
-            ))}
+        </aside>
+
+        <section className="discover__results">
+          <div className="results__head">
+            <h2
+              className="detail__title"
+              style={{ fontSize: "var(--font-size-xl)" }}
+            >
+              {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
+            </h2>
+            <div className="results__summary">
+              <span className="results__sort">Triés par score</span>
+              {status === "ready" && masques > 0 && (
+                <span className="results__count">
+                  {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""} affiché
+                  {restaurants.length > 1 ? "s" : ""} sur {total}
+                </span>
+              )}
+              {status === "ready" && masques === 0 && (
+                <span className="results__count">
+                  {restaurants.length} restaurant
+                  {restaurants.length > 1 ? "s" : ""}
+                </span>
+              )}
+            </div>
           </div>
-        )}
-      </section>
+
+          {status === "loading" && <ResultsSkeleton />}
+          {status === "error" && (
+            <ErrorState message={error} onRetry={relancer} />
+          )}
+          {status === "ready" && restaurants.length === 0 && (
+            // Un lieu choisi explicitement qui ne renvoie rien, sans filtre actif,
+            // signale une zone non relevée plutôt que des critères trop stricts.
+            <EmptyState
+              onReset={reset}
+              horsCouverture={Boolean(lieu) && !cuisine && radius >= 1500}
+              lieu={lieu?.label}
+            />
+          )}
+          {status === "ready" && restaurants.length > 0 && (
+            <div className="grid">
+              {restaurants.map((r, i) => (
+                <RestaurantCard
+                  key={i < 3 ? `${r.id}-${versionResultats}` : r.id}
+                  restaurant={r}
+                  index={i}
+                  onOpen={onOpen}
+                />
+              ))}
+              {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) }).map((_, i) => (
+                <LockedCard key={`locked-${i}`} onUnlock={onUnlock} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Carte + répartition : redisent ce que la liste dit déjà, en un
+            coup d'oeil. Repliées sous 1100px pour ne pas passer avant les
+            résultats qu'elles commentent. */}
+        <aside className="discover__rail">
+          <button
+            type="button"
+            className="discover__railToggle btn btn--ghost"
+            onClick={() => setRailOuvert((o) => !o)}
+            aria-expanded={railOuvert}
+          >
+            <MapTrifold size={16} weight="bold" />
+            {railOuvert ? "Masquer la carte" : "Voir la carte et la répartition"}
+          </button>
+
+          <div className={`discover__railBody${railOuvert ? " is-open" : ""}`}>
+            {origine && <ResultsMap restaurants={restaurants} origine={origine} />}
+            <StatsPanel restaurants={restaurants} />
+          </div>
+        </aside>
+      </div>
 
       {classementOuvert && (
         <div

@@ -1,0 +1,79 @@
+paire;choix;confiance;raison
+P0942;A;faible;Ostra ouvre 7j/7 en service continu avec restauration sur le pouce et un site multilingue presentant une equipe francais anglais espagnol portugais, Beaurepaire fonctionne sur reservation recommandee avec une carte basque identifiee
+P0943;B;forte;Karavaki ferme le lundi et le dimanche des 18h avec service traiteur et titres restaurant, Ostra ouvre 7j/7 en continu et revendique explicitement une orientation clientele internationale
+P0944;B;faible;Alliance ferme samedi et dimanche et impose la reservation sur deux services courts, Karavaki ouvre six jours en amplitude continue de 10h a 22h avec petit dejeuner et vente a emporter
+P0945;A;moyenne;La Ferrandaise declare une clientele touristes et ouvre six jours dont le lundi soir, Alliance ferme le week-end entier et fonctionne sur reservation obligatoire
+P0946;B;moyenne;La Ferrandaise ferme le dimanche et compte des clients revenus au fil des ans dans ses avis, Salvia est le cafe-restaurant rattache a un hotel et depend de sa clientele d hebergement
+P0947;A;moyenne;Salvia est la table d un hotel presentee en francais et en anglais sur le site de l etablissement, Les Petits Pois est un bistrot de quartier a carte de marche suivi par la presse et les blogs parisiens
+P0948;A;forte;La Brasserie ouvre six jours en service continu jusqu a 22h30 avec terrasse sur les quais et site anglophone, Les Petits Pois tient deux services de deux heures
+P0949;A;forte;La Brasserie ouvre en continu de 12h a 22h30 avec terrasse et site bilingue, Empire Celeste tient deux services courts et reserve sa specialite de raviolis au dimanche pour ses fideles
+P0950;B;forte;Empire Celeste est tenu par la meme famille depuis trois generations avec des avis d habitues declares, La Rosace ouvre 7j/7 de 9h30 a 20h sans site et ses avis signalent des ecarts entre prix affiches et prix factures
+P0951;A;faible;La Rosace ouvre 7j/7 en continu avec drive et vente a emporter sans aucune identite culinaire affichee, Maison de Gyros propose un plat a moins de 10 euros cite par des clients venus trois fois
+P0952;A;moyenne;Maison de Gyros ouvre 7j/7 de 11h a minuit sans site ni reservation, Le Mechoui du Prince est une maison familiale de 1969 avec menu du midi a 15 euros et reservation recommandee
+P0953;B;moyenne;Le Mechoui du Prince tient deux services avec reservation recommandee et une couverture en presse food francophone, Les Galandines ouvre en continu de 12h a 22h avec site bilingue et clientele touristes declaree
+P0954;B;moyenne;Hanami Ramen tient deux services courts et ses avis citent des clients revenus et des echanges suivis avec l equipe, Les Galandines ouvre en service continu avec site bilingue et clientele touristes declaree
+P0955;A;faible;Bar a Iode declare une clientele touristes, tient une terrasse et figure dans un webzine anglophone, Hanami Ramen n a ni attribut de clientele ni mention en guide et vit de deux services courts
+P0956;A;forte;Rim Cafe ouvre 7j/7 de 11h a minuit en continu, depend d un hotel pour son site et n apparait que dans des listes generiques de restaurants a proximite, Bar a Iode ferme dimanche et lundi sur deux services
+P0957;A;moyenne;Rim Cafe ouvre 7j/7 treize heures par jour avec happy hour et carte italienne generique, L Ardoise n ouvre que du lundi au vendredi le midi
+P0958;A;faible;Le Jardin Saint-Germain presente son site en anglais sous le titre Authentic Parisian Dining et ses avis viennent de visiteurs en premier sejour a Paris, L Ardoise n ouvre que le midi en semaine
+P0959;A;moyenne;Le Grand Amalfi est nettement plus frequente le week-end, figure dans une application de voyage et ses avis decrivent une pause pendant la visite du quartier, Le Jardin Saint-Germain ferme dimanche et lundi
+P0960;A;forte;Le Grand Amalfi realise 63 pour cent de son affluence le week-end et figure dans une fiche d application de voyage, Sashimi Bar concentre 63 pour cent de son affluence en semaine et accepte tous les titres restaurant
+P0961;B;faible;Sashimi Bar est un buffet a titres restaurant plus frequente en semaine avec des avis d habitues hebdomadaires depuis trois ans, Hon Ki declare une clientele touristes et dispose d une terrasse
+P0962;B;moyenne;Hon Ki n ouvre que 5h30 par jour, surtout le midi, sans site editorial, L Atelier des Nouilles ouvre six jours sur deux larges services et declare une clientele touristes et etudiants
+P0963;A;faible;L Atelier des Nouilles declare une clientele touristes et etudiants et ses avis citent des passants tombes dessus en promenade, Chez Tante ferme le mardi et compte des clients a leur quatrieme visite
+P0964;A;moyenne;Toscanino vend des schiacciate en restauration sur le pouce avec livraison et une notoriete de reseaux sociaux evoquee dans ses propres avis, Chez Tante fonctionne en deux services avec reservation et clientele fidelisee
+P0965;B;faible;L Estrapade ferme dimanche et lundi et est couvert par un critique gastronomique francophone, Toscanino cumule vente sur le pouce, livraison et amplitude midi-soir sept jours
+P0966;A;faible;Pizza Roma ouvre 7j/7 de 11h a minuit en service continu, le bistrot L Estrapade ferme dimanche et lundi et tient deux services de deux heures
+P0967;B;moyenne;Pizza Roma est une enseigne familiale de 1968 dotee d un site qui publie son historique, Ladelice Sushi ouvre 7j/7 en continu sans site, en restauration sur le pouce et a emporter
+P0968;B;forte;Petit Saigon ferme le lundi, tient deux services et l une de ses recommandations vient du disquaire voisin, Ladelice Sushi ouvre 7j/7 de 11h a 21h en continu et declare une clientele touristes et etudiants
+P0969;B;faible;Petit Saigon ferme le lundi et tient deux services separes, Saveurs d Asie ouvre en service continu onze heures par jour avec traiteur et livraison
+P0970;A;moyenne;Saveurs d Asie ouvre en continu de 11h30 a 22h30 avec traiteur et livraison, Je Ju ferme le lundi et est decrit comme a l ecart de l agitation touristique
+P0971;B;faible;Je Ju ne declare aucun attribut de clientele et adjoint une epicerie coreenne a sa salle, Le Vent d Armor declare une clientele touristes, tient un site bilingue et compte des visiteurs qui y reviennent a chaque sejour
+P0972;B;faible;Le Vent d Armor ferme le dimanche et ne sert qu une heure trente le midi, La Rotisserie est presentee comme l annexe d une maison etoilee et referencee par l office de tourisme officiel
+P0973;B;faible;Topo n a pas de site propre et ses avis decrivent surtout des repas de famille et des soirees entre amis, La Rotisserie est presentee comme l annexe d une maison etoilee et referencee par l office de tourisme officiel
+P0974;B;faible;Topo n a pas de site propre et vit de brunchs et de soirees musicales pour une clientele de connaissance, Rocaille ouvre en continu le samedi et le dimanche, sert tard et tient un site bilingue
+P0975;B;faible;Rocaille ferme le lundi midi et ne propose pas de service tardif sept jours, Vita ouvre 7j/7 jusqu a minuit avec concerts, restauration tardive et clientele touristes declaree
+P0976;A;faible;Vita ouvre 7j/7 jusqu a minuit avec restauration tardive, concerts et clientele touristes declaree, Sabraj ferme le dimanche
+P0977;A;forte;Sabraj ouvre six jours en deux services jusqu a 23h30 avec livraison, site bilingue et argument patrimonial de salle du XIVe siecle, Zaoka n ouvre que du mercredi au samedi de 19h30 a 22h
+P0978;A;forte;A Braccetto ouvre 7j/7 de 9h a 2h du matin, est plus frequente le week-end et a fait l objet d un partenariat commercial declare avec un compte food, Zaoka n ouvre que quatre soirs deux heures et demie
+P0979;A;moyenne;Symposium ouvre 7j/7 en continu jusqu a minuit sans site ni identite culinaire affichee, avec des menus a 20 euros salues par des visiteurs, A Braccetto revendique brunch, concerts et une clientele de reservation
+P0980;B;forte;Li Beyrouth propose un buffet a volonte a 15,90 euros le midi couvert par la presse food francophone et declare une clientele etudiante, Symposium ouvre 7j/7 en continu sans site avec des menus a 20 euros
+P0981;A;forte;Beaurepaire ouvre 7j/7 en continu de 10h a 23h avec terrasse et ses avis viennent de voyageurs loges a proximite, Li Beyrouth vit d un buffet a volonte a bas prix aupres d une clientele etudiante
+P0982;B;forte;Zaoka n ouvre que quatre soirs de 19h30 a 22h dans une salle minuscule, Symposium ouvre 7j/7 douze heures par jour en continu sans site propre
+P0983;B;faible;Li Beyrouth est couvert par la presse food francophone pour son buffet a volonte et declare une clientele etudiante, Karavaki ouvre en continu de 10h a 22h avec petit dejeuner, traiteur et vente a emporter
+P0984;A;faible;Sabraj sert jusqu a 23h30 avec site bilingue, livraison et argument patrimonial de salle medievale, Karavaki ferme le lundi et ses avis decrivent des echanges sur la cuisine cretoise avec les proprietaires
+P0985;B;faible;Topo n a pas de site propre et ses avis decrivent des repas de famille et des soirees entre amis, Sabraj tient un site bilingue, sert tard et propose la livraison
+P0986;A;faible;Topo ouvre le dimanche matin en brunch et accueille des passants qui decouvrent le lieu par hasard, Alliance ferme samedi et dimanche et fonctionne sur reservation obligatoire
+P0987;B;moyenne;Alliance ferme le week-end entier sur deux services courts avec reservation obligatoire, Le Mechoui du Prince ouvre 7j/7 midi et soir, declare une clientele touristes et dispose d une fiche dans un guide pour voyageurs
+P0988;B;moyenne;Les Petits Pois tient deux services de deux heures avec une carte de marche changeante, Le Mechoui du Prince ouvre 7j/7 midi et soir et declare une clientele touristes
+P0989;A;faible;Le Vent d Armor declare une clientele touristes, tient un site bilingue et ses avis citent des visiteurs qui y reviennent a chaque sejour, Les Petits Pois est un bistrot de quartier suivi par un blog critique parisien
+P0990;B;forte;Le Vent d Armor ferme le dimanche et ne sert qu une heure trente le midi, A Braccetto ouvre 7j/7 jusqu a 2h du matin, est plus frequente le week-end et communique en trois langues
+P0991;A;faible;A Braccetto ouvre quinze heures par jour 7j/7 avec brunch et partenariat commercial declare avec un compte food, Pizza Roma est une enseigne familiale de 1968 avec historique publie et clientele de quartier dans ses avis
+P0992;B;forte;Pizza Roma revendique une histoire familiale depuis 1968 sur son propre site, La Rosace n a ni site ni identite culinaire et ses avis signalent des ecarts entre prix affiches et prix factures
+P0993;B;faible;Le Grand Amalfi tient un site propre et compte des clients revenus plusieurs fois dans ses avis, La Rosace ouvre 7j/7 de 9h30 a 20h sans site avec drive et vente a emporter
+P0994;A;forte;Le Grand Amalfi est plus frequente le week-end, figure dans une application de voyage et ses avis decrivent une halte pendant la visite, Hon Ki n ouvre que 5h30 par jour surtout le midi et change sa carte chaque semaine
+P0995;B;moyenne;Sashimi Bar concentre 63 pour cent de son affluence en semaine, accepte tous les titres restaurant et compte des habitues hebdomadaires, Petit Saigon declare une clientele touristes et dispose d une terrasse
+P0996;A;forte;Maison de Gyros ouvre 7j/7 de 11h a minuit sans site ni reservation et figure dans une liste de gyros orientee voyageurs anglophones, Petit Saigon ferme le lundi sur deux services
+P0997;A;forte;Maison de Gyros ouvre treize heures par jour 7j/7 sans site ni reservation, Bar a Iode ferme dimanche et lundi et ses avis notent une salle remplie de Parisiens
+P0998;A;moyenne;Salvia est le cafe-restaurant d un hotel qui l alimente en clientele d hebergement, Bar a Iode ferme dimanche et lundi sur deux services et tient une seconde adresse dans le 11e
+P0999;B;moyenne;L Estrapade ferme dimanche et lundi et est couvert par un critique gastronomique francophone, Salvia est la table rattachee a un hotel et depend de sa clientele d hebergement
+P1000;B;forte;L Estrapade ferme dimanche et lundi sur deux services, Ostra ouvre 7j/7 en continu avec restauration sur le pouce et une equipe presentee comme quadrilingue pour une clientele internationale
+P1001;B;moyenne;La Ferrandaise ferme le dimanche, tient deux services et compte des clients revenus au fil des ans, Ostra ouvre 7j/7 en continu et revendique une orientation clientele internationale
+P1002;A;moyenne;Beaurepaire ouvre 7j/7 en continu de 10h a 23h avec terrasse et ses avis viennent de voyageurs loges a proximite, La Ferrandaise ferme le dimanche sur deux services
+P1003;A;faible;Ladelice Sushi ouvre 7j/7 en continu sans site ni reservation en restauration sur le pouce, Beaurepaire fonctionne sur reservation recommandee avec une carte basque identifiee
+P1004;A;forte;Ladelice Sushi ouvre 7j/7 dix heures en continu sans site ni reservation, Hanami Ramen tient deux services courts et ses avis citent des clients revenus et des echanges suivis avec l equipe
+P1005;B;moyenne;Hanami Ramen tient deux services courts avec livraison et une clientele de proximite dans ses avis, les avis de L Ardoise viennent de visiteurs etrangers qui reviennent a Paris plusieurs fois par an
+P1006;B;moyenne;Chez Tante ferme le mardi et compte des clients a leur quatrieme visite, les avis de L Ardoise viennent de visiteurs etrangers qui y reviennent a chaque sejour a Paris
+P1007;A;moyenne;Rocaille ouvre en continu le samedi et le dimanche, sert tard et tient un site bilingue, Chez Tante ferme le mardi sur deux services avec des avis d habitues
+P1008;A;forte;Rim Cafe ouvre 7j/7 treize heures en continu, depend d un hotel pour son site et n apparait que dans des listes de restaurants a proximite, Rocaille ferme le lundi midi
+P1009;B;forte;Saveurs d Asie ferme le dimanche et ses avis citent une cliente fidele depuis plus de vingt-cinq ans, Rim Cafe ouvre 7j/7 de 11h a minuit avec happy hour et carte italienne generique
+P1010;A;faible;Saveurs d Asie ouvre en service continu onze heures par jour avec traiteur et livraison, L Atelier des Nouilles ferme le dimanche et tient deux services separes
+P1011;A;moyenne;Le Jardin Saint-Germain presente son site en anglais sous le titre Authentic Parisian Dining et ses avis viennent de visiteurs en premier sejour, L Atelier des Nouilles ferme le dimanche et compte des clients qui y retournent souvent
+P1012;A;moyenne;La Brasserie ouvre six jours en continu jusqu a 22h30 avec terrasse sur les quais et site anglophone, Le Jardin Saint-Germain ferme dimanche et lundi sur deux services
+P1013;A;forte;La Brasserie ouvre en continu de 12h a 22h30 avec grande terrasse et site anglophone, Je Ju ferme le lundi et est decrit comme a l ecart de l agitation touristique
+P1014;B;moyenne;Je Ju ferme le lundi et ne declare aucun attribut de clientele, Toscanino cumule restauration sur le pouce, livraison et une notoriete de reseaux sociaux evoquee dans ses avis
+P1015;A;faible;Vita ouvre 7j/7 jusqu a minuit avec concerts, restauration tardive et clientele touristes declaree, Toscanino compte des clients qui viennent depuis des annees et une clientele etudiante
+P1016;B;forte;Empire Celeste est tenu par la meme famille depuis trois generations avec des avis d habitues declares, Vita ouvre 7j/7 jusqu a minuit avec concerts et clientele touristes declaree
+P1017;B;forte;Empire Celeste tient deux services courts et reserve sa specialite de raviolis au dimanche pour ses fideles, Les Galandines ouvre en continu de 12h a 22h avec site bilingue et clientele touristes declaree
+P1018;A;moyenne;Les Galandines ouvre six jours en service continu avec site bilingue et clientele touristes declaree, les avis de La Rotisserie citent surtout des actifs du quartier venant chercher leur dejeuner
+P1019;B;moyenne;Zaoka n ouvre que quatre soirs de 19h30 a 22h dans une salle minuscule, La Rotisserie est presentee comme l annexe d une maison etoilee et referencee par l office de tourisme officiel

@@ -52,6 +52,18 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
           Découvrir
         </button>
 
+        {/* Réservé aux comptes admin — l'API refuse de toute façon (403) à
+            quiconque d'autre, ce lien n'est que du confort de navigation. */}
+        {user?.role === "admin" && (
+          <button
+            className="nav__link"
+            aria-current={page === "admin" ? "page" : undefined}
+            onClick={() => onNavigate("admin")}
+          >
+            Administration
+          </button>
+        )}
+
         <button
           className="nav__theme"
           onClick={toggle}

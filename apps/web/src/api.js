@@ -6,7 +6,10 @@
 // L'URL vient de l'environnement. En dur, elle casse au premier déploiement.
 import { BUDGET_MAX, BUDGET_MIN } from "./lib/filtres";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
+// Exportée : Login/Signup en ont besoin pour construire le lien "Continuer
+// avec Google", une vraie navigation de page (pas un appel `fetch`) que
+// `request()` ci-dessous ne peut pas servir.
+export const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 
 async function request(path, options) {
   const res = await fetch(`${API_BASE}${path}`, options);
@@ -65,7 +68,28 @@ export async function fetchRestaurants({
 }
 
 export async function fetchRestaurant(id) {
-  return request(`/api/restaurant/${encodeURIComponent(id)}`);
+  // `credentials: "include"` : sans le cookie, l'API ne peut pas savoir qu'un
+  // compte admin regarde, et ne renverrait jamais `detail_calcul` pour lui.
+  return request(`/api/restaurant/${encodeURIComponent(id)}`, {
+    credentials: "include",
+  });
+}
+
+/* ------------------------------------------------------ Administration --- */
+// Réservé aux comptes `role: "admin"` — l'API applique la même règle
+// (`require_admin`, backend/core/auth/dependencies.py), ces fonctions ne
+// font que relayer, jamais la décision elle-même.
+
+export async function fetchAdminRestaurants({ limit = 50, offset = 0, q } = {}) {
+  const query = new URLSearchParams({ limit, offset });
+  if (q) query.set("q", q);
+  return request(`/api/admin/restaurants?${query}`, { credentials: "include" });
+}
+
+export async function fetchAdminRestaurant(id) {
+  return request(`/api/admin/restaurants/${encodeURIComponent(id)}`, {
+    credentials: "include",
+  });
 }
 
 /** Cuisines réellement présentes en base, pour alimenter les filtres. */

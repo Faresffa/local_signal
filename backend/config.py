@@ -269,6 +269,25 @@ SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "lax")
 # SESSION_COOKIE_SAMESITE=none).
 SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
 
+# =============================================================================
+# Connexion Google (OAuth 2.0) — LS-refonte
+# =============================================================================
+# Vides par défaut (D-016) : sans ces deux valeurs, `/api/auth/google/login`
+# répond une erreur claire plutôt que d'échouer plus loin sans explication.
+# Obtenues via l'assistant `google-oauth-setup.sh` (Google Cloud Console).
+GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "")
+GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", "")
+
+# Doit être déclarée telle quelle dans la console Google Cloud (Authorized
+# redirect URIs) — Google refuse toute URI qui ne correspond pas exactement,
+# donc surchargeable ici plutôt qu'en dur pour suivre un déploiement.
+GOOGLE_OAUTH_REDIRECT_URI = os.environ.get(
+    "GOOGLE_OAUTH_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback"
+)
+
+# Où renvoyer le navigateur une fois la session ouverte.
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+
 # Nombre de restaurants visibles par recherche pour un visiteur non connecté.
 # Le classement reste inchangé (tri avant troncature) : moins de résultats,
 # jamais de moins bons résultats.

@@ -7,6 +7,7 @@
 // URL de fiche devra être partageable, pas avant.
 
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 
 import Nav from "./components/Nav";
 import Discover from "./pages/Discover";
@@ -15,7 +16,29 @@ import Reserve from "./pages/Reserve";
 import { FILTRES_VIDES, RAYON_DEFAUT } from "./lib/filtres";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Admin from "./pages/Admin";
 import { useCurrentUser } from "./lib/auth";
+
+// Transition de vue native (Chromium/Safari récents) entre deux écrans de
+// l'application. Dégrade sans rien casser là où l'API n'existe pas — c'est
+// une amélioration progressive, jamais une dépendance.
+//
+// `flushSync` force React à committer AVANT que l'API ne capture le nouvel
+// état du DOM : sans lui, `startViewTransition` photographierait l'ancien
+// écran des deux côtés, puisque son callback doit être synchrone.
+function withTransition(update) {
+  if (typeof document.startViewTransition !== "function") {
+    update();
+    return;
+  }
+  const transition = document.startViewTransition(() => flushSync(update));
+  // Une transition qu'un navigateur interrompt (navigation trop rapprochée,
+  // onglet caché) rejette `.ready`/`.finished` — le DOM est déjà à jour via
+  // `flushSync`, seule l'animation manque. Sans ce `catch`, cette rejection
+  // remonte comme une erreur non gérée alors que rien n'est cassé.
+  transition.ready.catch(() => {});
+  transition.finished.catch(() => {});
+}
 
 export default function App() {
   const [page, setPage] = useState("discover");
@@ -36,24 +59,48 @@ export default function App() {
   // d'une fiche après avoir fait défiler une longue liste.
   useEffect(() => { window.scrollTo({ top: 0 }); }, [page]);
 
+  // Retour d'échec de /api/auth/google/callback (backend/main.py) : une vraie
+  // redirection de page, donc une erreur qui n'a pas d'autre moyen d'arriver
+  // jusqu'à React qu'un paramètre d'URL. Nettoyé immédiatement pour qu'un
+  // rechargement de page ne réaffiche pas l'erreur indéfiniment.
+  const [erreurGoogle, setErreurGoogle] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("erreur") === "google") {
+      setErreurGoogle(true);
+      setPage("login");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
   function openDetail(restaurant) {
-    setSelected(restaurant);
-    setPage("detail");
+    withTransition(() => {
+      setSelected(restaurant);
+      setPage("detail");
+    });
   }
 
   function openReserve(restaurant) {
-    setSelected(restaurant);
-    setPage("reserve");
+    withTransition(() => {
+      setSelected(restaurant);
+      setPage("reserve");
+    });
   }
 
   function demanderConnexion() {
-    setRetour(page);
-    setPage("login");
+    withTransition(() => {
+      setRetour(page);
+      setPage("login");
+    });
+  }
+
+  function naviguer(nextPage) {
+    withTransition(() => setPage(nextPage));
   }
 
   return (
     <div className="app">
-      <Nav page={page} onNavigate={setPage} user={user} onLogout={logout} />
+      <Nav page={page} onNavigate={naviguer} user={user} onLogout={logout} />
 
       <main className="page-main">
         <div className="shell">
@@ -67,14 +114,14 @@ export default function App() {
               lieu={lieu}
               onLieuChange={setLieu}
               user={user}
-              onUnlock={() => setPage("signup")}
+              onUnlock={() => naviguer("signup")}
             />
           )}
 
           {page === "detail" && selected && (
             <Detail
               restaurant={selected}
-              onBack={() => setPage("discover")}
+              onBack={() => naviguer("discover")}
               onReserve={openReserve}
               user={user}
               onSeConnecter={demanderConnexion}
@@ -84,25 +131,34 @@ export default function App() {
           {page === "reserve" && selected && (
             <Reserve
               restaurant={selected}
-              onBack={() => setPage("detail")}
-              onDone={() => setPage("discover")}
+              onBack={() => naviguer("detail")}
+              onDone={() => naviguer("discover")}
             />
           )}
 
           {page === "login" && (
             <Login
-              onLogin={async (credentials) => { await login(credentials); setPage(retour); }}
-              onGoToSignup={() => setPage("signup")}
-              onBack={() => setPage(retour)}
+              onLogin={async (credentials) => { await login(credentials); naviguer(retour); }}
+              onGoToSignup={() => naviguer("signup")}
+              onBack={() => naviguer(retour)}
+              erreurInitiale={
+                erreurGoogle
+                  ? "La connexion avec Google a échoué. Réessayez, ou utilisez votre mot de passe."
+                  : null
+              }
             />
           )}
 
           {page === "signup" && (
             <Signup
-              onSignup={async (fields) => { await signup(fields); setPage(retour); }}
-              onGoToLogin={() => setPage("login")}
-              onBack={() => setPage(retour)}
+              onSignup={async (fields) => { await signup(fields); naviguer(retour); }}
+              onGoToLogin={() => naviguer("login")}
+              onBack={() => naviguer(retour)}
             />
+          )}
+
+          {page === "admin" && (
+            <Admin user={user} onBack={() => naviguer("discover")} />
           )}
         </div>
       </main>

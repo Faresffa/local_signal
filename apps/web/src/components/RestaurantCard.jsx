@@ -57,6 +57,10 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
   return (
     <article className={`card${premier ? " card--premier" : ""} reveal`} ref={ref}>
       <div className="card__media">
+        {/* Le rang porte le classement : on est en liste unique, verticale,
+            « le premier, puis juste en dessous le deuxième » — le chiffre le
+            dit explicitement plutôt que de le laisser déduire de l'ordre. */}
+        <span className="card__rang" aria-hidden="true">{index + 1}</span>
         <PhotoRestaurant
           id={restaurant.id}
           cuisine={restaurant.cuisine}

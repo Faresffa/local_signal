@@ -312,6 +312,10 @@ def init_db():
     """)
 
     # --- Comptes utilisateurs (auth maison — override D-018 pour cette itération) ---
+    # `role` : "user" (défaut), "subscriber" ou "admin" (LS-refonte). Un TEXT
+    # avec valeur par défaut plutôt qu'un booléen `is_admin` — trois niveaux
+    # sont déjà demandés, un booléen n'en porterait que deux et il faudrait le
+    # remplacer dès l'abonnement implémenté.
     cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS users (
             id {_AUTOINCREMENT_PK},
@@ -319,6 +323,7 @@ def init_db():
             password_hash TEXT NOT NULL,
             name TEXT,
             is_active INTEGER DEFAULT 1,
+            role TEXT NOT NULL DEFAULT 'user',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
@@ -400,6 +405,19 @@ def _migrate(cursor) -> None:
             # « lot groupe du 05/11/2025 — 12 pages, 5 analysees ».
             "photos_motif": "TEXT",
         },
+        "users": {
+            # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Les
+            # comptes déjà créés avant cette colonne (dont l'import D-048)
+            # retombent sur "user" — c'est le niveau le moins privilégié,
+            # jamais l'inverse.
+            "role": "TEXT DEFAULT 'user'",
+            # Connexion Google (LS-refonte). `oauth_google_id` est le "sub"
+            # renvoyé par Google — stable, contrairement à l'email qu'un
+            # utilisateur peut changer côté Google sans que ça nous soit
+            # signalé. NULL pour tout compte créé par mot de passe.
+            "oauth_provider": "TEXT",
+            "oauth_google_id": "TEXT",
+        },
         "menus": {
             "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit
             # Texte brut releve par l'OCR, conserve integralement.
@@ -431,3 +449,12 @@ def _migrate(cursor) -> None:
         for column, sql_type in columns.items():
             if column not in existing:
                 cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {sql_type}")
+
+    # Unique, mais NULL-safe (index partiel, supporté par SQLite et Postgres) :
+    # deux comptes créés par mot de passe (donc sans `oauth_google_id`) ne se
+    # heurtent jamais à cette contrainte — seuls deux identifiants Google
+    # identiques le feraient, ce qui ne devrait jamais arriver.
+    cursor.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_oauth_google_id "
+        "ON users(oauth_google_id) WHERE oauth_google_id IS NOT NULL"
+    )

@@ -15,13 +15,20 @@
 
 import { useState } from "react";
 import {
-  KeyboardAvoidingView, Platform, Pressable, ScrollView,
+  Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView,
   StyleSheet, Text, TextInput, View,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Button } from "../components/ui";
+import { useEntree } from "../lib/motion";
 import { radius, spacing, useColors } from "../theme";
+
+// Défaut affiché quand l'écran n'a pas été ouvert avec un motif contextuel
+// (ex. « laisser un avis »). Sans ça, un utilisateur qui ouvre l'onglet
+// compte directement n'a aucune raison affichée de créer un compte.
+const MOTIF_DEFAUT =
+  "Laissez un avis, contribuez une carte, et retrouvez tout ça sur le site comme ici — c'est le même compte.";
 
 function Champ({ label, aide, erreur, ...props }) {
   const colors = useColors();
@@ -49,6 +56,7 @@ function Champ({ label, aide, erreur, ...props }) {
 
 export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack, motif }) {
   const colors = useColors();
+  const entree = useEntree(60);
 
   const [mode, setMode] = useState("login");
   const [nom, setNom] = useState("");
@@ -94,21 +102,23 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
           <Text style={[s.backText, { color: colors.brand }]}>Retour</Text>
         </Pressable>
 
-        <Text style={[s.titre, { color: colors.text }]}>Mon compte</Text>
+        <Animated.View style={entree}>
+          <Text style={[s.titre, { color: colors.text }]}>Mon compte</Text>
 
-        <View style={[s.bloc, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[s.nom, { color: colors.text }]}>{user.name || "Voyageur"}</Text>
-          <Text style={[s.email, { color: colors.textMuted }]}>{user.email}</Text>
-        </View>
+          <View style={[s.bloc, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[s.nom, { color: colors.text }]}>{user.name || "Voyageur"}</Text>
+            <Text style={[s.email, { color: colors.textMuted }]}>{user.email}</Text>
+          </View>
 
-        <Text style={[s.note, { color: colors.textFaint }]}>
-          Ce compte est le même sur le site et sur l'application. Vos avis et
-          vos contributions vous suivent d'un écran à l'autre.
-        </Text>
+          <Text style={[s.note, { color: colors.textFaint }]}>
+            Ce compte est le même sur le site et sur l'application. Vos avis et
+            vos contributions vous suivent d'un écran à l'autre.
+          </Text>
 
-        <View style={{ marginTop: spacing.lg }}>
-          <Button title="Se déconnecter" variant="ghost" icon="log-out" onPress={onLogout} />
-        </View>
+          <View style={{ marginTop: spacing.lg }}>
+            <Button title="Se déconnecter" variant="ghost" icon="log-out" onPress={onLogout} />
+          </View>
+        </Animated.View>
       </ScrollView>
     );
   }
@@ -125,14 +135,20 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
           <Text style={[s.backText, { color: colors.brand }]}>Retour</Text>
         </Pressable>
 
+        <Animated.View style={entree}>
+        <View style={[s.marque, { backgroundColor: colors.brand }]} aria-hidden="true">
+          <MaterialCommunityIcons name="silverware-fork-knife" size={20} color={colors.onBrand} />
+        </View>
+
         <Text style={[s.titre, { color: colors.text }]}>
           {inscription ? "Créer un compte" : "Se connecter"}
         </Text>
 
         {/* POURQUOI ON DEMANDE ÇA, MAINTENANT. Arriver sur un formulaire sans
             savoir ce qu'on y gagne est la première cause d'abandon. Le motif
-            vient de l'écran qui a demandé la connexion. */}
-        {motif && <Text style={[s.motif, { color: colors.textMuted }]}>{motif}</Text>}
+            vient de l'écran qui a demandé la connexion ; à défaut, un motif
+            générique reste affiché plutôt que rien (LS-refonte). */}
+        <Text style={[s.motif, { color: colors.textMuted }]}>{motif || MOTIF_DEFAUT}</Text>
 
         <View style={{ gap: spacing.md, marginTop: spacing.lg }}>
           {inscription && (
@@ -196,6 +212,7 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
             </Text>
           </Pressable>
         </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -205,6 +222,15 @@ const s = StyleSheet.create({
   page: { padding: spacing.lg, paddingBottom: spacing.xxxl },
   back: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: spacing.md, minHeight: 44 },
   backText: { fontSize: 15, fontWeight: "600" },
+
+  marque: {
+    width: 46,
+    height: 46,
+    borderRadius: radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.md,
+  },
 
   titre: { fontSize: 26, fontWeight: "700", letterSpacing: -0.4 },
   motif: { marginTop: spacing.sm, fontSize: 14, lineHeight: 19 },

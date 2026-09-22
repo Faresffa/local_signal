@@ -282,13 +282,32 @@ def main() -> None:
     ap.add_argument("--campagne", choices=("base", "web"), default="base",
                     help="base : jugements sur la seule base · "
                          "web : jugements sur dossier enrichi d'une recherche web")
-    ap.add_argument("--annotateurs", default="ABCDE")
+    ap.add_argument("--annotateurs", default=None,
+                    help="par defaut ABCDE en pilote, ABCD en campagne par blocs")
+    # LA CAMPAGNE PAR BLOCS N'ETAIT PAS BRANCHEE SUR LA LIGNE DE COMMANDE.
+    # `charger_blocs` existait mais n'etait appele de nulle part : lancer le
+    # module sans option agregeait le pilote de 30 restaurants et ecrasait
+    # `classement-base.csv`, en donnant l'impression d'avoir traite les 467.
+    ap.add_argument("--blocs", action="store_true",
+                    help="agreger la campagne par blocs (duels-467/) au lieu du pilote")
+    ap.add_argument("--plan", default="paires-467.json")
+    ap.add_argument("--racine", default="duels-467")
+    ap.add_argument("--sortie", default=None)
     args = ap.parse_args()
-    prefixe = "paires" if args.campagne == "base" else "paires2"
 
-    donnees, jugements = charger(args.annotateurs, prefixe)
+    if args.blocs:
+        annotateurs = args.annotateurs or "ABCD"
+        donnees, jugements = charger_blocs(args.plan, DOSSIER / args.racine,
+                                           annotateurs)
+        nom_sortie = args.sortie or "classement-467"
+    else:
+        annotateurs = args.annotateurs or "ABCDE"
+        prefixe = "paires" if args.campagne == "base" else "paires2"
+        donnees, jugements = charger(annotateurs, prefixe)
+        nom_sortie = args.sortie or f"classement-{args.campagne}"
+
     if not jugements:
-        print("Aucun fichier paires-*.csv dans docs/data/annotation-pilote/.")
+        print("Aucun jugement trouve.")
         return
 
     print(f"Annotateurs trouvés : {', '.join(sorted(jugements))}")
@@ -325,7 +344,7 @@ def main() -> None:
     print("   chaque annotateur, un écart marqué trahit un effet de position.")
 
     rang = classer(donnees, jugements)
-    chemin = DOSSIER / f"classement-{args.campagne}.csv"
+    chemin = DOSSIER / f"{nom_sortie}.csv"
     with chemin.open("w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f, delimiter=";")
         w.writerow(["rang", "id", "nom", "theta", "victoires", "duels"])

@@ -39,8 +39,8 @@ function ligneDetail(cle, valeur) {
   return String(valeur);
 }
 
-export default function DetailCalcul({ detail }) {
-  const [ouvert, setOuvert] = useState(false);
+export default function DetailCalcul({ detail, initialementOuvert = false }) {
+  const [ouvert, setOuvert] = useState(initialementOuvert);
 
   if (!detail?.disponible) return null;
 

@@ -26,22 +26,57 @@ def _row_to_restaurant(row) -> dict:
     return r
 
 
-def get_restaurants(zone: str = None, limit: int = None) -> list[dict]:
-    """Récupère les restaurants, optionnellement filtrés par zone."""
+def get_restaurants(
+    zone: str = None, limit: int = None, offset: int = 0, q: str = None
+) -> list[dict]:
+    """
+    Récupère les restaurants, optionnellement filtrés par zone ou par nom.
+
+    `offset` : pagination pour la page d'administration (LS-refonte), qui
+    parcourt TOUTE la base plutôt qu'un rayon autour d'un point — aucun autre
+    appelant n'en a besoin aujourd'hui, mais l'ajouter ici évite une deuxième
+    fonction presque identique.
+    """
     conn = get_connection()
     sql = "SELECT * FROM restaurants"
+    clauses = []
     params = []
     if zone:
-        sql += " WHERE zone = ?"
+        clauses.append("zone = ?")
         params.append(zone)
+    if q:
+        clauses.append("name LIKE ?")
+        params.append(f"%{q}%")
+    if clauses:
+        sql += " WHERE " + " AND ".join(clauses)
     sql += " ORDER BY local_signal DESC"
     if limit:
-        sql += " LIMIT ?"
+        sql += " LIMIT ? OFFSET ?"
         params.append(limit)
+        params.append(offset)
 
     rows = conn.execute(sql, params).fetchall()
     conn.close()
     return [_row_to_restaurant(r) for r in rows]
+
+
+def count_restaurants(zone: str = None, q: str = None) -> int:
+    """Nombre total de restaurants — pour la pagination de la page admin."""
+    conn = get_connection()
+    sql = "SELECT COUNT(*) FROM restaurants"
+    clauses = []
+    params = []
+    if zone:
+        clauses.append("zone = ?")
+        params.append(zone)
+    if q:
+        clauses.append("name LIKE ?")
+        params.append(f"%{q}%")
+    if clauses:
+        sql += " WHERE " + " AND ".join(clauses)
+    total = conn.execute(sql, params).fetchone()[0]
+    conn.close()
+    return total
 
 
 def get_restaurants_near(
@@ -339,6 +374,60 @@ def get_user_by_id(user_id: int) -> dict | None:
     row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
     conn.close()
     return dict(row) if row else None
+
+
+def get_user_by_google_id(google_id: str) -> dict | None:
+    """Récupère un compte déjà lié à cet identifiant Google, s'il existe."""
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT * FROM users WHERE oauth_google_id = ?", (google_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def create_google_user(
+    email: str, password_hash: str, name: str | None, google_id: str
+) -> int:
+    """
+    Crée un compte ouvert par Google.
+
+    `password_hash` porte le hash bcrypt d'un secret aléatoire, jamais connu
+    de personne — pas de colonne nullable à gérer, et la connexion par mot de
+    passe reste simplement infaisable pour ce compte tant qu'aucun mot de
+    passe n'a été choisi explicitement (fonctionnalité future, hors périmètre
+    ici).
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO users (email, password_hash, name, oauth_provider, oauth_google_id)
+        VALUES (?, ?, ?, 'google', ?)
+        """,
+        (email.strip().lower(), password_hash, name, google_id),
+    )
+    conn.commit()
+    user_id = cursor.lastrowid
+    conn.close()
+    return user_id
+
+
+def link_google_id(user_id: int, google_id: str) -> None:
+    """
+    Rattache un identifiant Google à un compte existant créé par mot de passe.
+
+    Même adresse email des deux côtés (D-037 : c'est le même compte, pas un
+    doublon) : quelqu'un qui s'est inscrit avec mot de passe peut ensuite se
+    connecter avec Google sans se retrouver avec deux comptes distincts.
+    """
+    conn = get_connection()
+    conn.execute(
+        "UPDATE users SET oauth_provider = 'google', oauth_google_id = ? WHERE id = ?",
+        (google_id, user_id),
+    )
+    conn.commit()
+    conn.close()
 
 
 def create_session(user_id: int, token_hash: str, expires_at: str) -> None:

@@ -90,3 +90,19 @@ def get_current_user_optional(request: Request) -> dict | None:
     authentifiés.
     """
     return _resolve_user(request)
+
+
+def require_admin(request: Request) -> dict:
+    """
+    Comme `get_current_user`, mais exige en plus `role = "admin"` (LS-refonte).
+
+    Relit toujours le rôle depuis la base via `get_current_user` — jamais une
+    valeur portée par le client (en-tête, corps de requête) — sinon
+    n'importe qui pourrait s'auto-déclarer admin. Aucune route ne dépend
+    encore de cette fonction : elle existe pour que la première route
+    d'administration n'ait qu'à l'importer.
+    """
+    user = get_current_user(request)
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Réservé aux administrateurs.")
+    return user

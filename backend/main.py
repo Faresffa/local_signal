@@ -8,17 +8,21 @@
 
 import logging
 import re
+import secrets
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlencode
 
+import requests
 from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import Optional
 
 from backend import config
 from backend.core.auth import limitation, security
 from backend.core.auth.dependencies import (
-    get_current_user, get_current_user_optional, jeton_de_session,
+    get_current_user, get_current_user_optional, jeton_de_session, require_admin,
 )
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.filters.criteres import (
@@ -101,6 +105,12 @@ class UserResponse(BaseModel):
     id: int
     email: str
     name: Optional[str] = None
+    # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Renvoyé au
+    # client pour qu'il puisse, par exemple, afficher un lien vers un futur
+    # panneau d'administration — mais AUCUNE route protégée ne doit se fier
+    # à ce que le client affirme : `require_admin` relit toujours le rôle en
+    # base, jamais une valeur transmise par le front.
+    role: str = "user"
     # Rendu UNIQUEMENT aux clients qui le réclament par l'en-tête
     # `X-Jeton-Session` — le mobile. Un navigateur reçoit `None` et s'appuie
     # sur son cookie httpOnly, qu'aucun script de la page ne peut lire : lui
@@ -256,6 +266,7 @@ def get_restaurant(
     restaurant_id: str,
     lat: Optional[float] = Query(None, description="Latitude de l'utilisateur"),
     lng: Optional[float] = Query(None, description="Longitude de l'utilisateur"),
+    user: Optional[dict] = Depends(get_current_user_optional),
 ):
     """
     Détail d'un restaurant, avec sa dernière carte scannée si elle existe.
@@ -271,19 +282,7 @@ def get_restaurant(
     if lat is not None and lng is not None:
         resto["scoring"] = _build_scoring(resto, lat, lng)
     else:
-        signals = resto.get("signals") or {}
-        local = {
-            "local_signal": resto.get("local_signal") or 0.0,
-            "confidence": resto.get("confidence") or 0.0,
-            "signals": signals,
-        }
-        relevance = {"proximity": None, "distance_m": None}
-        resto["scoring"] = {
-            "score_final": None,
-            **local,
-            "relevance": relevance,
-            "reasons": explain(local, relevance) if signals else [],
-        }
+        resto["scoring"] = _scoring_sans_position(resto)
 
     resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
     resto["menu"] = repo.get_latest_menu(restaurant_id)
@@ -302,12 +301,40 @@ def get_restaurant(
     # VERROUILLEE PAR DEFAUT (LS-16). D-009 impose de ne montrer aucun score :
     # ce panneau expose l'algorithme indicateur par indicateur. Il reste
     # indispensable pour verifier le calcul et instruire le memoire, mais il
-    # n'a rien a faire devant un utilisateur. `EXPOSE_DETAIL_CALCUL=true`
-    # l'active en developpement et pour la soutenance.
-    if config.EXPOSE_DETAIL_CALCUL:
+    # n'a rien a faire devant un utilisateur.
+    # `EXPOSE_DETAIL_CALCUL=true` l'active pour tout le monde en développement
+    # et pour la soutenance ; un compte admin le voit dans tous les cas
+    # (LS-refonte) — c'est le seul rôle pour qui ce panneau a un usage réel une
+    # fois le produit en ligne.
+    if config.EXPOSE_DETAIL_CALCUL or (user and user.get("role") == "admin"):
         resto["detail_calcul"] = _detail_calcul(resto)
     repo.log_consultation(restaurant_id, resto["name"], resto.get("local_signal"))
     return resto
+
+
+def _scoring_sans_position(resto: dict) -> dict:
+    """
+    Bloc `scoring` d'un restaurant regardé hors contexte utilisateur.
+
+    Même forme que `_build_scoring`, mais sans `lat`/`lng` : `score_final` et
+    la proximité restent `None` puisqu'il n'y a personne dont mesurer la
+    distance. Le Local Signal, lui, ne dépend pas de qui regarde (D-008), donc
+    reste plein — c'est ce qui rend cette vue utile pour la page admin, qui
+    parcourt toute la base sans point de départ.
+    """
+    signals = resto.get("signals") or {}
+    local = {
+        "local_signal": resto.get("local_signal") or 0.0,
+        "confidence": resto.get("confidence") or 0.0,
+        "signals": signals,
+    }
+    relevance = {"proximity": None, "distance_m": None}
+    return {
+        "score_final": None,
+        **local,
+        "relevance": relevance,
+        "reasons": explain(local, relevance) if signals else [],
+    }
 
 
 def _detail_calcul(resto: dict) -> dict:
@@ -360,6 +387,67 @@ def _detail_calcul(resto: dict) -> dict:
         ),
         "ponderations_calibrees": False,
     }
+
+
+# =============================================================================
+# ADMINISTRATION (LS-refonte) — réservé aux comptes `role = "admin"`
+# =============================================================================
+#
+# Parcourt TOUTE la base, pas un rayon autour d'un point : ces deux routes
+# n'ont donc pas de `lat`/`lng`, contrairement à `/api/restaurants`. Le
+# `scoring` renvoyé est celui de `_scoring_sans_position` — même Local Signal,
+# mais sans prétendre à une pertinence qui n'a pas de sens ici.
+#
+# `require_admin` relit le rôle en base à chaque appel (voir sa docstring) :
+# aucune de ces deux routes ne fait confiance à autre chose.
+
+@app.get("/api/admin/restaurants")
+def admin_list_restaurants(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    q: Optional[str] = Query(None, description="Filtre par nom"),
+    admin: dict = Depends(require_admin),
+):
+    """
+    Tous les restaurants de la base, paginés — la vue d'ensemble admin.
+
+    Même forme que `/api/restaurants` (`scoring`, `cuisine_label`, etc.) pour
+    que le front réutilise `RestaurantCard` tel quel, sans variante.
+    """
+    restaurants = repo.get_restaurants(limit=limit, offset=offset, q=q)
+    for r in restaurants:
+        r["scoring"] = _scoring_sans_position(r)
+        r["cuisine_label"] = cuisine_label(r.get("cuisine"))
+        r["ouvert_maintenant"] = est_ouvert(r.get("opening_hours"))
+    return {
+        "total": repo.count_restaurants(q=q),
+        "limit": limit,
+        "offset": offset,
+        "restaurants": restaurants,
+    }
+
+
+@app.get("/api/admin/restaurants/{restaurant_id}")
+def admin_get_restaurant(restaurant_id: str, admin: dict = Depends(require_admin)):
+    """
+    Fiche complète d'un restaurant : tous les champs bruts de la base, le
+    détail du calcul (toujours, indépendamment de `EXPOSE_DETAIL_CALCUL`), le
+    dernier menu lu et les métadonnées des cartes soumises.
+
+    Lecture seule pour l'instant — la modification (LS-refonte, prochaine
+    étape) passera par une route à part plutôt que de surcharger celle-ci.
+    """
+    resto = repo.get_restaurant(restaurant_id)
+    if not resto:
+        raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+
+    resto["scoring"] = _scoring_sans_position(resto)
+    resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
+    resto["ouvert_maintenant"] = est_ouvert(resto.get("opening_hours"))
+    resto["menu"] = repo.get_latest_menu(restaurant_id)
+    resto["detail_calcul"] = _detail_calcul(resto)
+    resto["cartes"] = repo.get_menu_submissions(restaurant_id)
+    return resto
 
 
 @app.get("/api/restaurant/{restaurant_id}/photo")
@@ -465,7 +553,11 @@ def _jeton_demande(request: Request) -> bool:
 
 def _to_user_response(user: dict, token: Optional[str] = None) -> UserResponse:
     return UserResponse(
-        id=user["id"], email=user["email"], name=user.get("name"), token=token
+        id=user["id"],
+        email=user["email"],
+        name=user.get("name"),
+        role=user.get("role") or "user",
+        token=token,
     )
 
 
@@ -514,6 +606,139 @@ def login(req: LoginRequest, request: Request, response: Response):
 
     jeton = _issue_session(response, user["id"])
     return _to_user_response(user, jeton if _jeton_demande(request) else None)
+
+
+# --- Connexion Google (OAuth 2.0) — LS-refonte ------------------------------
+#
+# Flux "authorization code" côté serveur (RFC 6749 §4.1), pas le flux
+# implicite : le Client Secret ne quitte jamais ce serveur, contrairement à un
+# jeton émis directement au navigateur.
+#
+# `state` protège contre le CSRF (RFC 6749 §10.12) : un attaquant qui forgerait
+# un lien vers /callback avec son propre `code` ne connaît pas la valeur posée
+# dans le cookie `ls_oauth_state`, donc sa requête est rejetée avant tout appel
+# à Google.
+#
+# Ces deux routes sont des NAVIGATIONS DE PAGE (le navigateur y est redirigé
+# par Google), pas des appels `fetch` — d'où `RedirectResponse` plutôt qu'un
+# `UserResponse` JSON : il n'y a personne côté React pour lire un JSON ici.
+
+_GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+_GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+_GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
+_OAUTH_STATE_COOKIE = "ls_oauth_state"
+
+
+@app.get("/api/auth/google/login")
+def google_login(response: Response):
+    """Redirige vers l'écran de consentement Google."""
+    if not config.GOOGLE_OAUTH_CLIENT_ID:
+        raise HTTPException(
+            status_code=503,
+            detail="Connexion Google non configurée (GOOGLE_OAUTH_CLIENT_ID manquant).",
+        )
+
+    state = secrets.token_urlsafe(24)
+    params = {
+        "client_id": config.GOOGLE_OAUTH_CLIENT_ID,
+        "redirect_uri": config.GOOGLE_OAUTH_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "state": state,
+        # Réaffiche le compte Google déjà connu au lieu de forcer un choix de
+        # compte à chaque connexion — un aller-retour de moins.
+        "prompt": "select_account",
+    }
+    redirect = RedirectResponse(f"{_GOOGLE_AUTH_URL}?{urlencode(params)}")
+    redirect.set_cookie(
+        key=_OAUTH_STATE_COOKIE,
+        value=state,
+        httponly=True,
+        secure=config.SESSION_COOKIE_SECURE,
+        samesite=config.SESSION_COOKIE_SAMESITE,
+        max_age=600,  # le temps de l'aller-retour Google, pas plus
+        path="/api/auth/google",
+    )
+    return redirect
+
+
+@app.get("/api/auth/google/callback")
+def google_callback(
+    request: Request,
+    response: Response,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+):
+    """Échange le code contre un profil Google, ouvre ou crée le compte."""
+    echec = f"{config.FRONTEND_URL}/?erreur=google"
+
+    if error or not code:
+        return RedirectResponse(echec)
+
+    cookie_state = request.cookies.get(_OAUTH_STATE_COOKIE)
+    if not state or not cookie_state or not secrets.compare_digest(state, cookie_state):
+        return RedirectResponse(echec)
+
+    jeton = requests.post(
+        _GOOGLE_TOKEN_URL,
+        data={
+            "code": code,
+            "client_id": config.GOOGLE_OAUTH_CLIENT_ID,
+            "client_secret": config.GOOGLE_OAUTH_CLIENT_SECRET,
+            "redirect_uri": config.GOOGLE_OAUTH_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        },
+        timeout=10,
+    )
+    if jeton.status_code != 200:
+        logging.getLogger("local_signal").error(
+            "google_oauth: echange de code refuse (%s)", jeton.status_code
+        )
+        return RedirectResponse(echec)
+
+    access_token = jeton.json().get("access_token")
+    profil = requests.get(
+        _GOOGLE_USERINFO_URL,
+        headers={"Authorization": f"Bearer {access_token}"},
+        timeout=10,
+    )
+    if profil.status_code != 200:
+        return RedirectResponse(echec)
+
+    infos = profil.json()
+    google_id = infos.get("sub")
+    email = (infos.get("email") or "").strip().lower()
+    if not google_id or not email:
+        return RedirectResponse(echec)
+
+    user = repo.get_user_by_google_id(google_id)
+    if not user:
+        existant = repo.get_user_by_email(email)
+        if existant:
+            # Même produit, même compte (D-037) : quelqu'un qui a un compte
+            # par mot de passe et se connecte un jour avec Google ne doit pas
+            # se retrouver avec deux comptes distincts.
+            repo.link_google_id(existant["id"], google_id)
+            user = existant
+        else:
+            # Mot de passe aléatoire, jamais révélé à personne : rend la
+            # connexion par mot de passe infaisable pour ce compte tant qu'il
+            # n'en a pas choisi un explicitement (D-016 : jamais de secret
+            # prévisible, y compris pour un compte qu'on crée nous-mêmes).
+            secret_inutilisable = security.hash_password(secrets.token_urlsafe(32))
+            user_id = repo.create_google_user(
+                email=email,
+                password_hash=secret_inutilisable,
+                name=infos.get("name"),
+                google_id=google_id,
+            )
+            user = repo.get_user_by_id(user_id)
+
+    redirect = RedirectResponse(config.FRONTEND_URL)
+    redirect.delete_cookie(_OAUTH_STATE_COOKIE, path="/api/auth/google")
+    _issue_session(redirect, user["id"])
+    return redirect
 
 
 @app.post("/api/auth/logout")

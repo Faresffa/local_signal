@@ -19,6 +19,7 @@ import DetailScreen from "./src/screens/DetailScreen";
 import DiscoverScreen from "./src/screens/DiscoverScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
+import MotifCouverts from "./src/components/MotifCouverts";
 import { useCurrentUser } from "./src/lib/auth";
 import { spacing, useColors } from "./src/theme";
 
@@ -198,6 +199,13 @@ export default function App() {
           })}
         </View>
       )}
+
+      {/* EN AVANT-PLAN, PAS EN ARRIÈRE-PLAN (retour utilisateur) : rendu en
+          dernier plutôt qu'en premier, le motif peint par-dessus tout —
+          écrans, onglets compris — au lieu de disparaître derrière les cartes
+          et photos opaques. `pointerEvents="none"` : il ne intercepte jamais
+          un appui. Noir en clair, rouge de marque en sombre. */}
+      <MotifCouverts color={isDark ? colors.brand : "#17140f"} />
     </SafeAreaView>
   );
 }

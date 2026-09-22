@@ -99,6 +99,47 @@ img {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+/* Trame de fourchettes-couteaux en filigrane, sur tout l'écran (LS-refonte).
+   `mask-image` plutôt qu'une image de fond colorée : la couleur reste un
+   jeton, donc le motif s'adapte automatiquement au thème clair/sombre sans
+   deuxième fichier.
+   EN AVANT-PLAN, PAS EN ARRIÈRE-PLAN (retour utilisateur) : posé derrière le
+   contenu, le motif ne se voyait que dans les marges — sur un écran couvert
+   de cartes/photos opaques, il disparaissait presque entièrement. En couche
+   flottante au-dessus de tout (y compris les photos, sous la barre de
+   recherche et les modales), à très faible opacité et `pointer-events: none`,
+   il couvre littéralement chaque pixel affiché, quelle que soit la densité
+   de la page — c'est ce qui était demandé : « sur l'entièreté des pixels ».
+   `fixed` : le motif ne défile pas avec la page, il reste une texture posée
+   sur l'écran, pas un élément qu'on croise en scrollant. */
+.app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  /* Noir en clair, rouge de marque en sombre (demande explicite) — jamais la
+     paire text/background par défaut, qui aurait donné du blanc en sombre. */
+  background-color: #17140f;
+  opacity: 0.1;
+  -webkit-mask-image: url("/motif-couverts.svg");
+  mask-image: url("/motif-couverts.svg");
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-size: 300px;
+  mask-size: 300px;
+}
+:root[data-theme="dark"] .app::before,
+:root:not([data-theme="light"]) .app::before {
+  background-color: var(--color-brand);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .app::before {
+    background-color: #17140f;
+  }
 }
 
 .shell {
@@ -213,7 +254,10 @@ img {
 
 .search {
   position: relative;
-  padding-block: var(--spacing-xxl) var(--spacing-lg);
+  /* Réduit : le titre et l'amorce qui occupaient ce bloc ont été retirés
+     (retour utilisateur), la barre de recherche n'a plus besoin d'autant
+     d'air au-dessus d'elle. */
+  padding-block: var(--spacing-lg) var(--spacing-lg);
 }
 
 /* Halo chaud derrière le titre : donne une profondeur au fond crème, qui
@@ -236,6 +280,17 @@ img {
       transparent 72%
     );
   filter: blur(6px);
+  /* Dérive lente et continue : le halo respire au lieu de rester figé une
+     fois apparu. Amplitude volontairement faible — c'est une ambiance, pas
+     une animation qu'on regarde. */
+  animation:
+    haze 1.2s ease-out forwards,
+    haze-derive 22s ease-in-out 1.2s infinite alternate;
+}
+
+@keyframes haze-derive {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(2%, -3%) scale(1.05); }
 }
 
 .search__title {
@@ -253,18 +308,18 @@ img {
   color: var(--color-brand);
 }
 
-.search__lede {
-  margin-top: var(--spacing-md);
-  color: var(--color-text-muted);
-  max-width: 70ch /*42ch*/;
-  font-size: clamp(1rem, 1.6vw, 1.2rem);
-  line-height: var(--line-height-relaxed);
+/* Redemandée après suppression, mais nettement plus petite (retour
+   utilisateur) : l'amorce tient sur une ligne à peu près partout, la barre de
+   recherche arrive vite. */
+.search__title--compact {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  max-width: 28ch;
+  margin-bottom: var(--spacing-sm);
 }
 
 /* Barre de recherche : lieu, cuisine, distance, sur une ligne au desktop
    et empilée au mobile. */
 .searchbar {
-  margin-top: var(--spacing-xl);
   display: grid;
   gap: var(--spacing-sm);
   grid-template-columns: 1fr;
@@ -467,20 +522,15 @@ img {
   color: var(--color-text-faint);
 }
 
+/* Une seule colonne, toujours : le classement se lit du premier au dernier,
+   de haut en bas, jamais éclaté en plusieurs colonnes qui font perdre l'ordre
+   de lecture (demande explicite — une grille multi-colonnes casse la
+   perception du rang). */
 .grid {
   display: grid;
-  gap: var(--spacing-xl) var(--spacing-lg);
+  gap: var(--spacing-lg);
   grid-template-columns: 1fr;
-}
-@media (min-width: 680px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 1020px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  max-width: 640px;
 }
 
 /* ==========================================================================
@@ -550,6 +600,32 @@ img {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
+}
+
+/* Rang dans le classement, en haut à gauche du visuel — la carte reste lisible
+   comme un ELEMENT DE LISTE avant d'être une fiche, cohérent avec la mise en
+   page à colonne unique (LS-refonte). */
+.card__rang {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow: var(--shadow-card);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+.card--premier .card__rang {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
 }
 
 /* Le verdict remonte sur le visuel : c'est l'information la plus distinctive
@@ -870,6 +946,75 @@ img {
 }
 
 /* ==========================================================================
+   Connexion / inscription (LS-refonte)
+   ==========================================================================
+   Avant : un formulaire nu posé sur le fond de page, seul écran sans aucun
+   traitement visuel ni mouvement d'entrée alors que le reste du produit en a
+   partout. La carte reprend le langage de `.searchbar` (surface, ombre
+   portée, rayon large) plutôt que d'inventer un second système. */
+
+.authpage {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--spacing-xl) var(--spacing-xxxl);
+}
+
+.authcard {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--spacing-xl);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised), var(--shadow-inset);
+}
+
+.authcard__mark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  margin-bottom: var(--spacing-md);
+}
+
+.authcard__title {
+  font-size: var(--font-size-xxl);
+}
+
+.authcard__lede {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+}
+
+.authcard__google {
+  color: var(--color-text);
+}
+
+/* Séparateur textuel entre la connexion sociale et le mot de passe : un
+   trait seul ne dirait pas "ou", un simple mot seul flotterait sans ancrage
+   visuel. */
+.authcard__separateur {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-lg) 0;
+  color: var(--color-text-faint);
+  font-size: var(--font-size-xs);
+}
+.authcard__separateur::before,
+.authcard__separateur::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ==========================================================================
    Formulaire
    ========================================================================== */
 
@@ -1039,7 +1184,7 @@ img {
 
 /* Les menus des filtres doivent passer devant les cards animées, mais rester
    sous le header sticky et sous les modales. */
-.discover__filters {
+.discover__aside {
   position: relative;
   z-index: 45;
 }
@@ -1064,9 +1209,9 @@ img {
     opacity: 1;
   }
 }
-.search::before {
-  animation: haze 1.2s ease-out forwards;
-}
+/* La dérive continue (`haze-derive`) est posée avec `haze` directement sur
+   `.search::before` dans sa règle de définition, plus haut : une seconde
+   déclaration ici écraserait la première au lieu de s'y ajouter. */
 
 /* ==========================================================================
    Pied de page
@@ -1403,9 +1548,13 @@ img {
    auto` : ils se peignent dans l'ordre du document, et les pastilles
    recouvraient la liste de suggestions.
    Un ordre explicite règle le cas sans toucher à l'animation. */
+/* Au-dessus de `.discover__aside` (z-index 45, LS-refonte) : les suggestions
+   de lieu doivent rester lisibles même quand la colonne de filtres commence
+   juste en dessous — sans ça, le menu de suggestions se fait recouvrir par
+   la colonne suivante dès qu'il dépasse la hauteur de la barre de recherche. */
 .searchbar {
   position: relative;
-  z-index: 30;
+  z-index: 46;
 }
 .chips {
   position: relative;
@@ -1477,10 +1626,14 @@ img {
   box-shadow: 0 6px 22px color-mix(in srgb, var(--color-brand) 18%, transparent);
 }
 
+/* Coin haut-droit : le coin bas-gauche porte déjà la distance, et le rang
+   (`.card__rang`) occupe le haut-gauche depuis la refonte (LS-refonte).
+   Superposer "Meilleur profil local" à la distance rendait les deux
+   illisibles. */
 .card__premier {
   position: absolute;
-  left: var(--spacing-sm);
-  bottom: var(--spacing-sm);
+  right: var(--spacing-sm);
+  top: var(--spacing-sm);
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   background: var(--color-brand);
@@ -2466,4 +2619,170 @@ img {
   margin-top: var(--spacing-sm);
   font-size: var(--font-size-sm);
   color: var(--color-brand);
+}
+
+/* ==========================================================================
+   Mise en page à trois zones de Discover (LS-refonte)
+   ==========================================================================
+   Le classement reste la colonne centrale — c'est le produit. Les côtés
+   portent du contenu qui aide à lire ce classement (carte, répartition,
+   filtres), jamais de la décoration pure. En dessous de 1100px, les trois
+   colonnes reviennent à un flux unique : il n'y a plus la largeur pour les
+   juxtaposer sans écraser les résultats. */
+
+.discover__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .discover__layout {
+    grid-template-columns: 220px minmax(0, 1fr) 280px;
+    gap: var(--spacing-lg);
+  }
+}
+
+.discover__aside,
+.discover__rail {
+  min-width: 0;
+}
+
+@media (min-width: 1100px) {
+  .discover__aside,
+  .discover__rail {
+    position: sticky;
+    top: calc(68px + var(--spacing-lg));
+  }
+}
+
+/* Les pastilles de filtres passent en colonne dans la barre latérale, sans
+   toucher `Filtres.jsx` : c'est une réinterprétation visuelle du même
+   composant, pas un second système de filtres à maintenir. */
+@media (min-width: 1100px) {
+  .discover__aside .fbar {
+    margin: 0;
+  }
+  .discover__aside .fbar__ligne {
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+  .discover__aside .fbar__pastille,
+  .discover__aside .fbar__tous {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  /* Les menus déroulants s'ouvrent dans le flux plutôt qu'en survol : une
+     colonne étroite n'a pas la place d'un panneau flottant à côté d'elle. */
+  .discover__aside .fbar__menu,
+  .discover__aside .fbar__panneau {
+    position: static;
+    width: 100%;
+    margin: 6px 0 0;
+    box-shadow: none;
+    animation: none;
+  }
+  .discover__aside .fbar__reset {
+    align-self: flex-start;
+  }
+}
+
+.discover__railToggle {
+  display: none;
+}
+@media (max-width: 1099px) {
+  .discover__railToggle {
+    display: inline-flex;
+    margin-bottom: var(--spacing-md);
+  }
+  .discover__railBody {
+    display: none;
+  }
+  .discover__railBody.is-open {
+    display: block;
+    margin-top: var(--spacing-md);
+  }
+}
+
+.discover__mapbox {
+  height: 220px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  background: var(--color-surface-sunken);
+}
+
+.discover__stats {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.discover__statsTitle {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+  margin-bottom: var(--spacing-sm);
+}
+.discover__statsList {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+}
+.discover__statsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+}
+.discover__statsDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.discover__statsDot--local { background: var(--color-local); }
+.discover__statsDot--mixed { background: var(--color-mixed); }
+.discover__statsDot--tourist { background: var(--color-tourist); }
+.discover__statsDot--unknown { background: var(--color-text-faint); }
+.discover__statsLabel {
+  color: var(--color-text-muted);
+  flex: 1;
+}
+.discover__statsValue {
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Transition de vue entre écrans (LS-refonte)
+   ==========================================================================
+   `App.jsx` déclenche ces pseudo-éléments via `document.startViewTransition`
+   (`withTransition`). Rien à faire côté composants : l'API capture l'écran
+   avant/après et l'anime elle-même. Sans support navigateur, le changement
+   d'écran reste instantané — amélioration progressive, jamais une dépendance.
+   L'écran sortant recule et s'efface légèrement ; l'entrant arrive du bas :
+   la profondeur suggère qu'on avance dans l'appli, pas qu'on la recharge. */
+::view-transition-old(root) {
+  animation: vue-sort var(--motion-base) var(--motion-ease) both;
+}
+::view-transition-new(root) {
+  animation: vue-entre var(--motion-base) var(--motion-ease) both;
+}
+@keyframes vue-sort {
+  to { opacity: 0; transform: translateY(-12px) scale(0.99); }
+}
+@keyframes vue-entre {
+  from { opacity: 0; transform: translateY(16px) scale(0.99); }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
