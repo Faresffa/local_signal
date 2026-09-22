@@ -5,9 +5,9 @@
 > **Chantier en cours — à lire avant de reprendre le travail :**
 > [`docs/REPRENDRE-ICI.md`](docs/REPRENDRE-ICI.md)
 >
-> La vérité terrain existe depuis le 18 septembre 2026 : **328 restaurants sur 467**
+> La vérité terrain existe depuis le 18 septembre 2026 : **360 restaurants sur 467**
 > classés du plus local au plus dépendant de la clientèle de passage, accord
-> inter-annotateurs 0,713. Le score actuel prédit ce classement, mais la
+> inter-annotateurs 0,717. Le score actuel prédit ce classement, mais la
 > pondération est mal répartie — la langue porte presque tout le signal, le menu
 > et la zone touristique ne sont pas significatifs. **La prochaine étape est la
 > recalibration**, pas une nouvelle campagne d'annotation.

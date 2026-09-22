@@ -13,22 +13,22 @@ D-045**. Le protocole d'annotation est dans
 
 ## 1. Ce qui est acquis
 
-**Une vérité terrain de 328 restaurants sur 467**, classés du plus local au plus
-dépendant de la clientèle de passage. 3 132 jugements par comparaison de paires,
-accord inter-annotateurs **kappa = 0,713** (substantiel).
+**Une vérité terrain de 360 restaurants sur 467**, classés du plus local au plus
+dépendant de la clientèle de passage. 3 448 jugements par comparaison de paires,
+accord inter-annotateurs **kappa = 0,717** (substantiel).
 
 Fichier : [`data/annotation-pilote/classement-467.csv`](data/annotation-pilote/classement-467.csv)
 
 **Et le résultat qui justifie tout le reste** — le score actuel confronté à ce
-classement (corrélation de Spearman, n = 328) :
+classement (corrélation de Spearman, n = 360) :
 
 | indicateur | poids actuel | rho | IC 95 % | verdict |
 |---|---|---|---|---|
-| **`local_signal`** (score global) | — | **+0,234** | [+0,129 ; +0,334] | prédit, significatif |
-| menu | **0,40** | +0,121 | [−0,002 ; +0,241] | **non significatif** |
-| **langue** | 0,30 | **+0,501** | [+0,416 ; +0,578] | le seul vraiment fort |
-| prix | 0,15 | +0,254 | [+0,123 ; +0,376] | significatif |
-| zone touristique | 0,15 | +0,049 | [−0,059 ; +0,157] | **non significatif** |
+| **`local_signal`** (score global) | — | **+0,229** | [+0,129 ; +0,325] | prédit, significatif |
+| menu | **0,40** | +0,115 | [−0,002 ; +0,229] | **non significatif** |
+| **langue** | 0,30 | **+0,510** | [+0,429 ; +0,583] | le seul vraiment fort |
+| prix | 0,15 | +0,245 | [+0,120 ; +0,362] | significatif |
+| zone touristique | 0,15 | +0,048 | [−0,056 ; +0,151] | **non significatif** |
 
 **Lecture : les deux indicateurs qui portent 0,55 du poids ne prédisent rien, et
 la langue porte l'essentiel du signal à elle seule.** C'est le point de départ de
@@ -68,7 +68,7 @@ corrélation de rang est plus adaptée.
 
 ## 3. Ce qui reste à annoter (optionnel)
 
-**139 restaurants sur 467 ne sont pas classés** — les blocs 11 à 15 du plan.
+**107 restaurants sur 467 ne sont pas classés** — les blocs 12 à 15 du plan.
 
 C'est optionnel : les corrélations n'ont quasiment plus bougé entre n = 168 et
 n = 328 (le score global est passé de +0,300 à +0,234, la langue de +0,508 à
@@ -78,19 +78,20 @@ resserreraient les intervalles, sans changer les conclusions.
 Si tu veux quand même les faire, tout est prêt :
 
 ```bash
-python -m backend.db.missions --plan paires-467.json --web --bloc 11
+python -m backend.db.missions --plan paires-467.json --web --bloc 12
 ```
 
 Puis lancer **4 agents** (un par profil d'annotateur) sur les fichiers
-`mission_b11_A.md` … `mission_b11_D.md`. Le prompt exact de chaque profil est
+`mission_b12_A.md` … `mission_b12_D.md`. Le prompt exact de chaque profil est
 reconstituable depuis le §4 ci-dessous. Enfin :
 
 ```bash
 python -m backend.db.bradley_terry
 ```
 
-**Utilise Opus, pas Sonnet.** C'est mesuré : blocs Opus kappa 0,78–0,96, blocs
-Sonnet 0,23–0,70, et la différence persiste à consigne identique. Haiku échoue
+**Utilise Opus, pas Sonnet.** C'est mesuré : blocs Opus kappa 0,75–0,96, blocs
+Sonnet 0,23–0,70. **Compter ~9,5 points de fenêtre 5 h par agent Opus**, soit ~38
+points par bloc — mesuré, et la différence persiste à consigne identique. Haiku échoue
 franchement (trois modes d'échec différents, voir D-042/D-044).
 
 ---
