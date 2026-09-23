@@ -7,7 +7,7 @@
 // type de cuisine, jusqu'où marcher.
 
 import { useEffect, useRef, useState } from "react";
-import { MagnifyingGlass, MapTrifold, Trophy, X } from "@phosphor-icons/react";
+import { Info, MagnifyingGlass, MapTrifold, Trophy, X } from "@phosphor-icons/react";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
 import Filtres from "../components/Filtres";
@@ -22,7 +22,7 @@ import {
   LocationNotice,
   ResultsSkeleton,
 } from "../components/States";
-import { verdict } from "../lib/display";
+import Verdict from "../components/Verdict";
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 import { useGeolocation } from "../lib/hooks";
 
@@ -59,6 +59,9 @@ export default function Discover({
   // combien de restaurants sont masqués sans jamais recevoir leurs données
   // (voir backend/main.py::list_restaurants).
   const [total, setTotal] = useState(0);
+  // Quota de recherches d'un compte non abonné (LS-refonte) — `null` pour
+  // tout le monde d'autre (anonyme, abonné, admin), qui n'en a pas.
+  const [quota, setQuota] = useState(null);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
   const [reloads, setReloads] = useState(0);
@@ -69,6 +72,10 @@ export default function Discover({
   // Carte et répartition : toujours visibles en colonne à partir de 1100px,
   // repliées derrière un bouton en dessous (voir .discover__railBody en CSS).
   const [railOuvert, setRailOuvert] = useState(false);
+  // Explique pourquoi le premier résultat n'a pas forcément le meilleur
+  // Local Signal (retour utilisateur) — le classement mêle authenticité et
+  // proximité (D-008), « Triés par score » seul le laissait croire.
+  const [expliqueClassement, setExpliqueClassement] = useState(false);
 
   // Les filtres proposés viennent de la base : on ne propose jamais un filtre
   // qui ne renverrait aucun résultat.
@@ -102,6 +109,8 @@ export default function Discover({
       ouvert: filtres.ouvert,
       reservation: filtres.reservation,
       avecCarte: filtres.avecCarte,
+      scoreMin: filtres.scoreMin,
+      scoreMax: filtres.scoreMax,
       limit: 24,
     })
       .then((data) => {
@@ -109,6 +118,7 @@ export default function Discover({
         const resultats = data.restaurants ?? [];
         setRestaurants(resultats);
         setTotal(data.count ?? resultats.length);
+        setQuota(data.quota ?? null);
         // Relance l'animation du podium après chaque recherche ou filtre.
         setVersionResultats((version) => version + 1);
         if (ouvrirClassement.current) {
@@ -142,9 +152,11 @@ export default function Discover({
     onRadiusChange(RAYON_DEFAUT);
   };
 
-  // Restaurants masqués faute de compte — 0 pour un utilisateur connecté,
-  // qui voit toujours l'intégralité des résultats.
-  const masques = user ? 0 : Math.max(0, total - restaurants.length);
+  // Restaurants masqués faute d'abonnement (LS-refonte) — 0 seulement pour un
+  // compte abonné ou admin. Se connecter ne suffit plus à tout débloquer :
+  // c'était l'ancienne règle, et elle ne laissait aucune raison de payer.
+  const abonne = user?.role === "subscriber" || user?.role === "admin";
+  const masques = abonne ? 0 : Math.max(0, total - restaurants.length);
 
   return (
     <>
@@ -242,6 +254,8 @@ export default function Discover({
             cuisines={cuisineOptions}
             nbResultats={status === "ready" ? restaurants.length : null}
             chargement={status === "loading"}
+            abonne={abonne}
+            onUnlock={onUnlock}
           />
         </aside>
 
@@ -254,7 +268,15 @@ export default function Discover({
               {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
             </h2>
             <div className="results__summary">
-              <span className="results__sort">Triés par score</span>
+              <button
+                type="button"
+                className="results__sort"
+                onClick={() => setExpliqueClassement((v) => !v)}
+                aria-expanded={expliqueClassement}
+              >
+                Classement : authenticité et proximité
+                <Info size={13} weight="bold" />
+              </button>
               {status === "ready" && masques > 0 && (
                 <span className="results__count">
                   {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""} affiché
@@ -269,6 +291,30 @@ export default function Discover({
               )}
             </div>
           </div>
+
+          {expliqueClassement && (
+            <p className="card__reason" style={{ marginTop: -10, marginBottom: 16 }}>
+              Le classement combine le Local Signal du restaurant
+              (authenticité) et sa distance jusqu'à vous : un restaurant très
+              proche peut donc apparaître avant un restaurant mieux noté mais
+              plus loin. Le score de chaque restaurant reste visible sur sa
+              carte, indépendant de ce classement (D-008).
+            </p>
+          )}
+
+          {/* Quota de recherches d'un compte non abonné (LS-refonte) —
+              affiché AVANT d'être atteint, pas seulement au moment où il
+              bloque (retour utilisateur : "doit être claire, affichée"). */}
+          {quota && (
+            <p className="card__reason" style={{ marginBottom: 16 }}>
+              {quota.restantes > 0
+                ? `${quota.restantes} recherche${quota.restantes > 1 ? "s" : ""} restante${quota.restantes > 1 ? "s" : ""} aujourd'hui.`
+                : "Dernière recherche du jour."}{" "}
+              <button type="button" className="linkbtn" onClick={onUnlock}>
+                S'abonner pour un accès illimité
+              </button>
+            </p>
+          )}
 
           {status === "loading" && <ResultsSkeleton />}
           {status === "error" && (
@@ -291,10 +337,12 @@ export default function Discover({
                   restaurant={r}
                   index={i}
                   onOpen={onOpen}
+                  user={user}
+                  onUnlock={onUnlock}
                 />
               ))}
               {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) }).map((_, i) => (
-                <LockedCard key={`locked-${i}`} onUnlock={onUnlock} />
+                <LockedCard key={`locked-${i}`} onUnlock={onUnlock} connecte={Boolean(user)} />
               ))}
             </div>
           )}
@@ -351,24 +399,21 @@ export default function Discover({
             </div>
 
             <ol className="classement-modal__liste">
-              {podium.map((restaurant, index) => {
-                // Le verdict plutot que des etoiles : c'est ce que le score
-                // dit reellement, et les etoiles reprenaient le symbole de la
-                // popularite que le projet recuse (D-007, LS-12).
-                const v = verdict(restaurant.local_signal, restaurant.confidence);
-                return (
-                  <li
-                    className={`classement-modal__ligne classement-modal__ligne--${index + 1}`}
-                    key={restaurant.id}
-                  >
-                    <span className="classement-modal__rang">{index + 1}</span>
-                    <span className="classement-modal__nom">
-                      {restaurant.name}
-                    </span>
-                    <span className={`verdict verdict--${v.tone}`}>{v.label}</span>
-                  </li>
-                );
-              })}
+              {podium.map((restaurant, index) => (
+                <li
+                  className={`classement-modal__ligne classement-modal__ligne--${index + 1}`}
+                  key={restaurant.id}
+                >
+                  <span className="classement-modal__rang">{index + 1}</span>
+                  <span className="classement-modal__nom">
+                    {restaurant.name}
+                  </span>
+                  <Verdict
+                    localSignal={restaurant.local_signal}
+                    confidence={restaurant.confidence}
+                  />
+                </li>
+              ))}
             </ol>
 
             <button

@@ -2,9 +2,9 @@
 //
 // Écran « autour de moi » : géolocalisation, filtres, liste de résultats.
 //
-// Règle d'affichage (D-009) : aucun score visible par défaut. L'utilisateur
-// voit un verdict lisible et la première raison en français ; le détail du
-// calcul est sur la fiche, derrière « pourquoi ? ».
+// Le verdict porte un mot ET le Local Signal chiffré (D-050, supersède
+// D-009) ; la première raison en français reste affichée à côté. Le détail
+// indicateur par indicateur, lui, est sur la fiche, derrière « pourquoi ? ».
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -138,7 +138,7 @@ function Carte({ item, onOpen, isDark, index }) {
             label={`${v.label} — ${item.name}`}
           />
         </View>
-        <Verdict tone={v.tone} label={v.label} />
+        <Verdict tone={v.tone} label={v.label} localSignal={item.local_signal} />
       </View>
 
       <View style={s.cardBody}>
@@ -166,7 +166,8 @@ function Carte({ item, onOpen, isDark, index }) {
   );
 }
 
-export default function DiscoverScreen({ onOpen, user, onCompte }) {
+export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
+  const abonne = user?.role === "subscriber" || user?.role === "admin";
   const colors = useColors();
   const isDark = useColorScheme() === "dark";
 
@@ -189,6 +190,10 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
 
   const [restaurants, setRestaurants] = useState([]);
   const [total, setTotal] = useState(0);
+  // Explique pourquoi le premier résultat n'a pas forcément le meilleur
+  // Local Signal (retour utilisateur, même ajout côté web) — le classement
+  // mêle authenticité et proximité (D-008).
+  const [expliqueClassement, setExpliqueClassement] = useState(false);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
 
@@ -237,6 +242,8 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
       ouvert: filtres.ouvert,
       reservation: filtres.reservation,
       avecCarte: filtres.avecCarte,
+      scoreMin: filtres.scoreMin,
+      scoreMax: filtres.scoreMax,
       limit: 30,
     })
       .then((data) => {
@@ -354,15 +361,39 @@ export default function DiscoverScreen({ onOpen, user, onCompte }) {
         cuisines={options}
         nbResultats={status === "ready" ? restaurants.length : null}
         chargement={status === "loading"}
+        abonne={abonne}
+        onUnlock={onUnlock}
       />
 
       {status === "ready" && (
-        <Text style={[s.count, { color: colors.textFaint }]}>
-          {masques > 0
-            ? `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""} `
-              + `affiché${restaurants.length > 1 ? "s" : ""} sur ${total}`
-            : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
+        <View style={s.countRow}>
+          <Text style={[s.count, { color: colors.textFaint }]}>
+            {masques > 0
+              ? `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""} `
+                + `affiché${restaurants.length > 1 ? "s" : ""} sur ${total}`
+              : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
+          </Text>
+          <Pressable
+            onPress={() => setExpliqueClassement((v) => !v)}
+            accessibilityRole="button"
+            style={s.sortBouton}
+          >
+            <Feather name="info" size={12} color={colors.textFaint} />
+            <Text style={[s.sortTexte, { color: colors.textFaint }]}>
+              Authenticité et proximité
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
+      {expliqueClassement && (
+        <Text style={[s.explication, { color: colors.textMuted }]}>
+          Le classement combine le Local Signal du restaurant (authenticité)
+          et sa distance jusqu'à vous : un restaurant très proche peut donc
+          apparaître avant un restaurant mieux noté mais plus loin. Le score
+          de chaque restaurant reste visible sur sa carte.
         </Text>
+      )}
       )}
     </View>
   );
@@ -457,7 +488,14 @@ const s = StyleSheet.create({
   },
   chipText: { fontSize: 14, fontWeight: "500" },
 
-  count: { fontSize: 13, marginTop: 4 },
+  countRow: {
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    marginTop: 4,
+  },
+  count: { fontSize: 13 },
+  sortBouton: { flexDirection: "row", alignItems: "center", gap: 4, minHeight: 30 },
+  sortTexte: { fontSize: 11 },
+  explication: { fontSize: 12, lineHeight: 17, marginTop: 4 },
 
   card: { borderRadius: radius.lg, borderWidth: 1, overflow: "hidden" },
   cardBody: { padding: spacing.md, gap: 5 },

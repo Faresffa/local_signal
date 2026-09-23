@@ -101,7 +101,7 @@ export default function DetailScreen({ restaurant, onBack, onReserve, user, onSe
       </View>
 
       <View style={{ marginTop: spacing.lg, gap: spacing.sm }}>
-        <Verdict tone={v.tone} label={v.label} size="lg" />
+        <Verdict tone={v.tone} label={v.label} localSignal={full.local_signal} size="lg" />
         <Text style={[s.title, { color: colors.text }]}>{full.name}</Text>
         <Text style={[s.meta, { color: colors.textMuted }]}>
           {full.cuisine_label || "Restaurant"}

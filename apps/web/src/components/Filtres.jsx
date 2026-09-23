@@ -31,12 +31,15 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  CaretDown, Clock, ForkKnife, MagnifyingGlass, Money, Notebook, SlidersHorizontal, X,
+  CaretDown, ChartBar, Clock, ForkKnife, Lock, MagnifyingGlass, Money,
+  Notebook, SlidersHorizontal, X,
 } from "@phosphor-icons/react";
 
 import Budget from "./Budget";
+import ScoreRange from "./ScoreRange";
 import {
-  BUDGET_MAX, BUDGET_MIN, budgetActif, compterFiltres, FILTRES_VIDES, libelleBudget,
+  BUDGET_MAX, BUDGET_MIN, budgetActif, compterFiltres, FILTRES_VIDES,
+  libelleBudget, libelleScore, SCORE_MAX, SCORE_MIN, scoreActif,
 } from "../lib/filtres";
 
 /** Ferme au clic extérieur et à Échap — sans quoi un menu ouvert piège l'écran. */
@@ -140,8 +143,12 @@ function Case({ coche, onChange, children }) {
 
 export default function Filtres({
   valeurs, onChange, cuisines = [], nbResultats = null, chargement = false,
+  abonne = false, onUnlock,
 }) {
-  const { budgetMin, budgetMax, ouvert, reservation, avecCarte, cuisine } = valeurs;
+  const {
+    budgetMin, budgetMax, ouvert, reservation, avecCarte, cuisine,
+    scoreMin, scoreMax,
+  } = valeurs;
 
   const [tousOuvert, setTousOuvert] = useState(false);
   const [recherche, setRecherche] = useState("");
@@ -155,6 +162,9 @@ export default function Filtres({
 
   const changerBudget = (bas, haut) =>
     onChange({ ...valeurs, budgetMin: bas, budgetMax: haut });
+
+  const changerScore = (bas, haut) =>
+    onChange({ ...valeurs, scoreMin: bas, scoreMax: haut });
 
   const cuisineLabel = cuisines.find((c) => c.value === cuisine)?.label;
 
@@ -217,9 +227,32 @@ export default function Filtres({
                 </p>
               </div>
 
+              <div className="fbar__groupe">
+                <h4>
+                  {abonne ? <ChartBar size={14} weight="light" /> : <Lock size={14} weight="bold" />}
+                  Réservé aux abonnés
+                </h4>
+                {abonne ? (
+                  <>
+                    <p className="fbar__aide" style={{ marginTop: 0, marginBottom: 8 }}>
+                      Score Local Signal
+                    </p>
+                    <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
+                  </>
+                ) : (
+                  <p className="fbar__aide">
+                    <button type="button" className="linkbtn" onClick={onUnlock}>
+                      S'abonner
+                    </button>
+                    {" "}pour filtrer directement sur le score.
+                  </p>
+                )}
+              </div>
+
               <p className="fbar__note">
                 Pas de filtre sur la note ni le nombre d'avis : ce serait refaire
-                le tri par popularité que ce produit existe pour éviter.
+                le tri par popularité que ce produit existe pour éviter. Le
+                Local Signal, lui, mesure l'inverse — il peut être un filtre.
               </p>
 
               <div className="fbar__pied">
@@ -351,6 +384,58 @@ export default function Filtres({
           <Notebook size={15} weight="light" />
           Carte analysée
         </button>
+
+        {/* Filtre directement assis sur le Local Signal (retour
+            utilisateur) — toujours AFFICHÉ, mais réservé aux abonnés : c'est
+            l'activation qui est verrouillée, pas la visibilité (§5, jamais
+            un mur). Une couleur distincte (voir index.css) le distingue des
+            filtres ordinaires, abonné ou non ; pour qui n'est pas abonné, le
+            mot « Abonnement » est écrit sur la pastille — pas seulement
+            dans l'infobulle au survol, invisible au tactile (retour
+            utilisateur).
+            Un second filtre premium (éloignement des zones touristiques,
+            D-050bis) a existé brièvement puis a été retiré (D-050ter) —
+            l'utilisateur n'était pas convaincu qu'il fonctionnerait. Pas de
+            remplacement proposé cette fois : un seul filtre premium, solide,
+            plutôt que deux pour respecter un compte. */}
+        {abonne ? (
+          <Menu
+            icone={<ChartBar size={15} weight="light" />}
+            label={libelleScore(scoreMin, scoreMax)}
+            actif={scoreActif(valeurs)}
+            largeur={260}
+          >
+            {(fermer) => (
+              <div className="fbar__budget">
+                <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
+                <div className="fbar__budgetPied">
+                  <button
+                    type="button"
+                    className="fbar__effacer"
+                    onClick={() => changerScore(SCORE_MIN, SCORE_MAX)}
+                    disabled={!scoreActif(valeurs)}
+                  >
+                    Tout le classement
+                  </button>
+                  <button type="button" className="btn btn--primary" onClick={fermer}>
+                    {libelleValidation}
+                  </button>
+                </div>
+              </div>
+            )}
+          </Menu>
+        ) : (
+          <button
+            type="button"
+            className="fbar__pastille fbar__pastille--abonne fbar__pastille--verrouille"
+            onClick={onUnlock}
+            title="Réservé aux abonnés — cliquez pour vous abonner"
+          >
+            <Lock size={13} weight="bold" />
+            Score Local Signal
+            <span className="fbar__badgeAbonnement">Abonnement</span>
+          </button>
+        )}
 
         {actifs > 0 && (
           <button

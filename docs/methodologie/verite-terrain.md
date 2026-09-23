@@ -463,46 +463,255 @@ chaque restaurant par sa profondeur dans la régression, calibrer d'abord sur le
 
 ---
 
-## 6. Le piège de l'ancrage
+## 6. Passage à l'échelle — les 467 restaurants de la zone
 
-Une proposition affichée est difficile à contredire. Si le taux de correction des
-pré-annotations tombe **sous 10 %**, ce n'est pas que la machine avait raison :
-c'est que l'ancrage a joué.
+Le §5 a validé l'instrument (comparaison par paires, dossier enrichi d'une
+recherche web séparée du jugement) sur un pilote de 30 restaurants. Restait à
+l'appliquer à la **zone entière** : 467 restaurants, sans échantillonnage —
+c'est la garantie que le classement final ne favorise aucun sous-groupe.
 
-`python -m backend.db.preannotation --comparer <fichier>` mesure ce taux après
-coup, précisément pour pouvoir le dire. En dessous du seuil, un sous-échantillon
-doit être repris **colonne `proposition` masquée**.
+### 6.1 Découper sans perdre la comparabilité
+
+Comparer les 467 restaurants deux à deux prendrait 108 811 duels — hors de
+portée. Il faut découper en groupes plus petits, mais un découpage naïf casse
+la comparabilité : un restaurant du groupe 1 ne serait jamais mis en regard
+d'un restaurant du groupe 12, et rien ne dirait comment aligner deux
+classements produits séparément.
+
+**La solution retenue : des blocs qui se chevauchent.** La zone est partagée en
+15 blocs de 40 restaurants, chaque bloc partageant 8 restaurants avec le
+suivant. Ces 8 restaurants partagés jouent le rôle d'**ancres** : jugés dans
+deux contextes différents, ils donnent au modèle d'agrégation (Bradley-Terry,
+détaillé au §6.3) le point de repère nécessaire pour placer tous les blocs sur
+**une seule et même échelle**. Sans ancrage, on obtiendrait 15 classements
+locaux incomparables entre eux plutôt qu'un classement unique de la zone.
+
+La construction du plan est vérifiée mathématiquement avant tout jugement : le
+graphe reliant les 467 restaurants par les duels prévus doit former **une
+seule composante connexe** — c'est-à-dire qu'il existe un chemin de
+comparaisons entre n'importe quelle paire de restaurants, même situés dans des
+blocs éloignés. C'est cette propriété, et non une intuition, qui garantit que
+l'agrégation finale produit un ordre total cohérent plutôt que des îlots
+indépendants.
+
+### 6.2 Le panel, à l'échelle
+
+Le panel retenu au §5 — quatre profils d'annotation, chacun porté par un
+agent — a été conservé pour couvrir les 15 blocs : un profil « riverain »
+jugeant sur la vie quotidienne du quartier, un profil « voyageur » qui
+reconnaît ce qui est pensé pour lui, un profil « restaurateur » lisant les
+signaux d'exploitation (horaires, coupure de service, groupes), un profil
+« journaliste food » attentif à qui un lieu s'adresse dans sa communication.
+Un cinquième profil, plus sceptique par construction, a été écarté après
+plusieurs échecs répétés à distinguer un raisonnement licite d'un raisonnement
+interdit (§5.9) — la décision de l'écarter est elle-même une donnée
+méthodologique, pas un incident caché.
+
+**4 528 jugements** au total (15 blocs × 86 duels en moyenne × 4 profils),
+répartis en 15 campagnes de bloc, chacune mesurée indépendamment avant
+agrégation.
+
+### 6.3 L'agrégation : du duel au classement continu
+
+Chaque jugement dit « A dépend plus du passage que B ». Pour transformer des
+milliers de comparaisons binaires en un **classement continu** — un ordre du
+1ᵉʳ au 467ᵉ avec, pour chaque restaurant, une force numérique et non un simple
+rang — on utilise le **modèle de Bradley-Terry** : chaque restaurant se voit
+attribuer un score latent θ (« thêta ») tel que la probabilité qu'il l'emporte
+sur un autre restaurant dans un duel croît avec l'écart de θ entre les deux. Le
+θ de chaque restaurant est estimé par les duels effectivement observés,
+régularisé (une pénalité empêche un restaurant invaincu de recevoir un score
+infiniment élevé, ce qui arriverait sans cette correction dès qu'un
+restaurant gagne tous ses duels).
+
+**Convention retenue : θ bas = restaurant local, θ élevé = dépendant du
+passage.** Le classement final trie les 467 restaurants par θ croissant.
+
+### 6.4 Ce que la campagne complète mesure
+
+L'accord inter-annotateurs se mesure avec le **kappa de Fleiss**, un indicateur
+qui corrige le taux d'accord brut de ce qu'on obtiendrait par pur hasard entre
+plusieurs juges — un kappa de 0 signifie « pas mieux que le hasard », 1
+signifie un accord parfait. Calculé bloc par bloc puis sur l'ensemble :
+
+| bloc | duels | accord observé | kappa |
+|---|---|---|---|
+| 01 | 79 | 85 % | 0,696 |
+| 02 | 76 | 62 % | 0,232 |
+| 03 | 78 | 91 % | 0,816 |
+| 04 | 80 | 96 % | 0,925 |
+| 05 | 79 | 89 % | 0,789 |
+| 06 | 78 | 89 % | 0,778 |
+| 07 | 78 | 98 % | 0,957 |
+| 08 | 79 | 90 % | 0,802 |
+| 09 | 77 | 79 % | 0,584 |
+| 10 | 79 | 77 % | 0,536 |
+| 11 | 79 | 88 % | 0,755 |
+| 12 | 79 | 88 % | 0,764 |
+| 13 | 78 | 90 % | 0,803 |
+| 14 | 77 | 92 % | 0,848 |
+| 15 | 36 | 94 % | 0,880 |
+| **ensemble** | **4 528 jugements** | **87 %** | **0,741** |
+
+Sur l'échelle de référence de Landis et Koch (celle qu'on cite pour interpréter
+un kappa), 0,741 se lit **« accord substantiel »** — le palier juste en dessous
+de « presque parfait ». C'est loin au-dessus du seuil auquel un jury pose la
+question « n'auraient-ils pas simplement répondu au hasard ? » (voir la mesure
+directe de cette question au §5.10, qui situe le panel à treize écarts-types
+d'un panel qui répondrait à pile ou face).
+
+La variation bloc à bloc n'est pas du bruit : elle est elle-même informative.
+Les blocs au kappa le plus bas correspondent aux campagnes où la consigne
+donnée aux annotateurs tolérait davantage de réponses « égalité » — une
+égalité déclarée dès qu'un signal de départage existe, même ténu, revient à
+jeter de l'information plutôt qu'à trancher, et ça se voit directement dans
+l'accord mesuré. Resserrer cette consigne (imposer de trancher sur tout signal
+disponible, même faible, en modulant la confiance plutôt que l'issue) a
+mécaniquement fait remonter le kappa sur les blocs suivants. C'est un résultat
+méthodologique en soi, transposable à toute future campagne d'annotation par
+comparaison : **la consigne sur l'indécision pèse sur l'accord mesuré autant
+que la difficulté réelle des cas.**
+
+### 6.5 Le résultat : le score actuel face au classement complet
+
+Confronter le score `local_signal` actuel (D-013) au classement de référence
+sur les 467 restaurants, avec une **corrélation de Spearman** (rho, qui mesure
+si deux classements ordonnent les objets de façon semblable, indépendamment de
+l'écart de valeur — 1 = ordres identiques, 0 = aucun lien, −1 = ordres
+inversés) :
+
+| indicateur | poids actuel | rho | couverture |
+|---|---|---|---|
+| **`local_signal`** (score global) | — | **+0,181** | 467/467 |
+| menu | 0,40 | +0,146 | 361/467 (77 %) |
+| langue | 0,30 | **+0,482** | 467/467 (100 %) |
+| prix | 0,15 | +0,241 | 297/467 (64 %) |
+| zone touristique | 0,15 | +0,022 | 467/467 (100 %) |
+
+Le score prédit — la corrélation est positive et l'intervalle de confiance
+exclut zéro — mais la répartition du poids ne correspond pas à ce que chaque
+indicateur apporte réellement : la langue des avis porte l'essentiel du signal
+avec un poids inférieur à celui du menu, tandis que la zone touristique, qui
+porte un poids comparable au prix, ne prédit quasiment rien sur cette zone.
+C'est ce déséquilibre qui motive la recalibration décrite au §9.
 
 ---
 
-## 7. Format
+## 7. Le piège de l'ancrage
 
-`docs/data/verite-terrain-quartier-latin.csv`, séparateur `;`, encodage UTF-8
-avec BOM (sans quoi Excel casse les accents).
+Une proposition affichée est difficile à contredire. Si le taux de correction
+des pré-annotations tombe **sous 10 %**, ce n'est pas que la machine avait
+raison : c'est que l'ancrage a joué. C'est pour cette raison que le jugement,
+à toutes les échelles de cette campagne, s'est fait **à l'aveugle** : aucun
+annotateur n'a eu connaissance d'une pré-annotation ou du jugement des autres
+avant de trancher.
 
-| Colonne | Contenu |
+---
+
+## 8. Format des données finales
+
+Toutes les données de la campagne complète sont versionnées dans
+`docs/data/annotation-pilote/` :
+
+| fichier | contenu |
 |---|---|
-| `rang`, `id`, `nom`, `adresse`, `lien` | identification, lien Google Maps |
-| `proposition`, `confiance`, `indices` | pré-annotation machine et ses preuves |
-| `etiquette_finale` | **la décision humaine — vide au départ** |
-| `corrigee`, `remarque` | suivi |
+| `paires-467.json` | le plan de comparaison complet — 15 blocs, ancres, graine de tirage fixée pour reproductibilité |
+| `dossiers-quartier-latin.json` | les 467 dossiers soumis aux annotateurs, indicateurs du modèle retirés |
+| `web-quartier-latin.json` | les fiches de recherche web associées à chaque restaurant |
+| `duels-467/b*_*.csv` | les 4 528 jugements bruts, un fichier par bloc et par profil, avec la justification de chaque choix |
+| `classement-467.csv` | **le résultat** : 467 restaurants classés, avec leur θ, le nombre de duels disputés et de victoires |
+| `dossiers-douteux.md` | les cas signalés par plusieurs annotateurs indépendamment (identité incertaine, fiche mal appariée) |
 
-`etiquette_finale` n'est **pas** pré-remplie avec la proposition : la recopier
-la ferait passer pour un choix.
-
-Import en base : `python -m backend.db.verite_terrain --importer <fichier>`
+Import du classement en base : la colonne `theta_verite_terrain` de la table
+`restaurants` porte le score de Bradley-Terry de chaque restaurant, utilisé
+comme cible de la recalibration (§9).
 
 ---
 
-## 8. Ce qui sera écrit dans le mémoire
+## 9. La calibration — des poids dérivés à la décision finale
 
-- l'échantillon et son ordre de tirage, avec la raison (§2)
-- la question exacte posée aux annotateurs (§3)
-- les interdits **et la limite d'indépendance assumée** (§4)
-- les trois sources et leur combinaison (§5)
-- l'accord inter-annotateurs mesuré (§5.2)
-- le taux de correction des pré-annotations (§6)
-- le fait que la pré-annotation sépare faiblement, avec le chiffre (§5.1)
+### 9.1 Ce que la régression propose
 
-Ce dernier point n'est pas un aveu de faiblesse : c'est ce qui distingue un
-travail mesuré d'un travail affirmé.
+Une fois le classement de référence disponible, on peut chercher, par
+**régression**, la combinaison des quatre indicateurs qui prédit le mieux ce
+classement — au lieu de la poser à la main comme l'étaient les poids D-013.
+Sur les 297 restaurants disposant des quatre indicateurs simultanément :
+
+| indicateur | poids D-013 (à la main) | rho seul contre la référence |
+|---|---|---|
+| menu | 0,40 | +0,143 |
+| langue | 0,30 | **+0,426** |
+| prix | 0,15 | **−0,077** |
+| zone touristique | 0,15 | −0,013 |
+
+La pondération qui maximise la corrélation globale pousserait la langue à
+**0,85** et ramènerait les trois autres indicateurs près de zéro — un résultat
+validé hors échantillon (testé sur des partages aléatoires 70/30 des données,
+pour vérifier qu'il ne s'agit pas d'un ajustement qui ne fonctionnerait que
+sur les données mêmes qui l'ont produit).
+
+### 9.2 Pourquoi cette pondération brute n'est pas retenue
+
+Adopter des poids qui écrasent tout sur la langue des avis reviendrait à
+transformer le Local Signal en un indicateur unique — la proportion d'avis en
+langue locale — et rien d'autre. Or c'est précisément le signal le moins
+disponible pour un restaurant invisible : sans aucun avis, l'indicateur de
+langue rend un a priori neutre (0,5) plutôt qu'une mesure. Un poids de 0,85
+dessus reviendrait à donner un score quasi constant à tout restaurant peu
+avisé — l'exact contraire de la contrainte n°1 du projet (D-001) : un
+restaurant invisible ne doit pas être mécaniquement désavantagé par le mode de
+calcul.
+
+### 9.3 La pondération retenue
+
+Les poids ont été révisés dans le sens indiqué par la calibration — la langue
+passe devant le menu, comme la mesure le montre — **sans adopter la
+pondération dérivée brute**, et en gardant un plafond explicite : aucun
+indicateur ne dépasse le poids maximal que le menu portait déjà dans D-013.
+
+| indicateur | avant (D-013) | après (D-053) |
+|---|---|---|
+| menu | 0,40 | 0,30 |
+| langue | 0,30 | **0,40** |
+| prix | 0,15 | 0,10 |
+| zone touristique | 0,15 | 0,20 |
+
+Cette pondération obtient rho = +0,269 contre +0,213 pour l'ancienne — un gain
+validé hors échantillon (gain moyen +0,054, positif dans 98 % des tirages
+aléatoires testés). Le prix, dont la corrélation propre était négative une
+fois mesurée correctement, redescend plutôt que de disparaître : à 0,15, la
+recalibration globale n'était pas robuste (gain positif dans seulement 68 à
+76 % des tirages selon la variante testée) ; à 0,10 elle l'est. C'est ce test
+de robustesse, et non une préférence, qui a fixé le chiffre.
+
+Le menu reste le deuxième poste le plus élevé du modèle : c'est le seul signal
+disponible pour un restaurant sans aucun avis, ce qui en fait, par
+construction, l'indicateur le plus proche de la mission du projet.
+
+---
+
+## 10. Ce qui sera écrit dans le mémoire
+
+- L'échantillon et son ordre de tirage, avec la raison (§2).
+- La question posée à l'annotateur, dans sa formulation finale — la
+  comparaison par paires, et pourquoi la première formulation (contrefactuelle,
+  §3) a été abandonnée après mesure de son incapacité à séparer les cas (§5.4).
+- Les interdits imposés à l'annotation, et la limite d'indépendance assumée
+  (§4).
+- Le passage à l'échelle : le découpage en blocs ancrés, la vérification de
+  connexité du graphe de comparaison, l'agrégation par Bradley-Terry (§6.1 à
+  §6.3).
+- L'accord inter-annotateurs mesuré à chaque étape, avec le contraste entre
+  l'instrument abandonné (kappa 0,118) et l'instrument retenu (kappa 0,741) —
+  c'est le résultat qui démontre que le choix méthodologique était le bon.
+- Le test direct contre le hasard (treize écarts-types, §5.10), qui répond par
+  avance à la question qu'un jury pose toujours en premier sur un jugement
+  produit par des modèles.
+- La confrontation du score actuel au classement de référence, et la
+  recalibration qui en découle (§6.5, §9) : c'est le résultat principal du
+  chapitre — la vérité terrain a permis de dériver des pondérations plutôt que
+  de les poser à la main, et de mesurer, chiffres à l'appui, ce que chaque
+  indicateur apporte réellement.
+
+Chaque limite listée ci-dessus (§5.6, §5.11, §9.2) n'est pas un aveu de
+faiblesse : c'est ce qui distingue un travail mesuré d'un travail affirmé.

@@ -346,6 +346,24 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token_hash)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)")
 
+    # --- Favoris (LS-refonte) — réservé aux abonnés, vérifié côté route ---
+    # `restaurant_id` n'a pas de clé étrangère vers `restaurants` : les deux
+    # tables sont alimentées par des pipelines différents (comptes vs
+    # collecte), et le reste du schéma ne contraint jamais ce lien non plus
+    # (`consultations.restaurant_id` fait de même) — un favori sur un
+    # restaurant retiré de la collecte reste une ligne valide, juste orpheline.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS favorites (
+            id {_AUTOINCREMENT_PK},
+            user_id INTEGER NOT NULL,
+            restaurant_id TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+            UNIQUE(user_id, restaurant_id)
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id)")
+
     _migrate(cursor)
 
     conn.commit()
@@ -417,6 +435,19 @@ def _migrate(cursor) -> None:
             # signalé. NULL pour tout compte créé par mot de passe.
             "oauth_provider": "TEXT",
             "oauth_google_id": "TEXT",
+            # Quota de recherches d'un compte non abonné (LS-refonte). Remis à
+            # zéro dès que `search_count_date` diffère d'aujourd'hui — voir
+            # `repository.check_and_count_search`, qui porte toute la logique
+            # de remise à zéro pour ne pas la dupliquer ailleurs.
+            "search_count_today": "INTEGER DEFAULT 0",
+            "search_count_date": "TEXT",
+            # Preuve de consentement aux CGU/politique de confidentialité
+            # (retour utilisateur : une case à cocher, obligatoire, à
+            # l'inscription). L'horodatage compte : « a accepté » ne suffit
+            # pas à documenter un consentement RGPD, « a accepté tel jour »
+            # si. NULL pour tout compte créé avant cette colonne — aucune
+            # inscription rétroactive à reconstituer.
+            "accepted_terms_at": "TIMESTAMP",
         },
         "menus": {
             "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit

@@ -18,10 +18,15 @@ export {
   BUDGET_MAX,
   BUDGET_PAS,
   RAYON_DEFAUT,
+  SCORE_MIN,
+  SCORE_MAX,
+  SCORE_PAS,
   FILTRES_VIDES,
   budgetSansPlafond,
   budgetActif,
+  scoreActif,
   libelleBudget,
+  libelleScore,
   compterFiltres,
 } from "./filtres.generated";
 

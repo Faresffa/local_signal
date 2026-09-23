@@ -1,6 +1,10 @@
 // apps/mobile/src/screens/CompteScreen.js
 //
-// Connexion, inscription, déconnexion (LS-40).
+// Connexion, inscription, déconnexion (LS-40) — et depuis ce chantier,
+// paramètres du compte : rôle, abonnement, mot de passe, droits RGPD. Miroir
+// fonctionnel de Profile.jsx + Settings.jsx côté web, réunis sur un seul
+// écran mobile (même raison qu'avant : chaque écran empilé de plus coûte un
+// retour sur téléphone, là où le web peut se permettre plusieurs pages).
 //
 // UN SEUL ÉCRAN POUR LES DEUX FORMULAIRES, là où le web en a deux. Ce n'est
 // pas une divergence de produit mais de support : sur le web, passer de
@@ -15,11 +19,12 @@
 
 import { useState } from "react";
 import {
-  Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView,
-  StyleSheet, Text, TextInput, View,
+  Alert, Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView,
+  Share, StyleSheet, Text, TextInput, View,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
+import { fetchMesDonnees, changerMotDePasse } from "../api";
 import { Button } from "../components/ui";
 import { useEntree } from "../lib/motion";
 import { radius, spacing, useColors } from "../theme";
@@ -29,6 +34,12 @@ import { radius, spacing, useColors } from "../theme";
 // compte directement n'a aucune raison affichée de créer un compte.
 const MOTIF_DEFAUT =
   "Laissez un avis, contribuez une carte, et retrouvez tout ça sur le site comme ici — c'est le même compte.";
+
+const ROLE_LABEL = {
+  admin: "Administrateur",
+  subscriber: "Abonné",
+  user: "Compte gratuit",
+};
 
 function Champ({ label, aide, erreur, ...props }) {
   const colors = useColors();
@@ -54,25 +65,51 @@ function Champ({ label, aide, erreur, ...props }) {
   );
 }
 
-export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack, motif }) {
+function Section({ titre, colors, children }) {
+  return (
+    <View style={[s.section, { borderTopColor: colors.border }]}>
+      <Text style={[s.sectionTitre, { color: colors.text }]}>{titre}</Text>
+      {children}
+    </View>
+  );
+}
+
+export default function CompteScreen({
+  user, onLogin, onSignup, onLogout, onBack, motif, modeDepart,
+  onGoToCGU, onGoToConfidentialite, onGoToPricing, onUnsubscribe, onDeleteAccount,
+}) {
   const colors = useColors();
   const entree = useEntree(60);
 
-  const [mode, setMode] = useState("login");
+  const [mode, setMode] = useState(modeDepart || "login");
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [motDePasse, setMotDePasse] = useState("");
+  const [accepteConditions, setAccepteConditions] = useState(false);
   const [erreurs, setErreurs] = useState({});
   const [envoi, setEnvoi] = useState(false);
+
+  // --- Mot de passe (compte connecté) ---
+  const [mdpActuel, setMdpActuel] = useState("");
+  const [mdpNouveau, setMdpNouveau] = useState("");
+  const [erreurMdp, setErreurMdp] = useState(null);
+  const [statutMdp, setStatutMdp] = useState("idle");
+
+  const [statutExport, setStatutExport] = useState("idle");
+  const [statutAbonnement, setStatutAbonnement] = useState("idle");
 
   const inscription = mode === "signup";
 
   function valider() {
     const e = {};
+    if (!nom.trim() && inscription) e.nom = "Le nom d'utilisateur est requis.";
     if (!email.includes("@")) e.email = "Adresse électronique invalide.";
     // Même seuil que côté serveur : autant prévenir avant l'envoi.
     if (inscription && motDePasse.length < 8) e.motDePasse = "8 caractères minimum.";
     if (!inscription && !motDePasse) e.motDePasse = "Mot de passe requis.";
+    if (inscription && !accepteConditions) {
+      e.conditions = "Vous devez accepter les CGU et la politique de confidentialité.";
+    }
     setErreurs(e);
     return Object.keys(e).length === 0;
   }
@@ -82,7 +119,10 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
     setEnvoi(true);
     try {
       if (inscription) {
-        await onSignup({ email: email.trim(), password: motDePasse, name: nom.trim() || undefined });
+        await onSignup({
+          email: email.trim(), password: motDePasse, name: nom.trim(),
+          acceptedTerms: accepteConditions,
+        });
       } else {
         await onLogin({ email: email.trim(), password: motDePasse });
       }
@@ -93,8 +133,73 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
     }
   }
 
+  async function soumettreMdp() {
+    setErreurMdp(null);
+    if (mdpNouveau.length < 8) {
+      setErreurMdp("Le nouveau mot de passe doit contenir au moins 8 caractères.");
+      return;
+    }
+    setStatutMdp("sending");
+    try {
+      await changerMotDePasse(mdpActuel, mdpNouveau);
+      setMdpActuel("");
+      setMdpNouveau("");
+      setStatutMdp("done");
+    } catch (err) {
+      setErreurMdp(err.message);
+      setStatutMdp("idle");
+    }
+  }
+
+  async function telechargerDonnees() {
+    setStatutExport("sending");
+    try {
+      const donnees = await fetchMesDonnees();
+      // Pas de systeme de fichiers ici : `Share` est le geste natif pour
+      // « faire sortir » une donnee de l'app (enregistrer, envoyer par
+      // e-mail, copier) sans dependance native supplementaire.
+      await Share.share({ message: JSON.stringify(donnees, null, 2) });
+    } catch (err) {
+      Alert.alert("Export impossible", err.message);
+    } finally {
+      setStatutExport("idle");
+    }
+  }
+
+  function confirmerSuppression() {
+    Alert.alert(
+      "Supprimer votre compte ?",
+      "Suppression définitive et immédiate : compte, avis, réservations. Impossible à annuler.",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await onDeleteAccount();
+            } catch (err) {
+              Alert.alert("Suppression impossible", err.message);
+            }
+          },
+        },
+      ],
+    );
+  }
+
+  async function toggleAbonnement() {
+    setStatutAbonnement("sending");
+    try {
+      await onUnsubscribe();
+    } finally {
+      setStatutAbonnement("idle");
+    }
+  }
+
   // --- Déjà connecté : l'écran devient celui du compte ---------------------
   if (user) {
+    const abonne = user.role === "subscriber";
+
     return (
       <ScrollView contentContainerStyle={s.page}>
         <Pressable onPress={onBack} style={s.back} accessibilityRole="button">
@@ -108,14 +213,90 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
           <View style={[s.bloc, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Text style={[s.nom, { color: colors.text }]}>{user.name || "Voyageur"}</Text>
             <Text style={[s.email, { color: colors.textMuted }]}>{user.email}</Text>
+            <View style={[s.roleBadge, { backgroundColor: colors.surfaceSunken }]}>
+              <Text style={[s.roleBadgeTexte, { color: colors.textMuted }]}>
+                {ROLE_LABEL[user.role] || ROLE_LABEL.user}
+              </Text>
+            </View>
           </View>
 
-          <Text style={[s.note, { color: colors.textFaint }]}>
-            Ce compte est le même sur le site et sur l'application. Vos avis et
-            vos contributions vous suivent d'un écran à l'autre.
-          </Text>
+          {user.role !== "admin" && (
+            <Section titre="Abonnement" colors={colors}>
+              <Text style={[s.sectionAide, { color: colors.textMuted }]}>
+                Formule actuelle : {ROLE_LABEL[user.role] || ROLE_LABEL.user}.
+              </Text>
+              <View style={{ marginTop: spacing.sm }}>
+                <Button
+                  title={
+                    statutAbonnement === "sending"
+                      ? "Résiliation…"
+                      : abonne ? "Résilier mon abonnement" : "Voir les formules"
+                  }
+                  variant={abonne ? "ghost" : "primary"}
+                  icon="credit-card"
+                  onPress={abonne ? toggleAbonnement : onGoToPricing}
+                  disabled={statutAbonnement === "sending"}
+                />
+              </View>
+            </Section>
+          )}
 
-          <View style={{ marginTop: spacing.lg }}>
+          <Section titre="Vos données" colors={colors}>
+            <View style={{ gap: spacing.sm }}>
+              <Button
+                title={statutExport === "sending" ? "Préparation…" : "Télécharger mes données"}
+                variant="ghost"
+                icon="download"
+                onPress={telechargerDonnees}
+                disabled={statutExport === "sending"}
+              />
+              <Text style={[s.sectionAide, { color: colors.textFaint }]}>
+                Compte, sessions, réservations et avis laissés — au format JSON.
+              </Text>
+              <Button
+                title="Supprimer mon compte"
+                variant="ghost"
+                icon="trash-2"
+                onPress={confirmerSuppression}
+              />
+            </View>
+          </Section>
+
+          <Section titre="Mot de passe" colors={colors}>
+            <View style={{ gap: spacing.md }}>
+              <Champ
+                label="Mot de passe actuel"
+                value={mdpActuel}
+                onChangeText={setMdpActuel}
+                secureTextEntry
+                autoComplete="current-password"
+              />
+              <Champ
+                label="Nouveau mot de passe"
+                value={mdpNouveau}
+                onChangeText={setMdpNouveau}
+                secureTextEntry
+                autoComplete="new-password"
+                aide="8 caractères minimum."
+              />
+              {erreurMdp && (
+                <Text style={[s.erreur, { color: colors.brand }]} accessibilityRole="alert">
+                  {erreurMdp}
+                </Text>
+              )}
+              {statutMdp === "done" && (
+                <Text style={[s.sectionAide, { color: colors.local }]}>Mot de passe modifié.</Text>
+              )}
+              <Button
+                title={statutMdp === "sending" ? "Enregistrement…" : "Changer mon mot de passe"}
+                icon="lock"
+                onPress={soumettreMdp}
+                disabled={statutMdp === "sending"}
+              />
+            </View>
+          </Section>
+
+          <View style={{ marginTop: spacing.xl }}>
             <Button title="Se déconnecter" variant="ghost" icon="log-out" onPress={onLogout} />
           </View>
         </Animated.View>
@@ -153,9 +334,10 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
         <View style={{ gap: spacing.md, marginTop: spacing.lg }}>
           {inscription && (
             <Champ
-              label="Nom (facultatif)"
+              label="Nom d'utilisateur"
               value={nom}
               onChangeText={setNom}
+              erreur={erreurs.nom}
               autoComplete="name"
               placeholder="Comment vous appeler"
             />
@@ -183,6 +365,38 @@ export default function CompteScreen({ user, onLogin, onSignup, onLogout, onBack
             autoCapitalize="none"
             autoComplete={inscription ? "new-password" : "current-password"}
           />
+
+          {inscription && (
+            <Pressable
+              onPress={() => setAccepteConditions((v) => !v)}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: accepteConditions }}
+              style={s.conditions}
+            >
+              <View
+                style={[
+                  s.checkbox,
+                  { borderColor: erreurs.conditions ? colors.brand : colors.border },
+                  accepteConditions && { backgroundColor: colors.brand, borderColor: colors.brand },
+                ]}
+              >
+                {accepteConditions && <Feather name="check" size={13} color={colors.onBrand} />}
+              </View>
+              <Text style={[s.conditionsTexte, { color: colors.textMuted }]}>
+                J'accepte les{" "}
+                <Text style={{ color: colors.brand, fontWeight: "600" }} onPress={onGoToCGU}>
+                  conditions générales d'utilisation
+                </Text>{" "}
+                et la{" "}
+                <Text style={{ color: colors.brand, fontWeight: "600" }} onPress={onGoToConfidentialite}>
+                  politique de confidentialité
+                </Text>.
+              </Text>
+            </Pressable>
+          )}
+          {erreurs.conditions && (
+            <Text style={[s.erreur, { color: colors.brand }]}>{erreurs.conditions}</Text>
+          )}
 
           {erreurs.global && (
             <Text style={[s.erreur, { color: colors.brand }]} accessibilityRole="alert">
@@ -248,6 +462,13 @@ const s = StyleSheet.create({
   aide: { fontSize: 12 },
   erreur: { fontSize: 12, lineHeight: 17 },
 
+  conditions: { flexDirection: "row", alignItems: "flex-start", gap: 9, minHeight: 44 },
+  checkbox: {
+    width: 20, height: 20, borderRadius: 5, borderWidth: 1.5,
+    alignItems: "center", justifyContent: "center", marginTop: 2,
+  },
+  conditionsTexte: { flex: 1, fontSize: 13, lineHeight: 18 },
+
   bloc: {
     marginTop: spacing.lg,
     padding: spacing.md,
@@ -257,7 +478,16 @@ const s = StyleSheet.create({
   },
   nom: { fontSize: 17, fontWeight: "700" },
   email: { fontSize: 14 },
+  roleBadge: {
+    alignSelf: "flex-start", marginTop: 6, paddingHorizontal: 9, paddingVertical: 3,
+    borderRadius: radius.sm,
+  },
+  roleBadgeTexte: { fontSize: 11, fontWeight: "700" },
   note: { marginTop: spacing.md, fontSize: 12, lineHeight: 17 },
+
+  section: { marginTop: spacing.xl, paddingTop: spacing.lg, borderTopWidth: 1 },
+  sectionTitre: { fontSize: 16, fontWeight: "700", marginBottom: spacing.sm },
+  sectionAide: { fontSize: 12, lineHeight: 17 },
 
   lien: { fontSize: 14, fontWeight: "600" },
 });

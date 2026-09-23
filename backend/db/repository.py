@@ -10,7 +10,7 @@ import json
 import math
 
 from backend.db.models import get_connection
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # =============================================================================
@@ -344,14 +344,17 @@ def get_consultations(limit: int = 20) -> list[dict]:
 # COMPTES UTILISATEURS / SESSIONS
 # =============================================================================
 
-def create_user(email: str, password_hash: str, name: str | None = None) -> int:
+def create_user(
+    email: str, password_hash: str, name: str | None = None,
+    accepted_terms_at: str | None = None,
+) -> int:
     """Crée un compte. Retourne son identifiant."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO users (email, password_hash, name)
-        VALUES (?, ?, ?)
-    """, (email.strip().lower(), password_hash, name))
+        INSERT INTO users (email, password_hash, name, accepted_terms_at)
+        VALUES (?, ?, ?, ?)
+    """, (email.strip().lower(), password_hash, name, accepted_terms_at))
     conn.commit()
     user_id = cursor.lastrowid
     conn.close()
@@ -374,6 +377,123 @@ def get_user_by_id(user_id: int) -> dict | None:
     row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
     conn.close()
     return dict(row) if row else None
+
+
+def set_password_hash(user_id: int, password_hash: str) -> None:
+    """Remplace le hash de mot de passe d'un compte (changement de mot de passe)."""
+    conn = get_connection()
+    conn.execute("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
+    conn.commit()
+    conn.close()
+
+
+def set_user_role(user_id: int, role: str) -> None:
+    """
+    Change le rôle d'un compte — "user", "subscriber" ou "admin".
+
+    DÉMONSTRATION, PAS UN ENCAISSEMENT (LS-refonte). Aucun processeur de
+    paiement n'est branché : cette fonction bascule le drapeau, elle ne fait
+    payer personne. Elle sert à `POST /api/subscribe`, qui existe pour tester
+    l'expérience abonné en attendant une vraie intégration (Stripe ou
+    équivalent — décision produit qui reste à prendre).
+    """
+    conn = get_connection()
+    conn.execute("UPDATE users SET role = ? WHERE id = ?", (role, user_id))
+    conn.commit()
+    conn.close()
+
+
+def check_and_count_search(user_id: int, quota: int) -> tuple[bool, int]:
+    """
+    Vérifie et consomme une recherche du quota quotidien d'un compte non
+    abonné (LS-refonte).
+
+    Remise à zéro AUTOMATIQUE dès que `search_count_date` n'est plus
+    aujourd'hui — pas de tâche planifiée à faire tourner à minuit, le
+    compteur se réinitialise tout seul à la prochaine recherche du jour.
+
+    Retourne `(autorisee, restantes)`. `autorisee` est False quand le quota
+    du jour est déjà consommé ; dans ce cas la recherche EN COURS n'est pas
+    comptée une deuxième fois si l'appelant retente.
+    """
+    aujourdhui = datetime.now(timezone.utc).date().isoformat()
+
+    conn = get_connection()
+    cur = conn.cursor()
+    row = cur.execute(
+        "SELECT search_count_today, search_count_date FROM users WHERE id = ?",
+        (user_id,),
+    ).fetchone()
+
+    compte = row["search_count_today"] or 0
+    date = row["search_count_date"]
+    if date != aujourdhui:
+        compte = 0  # nouveau jour : le compteur d'hier ne compte plus
+
+    if compte >= quota:
+        conn.close()
+        return False, 0
+
+    compte += 1
+    cur.execute(
+        "UPDATE users SET search_count_today = ?, search_count_date = ? WHERE id = ?",
+        (compte, aujourdhui, user_id),
+    )
+    conn.commit()
+    conn.close()
+    return True, max(0, quota - compte)
+
+
+# =============================================================================
+# FAVORIS — réservés aux abonnés (LS-refonte, vérifié côté route/main.py)
+# =============================================================================
+
+def add_favorite(user_id: int, restaurant_id: str) -> None:
+    """Ajoute un favori. Idempotent : refaire le même ajout ne duplique rien."""
+    conn = get_connection()
+    conn.execute(
+        "INSERT OR IGNORE INTO favorites (user_id, restaurant_id) VALUES (?, ?)",
+        (user_id, restaurant_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def remove_favorite(user_id: int, restaurant_id: str) -> None:
+    conn = get_connection()
+    conn.execute(
+        "DELETE FROM favorites WHERE user_id = ? AND restaurant_id = ?",
+        (user_id, restaurant_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_favorite_ids(user_id: int) -> set[str]:
+    """Identifiants favoris d'un compte — pour marquer les cartes côté front."""
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT restaurant_id FROM favorites WHERE user_id = ?", (user_id,)
+    ).fetchall()
+    conn.close()
+    return {r["restaurant_id"] for r in rows}
+
+
+def get_favorite_restaurants(user_id: int) -> list[dict]:
+    """
+    Restaurants favoris, même forme que `get_restaurants` (D-008 : pas de
+    recalcul, le Local Signal vient tel quel de la base).
+    """
+    ids = list(get_favorite_ids(user_id))
+    if not ids:
+        return []
+    conn = get_connection()
+    placeholders = ",".join("?" for _ in ids)
+    rows = conn.execute(
+        f"SELECT * FROM restaurants WHERE id IN ({placeholders})", ids
+    ).fetchall()
+    conn.close()
+    return [_row_to_restaurant(r) for r in rows]
 
 
 def get_user_by_google_id(google_id: str) -> dict | None:
@@ -485,7 +605,8 @@ def export_user_data(user_id: int) -> dict:
     """
     conn = get_connection()
     utilisateur = conn.execute(
-        "SELECT id, email, name, is_active, created_at FROM users WHERE id = ?",
+        "SELECT id, email, name, is_active, created_at, accepted_terms_at "
+        "FROM users WHERE id = ?",
         (user_id,),
     ).fetchone()
 
@@ -645,12 +766,14 @@ def get_user_reviews(restaurant_id: str, limit: int = 20) -> list[dict]:
     Avis laissés sur un restaurant, du plus récent au plus ancien.
 
     Le nom de l'auteur accompagne l'avis ; son adresse e-mail, jamais — elle
-    n'a aucune raison d'apparaître devant d'autres utilisateurs.
+    n'a aucune raison d'apparaître devant d'autres utilisateurs. `author_role`
+    accompagne aussi désormais (LS-refonte) : le badge "Abonné" affiché à
+    côté d'un avis (retour utilisateur) en dépend.
     """
     conn = get_connection()
     lignes = conn.execute("""
         SELECT v.id, v.rating, v.text, v.created_at, v.updated_at,
-               u.name AS author
+               u.name AS author, u.role AS author_role
           FROM user_reviews v
           LEFT JOIN users u ON u.id = v.user_id
          WHERE v.restaurant_id = ?
@@ -684,6 +807,47 @@ def delete_user_review(restaurant_id: str, user_id: int) -> bool:
     supprime = curseur.rowcount > 0
     conn.close()
     return supprime
+
+
+def delete_review_by_id(review_id: int) -> bool:
+    """
+    Retire N'IMPORTE QUEL avis par son identifiant (modération admin,
+    LS-refonte) — `delete_user_review` ne retire que le sien, volontairement
+    (D-029) ; celle-ci existe uniquement pour `require_admin`.
+    """
+    conn = get_connection()
+    curseur = conn.cursor()
+    curseur.execute("DELETE FROM user_reviews WHERE id = ?", (review_id,))
+    conn.commit()
+    supprime = curseur.rowcount > 0
+    conn.close()
+    return supprime
+
+
+# Champs qu'un admin peut corriger à la main (LS-refonte). Liste blanche
+# volontairement courte : la base est alimentée par la collecte, pas par la
+# saisie manuelle (CLAUDE.md §9) — ce n'est pas un CRUD générique, seulement
+# la correction des deux champs les plus visiblement faux au quotidien.
+CHAMPS_MODIFIABLES_ADMIN = {"opening_hours", "cuisine"}
+
+
+def update_restaurant_fields(restaurant_id: str, fields: dict) -> bool:
+    """Met à jour un sous-ensemble de `CHAMPS_MODIFIABLES_ADMIN` pour un restaurant."""
+    a_ecrire = {k: v for k, v in fields.items() if k in CHAMPS_MODIFIABLES_ADMIN}
+    if not a_ecrire:
+        return False
+
+    conn = get_connection()
+    curseur = conn.cursor()
+    colonnes = ", ".join(f"{k} = ?" for k in a_ecrire)
+    curseur.execute(
+        f"UPDATE restaurants SET {colonnes} WHERE id = ?",
+        (*a_ecrire.values(), restaurant_id),
+    )
+    conn.commit()
+    modifie = curseur.rowcount > 0
+    conn.close()
+    return modifie
 
 
 # =============================================================================

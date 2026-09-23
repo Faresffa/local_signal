@@ -16,19 +16,25 @@
 //   4. la raison, en français — « pourquoi celui-là ? »
 //
 // Les deux questions du jury trouvent leur réponse dans les deux premiers et
-// le dernier point, sans qu'un chiffre apparaisse.
+// le dernier point. Le verdict porte désormais aussi le score chiffré sur 10
+// (D-050, supersède D-009 : « aucun score visible par défaut ») — c'est
+// l'actif du projet, décision produit de le mettre en valeur plutôt que de
+// le cacher derrière un mot seul. Voir components/Verdict.jsx.
 //
-// LES ÉTOILES ONT ÉTÉ RETIRÉES. Elles affichaient `score / 20`, ce qui
-// reprenait le symbole de la note de popularité que le projet récuse (D-007)
-// et, sur données réelles, plaçait presque tout le monde à trois étoiles. Voir
-// `BarreSignal` pour le raisonnement complet.
+// LES ÉTOILES ONT ÉTÉ RETIRÉES DU CLASSEMENT. Elles affichaient `score / 20`,
+// ce qui reprenait le symbole de la note de popularité que le projet récuse
+// (D-007) et, sur données réelles, plaçait presque tout le monde à trois
+// étoiles. Le chiffre qui revient avec D-050 est le Local Signal, pas la
+// note — la distinction reste entière. Voir `BarreSignal` pour le
+// raisonnement complet.
 
-import { ForkKnife } from "@phosphor-icons/react";
+import { ForkKnife, Heart } from "@phosphor-icons/react";
 
 import BarreSignal from "./BarreSignal";
 import PhotoRestaurant from "./PhotoRestaurant";
+import Verdict from "./Verdict";
 
-import { useReveal } from "../lib/hooks";
+import { useFavori, useReveal } from "../lib/hooks";
 import { distance, verdict } from "../lib/display";
 
 // Décalage entre deux cartes. Assez pour qu'on perçoive une succession, assez
@@ -36,9 +42,19 @@ import { distance, verdict } from "../lib/display";
 const PAS_MS = 60;
 const DECALAGE_MAX_MS = 400;
 
-export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
+export default function RestaurantCard({
+  restaurant, onOpen, index = 0, user, onUnlock, onFavoriChange,
+}) {
   const delai = Math.min(index * PAS_MS, DECALAGE_MAX_MS);
   const ref = useReveal(delai);
+
+  // Le cœur n'apparaît que pour un compte connecté : un visiteur anonyme n'a
+  // pas encore de quoi enregistrer quoi que ce soit (LS-refonte, favoris).
+  const abonne = user?.role === "subscriber" || user?.role === "admin";
+  const { favori, toggle: toggleFavori } = useFavori(
+    restaurant.id, restaurant.favori, abonne, onUnlock,
+    onFavoriChange && ((v) => onFavoriChange(restaurant.id, v)),
+  );
 
   const v = verdict(restaurant.local_signal, restaurant.confidence);
   const dist = distance(restaurant.distance_m);
@@ -70,6 +86,23 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
         />
         {dist && <span className="card__distance">{dist}</span>}
         {premier && <span className="card__premier">Meilleur profil local</span>}
+
+        {user && (
+          <button
+            type="button"
+            className={`card__favori${favori ? " is-favori" : ""}`}
+            onClick={(e) => { e.stopPropagation(); toggleFavori(); }}
+            aria-pressed={favori}
+            aria-label={favori ? "Retirer des favoris" : "Ajouter aux favoris"}
+            title={
+              abonne
+                ? (favori ? "Retirer des favoris" : "Ajouter aux favoris")
+                : "S'abonner pour ajouter des favoris"
+            }
+          >
+            <Heart size={16} weight={favori ? "fill" : "regular"} />
+          </button>
+        )}
       </div>
 
       <div className="card__signal">
@@ -82,9 +115,11 @@ export default function RestaurantCard({ restaurant, onOpen, index = 0 }) {
           delai={delai + 180}
           label={`${v.label} — ${restaurant.name}`}
         />
-        <span className={`verdict verdict--${v.tone} card__verdict`}>
-          {v.label}
-        </span>
+        <Verdict
+          localSignal={restaurant.local_signal}
+          confidence={restaurant.confidence}
+          className="card__verdict"
+        />
       </div>
 
       <div className="card__body">

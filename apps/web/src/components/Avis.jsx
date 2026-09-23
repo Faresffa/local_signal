@@ -229,7 +229,18 @@ export default function Avis({ restaurantId, user, onSeConnecter }) {
           <div className="avis__auteur">
             <UserCircle size={26} weight="light" />
             <span>
-              <strong>{a.author || "Voyageur"}</strong>
+              <strong>
+                {a.author || "Voyageur"}
+                {/* Badge abonné (retour utilisateur : "avoir un badge devant
+                    l'avis") — purement d'affichage, ne pèse jamais sur le
+                    score (D-001), voir la mention en bas du bloc. */}
+                {(a.author_role === "subscriber" || a.author_role === "admin") && (
+                  <span className="avis__badgeAbonne" title="Membre abonné">
+                    <Star size={11} weight="fill" />
+                    Abonné
+                  </span>
+                )}
+              </strong>
               <span className="avis__date">{quand(a.updated_at || a.created_at)}</span>
             </span>
           </div>

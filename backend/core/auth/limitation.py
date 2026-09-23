@@ -45,6 +45,12 @@ FENETRE_CONNEXION_S = 15 * 60
 MAX_INSCRIPTIONS = 5
 FENETRE_INSCRIPTION_S = 60 * 60
 
+# Réservation : route entièrement publique, sans authentification — c'était
+# le seul formulaire du site sans aucune garde (retour utilisateur : anti-spam).
+# Un vrai visiteur ne réserve pas dix fois en une heure depuis la même adresse.
+MAX_RESERVATIONS = 10
+FENETRE_RESERVATION_S = 60 * 60
+
 # Garde-fou mémoire : au-delà, les clés les plus anciennes sont purgées. Sans
 # cela, un attaquant ferait grossir le dictionnaire indéfiniment en variant
 # l'email à chaque requête — la protection deviendrait elle-même l'attaque.
@@ -138,6 +144,14 @@ def garder_inscription(request: Request) -> None:
     """Garde sur l'inscription : par adresse uniquement — l'email est libre."""
     verifier(
         f"signup:ip:{adresse_client(request)}", MAX_INSCRIPTIONS, FENETRE_INSCRIPTION_S
+    )
+
+
+def garder_reservation(request: Request) -> None:
+    """Garde sur la réservation : par adresse — la route n'exige pas de compte."""
+    verifier(
+        f"reservation:ip:{adresse_client(request)}",
+        MAX_RESERVATIONS, FENETRE_RESERVATION_S,
     )
 
 

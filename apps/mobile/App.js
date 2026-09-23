@@ -14,9 +14,15 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
+import AboutScreen from "./src/screens/AboutScreen";
+import CGUScreen from "./src/screens/CGUScreen";
 import CompteScreen from "./src/screens/CompteScreen";
+import ConfidentialiteScreen from "./src/screens/ConfidentialiteScreen";
+import ContactScreen from "./src/screens/ContactScreen";
+import DonsScreen from "./src/screens/DonsScreen";
 import DetailScreen from "./src/screens/DetailScreen";
 import DiscoverScreen from "./src/screens/DiscoverScreen";
+import PricingScreen from "./src/screens/PricingScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
 import MotifCouverts from "./src/components/MotifCouverts";
@@ -87,7 +93,7 @@ export default function App() {
 
   const [tab, setTab] = useState("discover");
   const [stack, setStack] = useState(null); // { screen, restaurant }
-  const { user, login, signup, logout } = useCurrentUser();
+  const { user, login, signup, logout, unsubscribe, supprimerCompte } = useCurrentUser();
 
   function ouvrirFiche(restaurant) {
     setStack({ screen: "detail", restaurant });
@@ -113,6 +119,33 @@ export default function App() {
     setStack(stack?.depuis ? { screen: "detail", restaurant: stack.depuis } : null);
   }
 
+  // Pages légales : n'existent aujourd'hui que depuis la case à cocher de
+  // l'inscription (CompteScreen). Le retour rouvre le compte en gardant le
+  // mode « inscription » — sans `modeDepart`, CompteScreen repartirait sur
+  // « connexion » et l'utilisateur perdrait ce qu'il avait commencé à remplir.
+  function ouvrirLegal(page) {
+    setStack({ screen: page });
+  }
+
+  function ouvrirPricing() {
+    setStack({ screen: "pricing" });
+  }
+
+  // Filtre premium verrouillé (D-050) : un compte déjà connecté va direct à
+  // l'abonnement, un visiteur doit d'abord créer un compte — même logique
+  // que `demanderDeverrouillage` côté web (App.jsx).
+  function demanderDeverrouillage() {
+    if (user) {
+      ouvrirPricing();
+    } else {
+      setStack({
+        screen: "compte",
+        modeDepart: "signup",
+        motif: "Un abonnement débloque le filtre de score et les restaurants favoris.",
+      });
+    }
+  }
+
   // Un écran empilé recouvre les onglets : on ne mélange pas une fiche et une
   // barre de navigation qui suggère qu'on est ailleurs.
   const contenu = stack ? (
@@ -120,11 +153,29 @@ export default function App() {
       <CompteScreen
         user={user}
         motif={stack.motif}
+        modeDepart={stack.modeDepart}
         onLogin={async (identifiants) => { await login(identifiants); fermerCompte(); }}
         onSignup={async (champs) => { await signup(champs); fermerCompte(); }}
         onLogout={async () => { await logout(); setStack(null); }}
         onBack={fermerCompte}
+        onGoToCGU={() => ouvrirLegal("cgu")}
+        onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
+        onGoToPricing={ouvrirPricing}
+        onUnsubscribe={unsubscribe}
+        onDeleteAccount={async () => { await supprimerCompte(); setStack(null); }}
       />
+    ) : stack.screen === "cgu" ? (
+      <CGUScreen
+        onBack={() => setStack({ screen: "compte", modeDepart: "signup" })}
+        onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
+      />
+    ) : stack.screen === "confidentialite" ? (
+      <ConfidentialiteScreen
+        onBack={() => setStack({ screen: "compte", modeDepart: "signup" })}
+        onGoToCGU={() => ouvrirLegal("cgu")}
+      />
+    ) : stack.screen === "pricing" ? (
+      <PricingScreen user={user} onBack={() => setStack({ screen: "compte" })} />
     ) : stack.screen === "detail" ? (
       <DetailScreen
         restaurant={stack.restaurant}
@@ -144,7 +195,12 @@ export default function App() {
       />
     )
   ) : tab === "discover" ? (
-    <DiscoverScreen onOpen={ouvrirFiche} user={user} onCompte={() => ouvrirCompte()} />
+    <DiscoverScreen
+      onOpen={ouvrirFiche}
+      user={user}
+      onCompte={() => ouvrirCompte()}
+      onUnlock={demanderDeverrouillage}
+    />
   ) : (
     <ScanScreen />
   );

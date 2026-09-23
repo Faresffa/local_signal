@@ -91,6 +91,19 @@ img {
   white-space: nowrap;
 }
 
+/* Piège à robots (Reserve.jsx) — hors écran plutôt que `display:none` : un
+   robot un peu plus attentif ignore les champs non affichés, mais beaucoup
+   moins vérifient s'ils sont dans le cadre visible. `aria-hidden` sur le
+   conteneur l'écarte aussi d'un lecteur d'écran. */
+.champ-piege {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* ==========================================================================
    Mise en page
    ========================================================================== */
@@ -244,6 +257,108 @@ img {
 
 @media (max-width: 640px) {
   .nav__link {
+    display: none;
+  }
+}
+
+/* Menu déroulant du compte (LS-refonte) — profil, favoris, paramètres,
+   déconnexion. Une seule affordance plutôt que trois liens de plus dans la
+   barre, qui n'aurait plus tenu sur une ligne. */
+.nav__profile {
+  position: relative;
+}
+
+.nav__profileBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition:
+    background var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease);
+}
+.nav__profileBtn:hover {
+  background: var(--color-surface-alt);
+}
+
+.nav__profileName {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Statut d'abonnement (retour utilisateur : "ça affiche s'il est abonné ou
+   pas") — même vocabulaire de pastille que .verdict, jamais un chiffre. */
+.nav__role {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+}
+.nav__role--subscriber,
+.nav__role--admin {
+  background: var(--color-local-soft);
+  color: var(--color-local);
+}
+
+.nav__profileCaret {
+  color: var(--color-text-muted);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.nav__profileBtn[aria-expanded="true"] .nav__profileCaret {
+  transform: rotate(180deg);
+}
+
+.nav__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 80;
+  min-width: 220px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+}
+
+.nav__dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  text-align: left;
+  transition: background var(--motion-fast) var(--motion-ease);
+}
+.nav__dropdownItem:hover {
+  background: var(--color-surface-alt);
+}
+.nav__dropdownItem--danger {
+  color: var(--color-tourist);
+}
+
+.nav__dropdownSep {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--color-border);
+}
+
+@media (max-width: 640px) {
+  .nav__profileName {
     display: none;
   }
 }
@@ -518,8 +633,16 @@ img {
   flex-wrap: wrap;
 }
 .results__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: var(--font-size-xs);
   color: var(--color-text-faint);
+  transition: color var(--motion-fast) var(--motion-ease);
+}
+.results__sort:hover,
+.results__sort[aria-expanded="true"] {
+  color: var(--color-text-muted);
 }
 
 /* Une seule colonne, toujours : le classement se lit du premier au dernier,
@@ -531,6 +654,21 @@ img {
   gap: var(--spacing-lg);
   grid-template-columns: 1fr;
   max-width: 640px;
+}
+
+/* Grille admin (LS-refonte) : ici on feuillette toute la base pour repérer
+   un problème, pas un classement à lire dans l'ordre — colonne unique
+   contre-indiquée, demande explicite de "3 par 3 ou 4 par 4". Pas de
+   max-width : la page admin peut occuper toute la largeur disponible. */
+.admin__grid {
+  max-width: none;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 720px) {
+  .admin__grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1100px) {
+  .admin__grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 /* ==========================================================================
@@ -639,6 +777,45 @@ img {
   box-shadow: var(--shadow-card);
 }
 
+/* Favori (LS-refonte) — coin bas-droit du visuel, symétrique à
+   .card__distance en bas-gauche. Visible pour tout compte connecté ; un
+   compte non abonné qui clique est redirigé vers l'abonnement plutôt que de
+   voir le bouton disparaître (retour utilisateur : "s'abonner pour ajouter
+   des favoris" — une invitation, pas un mur). */
+.card__favori {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text-muted);
+  transition:
+    color var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease);
+}
+.card__favori:hover {
+  color: var(--color-brand);
+  transform: scale(1.08);
+}
+.card__favori.is-favori {
+  color: var(--color-brand);
+}
+
+/* Même bouton, en fil normal (pas de superposition sur un visuel), pour la
+   fiche restaurant (Detail.jsx). */
+.card__favori--detail {
+  position: static;
+  background: var(--color-surface-alt);
+  box-shadow: none;
+}
+
 /* Résultat masqué à un visiteur non connecté (Discover.jsx). Générique par
    construction : pas de vraie photo/donnée à flouter (voir LockedCard.jsx). */
 .card--locked {
@@ -730,6 +907,14 @@ img {
 .verdict--unknown {
   background: var(--color-surface-sunken);
   color: var(--color-text-muted);
+}
+
+/* Le chiffre du Local Signal, à l'intérieur du badge (D-050, supersède
+   D-009). Plus gras que le mot qui le précède : c'est lui qu'on met en
+   avant, le mot donne le contexte de lecture. */
+.verdict__score {
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ==========================================================================
@@ -853,6 +1038,36 @@ img {
   font-size: var(--font-size-sm);
 }
 
+/* Pages légales (CGU.jsx, Confidentialite.jsx) — du texte à lire, pas une
+   fiche à parcourir : titres discrets, paragraphes espacés, largeur bornée
+   déjà fixée en ligne (72ch) pour rester lisible. */
+.legal__section {
+  margin-top: var(--spacing-xl);
+}
+.legal__section h2 {
+  font-family: "Outfit Variable", sans-serif;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 10px;
+}
+.legal__section p {
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+  margin-bottom: 10px;
+}
+.legal__section strong {
+  color: var(--color-text);
+}
+.legal__liste {
+  margin: 10px 0;
+  padding-left: 20px;
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+}
+.legal__liste li {
+  margin-bottom: 8px;
+}
+
 .factlist {
   margin-top: var(--spacing-lg);
   display: grid;
@@ -943,6 +1158,100 @@ img {
   font-size: var(--font-size-xs);
   color: var(--color-text-faint);
   line-height: var(--line-height-snug);
+}
+
+/* ==========================================================================
+   Abonnement (LS-refonte)
+   ==========================================================================
+   Deux cartes, comme le pricing de Claude : la gratuite et l'abonnée, celle
+   qui rapporte visuellement mise en avant (bordure de marque, badge), sans
+   fioriture au-delà. */
+
+.pricing__grid {
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: 1fr;
+  max-width: 720px;
+}
+@media (min-width: 640px) {
+  .pricing__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pricing__carte {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xl);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+.pricing__carte--vedette {
+  border-color: var(--color-brand);
+  box-shadow: var(--shadow-raised);
+}
+
+.pricing__badge {
+  position: absolute;
+  top: -12px;
+  right: var(--spacing-lg);
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.pricing__nom {
+  font-size: var(--font-size-lg);
+}
+.pricing__prix {
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+}
+.pricing__periode {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+.pricing__note {
+  margin-top: 2px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+}
+
+.pricing__liste {
+  margin: var(--spacing-lg) 0;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  flex: 1;
+}
+.pricing__liste li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+}
+.pricing__coche {
+  color: var(--color-local);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.pricing__croix {
+  color: var(--color-text-faint);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.pricing__limite {
+  color: var(--color-text-faint);
 }
 
 /* ==========================================================================
@@ -1051,6 +1360,72 @@ img {
 .formfield__error {
   font-size: var(--font-size-xs);
   color: var(--color-brand);
+}
+
+/* Case à cocher d'acceptation des CGU (Signup.jsx) — texte multi-lignes
+   autour de la case, donc alignement en haut plutôt qu'au centre comme
+   .fbar__case, dont le texte tient sur une ligne. */
+.signup__conditions {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 4px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-snug);
+  cursor: pointer;
+}
+.signup__conditions input {
+  flex-shrink: 0;
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-brand);
+}
+
+/* Titre de bloc dans Settings.jsx (apparence / abonnement / mot de passe) —
+   trois sections indépendantes sur une même page, chacune a besoin d'un
+   repère visuel sans mériter un vrai <h1>. */
+.settings__section {
+  font-family: "Outfit Variable", sans-serif;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Bloc facturation dans Settings.jsx — maquette bloquée (voir le commentaire
+   dans le composant), même esprit visuel que .pricing__carte sans en
+   reprendre le style vedette : c'est de l'information, pas une offre. */
+.settings__facturation {
+  margin-top: 12px;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+.settings__facturation .btn {
+  margin-top: 10px;
+}
+.settings__facturation .formfield__hint {
+  margin-top: 8px;
+}
+
+.settings__ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: var(--font-size-sm);
+}
+.settings__ligne:not(:last-of-type) {
+  border-bottom: 1px solid var(--color-border);
+}
+.settings__ligne span:first-child {
+  color: var(--color-text-muted);
+}
+.settings__ligne span:last-child {
+  font-weight: var(--font-weight-medium);
 }
 
 .slots {
@@ -1216,6 +1591,73 @@ img {
 /* ==========================================================================
    Pied de page
    ========================================================================== */
+
+/* Bannière cookies (CookieBanner.jsx) — fixe en bas, au-dessus de tout,
+   sans bloquer le reste de la page (pas de voile derrière : rien de
+   critique ne dépend du choix, voir le composant). */
+.cookiebar {
+  position: fixed;
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  bottom: var(--spacing-md);
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  max-width: 640px;
+  margin-inline: auto;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+  animation: fbar-apparait var(--motion-base) var(--motion-ease);
+}
+.cookiebar__contenu {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+.cookiebar__icone {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+}
+.cookiebar__contenu p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-snug);
+}
+.cookiebar__boutons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .cookiebar {
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cookiebar {
+    animation: none;
+  }
+}
+
+.foot__liens {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+.foot__liens .linkbtn {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+}
+.foot__liens .linkbtn:hover {
+  color: var(--color-text-muted);
+}
 
 .foot {
   border-top: 1px solid var(--color-border);
@@ -1705,6 +2147,47 @@ img {
   border-color: var(--color-brand);
   color: var(--color-brand);
   background: var(--color-brand-soft);
+}
+
+/* Filtre réservé aux abonnés (retour utilisateur) — une couleur distincte de
+   l'état actif ordinaire (rouge) ET du gris par défaut, pour qu'on la
+   reconnaisse avant même de lire le libellé. Reprend le ton « profil mixte »
+   du verdict (index.css, .verdict--mixed) : déjà dans la palette, déjà associé
+   au Local Signal, pas une nouvelle couleur à justifier. */
+.fbar__pastille--abonne {
+  border-color: var(--color-mixed);
+  color: var(--color-mixed);
+  background: var(--color-mixed-soft);
+}
+.fbar__pastille--abonne:hover {
+  border-color: var(--color-mixed);
+  color: var(--color-mixed);
+}
+/* Une fois activé par un abonné, il rejoint le langage visuel commun des
+   filtres actifs (rouge) — la couleur distincte marque « réservé », pas
+   « activé », et .fbar__pastille[data-actif="true"] prend le relais grâce à
+   sa spécificité plus élevée. */
+
+/* Non abonné : le bouton reste cliquable, mais le clic ouvre l'abonnement
+   plutôt que de filtrer (voir Filtres.jsx) — jamais un mur, une invitation. */
+.fbar__pastille--verrouille {
+  opacity: 0.8;
+}
+.fbar__pastille--verrouille:hover {
+  opacity: 1;
+}
+
+/* Le mot « Abonnement », écrit sur la pastille plutôt que caché dans
+   l'infobulle au survol — invisible au doigt sur mobile, et une intention
+   qu'on doit lire, pas deviner (retour utilisateur). */
+.fbar__badgeAbonnement {
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-mixed) 22%, transparent);
+  font-size: 0.65rem;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* Le bouton d'accès à tout le reste : rempli, c'est l'ancre de la barre. */
@@ -2489,9 +2972,26 @@ img {
   color: var(--color-text-muted);
 }
 .avis__auteur strong {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--color-text);
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Badge abonné devant un avis (retour utilisateur : "avoir un badge devant
+   l'avis") — purement d'affichage, voir .avis__mention plus bas : ces avis
+   ne pèsent jamais sur le score (D-001). */
+.avis__badgeAbonne {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-local-soft);
+  color: var(--color-local);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
 }
 

@@ -43,7 +43,7 @@ async function request(path, options) {
 export async function fetchRestaurants({
   lat, lng, radius = 2000, cuisines, limit = 24,
   budgetMin,
-  budgetMax, ouvert, reservation, avecCarte,
+  budgetMax, ouvert, reservation, avecCarte, scoreMin, scoreMax,
 }) {
   const query = new URLSearchParams({ lat, lng, radius, limit });
   if (cuisines?.length) query.set("cuisines", cuisines.join(","));
@@ -60,6 +60,12 @@ export async function fetchRestaurants({
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");
+  // Réservés aux abonnés — le serveur les ignore pour les autres
+  // (backend/main.py), les envoyer sans effet n'expose rien.
+  // Score : converti de l'échelle d'affichage (0–10) vers celle du Local
+  // Signal stocké en base (0–100) — voir packages/shared/filtres.js.
+  if (scoreMin != null && scoreMin > 0) query.set("score_min", scoreMin * 10);
+  if (scoreMax != null && scoreMax < 10) query.set("score_max", scoreMax * 10);
   // `credentials: "include"` est indispensable : sans lui le cookie de
   // session ne part jamais, et l'API ne peut jamais distinguer un visiteur
   // connecté d'un anonyme (elle appliquerait alors toujours la limite des
@@ -88,6 +94,24 @@ export async function fetchAdminRestaurants({ limit = 50, offset = 0, q } = {}) 
 
 export async function fetchAdminRestaurant(id) {
   return request(`/api/admin/restaurants/${encodeURIComponent(id)}`, {
+    credentials: "include",
+  });
+}
+
+/** Corrige les horaires et/ou le type de cuisine (`require_admin` côté API). */
+export async function updateAdminRestaurant(id, fields) {
+  return request(`/api/admin/restaurants/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(fields),
+  });
+}
+
+/** Retire n'importe quel avis (modération) — pas seulement le sien. */
+export async function deleteAdminAvis(avisId) {
+  return request(`/api/admin/avis/${avisId}`, {
+    method: "DELETE",
     credentials: "include",
   });
 }
@@ -140,12 +164,12 @@ export function photoUrl(restaurantId) {
 // n'envoie ni ne stocke ce cookie (fetch ne le fait jamais par défaut sur une
 // requête cross-origin).
 
-export async function signup({ email, password, name }) {
+export async function signup({ email, password, name, acceptedTerms }) {
   return request("/api/auth/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ email, password, name }),
+    body: JSON.stringify({ email, password, name, accepted_terms: acceptedTerms }),
   });
 }
 
@@ -174,6 +198,63 @@ export async function fetchMe() {
   } catch {
     return null;
   }
+}
+
+/** Démonstration, pas un paiement réel (voir backend/main.py). */
+export async function subscribe() {
+  return request("/api/subscribe", { method: "POST", credentials: "include" });
+}
+
+// --- Droits RGPD (LS-29, LS-39) — accès, portabilité, effacement ---
+//
+// L'endpoint existait déjà côté API, jamais relié à l'interface : les droits
+// n'étaient exerçables qu'en ligne de commande. Voir Settings.jsx.
+
+/** Toutes les données rattachées au compte connecté (droit d'accès + portabilité). */
+export async function fetchMesDonnees() {
+  return request("/api/auth/mes-donnees", { credentials: "include" });
+}
+
+/** Efface définitivement le compte connecté. Irréversible. */
+export async function supprimerCompte() {
+  return request("/api/auth/compte", { method: "DELETE", credentials: "include" });
+}
+
+export async function unsubscribe() {
+  return request("/api/subscribe/annuler", { method: "POST", credentials: "include" });
+}
+
+/** Lève une erreur `status === 401` si le mot de passe actuel est incorrect. */
+export async function changerMotDePasse(motDePasseActuel, nouveauMotDePasse) {
+  return request("/api/auth/mot-de-passe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      mot_de_passe_actuel: motDePasseActuel,
+      nouveau_mot_de_passe: nouveauMotDePasse,
+    }),
+  });
+}
+
+// --- Favoris (réservés aux comptes abonnés, backend/main.py::_require_abonne) ---
+
+export async function fetchFavoris() {
+  return request("/api/favoris", { credentials: "include" });
+}
+
+export async function addFavori(restaurantId) {
+  return request(`/api/favoris/${encodeURIComponent(restaurantId)}`, {
+    method: "POST",
+    credentials: "include",
+  });
+}
+
+export async function removeFavori(restaurantId) {
+  return request(`/api/favoris/${encodeURIComponent(restaurantId)}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
 }
 
 // --- Avis laissés par nos utilisateurs (D-039) ---

@@ -17,6 +17,16 @@ import { FILTRES_VIDES, RAYON_DEFAUT } from "./lib/filtres";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Admin from "./pages/Admin";
+import Pricing from "./pages/Pricing";
+import Profile from "./pages/Profile";
+import Favoris from "./pages/Favoris";
+import Settings from "./pages/Settings";
+import CGU from "./pages/CGU";
+import Confidentialite from "./pages/Confidentialite";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Dons from "./pages/Dons";
+import CookieBanner from "./components/CookieBanner";
 import { useCurrentUser } from "./lib/auth";
 
 // Transition de vue native (Chromium/Safari récents) entre deux écrans de
@@ -53,7 +63,9 @@ export default function App() {
   // sinon il doit refaire sa recherche, retrouver le restaurant, et le geste
   // qu'il voulait faire est oublié en chemin.
   const [retour, setRetour] = useState("discover");
-  const { user, login, signup, logout } = useCurrentUser();
+  const {
+    user, login, signup, logout, subscribe, unsubscribe, supprimerCompte,
+  } = useCurrentUser();
 
   // Chaque changement d'écran repart du haut : sans cela on arrive au milieu
   // d'une fiche après avoir fait défiler une longue liste.
@@ -94,8 +106,27 @@ export default function App() {
     });
   }
 
+  // Pages légales : accessibles depuis n'importe où (pied de page, case à
+  // cocher de l'inscription), avec un vrai retour à l'écran d'origine —
+  // pas systématiquement l'accueil.
+  function ouvrirLegal(nom) {
+    withTransition(() => {
+      setRetour(page);
+      setPage(nom);
+    });
+  }
+
   function naviguer(nextPage) {
     withTransition(() => setPage(nextPage));
+  }
+
+  // Un visiteur non connecté doit d'abord créer un compte ; un compte déjà
+  // connecté mais non abonné n'a plus besoin que de ça — inutile de lui
+  // redemander un compte qu'il a déjà (LS-refonte : la limite se lève à
+  // l'abonnement, plus à la simple connexion).
+  function demanderDeverrouillage() {
+    setRetour(page);
+    naviguer(user ? "pricing" : "signup");
   }
 
   return (
@@ -114,7 +145,7 @@ export default function App() {
               lieu={lieu}
               onLieuChange={setLieu}
               user={user}
-              onUnlock={() => naviguer("signup")}
+              onUnlock={demanderDeverrouillage}
             />
           )}
 
@@ -125,6 +156,7 @@ export default function App() {
               onReserve={openReserve}
               user={user}
               onSeConnecter={demanderConnexion}
+              onUnlock={demanderDeverrouillage}
             />
           )}
 
@@ -154,19 +186,91 @@ export default function App() {
               onSignup={async (fields) => { await signup(fields); naviguer(retour); }}
               onGoToLogin={() => naviguer("login")}
               onBack={() => naviguer(retour)}
+              onGoToCGU={() => ouvrirLegal("cgu")}
+              onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
             />
           )}
 
           {page === "admin" && (
             <Admin user={user} onBack={() => naviguer("discover")} />
           )}
+
+          {page === "pricing" && (
+            <Pricing
+              user={user}
+              onAbonner={async () => { await subscribe(); naviguer(retour); }}
+              onBack={() => naviguer(retour)}
+            />
+          )}
+
+          {page === "profil" && user && (
+            <Profile
+              user={user}
+              onBack={() => naviguer("discover")}
+              onGoToSettings={() => naviguer("settings")}
+            />
+          )}
+
+          {page === "favoris" && (
+            <Favoris user={user} onOpen={openDetail} onUnlock={demanderDeverrouillage} />
+          )}
+
+          {page === "settings" && user && (
+            <Settings
+              user={user}
+              onBack={() => naviguer("discover")}
+              onGoToPricing={() => naviguer("pricing")}
+              onUnsubscribe={unsubscribe}
+              onDeleteAccount={async () => {
+                await supprimerCompte();
+                naviguer("discover");
+              }}
+            />
+          )}
+
+          {page === "cgu" && (
+            <CGU
+              onBack={() => naviguer(retour)}
+              onGoToConfidentialite={() => naviguer("confidentialite")}
+            />
+          )}
+
+          {page === "confidentialite" && (
+            <Confidentialite
+              onBack={() => naviguer(retour)}
+              onGoToCGU={() => naviguer("cgu")}
+            />
+          )}
+
+          {page === "about" && <About onBack={() => naviguer(retour)} />}
+          {page === "contact" && <Contact onBack={() => naviguer(retour)} />}
+          {page === "dons" && <Dons onBack={() => naviguer(retour)} />}
         </div>
       </main>
 
       <footer className="foot shell">
-        <span>Local Signal, mémoire HETIC</span>
-        <span>Données des lieux : OpenStreetMap</span>
+        <span>Local Signal</span>
+        <span className="foot__liens">
+          <button type="button" className="linkbtn" onClick={() => ouvrirLegal("about")}>
+            À propos
+          </button>
+          <button type="button" className="linkbtn" onClick={() => ouvrirLegal("contact")}>
+            Contact
+          </button>
+          <button type="button" className="linkbtn" onClick={() => ouvrirLegal("dons")}>
+            Faire un don
+          </button>
+          <button type="button" className="linkbtn" onClick={() => ouvrirLegal("cgu")}>
+            CGU
+          </button>
+          <button type="button" className="linkbtn" onClick={() => ouvrirLegal("confidentialite")}>
+            Confidentialité
+          </button>
+          <span>Données des lieux : OpenStreetMap</span>
+        </span>
       </footer>
+
+      <CookieBanner onOpenConfidentialite={() => ouvrirLegal("confidentialite")} />
     </div>
   );
 }

@@ -80,6 +80,11 @@ class ReservationRequest(BaseModel):
     num_persons: int = 2
     date: str
     time_slot: str
+    # Piège à robots (retour utilisateur : anti-spam) : un champ que
+    # Reserve.jsx cache visuellement, mais qu'un robot qui remplit tous les
+    # champs d'un formulaire renseigne quand même. Un humain ne le voit
+    # jamais, donc ne le remplit jamais.
+    site_web: Optional[str] = None
 
 
 class ReservationResponse(BaseModel):
@@ -94,11 +99,20 @@ class SignupRequest(BaseModel):
     email: str
     password: str
     name: Optional[str] = None
+    # Case à cocher obligatoire (retour utilisateur), preuve de consentement
+    # RGPD aux CGU/politique de confidentialité — voir `accepted_terms_at`
+    # dans backend/db/models.py.
+    accepted_terms: bool = False
 
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+
+class PasswordChangeRequest(BaseModel):
+    mot_de_passe_actuel: str
+    nouveau_mot_de_passe: str
 
 
 class UserResponse(BaseModel):
@@ -141,6 +155,11 @@ def list_restaurants(
     ouvert: bool = Query(False, description="Uniquement ceux ouverts maintenant"),
     reservation: bool = Query(False, description="Uniquement ceux qui acceptent les reservations"),
     avec_carte: bool = Query(False, description="Uniquement ceux dont la carte a ete lue"),
+    # Réservé aux abonnés (retour utilisateur) — silencieusement ignoré
+    # pour les autres, voir plus bas. Le filtre reste affiché à tout le
+    # monde côté interface, seule son activation est verrouillée (D-050).
+    score_min: Optional[float] = Query(None, description="Local Signal minimum, 0-100 (reserve aux abonnes)"),
+    score_max: Optional[float] = Query(None, description="Local Signal maximum, 0-100 (reserve aux abonnes)"),
     limit: int = Query(50, description="Nombre maximum de résultats"),
     user: Optional[dict] = Depends(get_current_user_optional),
 ):
@@ -153,6 +172,37 @@ def list_restaurants(
     `lat` et `lng` sont OBLIGATOIRES : pas de coordonnées par défaut, le projet
     doit fonctionner dans n'importe quelle ville (CLAUDE.md §8).
     """
+    # QUOTA DE RECHERCHES (LS-refonte) : un compte connecté non abonné a un
+    # nombre de recherches limité par jour, pas seulement un nombre de
+    # résultats limité par recherche — les deux limites sont distinctes et
+    # se cumulent. Un visiteur anonyme ou un abonné/admin n'est jamais
+    # concerné : le premier n'a pas de compteur auquel se rattacher, les
+    # deux autres n'ont pas de quota.
+    # Renvoyé dans la réponse (voir `return` en bas) pour que le front
+    # affiche le quota AVANT que la limite ne soit atteinte, pas seulement
+    # au moment où elle bloque (retour utilisateur : "doit être claire,
+    # affichée").
+    quota = None
+    if user and user.get("role") == "user":
+        autorisee, restantes = repo.check_and_count_search(
+            user["id"], config.SEARCHES_PER_DAY_NON_ABONNE
+        )
+        if not autorisee:
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Quota de {config.SEARCHES_PER_DAY_NON_ABONNE} recherches "
+                    "par jour atteint. Revenez demain, ou abonnez-vous pour "
+                    "des recherches illimitées."
+                ),
+            )
+        quota = {"restantes": restantes, "limite": config.SEARCHES_PER_DAY_NON_ABONNE}
+
+    # Calculé ici, réutilisé plus bas pour la limite de résultats, les
+    # filtres premium et le marquage des favoris — un seul calcul plutôt que
+    # plusieurs définitions divergentes du même rôle.
+    abonne = bool(user) and user.get("role") in ("subscriber", "admin")
+
     restaurants = repo.get_restaurants_near(lat, lng, radius_m=radius, limit=500)
 
     # --- Filtres (pertinence, dynamique) ---
@@ -181,6 +231,11 @@ def list_restaurants(
         ouvert_maintenant=ouvert,
         avec_reservation=reservation,
         avec_carte=avec_carte,
+        # Un compte non abonné qui forge la requête ne doit pas pouvoir
+        # activer ces filtres depuis l'URL — c'est un avantage de
+        # l'abonnement, pas une donnée à protéger (voir criteres.py::appliquer).
+        score_min=score_min if abonne else None,
+        score_max=score_max if abonne else None,
     )
 
     # --- Classement : Local Signal modulé par la proximité (D-008) ---
@@ -197,11 +252,29 @@ def list_restaurants(
 
     restaurants.sort(key=lambda r: r["scoring"]["score_final"], reverse=True)
 
-    # Visiteur non connecté : accès limité (D-0xx), premier avantage réel des
-    # comptes. Le tri a déjà eu lieu au-dessus — la limite retire des résultats,
-    # elle ne dégrade jamais leur ordre.
-    effective_limit = limit if user else min(limit, config.ANON_RESULTS_LIMIT)
-    return {"count": len(restaurants), "restaurants": restaurants[:effective_limit]}
+    # SEUL L'ABONNEMENT LÈVE LA LIMITE (LS-refonte) — pas la simple connexion.
+    # Avant, tout compte connecté voyait tout ; ça enlevait la seule raison de
+    # payer, puisque créer un compte suffisait déjà à tout débloquer. Le
+    # tri a déjà eu lieu au-dessus — la limite retire des résultats, elle ne
+    # dégrade jamais leur ordre. (`abonne` calculé plus haut.)
+    effective_limit = limit if abonne else min(limit, config.ANON_RESULTS_LIMIT)
+    resultats = restaurants[:effective_limit]
+
+    # Marque les favoris (LS-refonte) — un seul aller-retour base plutôt
+    # qu'un par carte : `get_favorite_ids` renvoie un ensemble, le marquage
+    # est local.
+    if abonne:
+        favoris = repo.get_favorite_ids(user["id"])
+        for r in resultats:
+            r["favori"] = r["id"] in favoris
+
+    return {
+        "count": len(restaurants),
+        "restaurants": resultats,
+        # `None` pour tout le monde sauf un compte non abonné — c'est
+        # justement le seul cas où un quota de recherches existe.
+        "quota": quota,
+    }
 
 
 def _build_scoring(
@@ -287,6 +360,8 @@ def get_restaurant(
     resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
     resto["menu"] = repo.get_latest_menu(restaurant_id)
     resto["ouvert_maintenant"] = est_ouvert(resto.get("opening_hours"))
+    if user and user.get("role") in ("subscriber", "admin"):
+        resto["favori"] = restaurant_id in repo.get_favorite_ids(user["id"])
 
     # --- Detail du calcul, pour inspection (D-034) ---
     #
@@ -432,10 +507,8 @@ def admin_get_restaurant(restaurant_id: str, admin: dict = Depends(require_admin
     """
     Fiche complète d'un restaurant : tous les champs bruts de la base, le
     détail du calcul (toujours, indépendamment de `EXPOSE_DETAIL_CALCUL`), le
-    dernier menu lu et les métadonnées des cartes soumises.
-
-    Lecture seule pour l'instant — la modification (LS-refonte, prochaine
-    étape) passera par une route à part plutôt que de surcharger celle-ci.
+    dernier menu lu, les photos de carte, les avis et les métadonnées des
+    cartes soumises.
     """
     resto = repo.get_restaurant(restaurant_id)
     if not resto:
@@ -447,7 +520,50 @@ def admin_get_restaurant(restaurant_id: str, admin: dict = Depends(require_admin
     resto["menu"] = repo.get_latest_menu(restaurant_id)
     resto["detail_calcul"] = _detail_calcul(resto)
     resto["cartes"] = repo.get_menu_submissions(restaurant_id)
+    resto["avis"] = repo.get_user_reviews(restaurant_id, limit=100)
     return resto
+
+
+class AdminUpdateRestaurantRequest(BaseModel):
+    opening_hours: Optional[str] = None
+    cuisine: Optional[str] = None
+
+
+@app.patch("/api/admin/restaurants/{restaurant_id}")
+def admin_update_restaurant(
+    restaurant_id: str,
+    req: AdminUpdateRestaurantRequest,
+    admin: dict = Depends(require_admin),
+):
+    """
+    Corrige les horaires ou le type de cuisine d'un restaurant.
+
+    Volontairement restreint à `CHAMPS_MODIFIABLES_ADMIN`
+    (backend/db/repository.py) : ce n'est pas un CRUD générique sur la base,
+    seulement la correction des deux champs les plus visiblement faux au
+    quotidien. Étendre la liste se fait là, pas en assouplissant cette route.
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+
+    champs = {k: v for k, v in req.model_dump().items() if v is not None}
+    if not champs:
+        raise HTTPException(status_code=400, detail="Rien à modifier.")
+
+    repo.update_restaurant_fields(restaurant_id, champs)
+    return repo.get_restaurant(restaurant_id)
+
+
+@app.delete("/api/admin/avis/{avis_id}")
+def admin_delete_avis(avis_id: int, admin: dict = Depends(require_admin)):
+    """
+    Retire n'importe quel avis (modération) — `DELETE /api/restaurant/{id}/avis`
+    ne retire que celui de l'appelant, délibérément (D-029) ; cette route-ci
+    existe pour contourner cette limite, réservée à `require_admin`.
+    """
+    if not repo.delete_review_by_id(avis_id):
+        raise HTTPException(status_code=404, detail="Avis introuvable.")
+    return {"message": "Avis supprimé."}
 
 
 @app.get("/api/restaurant/{restaurant_id}/photo")
@@ -569,17 +685,32 @@ def signup(req: SignupRequest, request: Request, response: Response):
     limitation.garder_inscription(request)
 
     email = req.email.strip().lower()
+    nom = (req.name or "").strip()
     if not _EMAIL_RE.match(email):
         raise HTTPException(status_code=400, detail="Adresse email invalide.")
+    # Nom d'utilisateur obligatoire (LS-refonte) : c'est lui qui s'affiche
+    # partout (avis, en-tête) — un compte sans nom retombait sur l'email,
+    # que D-039 interdit justement de montrer à d'autres utilisateurs.
+    if not nom:
+        raise HTTPException(status_code=400, detail="Le nom d'utilisateur est requis.")
     if len(req.password) < 8:
         raise HTTPException(
             status_code=400, detail="Le mot de passe doit contenir au moins 8 caractères."
+        )
+    # Case à cocher obligatoire (retour utilisateur) — sans preuve de
+    # consentement, les CGU/politique de confidentialité ne sont que du
+    # texte affiché, jamais accepté.
+    if not req.accepted_terms:
+        raise HTTPException(
+            status_code=400,
+            detail="Vous devez accepter les CGU et la politique de confidentialité.",
         )
     if repo.get_user_by_email(email):
         raise HTTPException(status_code=409, detail="Cet email est déjà utilisé.")
 
     user_id = repo.create_user(
-        email=email, password_hash=security.hash_password(req.password), name=req.name
+        email=email, password_hash=security.hash_password(req.password), name=nom,
+        accepted_terms_at=datetime.now(timezone.utc).isoformat(),
     )
     jeton = _issue_session(response, user_id)
     return _to_user_response(
@@ -760,6 +891,97 @@ def me(user: dict = Depends(get_current_user)):
 
 
 # =============================================================================
+# ABONNEMENT — DÉMONSTRATION, AUCUN PAIEMENT RÉEL (LS-refonte)
+# =============================================================================
+#
+# CE QUE CES DEUX ROUTES NE SONT PAS : un encaissement. Rien ici ne parle à un
+# processeur de paiement — elles ne font que basculer `role` entre "user" et
+# "subscriber" pour que l'expérience abonné (Pricing.jsx, la limite levée sur
+# /api/restaurants) soit testable avant qu'une vraie intégration (Stripe ou
+# équivalent) existe. Le jour où elle existera, ces routes seront le point
+# qu'un webhook de paiement confirmé appellera — pas remplacées, complétées.
+
+@app.post("/api/subscribe", response_model=UserResponse)
+def subscribe(user: dict = Depends(get_current_user)):
+    """Passe le compte connecté en `role = "subscriber"`. Démonstration."""
+    if user.get("role") == "admin":
+        return _to_user_response(user)
+    repo.set_user_role(user["id"], "subscriber")
+    return _to_user_response(repo.get_user_by_id(user["id"]))
+
+
+@app.post("/api/subscribe/annuler", response_model=UserResponse)
+def unsubscribe(user: dict = Depends(get_current_user)):
+    """Repasse le compte connecté en `role = "user"`. Démonstration."""
+    if user.get("role") == "admin":
+        return _to_user_response(user)
+    repo.set_user_role(user["id"], "user")
+    return _to_user_response(repo.get_user_by_id(user["id"]))
+
+
+@app.post("/api/auth/mot-de-passe")
+def changer_mot_de_passe(req: PasswordChangeRequest, user: dict = Depends(get_current_user)):
+    """
+    Change le mot de passe du compte connecté.
+
+    Fonctionne aussi pour un compte ouvert par Google : son mot de passe
+    actuel est un secret aléatoire que personne ne connaît (backend/main.py,
+    `google_callback`), donc `mot_de_passe_actuel` échouera toujours pour lui
+    tant qu'il n'en a pas déjà choisi un — ce qui est le comportement voulu,
+    pas un bug : personne ne doit pouvoir changer un mot de passe qu'il ne
+    connaît pas déjà.
+    """
+    if not security.verify_password(req.mot_de_passe_actuel, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Mot de passe actuel incorrect.")
+    if len(req.nouveau_mot_de_passe) < 8:
+        raise HTTPException(
+            status_code=400, detail="Le nouveau mot de passe doit contenir au moins 8 caractères."
+        )
+    repo.set_password_hash(user["id"], security.hash_password(req.nouveau_mot_de_passe))
+    return {"message": "Mot de passe modifié."}
+
+
+# =============================================================================
+# FAVORIS — réservés aux abonnés (LS-refonte)
+# =============================================================================
+
+def _require_abonne(user: dict) -> None:
+    if user.get("role") not in ("subscriber", "admin"):
+        raise HTTPException(
+            status_code=403, detail="Réservé aux comptes abonnés."
+        )
+
+
+@app.get("/api/favoris")
+def lister_favoris(user: dict = Depends(get_current_user)):
+    """Restaurants favoris du compte connecté, même forme qu'une recherche."""
+    _require_abonne(user)
+    favoris = repo.get_favorite_restaurants(user["id"])
+    for r in favoris:
+        r["scoring"] = _scoring_sans_position(r)
+        r["cuisine_label"] = cuisine_label(r.get("cuisine"))
+        r["ouvert_maintenant"] = est_ouvert(r.get("opening_hours"))
+        r["favori"] = True
+    return {"restaurants": favoris}
+
+
+@app.post("/api/favoris/{restaurant_id}")
+def ajouter_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
+    _require_abonne(user)
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+    repo.add_favorite(user["id"], restaurant_id)
+    return {"message": "Ajouté aux favoris."}
+
+
+@app.delete("/api/favoris/{restaurant_id}")
+def retirer_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
+    _require_abonne(user)
+    repo.remove_favorite(user["id"], restaurant_id)
+    return {"message": "Retiré des favoris."}
+
+
+# =============================================================================
 # DROITS DE LA PERSONNE — RGPD (LS-29)
 # =============================================================================
 #
@@ -807,8 +1029,26 @@ def supprimer_compte(request: Request, response: Response,
 
 
 @app.post("/api/reservations", response_model=ReservationResponse)
-def create_reservation(req: ReservationRequest):
-    """Crée une nouvelle réservation."""
+def create_reservation(req: ReservationRequest, request: Request):
+    """
+    Crée une nouvelle réservation.
+
+    Route publique, sans authentification — c'était le seul formulaire du
+    site sans aucune garde anti-spam (retour utilisateur). Deux protections,
+    comme sur l'inscription (LS-28) : une limite de débit par adresse, et un
+    piège à robots.
+    """
+    # Un robot qui remplit tout le formulaire touche ce champ ; un humain ne
+    # le voit jamais (Reserve.jsx) et ne le remplit donc jamais. On renvoie
+    # un succès de façade plutôt qu'une erreur, pour ne pas apprendre au
+    # robot à retirer ce champ précis la prochaine fois.
+    if (req.site_web or "").strip():
+        return ReservationResponse(
+            id=0, message=f"Réservation confirmée pour {req.user_name} à {req.restaurant_name}",
+        )
+
+    limitation.garder_reservation(request)
+
     reservation_id = repo.save_reservation(
         restaurant_id=req.restaurant_id,
         restaurant_name=req.restaurant_name,

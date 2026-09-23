@@ -32,9 +32,11 @@ import {
 import { Feather } from "@expo/vector-icons";
 
 import Budget from "./Budget";
+import ScoreRange from "./ScoreRange";
 import { radius, spacing, useColors } from "../theme";
 import {
   BUDGET_MAX, BUDGET_MIN, budgetActif, compterFiltres, FILTRES_VIDES, libelleBudget,
+  libelleScore, SCORE_MAX, SCORE_MIN, scoreActif,
 } from "../lib/filtres";
 
 function Pastille({ label, icone, actif, onPress, hint }) {
@@ -59,6 +61,38 @@ function Pastille({ label, icone, actif, onPress, hint }) {
       <Text style={[s.pastilleText, { color: actif ? colors.brand : colors.textMuted }]}>
         {label}
       </Text>
+    </Pressable>
+  );
+}
+
+// Filtre réservé aux abonnés (D-050) — toujours AFFICHÉ, seule l'activation
+// est verrouillée (§5 web, même principe). Couleur distincte (le ton
+// « mixte » du verdict, déjà dans la palette) plutôt que le contour de
+// marque des pastilles ordinaires, pour qu'on la reconnaisse avant de lire
+// le mot « Abonnement ».
+function PastilleAbonne({ label, actif, abonne, onPress }) {
+  const colors = useColors();
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{ selected: actif }}
+      style={[
+        s.pastille,
+        { borderColor: colors.mixed, backgroundColor: colors.mixedSoft },
+        actif && { backgroundColor: colors.brandSoft, borderColor: colors.brand },
+        !abonne && { opacity: 0.85 },
+      ]}
+    >
+      {!abonne && <Feather name="lock" size={12} color={colors.mixed} />}
+      <Text style={[s.pastilleText, { color: actif ? colors.brand : colors.mixed }]}>
+        {label}
+      </Text>
+      {!abonne && (
+        <View style={[s.badgeAbonnement, { backgroundColor: colors.mixed }]}>
+          <Text style={[s.badgeAbonnementText, { color: colors.onBrand }]}>ABONNEMENT</Text>
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -91,12 +125,15 @@ function Case({ coche, onChange, label, aide }) {
 
 export default function Filtres({
   valeurs, onChange, cuisines = [], nbResultats = null, chargement = false,
+  abonne = false, onUnlock,
 }) {
   const colors = useColors();
-  const { budgetMin, budgetMax, ouvert, reservation, avecCarte, cuisine } = valeurs;
+  const {
+    budgetMin, budgetMax, ouvert, reservation, avecCarte, cuisine, scoreMin, scoreMax,
+  } = valeurs;
 
   // `null` = fermée ; "tous" = panneau complet ; "cuisine" = liste des
-  // cuisines ; "budget" = fourchette de prix.
+  // cuisines ; "budget" = fourchette de prix ; "score" = fourchette de score.
   const [feuille, setFeuille] = useState(null);
   const [recherche, setRecherche] = useState("");
 
@@ -108,6 +145,13 @@ export default function Filtres({
 
   const changerBudget = (bas, haut) =>
     onChange({ ...valeurs, budgetMin: bas, budgetMax: haut });
+
+  const changerScore = (bas, haut) =>
+    onChange({ ...valeurs, scoreMin: bas, scoreMax: haut });
+
+  // Non abonné : un appui n'ouvre jamais la feuille, il redirige vers
+  // l'abonnement — même geste que la pastille verrouillée du web.
+  const ouvrirScore = () => (abonne ? setFeuille("score") : onUnlock?.());
 
   const cuisineLabel = cuisines.find((c) => c.value === cuisine)?.label;
 
@@ -179,6 +223,12 @@ export default function Filtres({
           hint="Restaurants dont la carte a été lue et analysée"
           onPress={() => modifier("avecCarte", !avecCarte)}
         />
+        <PastilleAbonne
+          label={libelleScore(scoreMin, scoreMax)}
+          actif={abonne && scoreActif(valeurs)}
+          abonne={abonne}
+          onPress={ouvrirScore}
+        />
       </ScrollView>
 
       <Modal
@@ -195,7 +245,40 @@ export default function Filtres({
             <View style={[s.trait, { backgroundColor: colors.borderStrong }]} />
           </View>
 
-          {feuille === "budget" ? (
+          {feuille === "score" ? (
+            <>
+              <Text style={[s.titre, { color: colors.text }]}>Score Local Signal</Text>
+              <View style={{ paddingHorizontal: spacing.lg }}>
+                <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
+              </View>
+              <View style={[s.pied, { borderTopColor: colors.border }]}>
+                <Pressable
+                  onPress={() => changerScore(SCORE_MIN, SCORE_MAX)}
+                  disabled={!scoreActif(valeurs)}
+                  accessibilityRole="button"
+                  style={s.effacer}
+                >
+                  <Text
+                    style={[
+                      s.effacerText,
+                      { color: colors.textMuted, opacity: scoreActif(valeurs) ? 1 : 0.4 },
+                    ]}
+                  >
+                    Tout le classement
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={fermer}
+                  accessibilityRole="button"
+                  style={[s.valider, { backgroundColor: colors.brand }]}
+                >
+                  <Text style={[s.validerText, { color: colors.onBrand }]}>
+                    {libelleValidation}
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          ) : feuille === "budget" ? (
             <>
               <Text style={[s.titre, { color: colors.text }]}>Budget</Text>
               <View style={{ paddingHorizontal: spacing.lg }}>
@@ -306,10 +389,26 @@ export default function Filtres({
                   aide="C'est le seul filtre où l'absence d'information écarte — parce qu'il porte justement sur cette présence."
                 />
 
+                <Text style={[s.groupe, { color: colors.textFaint }]}>RÉSERVÉ AUX ABONNÉS</Text>
+                {abonne ? (
+                  <>
+                    <Text style={[s.aide, { color: colors.textMuted, marginBottom: 6 }]}>
+                      Score Local Signal
+                    </Text>
+                    <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
+                  </>
+                ) : (
+                  <Pressable onPress={onUnlock} style={{ paddingVertical: 8 }}>
+                    <Text style={[s.aide, { color: colors.brand, fontWeight: "600" }]}>
+                      S'abonner pour filtrer directement sur le score.
+                    </Text>
+                  </Pressable>
+                )}
+
                 <Text style={[s.note, { color: colors.textFaint }]}>
                   Pas de filtre sur la note ni le nombre d'avis : ce serait
                   refaire le tri par popularité que ce produit existe pour
-                  éviter.
+                  éviter. Le Local Signal, lui, mesure l'inverse.
                 </Text>
               </ScrollView>
 
@@ -362,6 +461,12 @@ const s = StyleSheet.create({
     borderRadius: radius.pill,
   },
   pastilleText: { fontSize: 13, fontWeight: "500" },
+  badgeAbonnement: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.sm,
+  },
+  badgeAbonnementText: { fontSize: 9, fontWeight: "800", letterSpacing: 0.3 },
 
   tous: {
     flexDirection: "row",

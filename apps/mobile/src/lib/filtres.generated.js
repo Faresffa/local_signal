@@ -77,6 +77,19 @@ export function libelleBudget(min, max) {
  */
 export const RAYON_DEFAUT = 800;
 
+/**
+ * Fourchette du Local Signal, affichée sur 10 (D-050 : le score, jusqu'ici
+ * jamais montré par défaut — D-009, SUPERSÉDÉE — devient visible partout,
+ * l'actif du projet méritant d'être vu). Réservée aux comptes abonnés :
+ * l'API ignore `score_min`/`score_max` pour les autres (backend/main.py).
+ *
+ * Échelle 0–10 côté interface, convertie en 0–100 (l'échelle du Local Signal
+ * stocké en base) au moment de l'appel API — voir src/api.js, web et mobile.
+ */
+export const SCORE_MIN = 0;
+export const SCORE_MAX = 10;
+export const SCORE_PAS = 0.5;
+
 /** État initial, aussi utilisé par la réinitialisation. */
 export const FILTRES_VIDES = {
   budgetMin: BUDGET_MIN,
@@ -85,11 +98,24 @@ export const FILTRES_VIDES = {
   reservation: false,
   avecCarte: false,
   cuisine: null,
+  scoreMin: SCORE_MIN,
+  scoreMax: SCORE_MAX,
 };
 
 /** Le budget est-il réellement restreint, ou couvre-t-il toute l'échelle ? */
 export const budgetActif = (f) =>
   f.budgetMin > BUDGET_MIN || !budgetSansPlafond(f.budgetMax);
+
+/** La fourchette de score est-elle restreinte, ou couvre-t-elle tout le classement ? */
+export const scoreActif = (f) => f.scoreMin > SCORE_MIN || f.scoreMax < SCORE_MAX;
+
+/** Libellé de la fourchette de score, tel qu'affiché sur la pastille. */
+export function libelleScore(min, max) {
+  if (min <= SCORE_MIN && max >= SCORE_MAX) return "Score Local Signal";
+  if (min <= SCORE_MIN) return `Jusqu'à ${max.toFixed(1)}/10`;
+  if (max >= SCORE_MAX) return `${min.toFixed(1)}/10 et plus`;
+  return `${min.toFixed(1)} – ${max.toFixed(1)}/10`;
+}
 
 /** Nombre de filtres actifs, affiché sur le bouton « Tous les filtres ». */
 export function compterFiltres(f) {
@@ -98,6 +124,7 @@ export function compterFiltres(f) {
     (f.ouvert ? 1 : 0) +
     (f.reservation ? 1 : 0) +
     (f.avecCarte ? 1 : 0) +
-    (f.cuisine ? 1 : 0)
+    (f.cuisine ? 1 : 0) +
+    (scoreActif(f) ? 1 : 0)
   );
 }

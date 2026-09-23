@@ -29,6 +29,18 @@ export function verdict(localSignal, confidence = 1) {
   return { label: "Profil touristique", tone: "tourist" };
 }
 
+/**
+ * Le Local Signal, affiché sur 10.
+ *
+ * D-009 (« le score n'est jamais affiché par défaut ») est SUPERSÉDÉE par
+ * D-050 : c'est l'actif du projet, il doit se voir. `null` si le Local
+ * Signal est inconnu — mieux vaut l'absence de chiffre qu'un faux zéro.
+ */
+export function scoreSur10(localSignal) {
+  if (localSignal == null) return null;
+  return (localSignal / 10).toFixed(1).replace(".", ",");
+}
+
 /** Distance lisible : mètres en dessous d'un kilomètre, kilomètres au-delà. */
 export function distance(metres) {
   if (metres == null) return null;

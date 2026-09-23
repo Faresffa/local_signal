@@ -65,7 +65,7 @@ async function request(path, options = {}) {
  */
 export async function fetchRestaurants({
   lat, lng, radius = 2000, cuisines, budgetMin, budgetMax,
-  ouvert, reservation, avecCarte, limit = 30,
+  ouvert, reservation, avecCarte, scoreMin, scoreMax, limit = 30,
 }) {
   const query = new URLSearchParams({ lat, lng, radius, limit });
   if (cuisines?.length) query.set("cuisines", cuisines.join(","));
@@ -85,6 +85,10 @@ export async function fetchRestaurants({
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");
+  // Filtre premium (D-050), reserve aux abonnes — le serveur l'ignore pour
+  // les autres. Echelle 0-10 cote interface, convertie en 0-100.
+  if (scoreMin != null && scoreMin > 0) query.set("score_min", scoreMin * 10);
+  if (scoreMax != null && scoreMax < 10) query.set("score_max", scoreMax * 10);
 
   return request(`/api/restaurants?${query}`);
 }
@@ -149,11 +153,11 @@ const DEMANDE_JETON = {
   "X-Jeton-Session": "oui",
 };
 
-export async function signup({ email, password, name }) {
+export async function signup({ email, password, name, acceptedTerms }) {
   const user = await request("/api/auth/signup", {
     method: "POST",
     headers: DEMANDE_JETON,
-    body: JSON.stringify({ email, password, name }),
+    body: JSON.stringify({ email, password, name, accepted_terms: acceptedTerms }),
   });
   await poserJeton(user.token);
   return user;
@@ -250,4 +254,52 @@ export async function envoyerCarte(restaurantId, uri) {
 /** Combien de cartes ont été envoyées pour ce restaurant (métadonnées seules). */
 export async function fetchCartes(restaurantId) {
   return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/cartes`);
+}
+
+// --- Abonnement (démonstration, pas un paiement réel — voir backend/main.py) ---
+
+export async function subscribe() {
+  return request("/api/subscribe", { method: "POST" });
+}
+
+export async function unsubscribe() {
+  return request("/api/subscribe/annuler", { method: "POST" });
+}
+
+export async function changerMotDePasse(motDePasseActuel, nouveauMotDePasse) {
+  return request("/api/auth/mot-de-passe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      mot_de_passe_actuel: motDePasseActuel,
+      nouveau_mot_de_passe: nouveauMotDePasse,
+    }),
+  });
+}
+
+// --- Droits RGPD (LS-29, LS-39) — mêmes routes que le web, miroir de son api.js ---
+
+export async function fetchMesDonnees() {
+  return request("/api/auth/mes-donnees");
+}
+
+/** Efface définitivement le compte connecté. Irréversible. */
+export async function supprimerCompte() {
+  const resultat = await request("/api/auth/compte", { method: "DELETE" });
+  await poserJeton(null);
+  return resultat;
+}
+
+// --- Favoris (réservés aux comptes abonnés, backend/main.py::_require_abonne) ---
+
+export async function fetchFavoris() {
+  return request("/api/favoris");
+}
+
+export async function addFavori(restaurantId) {
+  return request(`/api/favoris/${encodeURIComponent(restaurantId)}`, { method: "POST" });
+}
+
+export async function removeFavori(restaurantId) {
+  return request(`/api/favoris/${encodeURIComponent(restaurantId)}`, { method: "DELETE" });
 }

@@ -103,20 +103,23 @@ MENU_SCAN_MAX_IMAGE_MB = 5  # refus au-delà, avant tout appel facturé
 USE_MOCK_DATA = True
 
 # =============================================================================
-# LOCAL SIGNAL — pondérations du score statique  (D-008)
+# LOCAL SIGNAL — pondérations du score statique  (D-008, recalibrées D-049)
 # =============================================================================
 # « Ce qu'est le restaurant », indépendamment de qui cherche.
 #
-# STATUT : PROVISOIRES. Ces valeurs sont des points de départ, PAS des résultats.
-# Elles doivent être dérivées du jeu labellisé (D-006) selon la procédure décrite
-# dans docs/methodologie/evaluation.md. Ne pas les présenter comme justifiées.
+# Poids dérivés de la vérité terrain (467 restaurants, comparaison par paires,
+# D-042 à D-045) : la langue des avis prédit mieux le classement de référence
+# que le menu sur la zone témoin, donc son poids monte au-dessus de celui du
+# menu. Le prix, dont le signal propre était faible sur cette zone, redescend.
+# La zone touristique remonte légèrement — voir D-049 pour le raisonnement
+# complet et pourquoi ces poids ne sont pas la pondération dérivée « brute ».
 #
-# Le signal menu domine car c'est le seul disponible pour un restaurant sans
-# aucun avis — la contrainte n°1 du projet (D-001, D-004).
-WEIGHT_MENU = 0.40          # à calibrer — signal menu (scan de carte)
-WEIGHT_LANGUAGE = 0.30      # à calibrer — langue des avis, lissée
-WEIGHT_PRICE = 0.15         # à calibrer — anomalie de prix vs quartier
-WEIGHT_TOURIST_ZONE = 0.15  # à calibrer — pénalité de zone touristique
+# Le signal menu reste substantiel car c'est le seul disponible pour un
+# restaurant sans aucun avis — la contrainte n°1 du projet (D-001, D-004).
+WEIGHT_MENU = 0.30          # recalibré D-049 — signal menu (scan de carte)
+WEIGHT_LANGUAGE = 0.40      # recalibré D-049 — langue des avis, lissée
+WEIGHT_PRICE = 0.10         # recalibré D-049 — anomalie de prix vs quartier
+WEIGHT_TOURIST_ZONE = 0.20  # recalibré D-049 — pénalité de zone touristique
 
 # Les étoiles ne participent plus au classement (D-007) : elles contredisent
 # l'intention du produit, ne discriminent rien, et dépendent de la popularité.
@@ -288,10 +291,20 @@ GOOGLE_OAUTH_REDIRECT_URI = os.environ.get(
 # Où renvoyer le navigateur une fois la session ouverte.
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
-# Nombre de restaurants visibles par recherche pour un visiteur non connecté.
-# Le classement reste inchangé (tri avant troncature) : moins de résultats,
-# jamais de moins bons résultats.
+# Nombre de restaurants visibles par recherche pour un visiteur non connecté
+# OU un compte connecté non abonné (LS-refonte — la limite suit l'abonnement,
+# pas la connexion). Le classement reste inchangé (tri avant troncature) :
+# moins de résultats, jamais de moins bons résultats.
 ANON_RESULTS_LIMIT = int(os.environ.get("ANON_RESULTS_LIMIT", "5"))
+
+# Nombre de RECHERCHES par jour pour un compte connecté non abonné
+# (LS-refonte, retour utilisateur : "limiter vraiment les recherches").
+# Distinct de ANON_RESULTS_LIMIT, qui borne les résultats D'UNE recherche —
+# celui-ci borne le nombre de recherches elles-mêmes. Ne s'applique qu'aux
+# comptes connectés : un visiteur anonyme n'a pas d'identifiant auquel
+# rattacher un compteur qui survivrait à la fermeture du navigateur.
+# À CALIBRER : 5/jour est un point de départ, pas une valeur mesurée.
+SEARCHES_PER_DAY_NON_ABONNE = int(os.environ.get("SEARCHES_PER_DAY_NON_ABONNE", "5"))
 
 # Vue technique du calcul — exposition du detail par indicateur (LS-16).
 #

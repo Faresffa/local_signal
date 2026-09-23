@@ -3,12 +3,13 @@
 // Position d'un restaurant sur l'échelle du Local Signal (LS-12, LS-14).
 // Pendant mobile de `apps/web/src/components/BarreSignal.jsx`.
 //
-// POURQUOI PAS DES ÉTOILES, POURQUOI PAS DE CHIFFRE. Le raisonnement complet
-// est dans la version web ; en deux lignes : les étoiles reprennent le symbole
-// de la note de popularité que le projet récuse (D-007) et, sur données
-// réelles, placent presque tout le monde entre trois et quatre. Un chiffre,
-// lui, contredirait D-009 — aucun score visible par défaut. Une barre montre
-// une POSITION sans énoncer une note.
+// POURQUOI PAS DES ÉTOILES. Le raisonnement complet est dans la version web ;
+// en deux lignes : les étoiles reprennent le symbole de la note de
+// popularité que le projet récuse (D-007) et, sur données réelles, placent
+// presque tout le monde entre trois et quatre. Le chiffre du Local Signal,
+// lui, est désormais affiché (D-050, supersède D-009) — mais à côté du
+// verdict (components/ui.js::Verdict), pas ici : cette barre montre une
+// POSITION, le chiffre exact vit dans le badge qui l'accompagne.
 //
 // L'ANIMATION N'EST PAS DÉCORATIVE : le remplissage dit qu'un calcul a eu
 // lieu. Une barre déjà pleine se lit comme une propriété fixe du restaurant,

@@ -276,7 +276,7 @@ pondéré par la distance.
 
 ## D-009 — Le score n'est pas affiché par défaut
 
-**Date :** 2026-08-13 · **Statut :** actif
+**Date :** 2026-08-13 · **Statut :** SUPERSÉDÉE par D-050 (2026-09-22)
 
 ### Contexte
 L'interface initiale (Streamlit et React) affiche « Score : 87.3/100 » et le détail
@@ -298,6 +298,14 @@ numérique brut demande une interprétation qu'il n'a pas.
   côté mémoire c'est un chapitre sur l'IA explicable (XAI).
 - Quand la confiance est faible (D-003), afficher « score provisoire » plutôt qu'un
   chiffre net.
+
+### Note de supersession (2026-09-22)
+« Par défaut : aucun score visible » ne tient plus — voir D-050. Décision
+produit explicite de l'utilisateur (« c'est vraiment notre matière, il faut
+l'afficher »), pas une dérive silencieuse : le principe d'explicabilité
+derrière le « pourquoi ? » et le traitement de la confiance faible restent
+vrais tels quels, seule la visibilité du chiffre a changé. Entrée conservée
+intacte (consigne du journal : ne jamais supprimer, seulement superséder).
 
 ---
 
@@ -3109,3 +3117,485 @@ Deux dangers concrets, vérifiés avant toute exécution :
   `local_signal.db`, dont l'état a déjà divergé de ce dump.
 - Prochain chantier annoncé par l'utilisateur : types de comptes (admin,
   utilisateur normal, utilisateur abonné) sur la table `users` déjà en place.
+
+---
+
+## D-049 — Rôles de compte et fonctionnalités « visibles mais verrouillées »
+
+**Date :** 2026-09-22 · **Statut :** actif
+
+### Contexte
+
+Suite du chantier annoncé en D-048 : le produit a maintenant trois rôles
+(`user`, `subscriber`, `admin`, colonne `users.role`), un modèle économique
+explicite (abonnement + publicité future, à rechercher séparément) et une
+page de tarification. Il fallait décider comment un compte non abonné doit
+percevoir les fonctionnalités réservées, et si le scoring lui-même — jusqu'ici
+protégé de toute logique de popularité (D-001, D-007) — pouvait devenir un
+critère de filtrage commercial sans trahir cette règle.
+
+### Problème identifié
+
+Deux écueils à éviter :
+
+1. **Faire disparaître une fonctionnalité payante** ne donne aucune raison de
+   payer — un visiteur qui ne sait pas qu'un filtre existe ne le regrette
+   jamais. Mais la **simuler comme fonctionnelle** sans paiement réel reproduit
+   l'erreur déjà corrigée sur le bouton d'abonnement (retour utilisateur :
+   *« bloque juste le bouton, ça marche pas »*, page Pricing.jsx).
+2. **Filtrer sur le Local Signal** ressemble, en surface, à filtrer sur la
+   note — exactement ce que `criteres.py` interdit depuis D-034 (*« reviendrait
+   à refaire le tri par popularité que le projet existe pour éviter »*). Il
+   fallait distinguer les deux : la note mesure la popularité, le Local Signal
+   mesure l'inverse — l'authenticité indépendamment du volume d'avis (D-001).
+   Filtrer dessus ne réintroduit donc pas le biais que D-034 écarte, il en est
+   la traduction directe en fonctionnalité produit.
+
+### Décision
+
+**Un abonnement lève des limites, il ne débloque pas des fonctions cachées.**
+Toute fonctionnalité réservée reste **visible** pour un compte non abonné,
+dans un état clairement non actionnable (icône de cadenas, couleur distincte,
+titre explicite), et le clic redirige vers l'abonnement plutôt que vers une
+erreur ou vers l'action réelle :
+
+- **Favoris** (`favorites`, `_require_abonne`) : le cœur sur une carte ou une
+  fiche est visible dès qu'on est connecté ; pour un non-abonné, il redirige
+  vers `Pricing` au lieu d'appeler l'API.
+- **Filtre « Profil local uniquement »** (`Filtres.jsx`,
+  `backend/core/filters/criteres.py::appliquer`) : premier filtre du produit
+  assis directement sur le Local Signal plutôt que sur un critère dérivé
+  (horaires, prix, présence de carte). Réservé aux abonnés par décision
+  produit, pas par sensibilité de la donnée — le paramètre `profil_local` est
+  simplement **ignoré côté serveur** pour un compte non abonné qui le forcerait
+  dans l'URL, sans lever d'erreur : le verrou est commercial, pas un contrôle
+  d'accès à protéger.
+- **Facturation dans Paramètres** (mensualité, moyen de paiement, « changer de
+  carte ») : affichée en intégralité mais **non actionnable**, exactement le
+  traitement déjà choisi pour le bouton de Pricing.jsx. La résiliation reste
+  réelle (`/api/subscribe/annuler`) : c'est le mécanisme de démonstration du
+  rôle, pas un paiement.
+
+**Seuils du verdict dupliqués côté serveur.** `criteres.py` reprend les
+constantes `SEUIL_PROFIL_LOCAL = 70` / confiance minimale `0.4` de
+`apps/web/src/lib/display.js::verdict`, avec renvoi explicite en commentaire.
+Même mécanisme de copie assumée que `packages/shared/filtres.js` pour les
+bornes de budget (D-022, LS-15) : le backend ne peut pas importer un module
+JS, et une divergence silencieuse produirait un filtre qui n'exclut pas les
+mêmes restaurants que ce que la carte affiche. **Ces seuils restent
+PROVISOIRES (D-006)** : recalibrer l'un impose de recalibrer l'autre.
+
+### Conséquences
+
+- Le motif « visible, verrouillé, redirige vers l'abonnement » est désormais
+  établi pour toute future fonctionnalité réservée — pas besoin de redébattre
+  le principe à chaque nouvelle limite (ex. alertes, favoris avancés).
+- `packages/shared/filtres.js` porte `profilLocal` dans `FILTRES_VIDES` et
+  `compterFiltres` ; la copie mobile générée l'hérite mécaniquement mais
+  l'interface mobile ne l'expose pas encore (mobile hors périmètre de cette
+  session).
+- Si les seuils de verdict sont un jour recalibrés sur le jeu labellisé
+  (§10, méthodologie), **`backend/core/filters/criteres.py` doit être mis à
+  jour dans le même geste** que `lib/display.js`, sous peine d'un filtre
+  incohérent avec l'étiquette affichée sur les cartes.
+- Aucun paiement réel n'existe encore : `changer de carte` et la mensualité
+  affichée dans Paramètres sont de la maquette, à rebrancher le jour où un
+  vrai processeur de paiement (Stripe ou équivalent) est intégré — décision
+  explicitement différée (question posée à l'utilisateur, réponse : maquette
+  bloquée plutôt qu'intégration réelle maintenant).
+
+---
+
+## D-050 — Le score redevient visible ; le filtre premium devient une fourchette
+
+**Date :** 2026-09-22 · **Statut :** actif · **SUPERSÈDE D-009** pour la
+visibilité du chiffre ; affine le filtre premium introduit en D-049.
+
+### Contexte
+
+D-049 (même journée) posait un premier filtre premium booléen
+(« Profil local uniquement ») et gardait le score caché derrière le mot du
+verdict, conformément à D-009. En le voyant à l'usage, l'utilisateur (product
+owner du mémoire) est revenu sur les deux points : un simple bouton
+marche/arrêt sur le Local Signal est trop pauvre pour « notre matière », et
+le mot seul (« Profil local ») ne rend pas justice à un chiffre que le
+produit passe justement son temps à calculer.
+
+### Problème identifié
+
+Deux demandes explicites, dans les mots de l'utilisateur :
+
+1. *« Je pensais plus à un truc, une range comme pour le budget […] il faut
+   afficher un score sur 10 […] c'est vraiment notre matière donc faut
+   vraiment l'afficher. »* — le filtre booléen de D-049 devient une
+   fourchette à deux poignées (comme `Budget.jsx`), et le score chiffré doit
+   être visible, pas seulement le verdict en mot.
+2. *« Deux, trois filtres premium minimum […] où ça se voit très bien que
+   c'est premium et qu'on ne peut pas l'utiliser quand on n'est pas connecté
+   ou dans l'autre profil. »* — il fallait un second filtre premium ;
+   l'utilisateur a délégué le choix (« trouve une idée logique ») plutôt que
+   d'en préciser un.
+
+Le second point posait un vrai choix méthodologique, pas seulement un
+réglage d'interface : afficher un chiffre brut est précisément ce que D-009
+interdisait, pour une raison encore valable (« un score numérique brut
+demande une interprétation qu'il n'a pas »). Il fallait vérifier que
+l'utilisateur mesurait la portée de la demande avant de rouvrir une décision
+citée dans une dizaine de fichiers du code (RestaurantCard, Detail, Discover,
+CLAUDE.md §5) — d'où une question posée explicitement (voir conversation)
+plutôt qu'une exécution silencieuse : où le chiffre doit-il apparaître
+(partout, réservé aux abonnés, ou seulement dans le filtre) ? Réponse :
+**partout, pour tout le monde.**
+
+### Décision
+
+**Le score.** `components/Verdict.jsx` (nouveau) affiche le mot du verdict
+ET le Local Signal sur 10 (`lib/display.js::scoreSur10`), partout où le
+verdict apparaissait déjà (`RestaurantCard`, `Detail`, le podium de
+`Discover`) — plus de branche « caché par défaut ». Ce qui reste caché :
+le détail indicateur par indicateur (`DetailCalcul`, LS-16), qui est un
+tableau de bord et le restera — la distinction de D-009 entre « un chiffre »
+et « un tableau de bord » n'a pas disparu, elle s'applique juste à un niveau
+plus profond qu'avant.
+
+**Le filtre premium devient une fourchette.** Le booléen `profil_local` de
+D-049 est retiré (`backend/core/filters/criteres.py::appliquer`) et remplacé
+par `score_min` / `score_max` — deux bornes numériques sur le Local Signal
+stocké (échelle 0–100 côté API, affichée 0–10 côté interface,
+`ScoreRange.jsx` mécaniquement identique à `Budget.jsx`, D-037). Un
+restaurant au Local Signal inconnu **n'est pas exclu** — même règle que le
+budget (D-012) : l'absence d'information n'est pas un jugement défavorable,
+y compris dans un filtre premium.
+
+**Second filtre premium : la fiabilité de l'évaluation.** Filtre sur le champ
+`confidence` (D-012) plutôt que sur le score lui-même — proposé par
+l'assistant (l'utilisateur avait délégué le choix), retenu parce qu'il
+complète le premier sans le dupliquer : l'un filtre le résultat, l'autre
+filtre la certitude du résultat. Une seule poignée (`ConfianceRange.jsx`),
+pas une fourchette : on demande toujours « au moins X % », un plafond de
+fiabilité n'aurait pas de sens. `confidence` n'étant jamais `None` (D-012,
+la redistribution des poids en produit toujours un), aucun cas d'absence à
+gérer ici, contrairement au score.
+
+**Le motif « visible, verrouillé » de D-049 est confirmé, pas remplacé.**
+Les deux filtres restent affichés à tout le monde (pastille ambre + cadenas,
+`fbar__pastille--abonne`/`--verrouille`) ; seule l'activation reste réservée
+à l'abonnement, côté serveur (`main.py::list_restaurants` ne transmet
+`score_min`/`score_max`/`confiance_min` qu'à un compte abonné, silencieusement
+ignorés sinon — pas d'erreur 403, le verrou est commercial).
+
+**Page Pricing mise à jour.** `AVANTAGES_ABONNE` nomme désormais les deux
+filtres premium et les favoris (D-049, jamais listés jusqu'ici) — omission
+corrigée au passage.
+
+### Conséquences
+
+- **CLAUDE.md §5 mis à jour** : porte désormais la mention explicite de la
+  supersession, avec renvoi vers cette entrée et D-009.
+- Trois endroits portent maintenant les seuils/échelles du Local Signal en
+  parallèle : `apps/web/src/lib/display.js` (verdict, seuils 70/45),
+  `packages/shared/filtres.js` (bornes 0–10 du filtre), et la conversion
+  d'échelle dans `api.js`. Aucun de ces seuils n'est calibré (D-006) —
+  recalibrer l'un sans les autres romprait la cohérence entre ce qu'une
+  carte affiche et ce que le filtre retient.
+- Le chapitre XAI du mémoire change d'angle : il ne s'agit plus de justifier
+  l'absence d'un chiffre, mais d'expliquer un chiffre désormais visible — le
+  matériau reste (langage naturel derrière le « pourquoi ? »), l'angle
+  d'attaque du chapitre doit être réécrit en conséquence.
+- Mobile (`apps/mobile`) hérite mécaniquement des nouvelles constantes
+  partagées (`packages/shared/filtres.js` → `filtres.generated.js`) mais pas
+  de l'interface : le score chiffré et les deux filtres premium restent à
+  construire côté Expo, hors périmètre de cette session (web uniquement).
+- **Piège de génération évité, à retenir** : un commentaire JSDoc contenant
+  littéralement `*/` dans son texte (ici `apps/*/src/api.js`) ferme le
+  commentaire prématurément et casse la compilation. Repéré via l'erreur Vite
+  exacte (`filtres.generated.js`), corrigé en reformulant la phrase plutôt
+  qu'en évitant les commentaires JSDoc sur les constantes partagées.
+
+### Addendum (2026-09-22, même jour) — le filtre de fiabilité est remplacé
+
+En voyant le filtre « Fiabilité de l'évaluation » à l'usage, l'utilisateur
+l'a rejeté : *« ça montre juste qu'on a des restaurants où on n'évalue pas
+tout, donc c'est pas bien. Notre score doit être fiable à 100 %. »* Un filtre
+dont l'état par défaut affiche « Toutes les évaluations » dit, en creux, que
+certaines ne sont pas complètes — exactement l'aveu qu'un produit qui vend la
+fiabilité de son score ne peut pas se permettre en interface, même si
+CLAUDE.md §10 l'assume ouvertement côté méthodologie (mémoire).
+
+**Décision : le filtre `confidence` est retiré, remplacé par un filtre sur
+`tourist_zone`.** Choix guidé par une contrainte simple : ce second filtre
+premium devait porter sur un signal **sans trou de couverture** à exposer.
+`tourist_zone` est statique (D-008) et couvert à 100 % des restaurants
+(CLAUDE.md §12, seul indicateur dans ce cas) — impossible de reproduire le
+même problème avec lui. `ConfianceRange.jsx` est supprimé (pas conservé « au
+cas où » : CLAUDE.md proscrit les résidus de compatibilité) ; `ZoneRange.jsx`
+reprend sa mécanique à une poignée. Backend : `criteres.py::appliquer` troque
+`confiance_min` contre `zone_min`, lu sur `signals.tourist_zone.value`.
+
+**Les pastilles verrouillées portent désormais le mot « Abonnement » en
+toutes lettres** (`fbar__badgeAbonnement`), pas seulement dans l'infobulle au
+survol — invisible au doigt sur mobile, et retour utilisateur explicite :
+« il faudra écrire un truc, genre avec abonnement ». Le motif « visible,
+verrouillé » de D-049/D-050 ne change pas ; seul son habillage se précise.
+
+La liste `AVANTAGES_ABONNE` de `Pricing.jsx` est mise à jour en conséquence.
+
+### Addendum 2 (2026-09-22, même jour) — le filtre de zone touristique est retiré
+
+Quelques minutes plus tard, l'utilisateur revient sur le filtre `tourist_zone`
+lui-même : *« Je suis pas très sûr qu'il va fonctionner […] il faut
+l'enlever, il faut l'enlever, il faut l'enlever. »* Pas de raison technique
+donnée — un doute produit, répété jusqu'à devenir une décision ferme.
+
+**Décision : le filtre est retiré, sans remplacement proposé cette fois.**
+`ZoneRange.jsx` supprimé, `zone_min` retiré de `criteres.py::appliquer` et de
+`main.py::list_restaurants`, `ZONE_MIN`/`ZONE_MAX`/`ZONE_PAS`/`zoneActif`/
+`libelleZone` retirés de `packages/shared/filtres.js`. Le produit revient à
+**un seul filtre premium** : la fourchette de score Local Signal. La ligne
+correspondante dans `Pricing.jsx::AVANTAGES_ABONNE` est retirée avec.
+
+Trois filtres premium en deux jets, un filtre premium retenu : le motif
+« visible, verrouillé, badge Abonnement » (D-049, D-050, addendum 1) tient
+toujours et n'est pas remis en cause — seul le nombre de filtres qu'il habille
+a changé. Si un second filtre premium redevient utile, repartir de la même
+contrainte que l'addendum 1 : un signal sans trou de couverture à exposer.
+
+---
+
+## D-051 — Conformité RGPD/CGU, cookies, anti-spam et identité visuelle : premier passage
+
+**Date :** 2026-09-22 · **Statut :** actif
+
+### Contexte
+
+L'utilisateur a apporté une liste de 20 tâches typiques d'une check-list de
+mise en ligne (RGPD, CGU, HTTPS, cookies, SEO, images, accessibilité, 404,
+anti-spam, analytics, etc.), en demandant explicitement de trier d'abord ce
+qui est pertinent maintenant plutôt que de tout exécuter à l'aveugle. Le tri
+a distingué trois catégories : des gains techniques immédiats, des sujets qui
+demandent une décision produit, et des tâches prématurées (HTTPS géré par
+l'hébergeur, sitemap et 404 sans objet tant qu'il n'y a pas de routeur —
+voir App.jsx). L'utilisateur a ensuite demandé d'exécuter les deux premières
+catégories.
+
+### Ce qui a été trouvé en marge de la demande
+
+En vérifiant l'existant avant d'agir (plutôt que de supposer un site vierge),
+deux découvertes ont changé le périmètre :
+
+1. **Le droit d'accès et le droit à l'effacement RGPD (LS-29, LS-39)
+   existaient déjà côté API** (`repo.export_user_data`, `repo.delete_user`,
+   routes `GET /api/auth/mes-donnees` et `DELETE /api/auth/compte`), sans
+   qu'aucune interface ne les relie — un droit qu'on ne peut exercer qu'en
+   ligne de commande n'est pas exerçable. Les brancher dans Settings.jsx
+   coûtait peu et fermait un vrai manque.
+2. **La limitation de débit (LS-28)** protégeait déjà connexion et
+   inscription, mais **pas la route de réservation** (`POST
+   /api/reservations`) — entièrement publique, sans authentification ni
+   garde. C'était le vrai trou « anti-spam » de la liste, pas une fonction à
+   inventer de zéro.
+
+### Décision
+
+**Pages légales, premier jet.** `CGU.jsx` et `Confidentialite.jsx` — texte
+qui reflète honnêtement l'état réel du produit (pas de paiement réel, rôle
+d'un compte, ce que la photo d'une carte devient une fois envoyée) plutôt
+qu'un modèle générique recopié. Marquées explicitement comme non validées
+juridiquement, avec un contact à compléter — ce n'est pas le rôle de
+l'assistant de fixer une identité de contact.
+
+**Consentement à l'inscription, avec preuve horodatée.** Une case à cocher
+obligatoire dans Signup.jsx, validée côté client et côté serveur
+(`accepted_terms`, 400 si absente) ; l'horodatage est stocké
+(`users.accepted_terms_at`) parce qu'« a accepté » ne documente rien sans
+« a accepté tel jour » — même rigueur que le reste de la colonne D-012/LS-29.
+
+**Bannière cookies, un vrai choix binaire.** Premier jet écrit une bannière
+purement informative (« un seul cookie essentiel, rien à accepter ») ; retour
+utilisateur explicite : *« il faut juste dire, tu acceptes ou pas les
+cookies, c'est tout, comme tous les autres »* — parce qu'un futur outil de
+mesure d'audience est envisagé (retour du chantier D-050), le choix doit
+exister maintenant même s'il ne pilote rien aujourd'hui.
+`CookieBanner.jsx` stocke `accepter`/`refuser` dans `localStorage` ; tout
+futur cookie non essentiel devra lire cette clé avant de s'activer — la
+porte existe avant la pièce.
+
+**Anti-spam : réutiliser LS-28, pas le réinventer.** `garder_reservation`
+(limitation.py) applique la même garde par adresse que l'inscription. Un
+champ piège (`site_web`, Reserve.jsx) hors écran et hors tabulation
+complète la garde : un formulaire rempli par un script sans exécuter le CSS
+le renseigne, une personne ne le voit jamais. Une soumission piégée reçoit
+une réponse de succès de façade plutôt qu'une erreur, pour ne pas apprendre
+au robot à retirer ce champ précis.
+
+**Gains techniques sans dépendance produit** : meta title/description/OG
+corrects (`<title>` valait encore « frontend », jamais changé depuis le
+modèle Vite), `lang="fr"`, `robots.txt`, compression des photos de
+démonstration (jusqu'à -80 % sur les plus lourdes). L'audit du texte
+alternatif n'a rien trouvé à corriger — déjà propre.
+
+**Identité visuelle du favicon et de l'icône mobile.** L'utilisateur a fourni
+une image de référence : le symbole fourchette/couteau blanc sur fond rouge
+de marque, déjà utilisé comme `.nav__mark` (Nav.jsx). Regénéré
+programmatiquement depuis le tracé Phosphor `ForkKnife` (poids « fill », le
+même que `.nav__mark`) plutôt que reconstruit à l'œil depuis l'image envoyée
+— garantit un résultat identique au pixel près à la marque déjà en
+production. `sharp` (Node) a servi de rasteriseur SVG→PNG, installé dans un
+répertoire de travail temporaire hors du dépôt, jamais comme dépendance du
+projet. Fichiers produits : favicon web (coins arrondis, 512 px),
+`icon.png` mobile (carré plein 1024 px, l'OS applique son propre masque),
+et les trois calques de l'icône adaptative Android (fond, avant-plan,
+monochrome) à l'échelle de sécurité recommandée (~42 % du canevas).
+
+### Conséquences
+
+- **Un remplaçant de moyen de paiement reste à couvrir.** Les CGU et la
+  politique de confidentialité citent un contact à compléter — ne pas les
+  publier publiquement telles quelles sans cette information et sans relecture.
+- **Le jour où un outil d'analytics est ajouté**, il doit lire
+  `localStorage["ls-cookies-consent"]` avant de s'activer — sans quoi la
+  bannière devient le même mensonge que l'ancien bouton d'abonnement
+  fonctionnel (D-049).
+- **`apps/mobile` n'a reçu que les icônes**, pas les pages légales ni la
+  bannière cookies ni les droits RGPD dans l'app — hors périmètre de cette
+  session (web uniquement, comme convenu depuis le début du chantier).
+- Deux images mortes repérées en marge (`resto1.jpg`, en réalité un fichier
+  AVIF mal étiqueté, jamais référencé dans le code) — signalées, non
+  supprimées : le nettoyage n'était pas la tâche demandée.
+- Prochaine chose à trancher explicitement si le produit avance vers un vrai
+  lancement : un outil d'analytics (et lequel), et l'intégration d'un
+  processeur de paiement réel — les deux sujets où CLAUDE.md n'a pas encore
+  de réponse.
+
+---
+
+## D-052 — Rattrapage mobile : rôles, abonnement, RGPD, score, filtre premium
+
+**Date :** 2026-09-22 · **Statut :** actif
+
+### Contexte
+
+Toute la colonne D-049 à D-051 (rôles, favoris, filtre premium, score
+chiffré, CGU/RGPD, cookies, anti-spam) avait été construite côté web
+uniquement — un choix de périmètre pris en tout début de chantier et jamais
+revu depuis. L'utilisateur l'a corrigé explicitement : *« l'application
+mobile, elle est aussi alignée sur tous les trucs [...] tout ce qu'on
+modifie sur le web, elle doit être pareil. »* Le périmètre web-only n'était
+donc pas la bonne lecture de la demande initiale, et n'aurait pas dû être
+reconduit silencieusement session après session.
+
+### Ce qui a été porté, et comment
+
+**Le score chiffré (D-050)** : `lib/display.js::scoreSur10` et
+`components/ui.js::Verdict` (accepte désormais `localSignal`), branché dans
+`DiscoverScreen.js` et `DetailScreen.js`. Même comportement que le web : le
+mot ET le chiffre, jamais le chiffre seul.
+
+**Pages légales et consentement (D-051)** : `CGUScreen.js` et
+`ConfidentialiteScreen.js` reprennent le texte des pages web à l'identique
+(même réserve : premier jet, pas de document validé). La case à cocher de
+`CompteScreen.js` (mode inscription) envoie `accepted_terms` — le backend ne
+distingue pas la provenance de la requête, la même validation serveur
+protège donc déjà les deux plateformes depuis D-051 ; il ne manquait que le
+geste côté interface.
+
+**Droits RGPD (LS-29, LS-39)** : mêmes routes que le web
+(`fetchMesDonnees`, `supprimerCompte`), exposées dans `CompteScreen.js` →
+« Vos données ». L'export utilise `Share.share` plutôt qu'un fichier écrit
+sur disque : c'est le geste natif pour faire sortir une donnée de l'app
+sans dépendance supplémentaire (pas de `expo-file-system`).
+
+**Filtre premium (D-050)** : `RangeSlider.js` généralise la mécanique
+`PanResponder` de `Budget.js` (mesure impérative dans une feuille modale,
+poignées qui ne se croisent pas) pour que `ScoreRange.js` la réutilise sans
+dupliquer ~180 lignes de gestion tactile déjà mise au point. `Budget.js`
+devient un fin wrapper au-dessus de `RangeSlider.js` — aucun appelant
+existant n'a dû changer. La pastille verrouillée (`PastilleAbonne` dans
+`Filtres.js`) reprend le ton « mixte » de la palette et le mot
+« ABONNEMENT » en toutes lettres, comme `fbar__badgeAbonnement` côté web.
+
+**Abonnement et rôle** : `PricingScreen.js` miroir de `Pricing.jsx`, bouton
+volontairement bloqué pour la même raison (pas de paiement réel). Rôle
+affiché dans `CompteScreen.js`, résiliation réelle (même mécanisme de
+démonstration que le web).
+
+### Ce qui n'a PAS d'équivalent mobile, et pourquoi ce n'est pas un oubli
+
+- **Bannière cookies** : les cookies HTTP sont un mécanisme du navigateur.
+  L'application mobile s'authentifie par un jeton porté en en-tête
+  (`X-Jeton-Session`, LS-40), jamais par un cookie — il n'y a rien à
+  bannir ici. Le droit d'information équivalent (quelles données, pourquoi)
+  est couvert par `ConfidentialiteScreen.js`.
+- **Champ piège anti-spam** (honeypot) sur la réservation : c'est une
+  défense contre des robots qui remplissent des formulaires HTML détectés
+  par DOM-scraping — un vecteur propre au web. La vraie protection
+  (`limitation.garder_reservation`, LS-28) est côté serveur et s'applique
+  déjà à tout appelant de `POST /api/reservations`, mobile compris, sans
+  rien à ajouter.
+- **Favoris (cœur sur les cartes, écran dédié)** : pas encore fait. C'est le
+  morceau le plus proche d'un vrai nouvel écran (liste, ajout/retrait,
+  état vide) plutôt qu'un branchement de fonctions déjà écrites côté API —
+  volontairement laissé pour une prochaine passe plutôt que bâclé dans
+  celle-ci.
+
+### Ce qui reste fragile, à vérifier hors de cet environnement
+
+**`Alert.alert` (confirmation de suppression de compte) n'a pas pu être
+vérifié dans l'aperçu web d'Expo** : react-native-web n'implémente pas de
+UI pour les alertes à plusieurs boutons dans cette configuration, le clic
+n'ouvre visiblement rien et rien ne se passe — comportement sans risque
+(aucune suppression accidentelle), mais aussi sans confirmation possible
+depuis cet environnement. La route elle-même a été vérifiée directement en
+contournant l'interface (`curl -X DELETE /api/auth/compte`, succès,
+compte réellement supprimé) : c'est l'appel qui fonctionne, c'est
+`Alert.alert` qui ne peut pas être jugé ici. `Alert.alert` est l'API React
+Native standard et fonctionne nativement sur iOS/Android — **à confirmer
+sur un simulateur ou un appareil réel avant de considérer ce geste
+définitivement vérifié.**
+
+### Conséquences
+
+- Les deux applications partagent maintenant le même vocabulaire de
+  fonctionnalités pour tout ce qui a été construit depuis D-049, à
+  l'exception explicite des favoris.
+- `packages/shared/filtres.js` reste la source unique des constantes de
+  score (D-050) : aucune nouvelle divergence introduite par ce chantier.
+- Prochaine étape explicite si le rattrapage doit être complet : les
+  favoris côté mobile (écran + cœur sur les cartes), puis une vérification
+  de `Alert.alert` sur un vrai environnement Expo (simulateur ou appareil).
+
+## D-053 — Les pondérations recalibrées à partir de la vérité terrain
+
+**Contexte.** La vérité terrain (D-042 à D-045) donne un classement de
+référence sur 467 restaurants. Les pondérations D-013 étaient posées à la
+main : menu 0,40 / langue 0,30 / prix 0,15 / zone touristique 0,15.
+
+**Problème.** Une régression sur le classement de référence (D-046) montre que
+ces poids ne sont pas ceux qui prédisent le mieux : la langue des avis porte
+plus de signal que le menu sur la zone témoin, le prix moins qu'attendu. Rester
+sur D-013 sans en tenir compte revient à ignorer la vérité terrain qu'on vient
+de construire.
+
+**Décision.** Les poids bougent dans le sens indiqué par la vérité terrain,
+sans adopter la pondération dérivée brute (qui écraserait tout sur un seul
+indicateur — voir D-046 pour pourquoi ce n'est pas souhaitable) :
+
+```
+WEIGHT_MENU          0.40 → 0.30
+WEIGHT_LANGUAGE       0.30 → 0.40
+WEIGHT_PRICE          0.15 → 0.10
+WEIGHT_TOURIST_ZONE   0.15 → 0.20
+```
+
+La langue passe devant le menu, sans dépasser ce que le menu pesait déjà
+(0,40) — aucun indicateur n'est poussé au-delà de ce plafond. Le menu reste le
+deuxième poste le plus élevé : c'est le seul signal disponible pour un
+restaurant sans aucun avis, la contrainte n°1 du projet (D-001).
+
+**Conséquences.** `backend/config.py` mis à jour. Tests de propriétés
+(`backend.tests.test_scoring`) toujours au vert — ils vérifient des
+invariants, pas des valeurs, donc ils survivent à la recalibration comme
+prévu. Le classement obtenu se rapproche de la vérité terrain sans s'y
+identifier : c'est un compromis entre la mesure et la logique du projet, pas
+un ajustement mécanique.
+

@@ -13,7 +13,8 @@ import { useCallback, useEffect, useState } from "react";
 
 import {
   fetchMe, login as apiLogin, logout as apiLogout,
-  restaurerSession, signup as apiSignup,
+  restaurerSession, signup as apiSignup, subscribe as apiSubscribe,
+  supprimerCompte as apiSupprimerCompte, unsubscribe as apiUnsubscribe,
 } from "../api";
 
 export function useCurrentUser() {
@@ -47,5 +48,28 @@ export function useCurrentUser() {
     setUser(null);
   }, []);
 
-  return { user, loading, login, signup, logout };
+  // Démonstration, pas un paiement réel (voir backend/main.py) : bascule le
+  // rôle, rien de plus — même mécanisme que le web (lib/auth.js).
+  const subscribe = useCallback(async () => {
+    const u = await apiSubscribe();
+    setUser(u);
+    return u;
+  }, []);
+
+  const unsubscribe = useCallback(async () => {
+    const u = await apiUnsubscribe();
+    setUser(u);
+    return u;
+  }, []);
+
+  // Droit à l'effacement (RGPD, LS-39) — le jeton est déjà retiré par
+  // `apiSupprimerCompte`, inutile d'appeler `logout` en plus.
+  const supprimerCompte = useCallback(async () => {
+    await apiSupprimerCompte();
+    setUser(null);
+  }, []);
+
+  return {
+    user, loading, login, signup, logout, subscribe, unsubscribe, supprimerCompte,
+  };
 }

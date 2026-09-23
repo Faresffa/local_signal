@@ -168,7 +168,9 @@ def _ouvert_json(texte: str, maintenant: datetime) -> bool | None:
 
 def appliquer(restaurants: list[dict], *,
               ouvert_maintenant: bool = False, avec_reservation: bool = False,
-              avec_carte: bool = False, maintenant: datetime = None) -> list[dict]:
+              avec_carte: bool = False,
+              score_min: float = None, score_max: float = None,
+              maintenant: datetime = None) -> list[dict]:
     """
     Retire les restaurants qui ne satisfont pas les critères demandés.
 
@@ -189,5 +191,22 @@ def appliquer(restaurants: list[dict], *,
         # Ce filtre porte sur la présence même : ici, l'absence exclut,
         # et c'est le seul cas où c'est légitime.
         sortie = [r for r in sortie if (r.get("menu_photo_urls") or "").strip()]
+
+    if score_min is not None or score_max is not None:
+        # Premier filtre du produit assis directement sur le Local Signal
+        # (D-050) — l'inverse d'un tri par popularité (D-001, D-007) : c'est
+        # l'authenticité qu'on filtre, pas la note. `appliquer_filtres`
+        # (backend/main.py) ne transmet ces bornes qu'à un compte abonné —
+        # non pas parce que la donnée serait sensible, mais parce que le
+        # filtre lui-même est un avantage de l'abonnement (retour
+        # utilisateur). Même règle qu'un restaurant sans prix connu pour le
+        # budget (D-012 : l'absence d'information n'exclut jamais) : un
+        # Local Signal inconnu reste affiché.
+        lo = score_min if score_min is not None else 0
+        hi = score_max if score_max is not None else 100
+        sortie = [
+            r for r in sortie
+            if r.get("local_signal") is None or lo <= r["local_signal"] <= hi
+        ]
 
     return sortie
