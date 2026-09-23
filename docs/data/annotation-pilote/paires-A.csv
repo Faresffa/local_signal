@@ -1,0 +1,87 @@
+paire;choix;confiance;raison
+P001;B;moyenne;Mr & Mrs Crab tourne midi-minuit sans coupure sur un concept de combos festifs ou les avis parlent d'experience et non d'habitude. La creperie garde au moins une formule de midi et des clients qui reservent.
+P002;B;forte;Brava est une affaire de couple qui vit du dejeuner en semaine paye en titres-restaurant et de la livraison. Mr & Mrs Crab n'a ni coupure ni fermeture et fonctionne au flux.
+P003;A;faible;Yokorama ouvre sept jours sur sept sans jamais fermer et declare une clientele de passage. Brava encaisse quatre types de titres-restaurant et livre dans le quartier.
+P004;A;moyenne;Arrivederci fait un volume enorme avec reservation recommandee midi et soir. Yokorama vit d'un dejeuner etudiant et de titres-restaurant.
+P005;A;moyenne;Pirosmani a des clients qui le frequentent depuis des annees et une niche georgienne qui se transmet entre connaisseurs. Arrivederci joue sur un tout autre volume.
+P006;A;moyenne;L'Estrapade ferme deux jours par semaine, tient sur une salle minuscule et n'a presque aucune photo publiee. Pirosmani est une adresse reperee que l'on vient chercher.
+P007;A;faible;Les deux sont tres ancres mais India StreEAT declare une clientele de passage et impose la reservation. L'Estrapade se decouvre par hasard en passant devant.
+P008;A;moyenne;India StreEAT a des clients qui en sont a leur sixieme visite et ferme dimanche et lundi. Le dossier de Hoki Sushi ne montre aucun signe equivalent d'habitude.
+P009;B;moyenne;Arya Bhavan a un client qui vient au moins une fois par semaine et une cuisine communautaire sud-indienne. Hoki Sushi n'affiche aucun ancrage de ce type.
+P010;B;faible;Hon Ki declare une clientele de passage et ses avis viennent de gens qui y repassent a chaque sejour. Arya Bhavan a un habitue hebdomadaire qui rale sur les ruptures de stock.
+P011;B;moyenne;Atelier Carmen n'ouvre que le soir six jours sur sept sur un format grillades et vin de sortie. Hon Ki sert surtout des dejeuners courts quatre jours sur sept.
+P012;B;forte;Bonvivant ouvre de 10h a 1h tous les jours, affiche groupes et etudiants et bascule vers le week-end. Atelier Carmen n'ouvre que le soir et reste un rendez-vous.
+P013;B;forte;Bonvivant est une grosse machine ouverte quinze heures par jour. Sushiyaki ferme le dimanche, coupe ses services et encaisse des titres-restaurant.
+P014;B;faible;Taeng Thai est decrit comme un repere de longue annees par sa clientele. Sushiyaki reste ouvert plus tard et publie beaucoup plus de photos.
+P015;B;forte;Ya Bayte prend les commandes sur borne, a tres peu de places assises et debite des sandwichs sept jours sur sept. Taeng Thai est un repere installe avec service a table.
+P016;B;moyenne;Le Grenier se remplit nettement le week-end alors que la semaine decroche. Ya Bayte fonctionne aussi beaucoup en emporte pour le quartier.
+P017;A;faible;Au Pere Louis sert soupe a l'oignon et escargots sans coupure jusqu'a minuit sept jours sur sept, avec des clients venus trois fois pendant un meme sejour. Le Grenier est tres week-end mais garde une clientele vegetarienne fidele.
+P018;A;forte;Au Pere Louis ne ferme jamais et vit d'un flux de tables. Sahara Cafe est un bar a chicha de soiree avec ses groupes d'habitues et ses concerts.
+P019;A;faible;Le Bluff ouvre de 11h a 1h et fait aussi du bar. Sahara Cafe fonctionne a la soiree entre habitues et publie peu de signaux de passage.
+P020;A;moyenne;L'Annexe sert escargots, confit de canard et tartare et recolte un avis explicite de piege a touristes. Le Bluff est nettement plus frequente en semaine et vit de privatisations.
+P021;A;moyenne;El Sur ouvre sept jours sur sept sans coupure, fait happy hour et concerts, et publie 745 photos. L'Annexe ouvre a 7h pour le cafe du matin du quartier.
+P022;B;faible;El Sur ne ferme jamais et enchaine sans coupure. Selva ferme deux jours et ne sert meme pas le midi en debut de semaine, ce qui suppose une clientele qui se deplace pour venir.
+P023;A;forte;Bicla ferme lundi et mardi, impose la reservation dans une toute petite salle et vit d'une communaute mexicaine et du traiteur. Selva fait dix fois plus de volume.
+P024;B;forte;Bicla est une micro-adresse fermee deux jours avec reservation obligatoire. La Ferrandaise a beaucoup plus de volume meme si elle ferme le dimanche.
+P025;A;forte;Mexi & Co ouvre de 11h30 a 23h30 sans coupure tous les jours et ses avis decrivent des gens attires par la deco qui ne reviennent pas. La Ferrandaise a des clients qui reviennent au fil des ans.
+P026;B;forte;Mexi & Co fonctionne au flux continu et accumule les avis de gens decus qui ne reviendront pas. L'Epoque a une formule de midi et un decor de bistrot de quartier.
+P027;B;moyenne;Khaaw Hoom ferme le dimanche, coupe strictement ses services et ses avis sont ceux de clients qui reviennent. L'Epoque a recu des visiteurs trois fois en trois jours de sejour.
+P028;A;moyenne;La Cava Voltini est une adresse que l'on recommande comme spot favori a Paris. Khaaw Hoom fonctionne sur une clientele qui revient et une amplitude serree.
+P029;A;forte;A Braccetto ouvre quinze heures par jour jusqu'a 2h avec brunch, cabaret et concerts, et bascule nettement le week-end. La Cava Voltini est une petite salle tenue par son patron.
+P030;A;faible;A Braccetto pousse jusqu'a 2h avec cabaret et brunch et decroche en semaine. La creperie garde une formule de midi mais reste dans un format tres court.
+P031;B;forte;La creperie fonctionne sur deux services courts avec promotions de reservation. Yokorama vit d'un dejeuner etudiant paye en titres-restaurant.
+P032;A;faible;Yokorama encaisse cinq types de titres-restaurant et declare une clientele etudiante, signes d'un dejeuner de proximite. Le dossier de Hoki Sushi ne montre aucun ancrage equivalent.
+P033;B;moyenne;Taeng Thai est decrit par ses clients comme un repere de longue date et ferme le dimanche. Hoki Sushi ouvre sept jours sur sept sans signal d'habitude.
+P034;B;forte;Au Pere Louis sert le repertoire bistrot sans coupure jusqu'a minuit tous les jours. Taeng Thai ferme le dimanche et tient sur des habitues de longue date.
+P035;A;forte;Au Pere Louis accumule les avis de gens en sejour qui y retournent plusieurs fois en quelques jours. La Cava Voltini reste une petite salle de recommandation.
+P036;A;moyenne;La Cava Voltini est une adresse qu'on se recommande comme decouverte. Brava vit du dejeuner en titres-restaurant, de la livraison et d'un patron connu de ses clients.
+P037;A;faible;Brava declare une clientele de passage et ouvre sept jours sur sept avec livraison. L'Estrapade ferme deux jours, n'a qu'une photo et tient sur une patronne qui explique les plats.
+P038;A;forte;Bonvivant ouvre quinze heures par jour avec terrasse et grande carte de vins. L'Estrapade est un minuscule bistrot ferme deux jours.
+P039;A;forte;Bonvivant est une grosse brasserie ouverte tous les jours jusqu'a 1h. Bicla ferme lundi et mardi et vit d'une communaute et du traiteur.
+P040;A;faible;Hon Ki declare une clientele de passage et ses avis viennent de visiteurs qui y repassent a chaque voyage. Bicla ferme deux jours et impose la reservation dans une toute petite salle.
+P041;A;moyenne;L'Epoque a recu des visiteurs revenus trois fois en trois jours et joue la carte du bistrot authentique. Hon Ki n'ouvre que 5h30 par jour, surtout au dejeuner.
+P042;A;moyenne;L'Epoque attire des gens en sejour qui y retournent plusieurs fois en quelques jours. Sushiyaki ferme le dimanche, coupe ses services et prend les titres-restaurant.
+P043;B;faible;Sushiyaki ouvre plus tard et publie bien plus de photos. Khaaw Hoom ferme le dimanche et ses avis sont ceux de clients fideles qui reviennent.
+P044;A;moyenne;Atelier Carmen n'ouvre que le soir, sur un format viande et vin de sortie avec un decor mis en avant. Khaaw Hoom coupe ses services et tient sur des habitues.
+P045;A;moyenne;Ya Bayte prend les commandes sur borne avec tres peu de places assises et tourne sept jours sur sept. Atelier Carmen est une sortie du soir que l'on prevoit.
+P046;A;faible;Selva publie plus de mille photos, fait bar a cocktails et recolte des avis de gens tombes dessus au hasard des rues. Ya Bayte debite aussi beaucoup de sandwichs pour le quartier.
+P047;A;moyenne;Selva attire par le cadre et les cocktails a 15 euros et ses avis parlent de decouverte. La Ferrandaise a des clients qui reviennent au fil des ans et ferme le dimanche.
+P048;A;moyenne;La Ferrandaise fait un volume nettement superieur avec reservation recommandee midi et soir. Le Bluff est nettement plus frequente en semaine et vit de privatisations et d'anniversaires.
+P049;B;moyenne;India StreEAT ferme dimanche et lundi, s'arrete a 21h30 et a des clients a leur sixieme visite. Le Bluff ouvre jusqu'a 1h tous les jours.
+P050;A;forte;Le Grenier bascule nettement sur le week-end et publie pres de 1400 photos. India StreEAT ferme deux jours et vit de familles du quartier qui reviennent.
+P051;B;faible;A Braccetto pousse jusqu'a 2h avec brunch, cabaret et concerts sur quinze heures d'amplitude. Le Grenier est tres week-end mais garde une clientele vegetarienne de fideles.
+P052;B;forte;A Braccetto ouvre quinze heures par jour et decroche nettement en semaine. L'Annexe ouvre a 7h pour le cafe et le gouter du quartier.
+P053;B;faible;Arrivederci fait un volume tres superieur avec reservation recommandee aux deux services. L'Annexe ouvre a 7h et sert des glaces au gouter, rythme de quartier.
+P054;B;forte;Arrivederci remplit deux services par jour toute la semaine avec reservation recommandee. Sahara Cafe est un bar a chicha de soiree avec ses groupes d'habitues.
+P055;B;faible;Arya Bhavan sert en continu de midi a 22h et appartient a une chaine avec plusieurs succursales. Sahara Cafe n'ouvre qu'a 14h30 et vit de soirees entre habitues.
+P056;A;forte;El Sur ouvre sept jours sur sept sans coupure avec happy hour et concerts et 745 photos. Arya Bhavan est une cantine vegetarienne avec un habitue hebdomadaire.
+P057;A;forte;Mr & Mrs Crab tourne midi-minuit sur un concept de combos ou l'avis type parle d'experience. El Sur a aussi des clients qui fetent leurs anniversaires sur place.
+P058;A;forte;Mr & Mrs Crab ne ferme jamais et fonctionne au flux. Pirosmani a des clients qui le frequentent depuis des annees et ferme le dimanche.
+P059;A;forte;Mexi & Co ouvre douze heures d'affilee tous les jours et ses avis decrivent une deco qui attire et une cuisine au micro-ondes. Pirosmani tient sur une clientele georgienne et des connaisseurs fideles.
+P060;B;faible;Mexi & Co ouvre sans coupure jusqu'a 23h30 tous les jours et ses clients decus ne reviennent pas. La creperie a une formule de midi et des clients qui reservent.
+P061;A;forte;Au Pere Louis sert le repertoire bistrot sans coupure jusqu'a minuit sept jours sur sept. Atelier Carmen n'ouvre que le soir et se prevoit.
+P062;B;faible;Au Pere Louis accumule les avis de gens revenus plusieurs fois pendant un meme sejour. Mexi & Co tourne au flux continu mais reste une adresse d'etudiants et de passage rapide.
+P063;A;faible;Le Grenier decroche nettement en semaine, ce qui est le profil d'une salle qui se remplit quand les gens se promenent. La creperie affiche une formule de midi.
+P064;B;forte;A Braccetto ouvre quinze heures par jour jusqu'a 2h et decroche en semaine. India StreEAT ferme deux jours, ferme a 21h30 et a des clients a leur sixieme visite.
+P065;A;forte;A Braccetto fait brunch, concerts et service jusqu'a 2h avec un pic week-end. Le Bluff est nettement plus frequente en semaine et vit de privatisations.
+P066;A;faible;Le Bluff ouvre de 11h a 1h tous les jours et fait aussi bar. Taeng Thai ferme le dimanche et est decrit comme un repere installe depuis des annees.
+P067;A;faible;Taeng Thai sert en continu de 11h30 a 22h15 avec une grande terrasse. Khaaw Hoom coupe strictement ses deux services et ses avis sont ceux de fideles.
+P068;A;faible;Brava ouvre sept jours sur sept et declare une clientele de passage. Khaaw Hoom ferme le dimanche et ses avis parlent de fait maison et de clients jamais decus.
+P069;B;forte;Bonvivant ouvre quinze heures par jour avec terrasse et grande carte. Brava vit du dejeuner en titres-restaurant et de la livraison.
+P070;B;forte;Mr & Mrs Crab tourne midi-minuit sur un concept de combos festifs sans aucune fermeture. Bonvivant garde des clients qui viennent dejeuner en famille.
+P071;A;forte;Mr & Mrs Crab ne ferme jamais et fonctionne au flux. Selva ferme deux jours et ne sert pas le midi en debut de semaine.
+P072;B;moyenne;Selva publie plus de mille photos, fait bar a cocktails et recolte des avis de gens tombes dessus en marchant. Hoki Sushi presente un profil beaucoup plus ordinaire.
+P073;A;faible;Pirosmani a des clients qui le frequentent depuis des annees et ferme le dimanche. Le dossier de Hoki Sushi ne montre aucun ancrage equivalent.
+P074;B;moyenne;Pirosmani est une adresse reperee que l'on vient chercher, avec beaucoup de photos et reservation recommandee. Sahara Cafe vit de soirees entre habitues.
+P075;B;forte;La Cava Voltini est recommandee comme spot favori et attire par le vin et les pizzas. Sahara Cafe est un bar a chicha de quartier ouvert le soir.
+P076;B;forte;La Cava Voltini attire des gens qui la citent comme adresse favorite a Paris. Arya Bhavan est une cantine vegetarienne avec un habitue hebdomadaire.
+P077;B;forte;Ya Bayte prend les commandes sur borne, a presque pas de places assises et tourne sept jours sur sept. Hon Ki n'ouvre que 5h30 par jour, surtout au dejeuner.
+P078;A;faible;Ya Bayte fonctionne au flux avec borne et quasi pas de places assises. L'Epoque a une formule de midi et un decor de bistrot de quartier malgre des clients en sejour.
+P079;A;faible;L'Epoque a recu des visiteurs revenus trois fois en trois jours et se vend comme authentique. L'Annexe ouvre a 7h pour le cafe et le gouter du quartier.
+P080;A;forte;Arrivederci remplit deux services par jour toute la semaine avec reservation recommandee. Bicla ferme lundi et mardi, impose la reservation et vit d'une communaute mexicaine.
+P081;B;forte;El Sur ouvre sept jours sur sept sans coupure avec happy hour et concerts. Bicla ferme deux jours dans une toute petite salle sur reservation.
+P082;A;moyenne;El Sur ne ferme jamais, enchaine sans coupure et affiche happy hour et concerts. La Ferrandaise ferme le dimanche et a des clients qui reviennent au fil des ans.
+P083;B;forte;La Ferrandaise fait un volume tres superieur avec reservation recommandee aux deux services. L'Estrapade est un minuscule bistrot ferme deux jours qu'on decouvre en passant.
+P084;A;moyenne;Sushiyaki ouvre six jours sur sept jusqu'a 23h avec un fort volume de photos. L'Estrapade ferme deux jours et tient sur une patronne qui explique les plats.
+P085;A;faible;Yokorama ouvre sept jours sur sept sans jamais fermer et declare une clientele de passage. Sushiyaki ferme le dimanche et ses clients parlent de petite adresse du quartier.
+P086;B;faible;Atelier Carmen mise sur un decor rustique chic et une carte de viandes internationales pour une sortie du soir. Yokorama vit d'un dejeuner etudiant paye en titres-restaurant.

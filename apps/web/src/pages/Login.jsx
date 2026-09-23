@@ -4,12 +4,17 @@
 // au-dessus du champ, erreur en dessous, validation manuelle.
 
 import { useState } from "react";
-import { ArrowLeft } from "@phosphor-icons/react";
+import { ArrowLeft, ForkKnife } from "@phosphor-icons/react";
 
-export default function Login({ onLogin, onGoToSignup, onBack }) {
+import { API_BASE } from "../api";
+import GoogleG from "../components/GoogleG";
+
+export default function Login({ onLogin, onGoToSignup, onBack, erreurInitiale }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState(
+    erreurInitiale ? { global: erreurInitiale } : {},
+  );
   const [status, setStatus] = useState("idle");
 
   function valider() {
@@ -34,57 +39,83 @@ export default function Login({ onLogin, onGoToSignup, onBack }) {
   }
 
   return (
-    <>
-      <button className="linkbtn" onClick={onBack} style={{ marginBottom: 20 }}>
-        <ArrowLeft size={15} weight="bold" />
-        Retour
-      </button>
+    <div className="authpage">
+      <div className="authcard enter" style={{ "--enter-delay": "0ms" }}>
+        <button className="linkbtn" onClick={onBack} style={{ marginBottom: 16 }}>
+          <ArrowLeft size={15} weight="bold" />
+          Retour
+        </button>
 
-      <h1 className="detail__title">Se connecter</h1>
-
-      <form className="form" onSubmit={soumettre} style={{ marginTop: 28 }} noValidate>
-        <div className="formfield">
-          <label htmlFor="login-email">Adresse électronique</label>
-          <input
-            id="login-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            aria-invalid={Boolean(errors.email)}
-          />
-          {errors.email && <span className="formfield__error">{errors.email}</span>}
+        <div className="authcard__mark" aria-hidden="true">
+          <ForkKnife size={20} weight="fill" />
         </div>
 
-        <div className="formfield">
-          <label htmlFor="login-password">Mot de passe</label>
-          <input
-            id="login-password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            aria-invalid={Boolean(errors.password)}
-          />
-          {errors.password && <span className="formfield__error">{errors.password}</span>}
-        </div>
+        <h1 className="authcard__title">Se connecter</h1>
+        <p className="authcard__lede">
+          Retrouvez vos avis, vos cartes contribuées, et les restaurants que
+          vous avez repérés.
+        </p>
 
-        {errors.global && (
-          <p className="formfield__error" role="alert">{errors.global}</p>
-        )}
-
-        <button
-          type="submit"
-          className="btn btn--primary btn--lg btn--block"
-          disabled={status === "sending"}
+        {/* Vraie navigation de page, pas un `fetch` : Google doit rediriger
+            le NAVIGATEUR vers son écran de consentement, un appel API ne
+            peut pas faire ça. */}
+        <a
+          className="btn btn--ghost btn--block authcard__google"
+          href={`${API_BASE}/api/auth/google/login`}
+          style={{ marginTop: 24 }}
         >
-          {status === "sending" ? "Connexion en cours" : "Se connecter"}
-        </button>
+          <GoogleG />
+          Continuer avec Google
+        </a>
 
-        <button type="button" className="linkbtn" onClick={onGoToSignup} style={{ marginTop: 12 }}>
-          Pas encore de compte ? Créer un compte
-        </button>
-      </form>
-    </>
+        <div className="authcard__separateur">
+          <span>ou avec un mot de passe</span>
+        </div>
+
+        <form className="form" onSubmit={soumettre} noValidate>
+          <div className="formfield">
+            <label htmlFor="login-email">Adresse électronique</label>
+            <input
+              id="login-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              aria-invalid={Boolean(errors.email)}
+            />
+            {errors.email && <span className="formfield__error">{errors.email}</span>}
+          </div>
+
+          <div className="formfield">
+            <label htmlFor="login-password">Mot de passe</label>
+            <input
+              id="login-password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              aria-invalid={Boolean(errors.password)}
+            />
+            {errors.password && <span className="formfield__error">{errors.password}</span>}
+          </div>
+
+          {errors.global && (
+            <p className="formfield__error" role="alert">{errors.global}</p>
+          )}
+
+          <button
+            type="submit"
+            className="btn btn--primary btn--lg btn--block"
+            disabled={status === "sending"}
+          >
+            {status === "sending" ? "Connexion en cours" : "Se connecter"}
+          </button>
+
+          <button type="button" className="linkbtn" onClick={onGoToSignup} style={{ marginTop: 4 }}>
+            Pas encore de compte ? Créer un compte
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

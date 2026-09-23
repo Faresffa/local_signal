@@ -1,0 +1,74 @@
+# Démarrage complet en une commande (LS-22).
+#
+#     docker compose up
+#
+# Lance la base, l'API et le web. Aucune installation préalable de Python ni de
+# Node n'est nécessaire — c'est le critère qu'applique un professionnel devant
+# un dépôt inconnu : est-ce que je peux le lancer sans lire trois pages ?
+#
+# POSTGIS PLUTÔT QUE POSTGRES SEUL. La cible annoncée depuis le début est
+# PostgreSQL + PostGIS, mais la distance était calculée en Python parce que
+# personne n'avait jamais eu PostGIS sous la main. Cette image le fournit, ce
+# qui rend la migration des requêtes géographiques enfin testable en local.
+#
+# LES DONNÉES NE SONT PAS DANS L'IMAGE. Le volume `donnees` les conserve entre
+# deux démarrages ; une base neuve part vide. Le chargement se fait par
+# `backend.db.export` puis import — voir le README.
+
+services:
+
+  base:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: local_signal
+      POSTGRES_PASSWORD: local_signal_dev
+      POSTGRES_DB: local_signal
+    volumes:
+      - donnees:/var/lib/postgresql/data
+    ports:
+      # Exposé pour qu'on puisse inspecter la base avec un client externe.
+      - "5432:5432"
+    healthcheck:
+      # L'API démarre AVANT que Postgres accepte les connexions si on ne
+      # vérifie pas : elle échouerait au premier accès, et le message d'erreur
+      # ne dirait pas que la base n'était simplement pas encore prête.
+      test: ["CMD-SHELL", "pg_isready -U local_signal -d local_signal"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://local_signal:local_signal_dev@base:5432/local_signal
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+      LOG_LEVEL: INFO
+      # La vue technique du calcul est utile en développement, jamais en
+      # production (LS-16).
+      EXPOSE_DETAIL_CALCUL: "true"
+      # Les clés restent hors de ce fichier, qui est versionné (D-016). Elles
+      # viennent du `.env` local, non versionné.
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OUTSCRAPER_API_KEY: ${OUTSCRAPER_API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      base:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE: http://localhost:8000
+    environment:
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  donnees:

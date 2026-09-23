@@ -1,0 +1,87 @@
+paire;choix;confiance;raison
+P001;A;forte;Mr & Mrs Crab : continu 12-24, 1502 photos vs Crêperie : service coupé, 378 photos
+P002;A;forte;Mr & Mrs Crab : 1502 photos énormes continu vs Brava Pizza : 103 photos service coupé
+P003;B;moyenne;Yokorama : 167 photos service coupé vs Brava Pizza : avis touriste américain typique, passage
+P004;B;forte;Yokorama : 167 photos vs Arrivederci : 2351 photos énormes, Touristes déclarés
+P005;A;forte;Arrivederci : 2351 photos Touristes vs Pirosmani : 375 photos restaurant connu d'amateurs
+P006;B;forte;Pirosmani : Touristes+Groupes 375 photos mais restaurant établi vs L'Estrapade : 1 photo local vrai
+P007;B;forte;L'Estrapade : local vrai vs India StreEAT : 313 photos Touristes+Étudiants
+P008;A;forte;India StreEAT : 313 photos Touristes+Étudiants vs Hoki Sushi : 149 photos authentique petit
+P009;A;moyenne;Arya Bhavan : 153 photos Touristes vs Hoki Sushi : 149 photos authentique petit
+P010;B;forte;Arya Bhavan : 153 photos 6j vs Hon Ki : 5.5h/jour très restreint local
+P011;B;forte;Hon Ki : petit très local 5.5h vs Atelier Carmen : 487 photos soir expérience
+P012;A;forte;Bonvivant : 1293 photos 7j/7 continu vs Atelier Carmen : 487 photos soir seulement
+P013;A;forte;Bonvivant : 1293 photos continu vs Sushiyaki : 281 photos service coupé
+P014;B;moyenne;Sushiyaki : 281 photos vs Taeng Thai : 231 photos avis discovery, terrasse
+P015;A;moyenne;Taeng Thai : avis découverte passage vs Ya Bayté : 248 photos petit local authentique
+P016;A;forte;Le Grenier : 1379 photos énormes amazing location vs Ya Bayté : 248 photos petit
+P017;B;moyenne;Au Père Louis : 1009 photos 7j/7 vs Le Grenier : 1379 photos location touristique
+P018;B;forte;Sahara Café : 254 photos vs Au Père Louis : 1009 photos visible Groupes+Touristes
+P019;A;forte;Sahara Café : 254 photos 7j/7 continu vs Le Bluff : 62 photos petit
+P020;B;forte;Le Bluff : 62 photos vs L'Annexe : avis explicite tourist trap
+P021;B;forte;L'Annexe : tourist trap vs El Sur : 745 photos continu 7j/7 Touristes
+P022;B;forte;El Sur : 745 photos vs Selva : 1169 photos énormes avis découverte passage
+P023;B;forte;Bicla : 194 photos restreint vs Selva : 1169 photos énormes
+P024;A;forte;La Ferrandaise : 450 photos Touristes vs Bicla : 194 photos restreint
+P025;A;forte;Mexi & Co : 623 photos 7j/7 continu vs La Ferrandaise : 450 photos service coupé
+P026;B;forte;L'Époque : local authentique vs Mexi & Co : 623 photos continu visible
+P027;B;forte;L'Époque : bistrot local vrai vs Khaaw Hoom : 385 photos Touristes déclarés
+P028;B;forte;La Cava Voltini : petit local mitigé vs Khaaw Hoom : 385 photos Touristes
+P029;B;forte;La Cava Voltini : très petit local vs A Braccetto : 1181 photos 7j/7 continu Groupes
+P030;A;forte;A Braccetto : 1181 photos continu vs Crêperie : 378 photos service coupé
+P031;B;moyenne;Yokorama : 167 photos vs Crêperie : 378 photos plus visible
+P032;B;moyenne;Hoki Sushi : 149 photos authentique vs Yokorama : 167 photos Groupes Étudiants
+P033;A;forte;Taeng Thai : 231 photos avis discovery vs Hoki Sushi : 149 photos petit authentique
+P034;B;forte;Taeng Thai : 231 photos vs Au Père Louis : 1009 photos continu Groupes visible
+P035;A;forte;Au Père Louis : 1009 photos Groupes vs La Cava Voltini : très petit local
+P036;B;forte;La Cava Voltini : petit local vs Brava Pizza : 103 photos Touristes 7j/7
+P037;B;forte;L'Estrapade : 1 photo local vs Brava Pizza : 103 photos Touristes
+P038;A;forte;Bonvivant : 1293 photos continu vs L'Estrapade : 1 photo local invisible
+P039;B;forte;Bicla : 194 photos restreint vs Bonvivant : 1293 photos énormes continu
+P040;A;moyenne;Bicla : 194 photos avis pozole tacos vs Hon Ki : 149 photos très petit
+P041;egalite;faible;L'Époque local authentique vs Hon Ki petit authentique tous deux très locaux
+P042;B;forte;L'Époque : local vs Sushiyaki : 281 photos Touristes décontracté
+P043;A;moyenne;Khaaw Hoom : 385 photos vs Sushiyaki : 281 photos Touristes
+P044;A;moyenne;Atelier Carmen : 487 photos soir concept vs Khaaw Hoom : 385 photos Touristes
+P045;B;forte;Ya Bayté : 248 photos Touristes vs Atelier Carmen : 487 photos concept
+P046;A;forte;Selva : 1169 photos avis découverte vs Ya Bayté : 248 photos petit
+P047;B;forte;La Ferrandaise : 450 photos vs Selva : 1169 photos découverte passage
+P048;B;forte;Le Bluff : 62 photos vs La Ferrandaise : 450 photos Touristes visible
+P049;A;forte;India StreEAT : 313 photos Touristes vs Le Bluff : 62 photos
+P050;B;forte;India StreEAT : 313 photos vs Le Grenier : 1379 photos amazing location
+P051;B;moyenne;A Braccetto : 1181 photos Groupes continu vs Le Grenier : 1379 photos location
+P052;A;forte;A Braccetto : 1181 photos continu Groupes vs L'Annexe : tourist trap
+P053;A;forte;Arrivederci : 2351 photos vs L'Annexe : tourist trap mauvaise qualité
+P054;A;forte;Arrivederci : 2351 photos Touristes continu vs Sahara : 254 photos bohème
+P055;B;moyenne;Arya Bhavan : 153 photos Touristes vs Sahara : 254 photos 7j/7 continu
+P056;B;forte;Arya Bhavan : 153 photos vs El Sur : 745 photos 7j/7 continu
+P057;B;forte;El Sur : 745 photos vs Mr & Mrs Crab : 1502 photos énormes
+P058;B;forte;Pirosmani : 375 photos Touristes vs Mr & Mrs Crab : 1502 photos continu
+P059;A;forte;Mexi & Co : 623 photos 7j/7 continu vs Pirosmani : 375 photos 6j
+P060;A;forte;Mexi & Co : 623 photos 7j/7 continu vs Crêperie : 378 photos coupé
+P061;B;forte;Atelier Carmen : 487 photos vs Au Père Louis : 1009 photos 7j/7 Groupes
+P062;A;forte;Au Père Louis : 1009 photos Groupes vs Mexi & Co : 623 photos
+P063;A;forte;Le Grenier : 1379 photos location vs Crêperie : 378 photos
+P064;B;forte;India StreEAT : 313 photos vs A Braccetto : 1181 photos continu Groupes
+P065;A;forte;A Braccetto : 1181 photos continu vs Le Bluff : 62 photos
+P066;B;forte;Le Bluff : 62 photos petit vs Taeng Thai : 231 photos Touristes terrasse
+P067;B;moyenne;Taeng Thai : 231 photos vs Khaaw Hoom : 385 photos Touristes
+P068;A;forte;Khaaw Hoom : 385 photos vs Brava Pizza : 103 photos
+P069;A;forte;Bonvivant : 1293 photos continu vs Brava Pizza : 103 photos
+P070;A;forte;Mr & Mrs Crab : 1502 photos vs Bonvivant : 1293 photos
+P071;A;moyenne;Mr & Mrs Crab : 1502 photos continu vs Selva : 1169 photos Tu-Sa
+P072;A;forte;Selva : 1169 photos découverte vs Hoki Sushi : 149 photos authentique
+P073;A;forte;Pirosmani : 375 photos Touristes+Groupes vs Hoki Sushi : 149 photos
+P074;A;moyenne;Pirosmani : 375 photos Groupes vs Sahara : 254 photos continu concerts
+P075;A;forte;Sahara : 254 photos 7j/7 continu vs La Cava Voltini : très petit local
+P076;B;forte;La Cava Voltini : très petit local vs Arya Bhavan : 153 photos Touristes
+P077;A;moyenne;Ya Bayté : 248 photos Touristes vs Hon Ki : 149 photos petit
+P078;B;forte;L'Époque : local vs Ya Bayté : 248 photos Touristes
+P079;B;moyenne;L'Époque : local vs L'Annexe : tourist trap même mauvais
+P080;A;forte;Arrivederci : 2351 photos 7j/7 vs Bicla : 194 photos restreint
+P081;B;forte;Bicla : 194 photos restreint vs El Sur : 745 photos 7j/7
+P082;B;forte;La Ferrandaise : 450 photos vs El Sur : 745 photos continu
+P083;A;forte;La Ferrandaise : 450 photos Touristes vs L'Estrapade : 1 photo local
+P084;B;forte;L'Estrapade : 1 photo local vs Sushiyaki : 281 photos décontracté
+P085;B;moyenne;Yokorama : 167 photos 7j/7 vs Sushiyaki : 281 photos presque 7j/7
+P086;B;forte;Yokorama : 167 photos vs Atelier Carmen : 487 photos concept expérience

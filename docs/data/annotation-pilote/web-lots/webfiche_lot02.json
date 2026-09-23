@@ -1,0 +1,250 @@
+{
+  "osm_n8222344128": {
+    "nom": "Le Mékong",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "lemekong.eatbu.com, plateforme de commande bilingue français/anglais (paramètre ?lang=en), se présente comme restaurant vietnamien (https://lemekong.eatbu.com/?lang=en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["tenu par un couple (mari et femme) selon Asie360 (https://www.asie360.com/cuisine/restaurants/le-mekong-paris-5e-arrondissement-avis-f4141.html)"],
+    "incertitudes": ""
+  },
+  "osm_w59544128": {
+    "nom": "CROUS Restaurant Universitaire Censier",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site du CROUS / Université Paris Cité, en français, s'adresse aux étudiants ; paiement par carte étudiante Izly (https://u-paris.fr/language/en/dining/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant universitaire du réseau CROUS de l'académie de Paris, réservé aux étudiants munis de la carte Izly (https://www.sorbonne.fr/en/student-life-in-paris-and-in-the-ile-de-france-2/student-life-in-paris-and-in-the-ile-de-france/les-restaurants-universitaires-dans-paris-les-crous/)"],
+    "incertitudes": "l'adresse du CSV (1 Rue Censier) diffère de celles données par certains annuaires (31 rue Geoffroy Saint-Hilaire, 3 Rue Censier) ; possible divergence entre bases d'annuaires pour un même établissement, non vérifiable avec certitude"
+  },
+  "osm_n3734846129": {
+    "nom": "Café de la Tourelle",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Bonjour Paris, blog anglophone destiné aux visiteurs : présente le lieu comme un bistro parisien classique et abordable (https://bonjourparis.com/archives/cafe-tourelle-classic-affordable-lunch/)"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert depuis plus de 100 ans selon Bonjour Paris (https://bonjourparis.com/archives/cafe-tourelle-classic-affordable-lunch/)"],
+    "incertitudes": "le nom varie selon les sources entre « Café de la Tourelle » et « La Tourelle » (Yelp, Sortiraparis) pour la même adresse, 5 rue Hautefeuille"
+  },
+  "osm_n697029135": {
+    "nom": "Bouillon de l'île",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["MyBestParis, liste des meilleurs restaurants de l'Île Saint-Louis (https://mybestparis.com/restaurants-ile-saint-louis/)"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["compte Instagram @bouillon_de_lile (https://www.instagram.com/bouillon_de_lile/)"],
+    "autres_faits": ["restaurant à orientation végétarienne, ouvert seulement lundi et mardi selon Tripadvisor"],
+    "incertitudes": ""
+  },
+  "osm_n4185965139": {
+    "nom": "Vita",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "vita-ristorante.fr, disponible en français et en anglais (/en), se présente comme restaurant de cuisine traditionnelle italienne avec le chef Angelo Cavalieri (https://vita-ristorante.fr/en)",
+    "reseaux_sociaux": ["page Facebook Vita Ristorante Paris (https://www.facebook.com/vitaristoranteparis)", "vidéo TikTok d'une créatrice food (@estherdsza) mentionnant le restaurant (https://www.tiktok.com/@estherdsza/video/7439695740932263200)"],
+    "autres_faits": ["dispose d'une cave à vin et d'un salon à cigares selon TheFork (https://www.thefork.com/restaurant/vita-ristorante-r682359)"],
+    "incertitudes": ""
+  },
+  "osm_n9501679142": {
+    "nom": "La Soummam",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine berbère, kabyle et marocaine selon plusieurs fiches d'annuaires (foodyparis.com, mappy.com)", "environ 100 couverts, terrasse mise en avant"],
+    "incertitudes": ""
+  },
+  "osm_n11016686147": {
+    "nom": "Atelier d'André",
+    "presse_francophone": [
+      "Paris ZigZag : article présentant le restaurant, référence à André Breton et au surréalisme du Quartier Latin (https://www.pariszigzag.fr/bar-restaurant/restaurant/atelier-andre-paris/)",
+      "Food & Sens : présentation de la nouvelle adresse parisienne (https://foodandsens.com/f-and-s-live/latelier-dandre-une-nouvelle-adresse-parisienne/)",
+      "Voyager Magazine : article sur une cuisine de partage et de curiosité (https://www.voyager-magazine.fr/latelier-dandre-paris-une-cuisine-de-partage-et-de-curiosite/)",
+      "Paris Select Book : article de février 2025, « souvenir d'un Paris surréaliste » (https://www.parisselectbook.com/en/2025/02/16/latelier-dandre-a-souvenir-of-surrealist-paris/)",
+      "Gustave et Rosalie (blog food) : « un restaurant parisien qui se contente du meilleur » (https://www.gustave-et-rosalie.com/latelier-d-andre-restaurant-paris)"
+    ],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "atelier-andre.fr, en français, se présente comme « bistrot & vins fins, jazz manouche » au Quartier Latin (https://www.atelier-andre.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert en janvier 2025, créé par Jérémy Quélin, Yohann Clotz et Joséphine Fossey (source : Paris Select Book, Voyager Magazine)", "65 couverts en salle et 30 en terrasse selon Voyager Magazine"],
+    "incertitudes": ""
+  },
+  "osm_n2341691147": {
+    "nom": "Café de la Nouvelle Mairie",
+    "presse_francophone": [
+      "Gilles Pudlowski (Les Pieds dans le Plat) : fiche consacrée aux restaurants du Paris 5e incluant cette adresse (https://www.gillespudlowski.com/394179/restaurants/paris-5e)",
+      "Time Out Paris (édition française) : listé parmi les bars du Quartier latin (https://www.timeout.fr/paris/bars/cafe-de-la-nouvelle-mairie)",
+      "Paris Bouge : fiche restaurant (https://www.parisbouge.com/places/3168)"
+    ],
+    "guides_visiteurs": [
+      "David Lebovitz (blog culinaire anglophone très suivi par les visiteurs) : article dédié « Cafe de la Nouvelle Mairie - Paris » (https://www.davidlebovitz.com/cafe-de-la-nouvelle-mairie-bistro-restaurant-paris/)",
+      "Paris by Mouth (guide anglophone) : fiche restaurant (https://parisbymouth.com/cafe-de-la-nouvelle-mairie/)",
+      "HiP Paris Blog : article « Bistrot Meets Beaujolais » (https://hipparis.com/bistrot-meets-beaujolais-natural-wines-and-french-fare-at-cafe-de-la-nouvelle-mairie/)"
+    ],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["adopté par des fans de la série Emily in Paris selon davidlebovitz.com", "présenté comme faisant partie du mouvement néo-bistrot par plusieurs annuaires (guides-restaurants.fr)"],
+    "incertitudes": "un résumé de recherche mentionne une recommandation par Le Fooding, non confirmée par une lecture directe sur lefooding.com — à ne pas considérer comme établie"
+  },
+  "osm_n6035003151": {
+    "nom": "Pain d'Épices",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["AAA TripCanvas (guide de voyage nord-américain) : fiche restaurant (https://www.aaa.com/tripcanvas/restaurant/pain-d'epices-AA73830)"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["situé entre le pont Louis-Philippe et le pont de l'Archevêché, à proximité de Notre-Dame et du Marais selon reserverunbar.fr"],
+    "incertitudes": ""
+  },
+  "osm_n2924393155": {
+    "nom": "Bistro du Marché",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "bistrot-du-marche.metro.rest, plateforme de réservation/commande se présentant comme le site du restaurant, cuisine française (https://bistrot-du-marche.metro.rest/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert tous les jours de 8h à 2h selon plusieurs annuaires (Yelp, Eater Space)"],
+    "incertitudes": ""
+  },
+  "osm_n6684800156": {
+    "nom": "Bolan",
+    "presse_francophone": ["aucune mention trouvée en français (l'article Sortiraparis identifié est en version anglaise, voir guides_visiteurs)"],
+    "guides_visiteurs": ["Sortiraparis, édition anglophone : « Bolan, a contemporary and refined Thai restaurant in the heart of the Latin Quarter » (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/343321-bolan-a-contemporary-and-refined-thai-restaurant-in-the-heart-of-the-latin-quarter)"],
+    "site_officiel": "bolan.fr, disponible en français et en anglais (/en) ; la version anglaise se positionne comme « Thai restaurant near Notre-Dame », la version française comme « Restaurant Thaï dans le Quartier Latin » (https://bolan.fr/en/thai-restaurant-near-notre-dame/, https://bolan.fr/restaurant-thai-quartier-latin/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fondé par Bo et Pedro Aires, avec le chef Patipan Aekpanja formé à Bangkok ; Pedro formé à Ferrandi Paris, selon la page « Our Story » du site officiel (https://bolan.fr/en/our-story/)"],
+    "incertitudes": ""
+  },
+  "osm_n9470008156": {
+    "nom": "Bistrot La Grange",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "bistrot-la-grange.fr, en français (https://bistrot-la-grange.fr/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["dirigé par Régis (salle) et Jérôme (cuisine) selon mistergoodbeer.com"],
+    "incertitudes": ""
+  },
+  "osm_n1133077162": {
+    "nom": "Le Grand Amalfi",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Mindtrip.ai, application de voyage assistée par IA : fiche restaurant (https://mindtrip.ai/restaurant/paris-ile-de-france/le-grand-amalfi/re-9BmkkYJN)"],
+    "site_officiel": "legrandamalfirestaurant.fr, en français (https://legrandamalfirestaurant.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant italien situé quai de Montebello, face à Notre-Dame"],
+    "incertitudes": ""
+  },
+  "osm_n1133077163": {
+    "nom": "La Taverne",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [],
+    "incertitudes": "impossible de rattacher avec certitude une source à cet établissement précis : plusieurs « La Taverne » existent à Paris, dont « La Taverne d'Esmeralda » (2 rue des Bernardins, cuisine française) et une « La Taverne » présentée comme brasserie alsacienne par parisgourmand.com sans adresse confirmée ; le CSV ne donne pas de numéro de rue. Aucune fiche trouvée ne peut être attribuée de façon fiable à cette adresse précise"
+  },
+  "osm_n2868208169": {
+    "nom": "Café Med",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Secrets of Paris, blog anglophone destiné aux visiteurs : critique dédiée (https://secretsofparis.com/food-drink/reviews/cafe-med/)"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["petit restaurant d'une douzaine de tables selon Secrets of Paris, situé sur l'Île Saint-Louis, à proximité de Notre-Dame"],
+    "incertitudes": ""
+  },
+  "osm_n1697702172": {
+    "nom": "Guang Ming",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine chinoise, spécialité de canard laqué mise en avant par plusieurs annuaires (restaurants-paris.fr, TheFork)"],
+    "incertitudes": ""
+  },
+  "osm_n4399470176": {
+    "nom": "Alliance",
+    "presse_francophone": [
+      "Gilles Pudlowski (Les Pieds dans le Plat) : critique consacrée au chef Toshitaka Omiya (https://www.gillespudlowski.com/critiques/toshitaka-omiya)",
+      "Gault&Millau : fiche du chef, 3 toques, 16/20 (https://fr.gaultmillau.com/en/people/toshitaka-omiya)",
+      "Edgar Magazine : article « Alliance : les alchimies du chef Toshitaka Omiya » (https://www.edgarmagazine.com/alliance-les-alchimies-du-chef-toshitaka-omiya/)",
+      "Thuriès Magazine : carnet de recettes salées du chef (https://www.thuriesmagazine.fr/fr/carnet-de-recettes-salees-toshitaka-omiya)"
+    ],
+    "guides_visiteurs": ["Guide Michelin, une étoile (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/alliance)"],
+    "site_officiel": "restaurant-alliance.fr, disponible en français et en anglais, se présente comme le fruit de la rencontre entre le chef Toshitaka Omiya et le maître d'hôtel Shawn Joyeux, nés à l'Agapé (https://www.restaurant-alliance.fr/en/)",
+    "reseaux_sociaux": ["page Facebook Restaurant Alliance (https://www.facebook.com/restaurant.alliance.paris/)"],
+    "autres_faits": ["restaurant étoilé au guide Michelin, fêtait environ 10 ans d'existence selon instant-luxe.com (donc ouverture autour de 2015-2016)", "chef formé à L'Arpège (Alain Passard), Le Cinq (Philippe Legendre) et L'Agapé Substance (David Toutain)"],
+    "incertitudes": ""
+  },
+  "osm_n3465494181": {
+    "nom": "L'Escarmouche",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Paris je t'aime (office du tourisme de Paris) : fiche restaurant orientée visiteurs (https://parisjetaime.com/eng/restaurant/l-escarmouche-p736)"],
+    "site_officiel": "lescarmouche-restaurant-groupe-paris.com et restaurant-groupe-paris-lescarmouche.com, en français, orientés banquets et événements de groupe (http://www.lescarmouche-restaurant-groupe-paris.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cadre médiéval mis en avant : caves du 12e siècle, pierres apparentes et vitraux selon plusieurs fiches d'annuaires (restaurantguru, pagesjaunes)", "spécialisé dans les groupes, banquets et événements privés (15 à 100 personnes)"],
+    "incertitudes": ""
+  },
+  "osm_n2298160184": {
+    "nom": "Veganil",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": [
+      "Sortiraparis : cité dans une sélection « restaurants végétariens et vegan en terrasse à Paris » (résultat de recherche agrégé, présence de Veganil dans la liste non vérifiée par lecture directe) (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/guides/250926-vegetarian-and-vegan-restaurants-on-the-terrace-in-paris-our-best-addresses-for-eating-out)",
+      "Time Out : cité dans la sélection « 18 Best Vegan and Vegetarian Restaurants in Paris » (même réserve) (https://www.timeout.com/paris/en/restaurants/vegetarian-restaurants-in-paris)"
+    ],
+    "site_officiel": "veganil.fr, en français, se présente comme restaurant vegan égyptien avec traiteur et épicerie (https://veganil.fr/)",
+    "reseaux_sociaux": [
+      "compte Instagram @veganil.fr (https://www.instagram.com/veganil.fr/)",
+      "compte Threads @veganil.fr (https://www.threads.com/@veganil.fr)",
+      "post Threads d'une créatrice (bozena_le_talludec_auteure) décrivant le plat kochari et un décor inspiré des galeries d'égyptologie du Louvre (https://www.threads.com/@bozena_le_talludec_auteure/post/DWZV1GRiLfG/)"
+    ],
+    "autres_faits": ["établissement créé en septembre 2024 selon aaa.com/tripcanvas"],
+    "incertitudes": "les mentions Sortiraparis et Time Out proviennent de pages de sélection générales sur le végétarien/vegan à Paris ; la présence effective de Veganil dans ces listes précises n'a pas été confirmée par lecture directe de l'article complet"
+  },
+  "osm_n3085099186": {
+    "nom": "Le Marmiton de Lutèce",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["WanderBoat AI Trip Planner : fiche restaurant pour visiteurs (https://wanderboat.ai/restaurants/france/paris/le-marmiton-de-lut-ce/yb_vIqaIQQuTB1HlxAyLAA)", "Mindtrip.ai : fiche restaurant, application de voyage (https://mindtrip.ai/restaurant/paris-ile-de-france/le-marmiton-de-lutece/re-Z4dKjtjN)"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["compte X/Twitter @MarmitonLutece (https://x.com/MarmitonLutece)"],
+    "autres_faits": ["spécialisé en cuisine savoyarde : fondues, raclettes, pierrades, tartiflette, Mont d'Or, selon Yelp"],
+    "incertitudes": ""
+  },
+  "osm_n5949368186": {
+    "nom": "Chez Kelly",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [],
+    "incertitudes": "l'adresse varie selon les annuaires entre 27 rue de la Harpe (correspondant au CSV) et 25 rue de la Huchette (fiche Yelp distincte) ; non confirmé que toutes les sources trouvées désignent le même établissement"
+  },
+  "osm_n5949368187": {
+    "nom": "Santorini",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "santorini-paris.fr, en français (https://www.santorini-paris.fr/)",
+    "reseaux_sociaux": ["page Facebook Restaurant Santorini Paris (https://www.facebook.com/santoriniparis/)"],
+    "autres_faits": ["cuisine annoncée comme française et méditerranéenne selon Tripadvisor, malgré le nom grec de l'établissement", "ouvert 7 jours sur 7, midi et soir"],
+    "incertitudes": "à noter pour la suite : décalage entre le nom (grec) et la cuisine annoncée (française et méditerranéenne) selon les fiches consultées"
+  },
+  "osm_n5866451188": {
+    "nom": "Safran",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Paris je t'aime (office du tourisme de Paris) : fiche restaurant (https://parisjetaime.com/eng/restaurant/safran-p589)", "Restopolitan : offre repas gratuit avec carte de réduction pour visiteurs (https://www.restopolitan.com/en/restaurant/paris-5eme-451/safran-paris-300008.html)"],
+    "site_officiel": "aucun site officiel trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décor indien mis en avant : poutres et pierres apparentes du 16e siècle, associées à un décor contemporain indien, selon restopolitan.com"],
+    "incertitudes": ""
+  },
+  "osm_n4168447189": {
+    "nom": "L'Avant Comptoir de la Terre",
+    "presse_francophone": ["aucune mention trouvée directement en français (les sources identifiées sont majoritairement anglophones)"],
+    "guides_visiteurs": [
+      "goop (média lifestyle américain) : fiche restaurant (https://goop.com/place/france/5th-6th-arrondissement/lavant-comptoir)",
+      "Paris by Mouth (guide anglophone) : « Our guide to Paris L'Avant Comptoir » (https://parisbymouth.com/our-guide-to-paris-lavant-comptoir/)",
+      "Indagare Travel (agence de voyage de luxe) : fiche restaurant (https://indagare.com/restaurant/lavant-comptoir)",
+      "WanderBoat AI Trip Planner : fiche restaurant (https://wanderboat.ai/restaurants/france/paris/avant-comptoir-de-la-terre/wVyZZSfET1ifaNqnZbWnyg)",
+      "Postcard : « Tapas bar in l'Odéon, Paris » (https://www.postcard.inc/places/avant-comptoir-de-la-terre-paris)"
+    ],
+    "site_officiel": "aucun site officiel propre identifié (pas de site distinct du groupe Camdeborde trouvé)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert par Yves Camdeborde, également propriétaire du Comptoir du Relais voisin", "deux adresses sœurs : L'Avant Comptoir de la Mer et L'Avant Comptoir du Marché", "service debout au comptoir, sans réservation, ouvert 7j/7 de midi à 23h"],
+    "incertitudes": ""
+  }
+}

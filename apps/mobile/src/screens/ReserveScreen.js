@@ -8,13 +8,14 @@
 
 import { useState } from "react";
 import {
-  KeyboardAvoidingView, Platform, Pressable, ScrollView,
+  Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView,
   StyleSheet, Text, TextInput, View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { createReservation } from "../api";
 import { Button } from "../components/ui";
+import { useEntree } from "../lib/motion";
 import { radius, spacing, useColors } from "../theme";
 
 const CRENEAUX = ["12:00", "12:30", "13:00", "19:00", "19:30", "20:00", "20:30", "21:00"];
@@ -22,6 +23,7 @@ const TAILLES = [1, 2, 3, 4, 5, 6];
 
 export default function ReserveScreen({ restaurant, onBack, onDone }) {
   const colors = useColors();
+  const entree = useEntree(60);
 
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
@@ -88,6 +90,7 @@ export default function ReserveScreen({ restaurant, onBack, onDone }) {
           <Text style={[s.backText, { color: colors.brand }]}>Retour</Text>
         </Pressable>
 
+        <Animated.View style={entree}>
         <Text style={[s.title, { color: colors.text }]}>Réserver</Text>
         <Text style={[s.lede, { color: colors.textMuted }]}>{restaurant.name}</Text>
 
@@ -181,6 +184,7 @@ export default function ReserveScreen({ restaurant, onBack, onDone }) {
             disabled={status === "sending"}
           />
         </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

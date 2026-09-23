@@ -1,0 +1,218 @@
+{
+  "osm_n4517189189": {
+    "nom": "Le Petit Pontoise",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Petit Futé : le présente comme un bistrot gourmand, décrit comme une institution du 5e arrondissement entre boulevard Saint-Germain et la Seine (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c4-cuisine-francaise/1488507-le-petit-pontoise.html)"],
+    "site_officiel": "site en français, se présente comme un « Bistrot Parisien et Gourmand », cuisine traditionnelle inspirée du Périgord (https://www.lepetitpontoise.fr/)",
+    "reseaux_sociaux": ["page Facebook « Restaurant Le Petit Pontoise » (https://www.facebook.com/lepetitpontoise/)"],
+    "autres_faits": ["décrit comme un des derniers bistrots parisiens « à l'ancienne » par plusieurs fiches d'annuaire (source non datée)"],
+    "incertitudes": ""
+  },
+  "osm_n4403798190": {
+    "nom": "Bistro des Lettres",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Do It In Paris (site anglophone pour visiteurs) : présenté comme « A Romantic Restaurant in the Latin Quarter » (https://www.doitinparis.com/en/bistro-des-lettres-26874)"],
+    "site_officiel": "site bilingue (pages FR et EN distinctes), se présente comme « Bistro Parisien » / « Parisian Literary Bistro », propose un concept où le client écrit une lettre renvoyée un an plus tard (https://bistrodeslettres.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["conçu par Yinhua Qiu, fondatrice du groupe Larome (une dizaine de restaurants en Asie), selon doitinparis.com"],
+    "incertitudes": ""
+  },
+  "osm_n9402142191": {
+    "nom": "Mo Sarpi",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français, se présente comme « Restaurant Chinois » (street food asiatique) (https://mosarpi.fr/)",
+    "reseaux_sociaux": ["vidéo TikTok du compte @parisiantables tournée « chez Mo Sarpi, 10 rue Toullier » présentant le lieu comme un « restaurant chinois » street food (https://www.tiktok.com/@parisiantables/video/7252826163201035547)"],
+    "autres_faits": ["formule étudiante à 10€ mentionnée par plusieurs fiches d'annuaire (pagesjaunes, restaurants-de-france)"],
+    "incertitudes": "l'adresse varie selon les sources entre 75005 et 75006 pour le même numéro de rue (10 rue Toullier) ; probablement la même adresse mal codée en arrondissement selon les annuaires."
+  },
+  "osm_n4677007192": {
+    "nom": "Saveurs d'Asie",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français, se présente comme « Traiteur Restaurant Vietnamien » (https://saveursdasie75005.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décrit par plusieurs annuaires comme cuisine vietnamienne simple, avec terrasse, service traiteur"],
+    "incertitudes": "le numéro exact sur la Place Maubert varie selon les sources (29 ou 31) ; l'établissement correspondant à l'id du CSV (31 Place Maubert) est vraisemblablement le même que celui décrit."
+  },
+  "osm_n3350313193": {
+    "nom": "Pizza Verone",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["un avis Tripadvisor (2025) qualifie l'établissement de « nothing really special », prix jugés plus élevés que des établissements comparables (https://www.tripadvisor.ie/ShowUserReviews-g187147-d33074585-r1002778090-Pizza_Verone-Paris_Ile_de_France.html)"],
+    "incertitudes": "homonymie : il existe une autre « Pizza Vérone » à Gond-Pontouvre (Charente), sans lien apparent ; l'établissement parisien au 6 rue du Petit Pont (75005) est bien celui identifié dans les résultats Tripadvisor/Uber Eats utilisés ici."
+  },
+  "osm_n3465203193": {
+    "nom": "Loubnane",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["The Food Driver (blog voyage/food italophone) consacre une page au restaurant (https://www.thefooddriver.com/en/le-loubnane/)"],
+    "site_officiel": "site en français, se présente comme « Restaurant / Caterer » libanais (https://www.loubnane.fr/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fondé en 1982 par Kamal Nassif, neveu de Rachid Youssef Makhoul qui avait ouvert « Chez Rachid, aux Délices du Liban » en 1952, premier restaurant libanais de France selon petitfute.co.uk"],
+    "incertitudes": ""
+  },
+  "osm_n13898698194": {
+    "nom": "Salvia",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français/anglais de l'Hôtel Salvia (16 rue Cujas) qui présente « Salvia Cantina », café-restaurant littéraire au cœur du Quartier latin, en face de la Sorbonne (https://www.hotelsalviaparis.com/en/restaurant/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["le restaurant est rattaché à l'hôtel Salvia, nom inspiré de la plante du même nom selon le site de l'hôtel"],
+    "incertitudes": "le CSV ne donne qu'un numéro de rue absent (« Rue Cujas ») ; l'identification avec le restaurant « Salvia Cantina » de l'Hôtel Salvia au 16 rue Cujas est probable mais non certaine à 100 %, aucune autre « Salvia » restaurant n'ayant été trouvée sur cette rue."
+  },
+  "osm_n6034964198": {
+    "nom": "Bar à Iode - Saint-Germaine",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Paris Update (webzine anglophone pour résidents/visiteurs anglophones de Paris) : présenté comme « reasonably priced seafood restaurant » (https://www.parisupdate.com/bar-a-iode/)"],
+    "site_officiel": "site en français, se présente comme restaurant de fruits de mer et coquillages (https://baraiode.fr/saint-germain)",
+    "reseaux_sociaux": ["compte Instagram @baraiode_saintgermain (https://www.instagram.com/baraiode_saintgermain/)"],
+    "autres_faits": ["ouvert depuis 2014 selon Paris Update ; deuxième adresse existante au 18 rue Jean Macé (75011)"],
+    "incertitudes": ""
+  },
+  "osm_n2939301201": {
+    "nom": "La Rose de Damas",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "au moins deux sites en français référencés (larosededamas.fr et larosededamas.com), présenté comme « Restaurant et traiteur syrien » (https://www.larosededamas.fr/)",
+    "reseaux_sociaux": ["page Facebook « Restaurant La Rose De Damas » se décrivant comme « Café syrien à la Cardamome » (https://m.facebook.com/larosededamasparis/)"],
+    "autres_faits": ["situé à proximité de l'Institut du monde arabe selon plusieurs fiches d'annuaire"],
+    "incertitudes": ""
+  },
+  "osm_n2939306202": {
+    "nom": "L'Atlas",
+    "presse_francophone": ["Gault&Millau (guide gastronomique français) référence le restaurant, cuisine marocaine, chef Benjamin El Jaziri (https://fr.gaultmillau.com/en/restaurants/l-atlas) — à noter : source consultée en version anglaise du site"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "au moins deux sites (latlas-paris.com et latlas-paris-5.fr), se présente comme restaurant marocain au décor inspiré des Mille et Une Nuits, ouvert depuis 1985 (https://www.latlas-paris.com/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert depuis 1985 selon le site officiel et petitfute"],
+    "incertitudes": ""
+  },
+  "osm_n6188279205": {
+    "nom": "Li Thang",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (uniquement fiches d'annuaire)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté par plusieurs annuaires comme restaurant franco-tibétain, spécialité de thukpa (soupe de nouilles)"],
+    "incertitudes": "le CSV situe l'établissement « Rue Saint-Jacques, 75005 » sans numéro ; les résultats de recherche (« Lithang ») donnent l'adresse 318 rue Saint-Jacques, plus proche de Port-Royal/Denfert que du cœur du Quartier latin — correspondance plausible mais non vérifiée avec certitude (orthographe « Li Thang » vs « Lithang » sur les sources)."
+  },
+  "osm_n5866476206": {
+    "nom": "Anatolie Dürüm",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français, se présente comme « Restaurant de spécialités turques & kurdes » (http://anatolie-durum.fr/)",
+    "reseaux_sociaux": ["vidéo TikTok du compte @dylangraille75 mentionnant l'adresse « 9 Rue de la Harpe » et le caractère halal du lieu (https://www.tiktok.com/@dylangraille75/video/7438675790868253984); compte Instagram @anatoliedurum mentionné sur le site officiel"],
+    "autres_faits": ["situé à 1 minute à pied du RER Saint-Michel Notre-Dame selon plusieurs fiches"],
+    "incertitudes": ""
+  },
+  "osm_n1930542208": {
+    "nom": "Le Coupe-Chou",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Time Out Paris (édition anglophone), article du 26 novembre 2014, note 3/5, décrit une cuisine française classique « barely a false note », dans une maison du 17e-18e siècle (https://www.timeout.com/paris/en/restaurants/le-coupe-chou)"],
+    "site_officiel": "site bilingue (FR/EN), se présente comme restaurant Quartier Latin dans une maison du 17e siècle (https://en.lecoupechou.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert le 3 novembre 1962 par trois comédiens souhaitant accueillir le public après les spectacles, selon parisjetaime.com et le site officiel ; ancien lieu de rendez-vous nocturne de célébrités"],
+    "incertitudes": ""
+  },
+  "osm_n5866476208": {
+    "nom": "Les Balkans",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (uniquement fiches d'annuaire de type ipizzeria.fr, goto-where.com)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décrit par les annuaires comme pizzeria/brasserie au cadre simple, avis clients mitigés sur la qualité et le service"],
+    "incertitudes": "le même identifiant osm (osm_n5866476...) que Anatolie Dürüm apparaît avec un numéro différent (206 vs 208) dans le CSV — à vérifier côté base, mais les deux établissements semblent bien distincts (l'un turc/kurde, l'autre pizzeria) à la même rue."
+  },
+  "osm_n2276138209": {
+    "nom": "Indonesia",
+    "presse_francophone": ["Sortiraparis (fiche lieu, non datée) mentionne le restaurant, en insistant sur sa mission sociale de création d'emplois pour des réfugiés politiques indonésiens (https://www.sortiraparis.com/en/lieux/55442-indonesia)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français/anglais, se présente comme le premier restaurant indonésien de Paris, ouvert depuis 1982 (https://restaurantindonesia.online/en)",
+    "reseaux_sociaux": ["page Facebook « Restaurant Indonesia - Paris » (https://www.facebook.com/indonesiaparis/)"],
+    "autres_faits": ["fondé en 1982 par quatre Français et quatre Indonésiens, organisé en SCOP (société coopérative de production) pour intégrer des réfugiés politiques indonésiens dont les diplômes n'étaient pas reconnus en France, selon le site officiel"],
+    "incertitudes": ""
+  },
+  "osm_n703430210": {
+    "nom": "La Comedia",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (uniquement fiches d'annuaire type checkeat, icioncuisine)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté par les annuaires comme restaurant italien/pizzeria avec terrasse d'angle au cœur du Quartier latin"],
+    "incertitudes": ""
+  },
+  "osm_n739770210": {
+    "nom": "Restaurant de La Mosquée de Paris",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["plusieurs fiches Tripadvisor (dont une catégorisée « Attraction ») le décrivent comme un lieu touristique emblématique associé aux hammams de la Mosquée de Paris (https://www.tripadvisor.com/Attraction_Review-g187147-d12992104-Reviews-La_Mosquee_de_Paris-Paris_Ile_de_France.html)"],
+    "site_officiel": "site en français (la-mosquee.com) présentant le restaurant, le salon de thé et le hammam de la Mosquée de Paris",
+    "reseaux_sociaux": ["page Facebook « Restaurant, Salon de thé Mosquée de Paris » (https://www.facebook.com/restaurantlamosquee/)"],
+    "autres_faits": ["intégré au bâtiment de la Mosquée de Paris, cuisine maghrébine (tajines, couscous), décor de patios ombragés selon plusieurs fiches"],
+    "incertitudes": ""
+  },
+  "osm_n10706926212": {
+    "nom": "Xiu",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (page Canva utilisée comme menu en ligne)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté par les annuaires comme « Việt Street-food », note Google 4.8 mentionnée par lesmeilleurs.net"],
+    "incertitudes": ""
+  },
+  "osm_n622303213": {
+    "nom": "Maison Cluny",
+    "presse_francophone": ["Gault&Millau consacre une fiche au restaurant, chef Matthieu Nadjar, cuisine traditionnelle (https://fr.gaultmillau.com/en/restaurants/maison-cluny) — source consultée en version anglaise du site"],
+    "guides_visiteurs": ["Guide Michelin référence l'établissement (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/maison-cluny); Paris by Mouth (blog anglophone food à Paris) lui consacre une page (https://parisbymouth.com/maison-cluny/)"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert par Franck Bellanger et Mathieu (Matthieu) Nadjar, précédemment connus pour Le Cornichon, primé « meilleur bistrot » au prix Staub Lebey 2013, selon lebey.com ; classé #118 sur 20 449 restaurants de Paris sur Tripadvisor avec 4,8/5 (660 avis)"],
+    "incertitudes": ""
+  },
+  "osm_n622303216": {
+    "nom": "El Sol y la Luna",
+    "presse_francophone": ["Paris Bouge (média food francophone pour Parisiens) consacre une fiche au restaurant (https://www.parisbouge.com/places/2366)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (menu en ligne via mobimenu.fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décrit selon les sources tantôt comme restaurant colombien, tantôt comme cuisine latino-américaine générale (Mexique à Argentine), décor de piñatas et guitares selon plusieurs fiches"],
+    "incertitudes": ""
+  },
+  "osm_n4788616221": {
+    "nom": "5 Séverin",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté par les annuaires comme brasserie traditionnelle ouverte 7j/7 de 9h à 1h, cuisine française classique"],
+    "incertitudes": "à ne pas confondre avec « Le Saint Séverin », établissement différent référencé par Sortiraparis à la même rue."
+  },
+  "osm_n10807924222": {
+    "nom": "Rivières d'Himalaya",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (page Facebook et fiches de livraison uniquement)",
+    "reseaux_sociaux": ["page Facebook « Rivières d'himalaya » (https://www.facebook.com/people/Rivi%C3%A8res-dhimalaya/61552905991525/)"],
+    "autres_faits": ["présenté par les annuaires comme fusion de cuisine indienne et népalaise (momos, lassi)"],
+    "incertitudes": ""
+  },
+  "osm_n4040156222": {
+    "nom": "An An",
+    "presse_francophone": ["aucune mention trouvée directement pour cet établissement (une page Sortiraparis référencée dans les résultats de recherche n'a pas pu être confirmée au contenu lors de la consultation — voir incertitudes)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site via eatbu.com, se présente en anglais et français comme restaurant vietnamien traditionnel (https://an-an-restaurant-paris.eatbu.com/?lang=en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["créé par un couple vietnamien selon plusieurs fiches, situé rue Saint-Jacques près du Panthéon et du Luxembourg"],
+    "incertitudes": "un article Sortiraparis intitulé « An An Restaurant : An open door to Vietnamese cuisine in Paris » apparaît dans les résultats de recherche mais son contenu n'a pas pu être vérifié directement (la page récupérée ne correspondait pas) ; à confirmer si besoin (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/293939-an-an-restaurant-an-open-door-to-vietnamese-cuisine-in-paris)."
+  },
+  "osm_n1930542223": {
+    "nom": "La Sirena",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucune mention trouvée (uniquement fiches d'annuaire type rankeat, sluurpy)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté par les annuaires comme restaurant italien tenu par les frères Luigi et Pino depuis plus de 40 ans, pizzas au feu de bois, spécialités siciliennes"],
+    "incertitudes": ""
+  }
+}

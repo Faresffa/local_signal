@@ -1,0 +1,218 @@
+{
+  "osm_n2788471696": {
+    "nom": "Petit Gaston",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Tripadvisor liste l'établissement sous le nom \"GASTON\" à la même adresse, restaurant américain/burgers, sans mention de sélection éditoriale (https://www.tripadvisor.com/Restaurant_Review-g187147-d4401878-Reviews-or15-Gaston-Paris_Ile_de_France.html)"],
+    "site_officiel": "aucun site officiel distinct trouvé ; fiches d'annuaires (Pages Jaunes, Mappy) uniquement",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["décrit comme bistro à l'ambiance décontractée, mobilier dépareillé, devient bar-lounge le soir (Mapstr, https://mapstr.com/place/VoGWWINFLdg/le-gaston-paris-restaurant-bar-burger-cafe-terrasse)"],
+    "incertitudes": "Tripadvisor référence le lieu comme \"GASTON\" et non \"Petit Gaston\", et donne l'adresse 1 Place de la Contrescarpe alors que le CSV indique 3 Pl. de la Contrescarpe — possible homonymie ou changement de numérotation à vérifier."
+  },
+  "osm_n5424927696": {
+    "nom": "Nossa",
+    "presse_francophone": ["Paris Bouge présente l'établissement dans sa rubrique restaurants, sans date précise (https://www.parisbouge.com/places/3800)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français/anglais (nossa-paris.com), se présente comme un concept de rôtisserie portugaise né en 2015, spécialisé dans le poulet churrasco (https://nossa-paris.com/en)",
+    "reseaux_sociaux": ["page Facebook \"NossaParis\" active (https://www.facebook.com/NossaParis/?locale=fr_FR)"],
+    "autres_faits": ["concept né en 2015, propose des plats du jour portugais changeant tous les deux jours (morue, carne de porco à alentejana, feijoada, bitoque)"],
+    "incertitudes": ""
+  },
+  "osm_n715454698": {
+    "nom": "Baieta",
+    "presse_francophone": ["Sortiraparis (édition anglophone consultée) a couvert l'ouverture du restaurant par la cheffe Julia Sedefdjian en 2018 (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/158259-chef-julia-sedefdjian-opens-her-1st-restaurant-baieta)"],
+    "guides_visiteurs": ["Michelin Guide référence l'établissement (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/baieta)", "France Today (magazine anglophone destiné aux voyageurs) présente le restaurant (https://francetoday.com/travel/paris/baieta-in-paris/)", "critique du journaliste gastronomique anglophone Alexander Lobrano, élogieuse sur la cuisine niçoise de la cheffe (https://www.alexanderlobrano.com/restaurant-reviews/baieta-paris-brilliant-nicoise-cooking-by-julia-sedefdjian-a/)"],
+    "site_officiel": "site bilingue (restaurant-baieta-paris.fr/en), présente la cheffe Julia Sedefdjian et l'équipe (https://restaurant-baieta-paris.fr/en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cheffe Julia Sedefdjian, étoilée Michelin en 2016 à 21 ans (record de précocité), ouvre Baieta en janvier 2018 après 3 ans aux Fables de la Fontaine ; \"baieta\" signifie \"petit baiser\" en niçois"],
+    "incertitudes": ""
+  },
+  "osm_n1750435701": {
+    "nom": "Les Patios",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Tripadvisor et Yelp décrivent l'endroit comme une brasserie touristique classique en face de la Sorbonne, sans sélection éditoriale identifiée (https://www.tripadvisor.com/Restaurant_Review-g187147-d1857273-Reviews-Brasserie_Les_Patios-Paris_Ile_de_France.html)"],
+    "site_officiel": "aucun site propre identifié ; menu en ligne via menuonline.fr (https://menuonline.fr/en/lespatios/reserver)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert tous les jours de 7h à 1h, situé directement sur la place de la Sorbonne"],
+    "incertitudes": "plusieurs \"Patios\" existent à Paris ; à confirmer que l'établissement place de la Sorbonne correspond bien à l'id OSM."
+  },
+  "osm_n2926036702": {
+    "nom": "Au Moulin à Vent",
+    "presse_francophone": ["Gault&Millau consacre une fiche au restaurant, sans date précisée dans les résultats (https://fr.gaultmillau.com/en/restaurants/au-moulin-a-vent)"],
+    "guides_visiteurs": ["blog anglophone \"That Cheese Girl's Paris\" en fait un éloge détaillé, le présentant comme un bistro parisien emblématique (https://www.tomatokumato.com/au-moulin-a-vent-is-the-holy-grail-a-prototypical-bistro-with-exquisite-food/)", "Minnie Muse (site voyage anglophone) référence l'adresse (https://www.minniemuse.com/musts/go/au-moulin-a-vent)"],
+    "site_officiel": "site en français, au-moulinavent.com, se présente comme bistro de cuisine française (https://www.au-moulinavent.com/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fondé en 1946, bistro historique du 5e arrondissement, salle unique avec banquettes en cuir rouge, spécialités : os à moelle, terrine, pâté en croûte, veau confit"],
+    "incertitudes": ""
+  },
+  "osm_n1134402720": {
+    "nom": "La Méthode",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["mindtrip.ai (guide IA orienté voyageurs) référence l'établissement (https://mindtrip.ai/restaurant/paris-ile-de-france/la-methode-restaurant-paris-5/re-I2G8skX3)"],
+    "site_officiel": "site en français (la-methode-paris.fr), se présente comme restaurant de cuisine française authentique et de saison près du Panthéon (https://la-methode-paris.fr/en)",
+    "reseaux_sociaux": ["compte Instagram \"lamethode_paris5\" actif (https://www.instagram.com/lamethode_paris5/)"],
+    "autres_faits": ["ouvert 7j/7 de 9h à 2h, plats emblématiques : confit de canard, filet mignon, escargots"],
+    "incertitudes": ""
+  },
+  "osm_n1109781722": {
+    "nom": "Pee Bee",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (pee-and-bee.com), rubrique contact/réservation (https://pee-and-bee.com/contact)",
+    "reseaux_sociaux": ["aucune mention trouvée dans les résultats"],
+    "autres_faits": ["restaurant de pizzas, burgers et cocktails ; avis en ligne mentionnent des facturations inattendues et un service inégal aux heures de pointe"],
+    "incertitudes": ""
+  },
+  "osm_n8879706726": {
+    "nom": "Chantira",
+    "presse_francophone": ["Le Fooding a publié une fiche sur Chantira (version consultée en anglais, média francophone à l'origine) (https://lefooding.com/en/restaurants/chantira)", "Time Out Paris (édition française) titre \"Chantira, la Thaïlande contemporaine\" (https://www.timeout.fr/paris/restaurants/chantira)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site propre identifié ; présence via Instagram et fiches d'agrégateurs (LaCarte, Raisin)",
+    "reseaux_sociaux": ["compte Instagram @chantira.paris mentionné (source secondaire, non vérifié directement)"],
+    "autres_faits": ["créé par Ti Tienchutima (ancienne flûtiste, ex-cheffe de Street Bangkok) et Line Chairatanalerkdee (ex-styliste) ; cuisine thaïlandaise contemporaine et vins nature ; fermé lundi et mardi"],
+    "incertitudes": ""
+  },
+  "osm_n1134402727": {
+    "nom": "Le Petit Café",
+    "presse_francophone": ["Paris Bouge référence l'établissement dans sa sélection de restaurants-bars (https://www.parisbouge.com/places/2872)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (le-petit-cafe.fr), se présente comme restaurant du Quartier latin (https://le-petit-cafe.fr/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["établissement fondé en 2003, décor de style bistrot new-yorkais (brique apparente, parquet chêne massif), ouvert 9h-2h avec happy hour 17h30-19h30"],
+    "incertitudes": ""
+  },
+  "osm_n2897679727": {
+    "nom": "Brasserie Balzar",
+    "presse_francophone": ["Paris Gourmand consacre un article détaillé à la brasserie, décrite comme \"exemplaire au cadre rétro\" (https://www.parisgourmand.com/restaurant-paris/balzar.html)"],
+    "guides_visiteurs": ["A Flâneur's Guide (blog voyage anglophone) consacre un article à l'adresse dans sa série sur la Rive Gauche (https://www.aflaneursguide.com/post/brasseriebalzar_paris_left_bank_flaneur)"],
+    "site_officiel": "site en français (brasseriebalzar.com) (https://brasseriebalzar.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["brasserie fondée vers 1894 par Amédée Balzar entre Sorbonne, Collège de France et facultés de médecine et droit ; rachetée ensuite par Marcelin Cazes (propriétaire de la Brasserie Lipp) qui la fait redécorer en style Art déco par l'architecte Joseph Madeline (Wikipédia FR, https://fr.wikipedia.org/wiki/Le_Balzar)"],
+    "incertitudes": ""
+  },
+  "osm_n531795728": {
+    "nom": "Colbeh",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Petit Futé, édition anglophone (petitfute.co.uk), référence l'établissement comme restaurant iranien (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c1031-cuisines-du-monde/c1037-cuisine-du-proche-et-moyen-orient/c97-restaurant-iranien/264914-colbeh.html)"],
+    "site_officiel": "site en français (restaurantcolbeh.com), page d'accueil sobre (https://restaurantcolbeh.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["fondé en 1982, l'un des premiers restaurants iraniens de Paris et l'un des plus anciens de la rue Mouffetard ; \"colbeh\" signifie \"musique\" en farsi, musiciens jouant du tar sur place, le patron chante lui-même"],
+    "incertitudes": ""
+  },
+  "osm_n2897679729": {
+    "nom": "La Bobine",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (labobineparis.fr), page contact/adresse (https://www.labobineparis.fr/en/address-contact/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["brasserie au décor inspiré du cinéma, cuisine traditionnelle avec options végétariennes et bio, prix moyen 25€, ouvert 8h-2h"],
+    "incertitudes": ""
+  },
+  "osm_n1145667733": {
+    "nom": "La Vieille Tour",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Novacircle (guide voyage anglophone) présente l'établissement comme adresse française authentique près de la rue Mouffetard (https://www.novacircle.com/spots/europe/france/ile-de-france/paris/paris/la-vieille-tour-bb050c)"],
+    "site_officiel": "site en français/anglais (lavieilletourparis5.com) (https://www.lavieilletourparis5.com/en/)",
+    "reseaux_sociaux": ["page Facebook \"La Vieille Tour Paris\" existante (https://www.facebook.com/lavieilletourparis.fr/)"],
+    "autres_faits": ["restaurant familial tenu par un père et son fils, situé à l'angle de la rue Mouffetard, spécialités fondue/raclette/tartiflette, musique d'ambiance (Piaf, Bruel, Aznavour)"],
+    "incertitudes": ""
+  },
+  "osm_n304964735": {
+    "nom": "Sweet KT",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["InTravel (site voyage) présente le restaurant avec photos et avis (https://intravel.net/paris/restaurants-cafes/sweet-kt-restaurant-japonais)"],
+    "site_officiel": "site en français (sweetkt.fr), non consulté en détail au-delà de l'URL",
+    "reseaux_sociaux": ["vidéo TikTok d'une créatrice (@nosylaa_) montrant le restaurant, décor à thème One Piece (https://www.tiktok.com/@nosylaa_/video/7230513191057362203)"],
+    "autres_faits": ["restaurant japonais à volonté, décor à thème manga One Piece"],
+    "incertitudes": ""
+  },
+  "osm_n1676994737": {
+    "nom": "L'île de Crête",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée en tant que sélection éditoriale ; fiches d'annuaires uniquement (eat-list.fr, kebab-frites.com)"],
+    "site_officiel": "site en français (restaurantliledecrete.fr), non consulté en détail au-delà de l'URL (https://restaurantliledecrete.fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine crétoise/méditerranéenne, moussaka, souvlakis, terrasse extérieure"],
+    "incertitudes": "les résultats de recherche situent systématiquement l'établissement au 10 rue Mouffetard, alors que le CSV indique 2 rue Blainville — à vérifier s'il s'agit bien du même restaurant ou d'un doublon/déménagement."
+  },
+  "osm_n3650444745": {
+    "nom": "Café G",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (cafe-g-paris.fr), se présente comme brasserie du 6e arrondissement avec terrasse et soirées DJ (https://cafe-g-paris.fr/)",
+    "reseaux_sociaux": ["compte Instagram @cafeg.paris (https://www.instagram.com/cafeg.paris/)"],
+    "autres_faits": ["afterwork dansant tous les vendredis, événements privés proposés ; l'identifiant OSM n3650444745 est confirmé correspondre à cette adresse via cartes.app"],
+    "incertitudes": ""
+  },
+  "osm_n8116983751": {
+    "nom": "Octant",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site bilingue (octantparis.com), se présente comme restaurant de \"cuisine fusion\" / \"cuisine de voyage\" (https://octantparis.com/en)",
+    "reseaux_sociaux": ["compte Instagram @octantparis (https://www.instagram.com/octantparis/)"],
+    "autres_faits": ["propose des options vegan, sans gluten et halal ; ouvert du mardi au samedi ; adresse relevée comme 18 rue Censier dans certaines fiches, le CSV ne donnant que \"Rue Censier\""],
+    "incertitudes": ""
+  },
+  "osm_n9350719751": {
+    "nom": "Mouffetard Saigon's",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["We Love Phở (site anglophone spécialisé) référence l'adresse (https://welovepho.org/places/mouffetard-saigons/)"],
+    "site_officiel": "site en français (mouffetardsaigon.fr), slogan \"Il n'y a rien de tel qu'un plat fait maison\" (https://mouffetardsaigon.fr/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["petit restaurant d'une dizaine de tables tenu par un couple, cuisine familiale vietnamienne (pho, banh beo, raviolis vapeur)"],
+    "incertitudes": ""
+  },
+  "osm_n3239933755": {
+    "nom": "Au grand bol",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site en français (ograndbol.com), page réservation (https://www.ograndbol.com/reservation)",
+    "reseaux_sociaux": ["plusieurs vidéos TikTok de créateurs alimentaires présentant le concept \"bol surprise\" avec réductions cachées (https://www.tiktok.com/@yanman_1.54/video/7489372512267095318, https://www.tiktok.com/@ograndbolparis/video/7506828314288475414)"],
+    "autres_faits": ["restaurant chinois de nouilles en bol (\"Ô Grand Bol\"), poulet halal certifié, options végétariennes, prix moyen 10-20€"],
+    "incertitudes": "le nom exact relevé en ligne est \"Ô Grand Bol\" (et non \"Au grand bol\" comme dans le CSV) ; l'adresse 61 rue Monsieur le Prince correspond aussi à des résultats pour le restaurant \"Hanoï\" (id osm_n3239933756) — possible confusion d'adresse entre les deux fiches OSM voisines, à vérifier."
+  },
+  "osm_n3239933756": {
+    "nom": "Hanoï",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["CECKR, blog spécialisé cuisine asiatique, consacre un billet à l'adresse en 2019 (https://ceckr.wordpress.com/2019/08/28/hanoi-61-rue-monsieur-le-prince-75006-paris-france/)"],
+    "site_officiel": "deux sites relevés : hanoi75.fr et hanoiparis.fr, tous deux en français, présentant un restaurant vietnamien familial près du Panthéon et du Luxembourg (https://hanoi75.fr/fr, https://hanoiparis.fr/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant familial, spécialités pho et nems, ouvert 11h-15h et 18h-22h45"],
+    "incertitudes": "l'adresse relevée en ligne (61 rue Monsieur le Prince) est la même que celle trouvée pour \"Au grand bol\" (id osm_n3239933755) — les deux id OSM voisins pointent vers la même adresse dans les résultats de recherche, à vérifier (fermeture/remplacement d'un établissement par l'autre, ou erreur de données)."
+  },
+  "osm_n6862401758": {
+    "nom": "Le Petit Châtelet",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Eat Out Paris (guide anglophone) référence l'établissement (https://www.eatoutparis.com/restaurant/le-petit-chatelet/profile)"],
+    "site_officiel": "site en français (restaurantlepetitchatelet.com), met en avant l'histoire du bâtiment (https://restaurantlepetitchatelet.com/accueil.html)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["bâtiment construit avec des pierres de l'ancienne porte fortifiée du Petit Châtelet, abrite un restaurant depuis le milieu du XIXe siècle ; racheté par les arrière-grands-parents des propriétaires actuels en 1951 ; cuisine au feu de cheminée dans la salle principale, vue sur Notre-Dame depuis l'étage"],
+    "incertitudes": ""
+  },
+  "osm_n3797279759": {
+    "nom": "Ayadi Gourmet",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Eat Out France (guide anglophone) référence l'établissement (https://eatoutfrance.com/restaurant/ayadi-gourmet-2/)"],
+    "site_officiel": "site en français (ayadi-gourmet-paris.com), met en avant l'art de la \"Fatteh\" syrienne (https://ayadi-gourmet-paris.com/fr)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["se présente comme le premier restaurant à \"présenter au monde l'art de la Fatteh\", décoration artisanale réalisée par des artisans syriens, ambiance sensorielle (senteurs de jasmin, bruit d'eau)"],
+    "incertitudes": ""
+  },
+  "osm_n3797279760": {
+    "nom": "Hébé",
+    "presse_francophone": ["Mandaley (city guide francophone) a consacré un article à l'ouverture du restaurant, titré \"Hébé, nouveau restaurant méditerranéen à Paris\" (https://www.mandaley.fr/cityguide/paris/hebe-restaurant-mediterraneen-a-paris)"],
+    "guides_visiteurs": ["Petit Futé, édition anglophone, référence l'établissement (https://www.petitfute.co.uk/v17231-17300-paris-75005/c1165-restaurants/c4-cuisine-francaise/1763529-hebe.html)"],
+    "site_officiel": "site en français (heberestaurant.com) (https://www.heberestaurant.com/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert en 2018 par Carole et Imad Kanaan, cuisine du chef Clément Courtemanche en collaboration avec le chef deux étoiles Michel Portos ; nom référant à la déesse grecque Hébé, servante du nectar des dieux ; gamme de prix 50-75€"],
+    "incertitudes": ""
+  },
+  "osm_n2529728761": {
+    "nom": "Maison de Gyros",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Zabihah (guide anglophone spécialisé halal) référence l'établissement (https://www.zabihah.com/restaurants/cade6e14-7767-11ef-95ae-6045bdeb9f57/maison-de-gyros-paris-ile-de-france)"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["restaurant grec (gyros/shawarma) certifié halal, situé sur la rue de la Huchette réputée pour sa forte concentration de restaurants grecs"],
+    "incertitudes": "adresses divergentes selon les sources (26 vs 17 rue de la Huchette) ; rue de la Huchette compte plusieurs enseignes grecques similaires, homonymie possible avec d'autres restaurants \"gyros\" du même secteur."
+  }
+}

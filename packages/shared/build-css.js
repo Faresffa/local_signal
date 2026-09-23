@@ -16,7 +16,7 @@
 // générer une copie depuis la même source atteint le même but sans dépendre
 // d'un comportement d'outil.
 
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -97,3 +97,30 @@ const js = [
 const jsTarget = join(here, "..", "..", "apps", "mobile", "src", "tokens.generated.js");
 writeFileSync(jsTarget, js.join(EOL), "utf8");
 console.log(`tokens.generated.js généré -> ${jsTarget}`);
+
+
+// ------------------------------------------- Constantes de filtrage (LS-15)
+//
+// `filtres.js` est recopié dans les deux applications plutôt qu'importé. Le
+// mobile ne peut pas l'importer — Metro ne résout pas de façon fiable hors du
+// dossier de l'application (D-022) — et le web suit la même voie pour qu'il
+// n'y ait qu'un seul mécanisme à comprendre.
+//
+// La copie est intégrale et non retouchée : la seule modification est l'en-tête
+// qui interdit de l'éditer. Toute correction se fait dans la source.
+
+const ENTETE_GENERE = [
+  "// GÉNÉRÉ par packages/shared/build-css.js. NE PAS ÉDITER À LA MAIN.",
+  "// Modifier packages/shared/filtres.js puis relancer le script.",
+  "//",
+  "//   node packages/shared/build-css.js",
+  "",
+].join(EOL);
+
+const filtresSource = readFileSync(join(here, "filtres.js"), "utf8");
+
+for (const app of ["web", "mobile"]) {
+  const cible = join(here, "..", "..", "apps", app, "src", "lib", "filtres.generated.js");
+  writeFileSync(cible, ENTETE_GENERE + filtresSource, "utf8");
+  console.log(`filtres.generated.js généré -> ${cible}`);
+}

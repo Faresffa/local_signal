@@ -1,0 +1,87 @@
+paire;choix;confiance;raison
+P001;A;forte;Mr & Mrs Crab viral TikTok (2.6M likes, 110k abonnés) depuis sept 2024 = pur attrape-passage; Crêperie locale.
+P002;B;forte;Mr & Mrs Crab viral TikTok vs Brava Pizza (pizzeria locale); Brava Pizza plus local.
+P003;A;moyenne;Yokorama Touristes+Étudiants, 7j/7 vs Brava Pizza Touristes+Étudiants; Yokorama légèrement plus touriste.
+P004;A;moyenne;Yokorama site cassé vs Arrivederci Pizzeria; Yokorama plus touristique.
+P005;B;faible;Arrivederci vs Pirosmani; pas assez d'infos.
+P006;B;moyenne;Pirosmani vs L'Estrapade (1914, Pudlowski); L'Estrapade LOCAL documenté.
+P007;B;moyenne;L'Estrapade (1914, Pudlowski, coupure midi/soir) vs India StreEAT (multilingue 15 langues); L'Estrapade moins touristique.
+P008;A;moyenne;India StreEAT (presse locale, multilingue) vs Hoki Sushi; India StreEAT plus documentée.
+P009;B;faible;Arya Bhavan vs Hoki Sushi; infos insuffisantes.
+P010;B;faible;Arya Bhavan vs Hon Ki; infos insuffisantes.
+P011;B;faible;Hon Ki vs Atelier Carmen; infos insuffisantes.
+P012;A;faible;Bonvivant vs Atelier Carmen; infos insuffisantes, estimation.
+P013;B;forte;Bonvivant vs Sushiyaki (familial 10 ans, ferme dimanche, coupure midi/soir); Sushiyaki clairement LOCAL.
+P014;B;forte;Taeng Thai vs Sushiyaki (familial 10 ans, LOCAL); Sushiyaki LOCAL.
+P015;A;moyenne;Taeng Thai vs Ya Bayté (Pudlowski presse); Ya Bayté Pudlowski LOCAL.
+P016;B;moyenne;Le Grenier vs Ya Bayté (Pudlowski, Gault&Millau); Ya Bayté presse locale.
+P017;B;moyenne;Au Père Louis (presse LesRestos, ParisGourmand) vs Le Grenier; Au Père Louis presse locale.
+P018;A;moyenne;Sahara Café vs Au Père Louis (presse locale, français seul); Au Père Louis moins touristique.
+P019;B;moyenne;Sahara Café vs Le Bluff (11:00-01:00 continu); Le Bluff plus touristique.
+P020;A;moyenne;Le Bluff (horaires continus) vs L'Annexe (annexe La Petite Périgourdine, 1996); L'Annexe plus stable LOCAL.
+P021;B;moyenne;L'Annexe (annexe 1996) vs El Sur (7j/7 continu Touristes); El Sur plus touristique.
+P022;A;moyenne;El Sur (7j/7 continu) vs Selva (site 11 langues, HiP Paris guide anglophone); Selva plus multilingue touristique.
+P023;B;moyenne;Bicla vs Selva (11 langues multilingue, HiP Paris); Selva plus touristique.
+P024;B;moyenne;La Ferrandaise (Gault&Millau, fermé dimanche) vs Bicla; La Ferrandaise LOCAL.
+P025;B;forte;Mexi & Co (7j/7 continu, Touristes+Étudiants, "fast-good-food") vs La Ferrandaise (Gault&Millau, terroir); Ferrandaise LOCAL.
+P026;A;faible;L'Époque vs Mexi & Co; pas assez d'infos L'Époque.
+P027;B;faible;L'Époque vs Khaaw Hoom; infos insuffisantes.
+P028;B;moyenne;La Cava Voltini (faillite 2025) vs Khaaw Hoom; Khaaw Hoom moins problématique.
+P029;B;moyenne;La Cava Voltini (faillite) vs A Braccetto; A Braccetto moins risqué.
+P030;B;moyenne;A Braccetto vs Crêperie des Pêcheurs (française locale); Crêperie plus locale.
+P031;B;moyenne;Yokorama (Touristes déclaré) vs Crêperie des Pêcheurs (française); Crêperie plus locale.
+P032;A;moyenne;Hoki Sushi vs Yokorama (Touristes); Yokorama plus clairement touristique.
+P033;B;faible;Taeng Thai vs Hoki Sushi; infos insuffisantes.
+P034;B;moyenne;Taeng Thai vs Au Père Louis (presse locale); Au Père Louis LOCAL.
+P035;A;moyenne;Au Père Louis (presse) vs La Cava Voltini (faillite); Au Père Louis gagne.
+P036;B;moyenne;La Cava Voltini vs Brava Pizza (7j/7, Touristes+Étudiants); Brava Pizza au moins fonctionnelle.
+P037;B;forte;L'Estrapade (1914, Pudlowski) vs Brava Pizza (7j/7, Touristes); L'Estrapade LOCAL historique.
+P038;B;moyenne;Bonvivant vs L'Estrapade (1914, Pudlowski); L'Estrapade LOCAL.
+P039;B;faible;Bicla vs Bonvivant; infos insuffisantes.
+P040;B;faible;Bicla vs Hon Ki; infos insuffisantes.
+P041;B;faible;L'Époque vs Hon Ki; infos insuffisantes.
+P042;A;faible;L'Époque vs Sushiyaki (familial LOCAL); Sushiyaki LOCAL.
+P043;B;moyenne;Khaaw Hoom vs Sushiyaki (familial LOCAL); Sushiyaki LOCAL.
+P044;B;faible;Atelier Carmen vs Khaaw Hoom; infos insuffisantes.
+P045;A;moyenne;Ya Bayté (Pudlowski presse) vs Atelier Carmen; Ya Bayté LOCAL presse.
+P046;B;forte;Selva (multilingue 11 langues) vs Ya Bayté (Pudlowski presse, coupure); Ya Bayté moins touristique.
+P047;B;moyenne;La Ferrandaise (Gault&Millau) vs Selva (11 langues); Ferrandaise LOCAL presse.
+P048;B;moyenne;Le Bluff (11:00-01:00) vs La Ferrandaise (Gault&Millau); Ferrandaise LOCAL presse.
+P049;B;moyenne;India StreEAT (presse Les Hardis) vs Le Bluff (horaires longs); India StreEAT presse.
+P050;A;moyenne;India StreEAT (presse locale) vs Le Grenier; India StreEAT documentée.
+P051;B;faible;A Braccetto vs Le Grenier; infos insuffisantes.
+P052;B;moyenne;A Braccetto vs L'Annexe (annexe 1996); L'Annexe plus stable.
+P053;A;moyenne;Arrivederci Pizzeria vs L'Annexe; pizzeria locale vs annexe.
+P054;A;moyenne;Arrivederci Pizzeria vs Sahara Café; pizzeria vs café.
+P055;B;faible;Arya Bhavan vs Sahara Café; infos insuffisantes Arya.
+P056;A;moyenne;Arya Bhavan vs El Sur (7j/7 continu Touristes); El Sur plus touristique.
+P057;B;forte;El Sur (7j/7 Touristes) vs Mr & Mrs Crab (viral TikTok); Mr & Mrs Crab VIRAL = plus touristique.
+P058;B;forte;Pirosmani vs Mr & Mrs Crab (viral TikTok 110k abonnés); Mr & Mrs Crab VIRAL TikTok.
+P059;A;forte;Mexi & Co (7j/7 continu Touristes+Étudiants, "fast-good") vs Pirosmani; Mexi & Co plus touristique.
+P060;A;forte;Mexi & Co (7j/7 continu) vs Crêperie des Pêcheurs (française); Mexi & Co plus touristique.
+P061;B;moyenne;Atelier Carmen vs Au Père Louis (presse locale); Au Père Louis LOCAL presse.
+P062;A;moyenne;Au Père Louis (presse locale) vs Mexi & Co (7j/7 continu); Au Père Louis moins dépendant.
+P063;B;moyenne;Le Grenier vs Crêperie des Pêcheurs (française locale); Crêperie plus locale.
+P064;A;moyenne;India StreEAT (presse) vs A Braccetto; India StreEAT documentée.
+P065;B;moyenne;A Braccetto vs Le Bluff (11:00-01:00); Le Bluff horaires continus longs.
+P066;A;moyenne;Le Bluff vs Taeng Thai; pas assez d'infos Taeng.
+P067;B;faible;Taeng Thai vs Khaaw Hoom; thaï vs thaï, infos insuffisantes.
+P068;A;forte;Khaaw Hoom vs Brava Pizza (7j/7 Touristes+Étudiants); Brava Pizza plus touristique.
+P069;A;forte;Bonvivant vs Brava Pizza (7j/7 Touristes+Étudiants); Brava Pizza plus touristique.
+P070;A;forte;Mr & Mrs Crab (viral TikTok) vs Bonvivant; Mr & Mrs Crab VIRAL.
+P071;A;forte;Mr & Mrs Crab (viral TikTok) vs Selva (11 langues); Mr & Mrs Crab VIRAL.
+P072;B;moyenne;Selva (11 langues) vs Hoki Sushi; Selva multilingue.
+P073;A;moyenne;Pirosmani vs Hoki Sushi; géorgienne vs sushi.
+P074;A;moyenne;Pirosmani vs Sahara Café; géorgienne vs café.
+P075;A;moyenne;Sahara Café vs La Cava Voltini (faillite); Sahara moins risqué.
+P076;B;moyenne;La Cava Voltini vs Arya Bhavan; Arya moins problématique.
+P077;B;moyenne;Ya Bayté (Pudlowski presse) vs Hon Ki; Ya Bayté LOCAL presse.
+P078;B;moyenne;L'Époque vs Ya Bayté (Pudlowski); Ya Bayté LOCAL presse.
+P079;A;moyenne;L'Époque vs L'Annexe (annexe 1996); L'Annexe plus stable.
+P080;A;moyenne;Arrivederci Pizzeria vs Bicla; pizzeria vs ?
+P081;B;moyenne;Bicla vs El Sur (7j/7 Touristes); El Sur plus touristique.
+P082;A;moyenne;La Ferrandaise (Gault&Millau, fermé dim) vs El Sur (7j/7 Touristes); Ferrandaise LOCAL.
+P083;A;moyenne;La Ferrandaise (Gault&Millau) vs L'Estrapade (1914, Pudlowski); les deux LOCAL, Estrapade plus presse.
+P084;B;moyenne;L'Estrapade (1914, Pudlowski) vs Sushiyaki (familial); les deux LOCAL, Estrapade presse > Sushiyaki.
+P085;B;forte;Yokorama (Touristes+Étudiants, 7j/7) vs Sushiyaki (familial LOCAL, fermé dim); Sushiyaki LOCAL.
+P086;A;moyenne;Yokorama (Touristes+Étudiants) vs Atelier Carmen; Yokorama plus clairement touristique.

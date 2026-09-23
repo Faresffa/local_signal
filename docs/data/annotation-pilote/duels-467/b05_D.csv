@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0314;A;forte;Lilane vit de fideles revenant depuis seize ans avec formule midi et fermeture week-end partielle, quand Au Petit Bistrot joue la carte du bistrot typique avec terrasse et soirees a theme
+P0315;B;faible;Les deux sont des adresses de flux, mais Au Petit Bistrot se presente entierement comme decor de bistrot parisien traditionnel alors qu'un avis d'En face vante un diner sans foule
+P0316;B;faible;En face ouvre 7j/7 en service continu quatorze heures par jour, amplitude de captage plus large que Gladines qui garde une identite basque et une clientele etudiante
+P0317;A;moyenne;Gladines est une antenne de chaine largement relayee sur les plateformes de voyage, Etoile Gourmet vit aussi de son karaoke et de ses salles de reception privees
+P0318;B;moyenne;Bistro des Poemes est un concept a theme face a un theatre avec site decline en anglais et un avis regrettant que l'ambiance ait change a cause des plateformes
+P0319;A;forte;Setopa est porte par la presse food francophone qui ecrit pour des Parisiens, Bistro des Poemes est un concept scenographie tres oriente week-end
+P0320;B;faible;Setopa est un projet de groupe adosse a des chefs etoiles et reference au Michelin, Le Thiossane s'appuie sur du bouche-a-oreille et une communaute
+P0321;A;forte;La Petite Perigourdine tourne en brasserie de 7h a 23h avec un avis decrivant une chaine de montage, Le Thiossane vit de recommandations personnelles
+P0322;B;moyenne;Maison de Gyros est une restauration rapide ouverte treize heures par jour avec formule a 9,50 euros, format de consommation de passage plus marque
+P0323;A;faible;Le Bistrot de la Montagne est specialise dans l'accueil de groupes de vingt a deux cents couverts et figure sur le site de l'office de tourisme
+P0324;B;forte;Une maison qui se vend comme salle a groupes medievale depend du car et du groupe organise, Bolan est une table de chef avec carte courte et reservation
+P0325;A;moyenne;Narro est adoube par Gault&Millau et Sortiraparis pour un lectorat parisien, Bolan positionne sa version anglaise sur un angle de proximite monumentale
+P0326;A;forte;Bistrot 20 est classe attraction touristique et sert fondue et raclette en continu 7j/7, Narro est un bistrot de quartier de scene naturelle
+P0327;B;forte;El Picaflor est un peruvien de 1994 double d'une epicerie avec musiciens, Bistrot 20 vend un folklore savoyard en service continu
+P0328;A;faible;Lhassa n'a ni site ni presence en ligne et sert sur des creneaux courts, El Picaflor a une programmation musicale et une carte plus mise en avant
+P0329;A;faible;Japorama a des avis d'habitues de vingt ans, Lhassa recoit des avis de visiteurs en decrivant un passage oblige de sejour
+P0330;A;moyenne;Pizza Hut est une enseigne internationale reconnue de loin par n'importe quel visiteur, Japorama tient sur une clientele fidele de longue date
+P0331;B;moyenne;Girasole tient sur la relation personnelle avec Mamie Bea citee dans presque tous les avis, Pizza Hut est une marque mondiale identifiable sans connaitre la ville
+P0332;A;faible;Le Village Monge ouvre des 7h30 avec petit dejeuner happy hour et jazz hebdomadaire, routine de quartier plus marquee que la pizzeria
+P0333;B;forte;Cafe G ouvre jusqu'a 2h avec soirees DJ et afterworks dansants sur une place tres passante, Le Village Monge vit de ses habitues nommes dans les avis
+P0334;A;faible;Sola est une destination gastronomique a menu unique reservee a l'avance, Cafe G capte le passage en terrasse a toute heure
+P0335;A;moyenne;Homer est un concept de comptoir a lobster roll importe, consommation rapide typique du passage, Sola exige une demarche de reservation
+P0336;A;moyenne;Homer se consomme debout en vingt minutes avec un ticket juge cher, Little Napoli garde un service de table et des retours d'habitues
+P0337;A;forte;Sucrepice est decrit comme frequente par les etudiants du quartier et des natifs du Sichuan, Little Napoli mise sur un decor italien et un classement de plateforme
+P0338;A;forte;Chez Kelly n'a ni site ni presse et vend une formule trois plats a 15 euros, mecanique d'attrape-passage, Sucrepice a un public de quartier
+P0339;A;forte;Marco Polo a des avis de clients qui reviennent et une notoriete installee, Chez Kelly vend un prix d'appel sans aucune identite en ligne
+P0340;A;moyenne;Le nul part ailleurs est un bar corse decrit comme rempli d'habitues, Marco Polo est une table italienne de prestige plus exposee
+P0341;B;forte;Soho Trattoria ouvre jusqu'a une heure du matin en service continu avec happy hour, Le nul part ailleurs vit d'une clientele reguliere revendiquee
+P0342;B;moyenne;Le Petit Cluny ouvre de 9h a 2h en terrasse et un avis le qualifie explicitement d'endroit tres touristique
+P0343;B;forte;X Lagrange est tenu par un gerant nomme dans les avis avec des clients qui reviennent, Le Petit Cluny vit du flux de terrasse
+P0344;B;faible;Terronia ferme deux jours par semaine et renouvelle sa carte au mois sous la main du patron, X Lagrange ouvre 7j/7 en service continu
+P0345;B;faible;Le Paradis des Amis n'a aucune presence en ligne et sert sur des creneaux courts, Terronia beneficie d'une reference Gault&Millau qui elargit son audience
+P0346;B;forte;Red Grill ouvre jusqu'a 2h du matin avec promotion video et positionnement steakhouse, Le Paradis des Amis est une table familiale sans site
+P0347;A;forte;Bicla est salue par la presse francophone et par des clients mexicains pour sa cuisine de tradition, Red Grill vend un format steakhouse ouvert tres tard
+P0348;A;faible;Bicla ferme deux jours par semaine et tient sur une communaute, Piment thai a une double couverture presse dont un article oriente visiteurs
+P0349;A;moyenne;MONK est un pub a bieres avec concerts ouvert de 10h a 2h et billetterie evenementielle, Piment thai est une table de cuisine reconnue par un blog parisien
+P0350;B;moyenne;La Nouvelle Seine programme de l'humour en francais, ce qui suppose un public francophone, MONK vit du flux nocturne et des concerts
+P0351;B;faible;La dedicace est decouverte par des visiteurs qui reviennent d'une annee sur l'autre, La Nouvelle Seine retient un public de spectacle en langue francaise
+P0352;B;moyenne;Les Crepes de Louis-Marie ont des avis nommant les serveurs comme des connaissances, La dedicace attire une clientele de sejour recurrente
+P0353;A;faible;Lilane compte des clients revenant chaque annee depuis seize ans, la creperie est nettement plus orientee week-end
+P0354;B;forte;La Petite Perigourdine tourne en brasserie continue avec forte rotation, Lhassa sert sur deux creneaux courts sans aucune vitrine en ligne
+P0355;A;moyenne;Marco Polo fidelise des clients qui ecrivent y revenir comme toujours, La Petite Perigourdine fonctionne au volume et a la rotation de salle
+P0356;A;moyenne;Bistro des Poemes est un concept scenographie face a un theatre avec version anglaise du site, Marco Polo a une clientele de retour installee
+P0357;B;forte;Le Paradis des Amis est une petite table familiale sans site ni presse, Bistro des Poemes est un concept a theme tres oriente week-end
+P0358;B;moyenne;Sola est une destination gastronomique a 95 et 150 euros que des voyageurs comparent aux autres tables de la ville, Le Paradis des Amis vit du quartier
+P0359;A;moyenne;Le Bistrot de la Montagne se vend comme salle a groupes pour vingt a deux cents personnes, Sola selectionne par le prix et la reservation
+P0360;A;forte;Setopa est porte par la presse food francophone, le Bistrot de la Montagne organise des banquets de groupes de passage
+P0361;B;faible;Setopa est une ouverture de groupe adossee a des chefs etoiles et au Michelin, la creperie tient sur un duo de salle que les clients nomment
+P0362;B;forte;Au Petit Bistrot joue le decor de bistrot parisien traditionnel avec terrasse et soirees a theme, la creperie garde une clientele familiere
+P0363;A;forte;El Picaflor est un peruvien historique double d'une epicerie communautaire, Au Petit Bistrot vend une experience de bistrot typique
+P0364;B;forte;El Picaflor a une clientele peruvienne et une presse francophone, Soho Trattoria ouvre en continu jusqu'a une heure du matin
+P0365;A;faible;Soho Trattoria est une trattoria de service continu tres tardif referencee sur guide, Maison de Gyros declare une clientele etudiante
+P0366;B;moyenne;Bistrot 20 est classe attraction touristique et vend un folklore savoyard, le gyros reste une restauration rapide de proximite pour etudiants
+P0367;B;moyenne;Bistrot 20 est explicitement categorise attraction touristique, Gladines garde une identite basque et une clientele etudiante
+P0368;B;moyenne;Le Petit Cluny est decrit par un avis comme un endroit tres touristique et ouvre de 9h a 2h, Gladines conserve une base plus mixte
+P0369;B;forte;Japorama compte des clients venant depuis vingt ans, Le Petit Cluny vit de la terrasse et du flux continu
+P0370;B;moyenne;Japorama tient sur des habitues de tres longue date, La dedicace est decouverte et reprise par des clients de sejour
+P0371;A;moyenne;Cafe G capte le passage en terrasse de 8h a 2h avec soirees dansantes, La dedicace est une petite table de ruelle calme
+P0372;B;moyenne;Chez Kelly n'a aucune presence propre et vend une formule a prix d'appel, Cafe G garde une clientele de soiree et d'evenements prives
+P0373;A;faible;Red Grill affirme une identite steakhouse assumee avec des retours francais sur la qualite de la viande, Chez Kelly ne tient que par son prix d'appel
+P0374;A;forte;Piment thai est chronique par un blog food francophone et recoit des avis sur la justesse de sa cuisine, Red Grill vend un format ouvert jusqu'a 2h
+P0375;B;moyenne;Lilane vit de fideles revenant chaque annee depuis seize ans, Piment thai a une double exposition dont un article oriente visiteurs
+P0376;A;moyenne;Lilane est une adresse de fideles a creneaux courts, X Lagrange ouvre 7j/7 en service continu onze heures par jour
+P0377;B;forte;X Lagrange fidelise autour d'un gerant nomme dans les avis, MONK est un pub a concerts ouvert jusqu'a 2h avec billetterie
+P0378;A;faible;Etoile Gourmet est couvert par deux articles en anglais et se decline en trois langues, La Nouvelle Seine programme de l'humour en francais
+P0379;B;moyenne;Le Village Monge est une brasserie de routine avec petit dejeuner et jazz hebdomadaire, Etoile Gourmet est relaye par des articles en anglais
+P0380;B;forte;Le Village Monge vit de ses habitues nommes dans les avis, Little Napoli mise sur un decor napolitain et un classement de plateforme
+P0381;B;moyenne;Terronia est tenu par un patron cuisinier avec carte mensuelle et deux jours de fermeture, Little Napoli est plus expose au flux
+P0382;B;forte;Terronia ferme deux jours par semaine et fonctionne a la commande, En face ouvre 7j/7 quatorze heures par jour en continu
+P0383;A;faible;Homer est un comptoir a lobster roll de consommation rapide, En face garde un service de table et des avis de convivialite locale
+P0384;A;moyenne;Homer vend un concept importe consomme rapidement, Pizza Hut tourne beaucoup sur la livraison et une clientele de proximite
+P0385;B;faible;Bolan positionne sa version anglaise sur un angle de proximite monumentale, Pizza Hut fonctionne surtout en livraison de quartier
+P0386;A;moyenne;Bicla est salue par la presse francophone et par des clients mexicains, Bolan oriente sa communication anglaise vers les visiteurs
+P0387;B;moyenne;Bicla ferme deux jours et vit d'une communaute, Narro est une table bistronomique relayee aussi par des blogs anglophones pour visiteurs
+P0388;A;moyenne;Sucrepice est frequente par les etudiants du quartier a quinze euros le ticket, Narro est une table de scene relayee jusque dans la presse anglophone
+P0389;B;faible;Sucrepice a un public de quartier et de natifs du Sichuan, Girasole a une version anglaise de son site
+P0390;B;faible;Le nul part ailleurs revendique beaucoup d'habitues et n'a qu'une page Facebook, Girasole dispose d'un site avec version anglaise
+P0391;B;faible;Le nul part ailleurs vit d'une clientele reguliere de quartier, Le Thiossane est une ouverture recente relayee par des videos grand public
+P0392;A;faible;Le Thiossane a une visibilite recente sur les reseaux, Lhassa n'a aucune vitrine en ligne et sert sur deux creneaux courts

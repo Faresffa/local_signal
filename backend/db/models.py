@@ -160,6 +160,119 @@ def init_db():
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_menus_resto ON menus(restaurant_id)")
 
+    # --- Avis, avec leur TEXTE (LS-01) ---
+    #
+    # La base portait jusqu'ici `review_count` — le NOMBRE d'avis — mais jamais
+    # leur contenu. L'indicateur langue, qui pese 0,30 du Local Signal, valait
+    # donc 0,50 pour les 468 restaurants de la zone temoin : il ne separait
+    # personne. Detecter une langue demande du texte.
+    #
+    # LE TEXTE EST CONSERVE, PAS SEULEMENT LA LANGUE DETECTEE. Deux raisons.
+    # D'abord parce que `langdetect` se trompe, surtout sur les avis courts :
+    # garder le texte permet de recalculer sans recollecter — donc sans
+    # repayer. Ensuite parce qu'un avis porte d'autres signaux que sa langue
+    # (marqueurs d'habitues, mentions de prix), et que ce qui est obtenu se
+    # garde.
+    #
+    # `review_id` porte l'identifiant du fournisseur quand il existe : c'est ce
+    # qui rend une recollecte idempotente au lieu de dupliquer.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS reviews (
+            id {_AUTOINCREMENT_PK},
+            restaurant_id TEXT NOT NULL,
+            review_id TEXT,          -- identifiant chez le fournisseur, pour dedupliquer
+            text TEXT,
+            lang TEXT,               -- code ISO 639-1 detecte, NULL si indetectable
+            rating REAL,
+            published_at TEXT,
+            source TEXT,             -- nom du collecteur, pour l'audit
+            collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_reviews_resto ON reviews(restaurant_id)")
+
+    # --- Avis laisses par NOS utilisateurs (LS-39) ---
+    #
+    # Distincts de `reviews`, qui porte les avis collectes chez un tiers. Deux
+    # tables et non une, pour trois raisons.
+    #
+    # LA PROVENANCE EST UNE PROPRIETE, PAS UNE COLONNE. Melanger nos avis et
+    # ceux d'un fournisseur dans une meme table invite a les traiter ensemble,
+    # et rend toute mesure de biais impossible a poser proprement.
+    #
+    # LES DONNEES PERSONNELLES NE SONT PAS LES MEMES. Un avis maison est
+    # rattache a un compte : il entre dans le droit d'acces et dans le droit a
+    # l'effacement (D-029). Un avis collecte ne nous appartient pas et ne
+    # designe personne chez nous.
+    #
+    # LE CYCLE DE VIE DIFFERE. Un avis maison se modifie et se supprime par son
+    # auteur ; un avis collecte se remplace par une nouvelle collecte.
+    #
+    # CE QU'ON EN FAIT AUJOURD'HUI : RIEN. Ils sont stockes, affiches, et
+    # n'entrent dans AUCUN calcul de score. Les faire compter avant d'avoir
+    # mesure leur biais reviendrait a reintroduire la popularite par la porte
+    # de service (D-001, D-007).
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS user_reviews (
+            id {_AUTOINCREMENT_PK},
+            restaurant_id TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
+            rating INTEGER,          -- 1 a 5, AFFICHE, jamais note (D-007)
+            text TEXT,
+            lang TEXT,               -- detectee a l'ecriture, pour un usage futur
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP,
+            FOREIGN KEY(restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_user_reviews_resto "
+        "ON user_reviews(restaurant_id)"
+    )
+    # Un utilisateur n'a qu'un avis par restaurant : il le modifie, il n'en
+    # empile pas. Sans cette contrainte, un clic repete cree des doublons.
+    cursor.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_user_reviews_unique "
+        "ON user_reviews(restaurant_id, user_id)"
+    )
+
+    # --- Cartes soumises par les utilisateurs (LS-38) ---
+    #
+    # La table `menus` porte le RESULTAT de la lecture. Celle-ci porte la
+    # SOUMISSION : qui a envoye quoi, quand, et ou le fichier est range.
+    #
+    # `corpus_key` est l'empreinte SHA-256 du fichier, qui sert aussi de nom
+    # dans le stockage. Deux utilisateurs qui envoient la meme photo produisent
+    # la meme empreinte : le fichier n'est stocke qu'une fois, et l'egalite le
+    # prouve.
+    #
+    # L'IMAGE N'EST PAS DANS LA BASE, seulement sa cle. Un BLOB gonflerait les
+    # sauvegardes au point de les rendre inexploitables.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS menu_submissions (
+            id {_AUTOINCREMENT_PK},
+            restaurant_id TEXT NOT NULL,
+            user_id INTEGER,         -- NULL si soumis sans compte
+            corpus_key TEXT NOT NULL,
+            mime TEXT,
+            octets INTEGER,
+            menu_id INTEGER,         -- lecture produite, quand elle a abouti
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_submissions_resto "
+        "ON menu_submissions(restaurant_id)"
+    )
+    # Un meme avis ne doit pas entrer deux fois si la collecte est relancee.
+    cursor.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_unique "
+        "ON reviews(restaurant_id, review_id) WHERE review_id IS NOT NULL"
+    )
+
     # --- Sites touristiques (référence pour la pénalité de zone — D-002) ---
     cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS tourist_sites (
@@ -199,6 +312,10 @@ def init_db():
     """)
 
     # --- Comptes utilisateurs (auth maison — override D-018 pour cette itération) ---
+    # `role` : "user" (défaut), "subscriber" ou "admin" (LS-refonte). Un TEXT
+    # avec valeur par défaut plutôt qu'un booléen `is_admin` — trois niveaux
+    # sont déjà demandés, un booléen n'en porterait que deux et il faudrait le
+    # remplacer dès l'abonnement implémenté.
     cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS users (
             id {_AUTOINCREMENT_PK},
@@ -206,6 +323,7 @@ def init_db():
             password_hash TEXT NOT NULL,
             name TEXT,
             is_active INTEGER DEFAULT 1,
+            role TEXT NOT NULL DEFAULT 'user',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
@@ -227,6 +345,24 @@ def init_db():
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token_hash)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)")
+
+    # --- Favoris (LS-refonte) — réservé aux abonnés, vérifié côté route ---
+    # `restaurant_id` n'a pas de clé étrangère vers `restaurants` : les deux
+    # tables sont alimentées par des pipelines différents (comptes vs
+    # collecte), et le reste du schéma ne contraint jamais ce lien non plus
+    # (`consultations.restaurant_id` fait de même) — un favori sur un
+    # restaurant retiré de la collecte reste une ligne valide, juste orpheline.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS favorites (
+            id {_AUTOINCREMENT_PK},
+            user_id INTEGER NOT NULL,
+            restaurant_id TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+            UNIQUE(user_id, restaurant_id)
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id)")
 
     _migrate(cursor)
 
@@ -287,6 +423,32 @@ def _migrate(cursor) -> None:
             # « lot groupe du 05/11/2025 — 12 pages, 5 analysees ».
             "photos_motif": "TEXT",
         },
+        "users": {
+            # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Les
+            # comptes déjà créés avant cette colonne (dont l'import D-048)
+            # retombent sur "user" — c'est le niveau le moins privilégié,
+            # jamais l'inverse.
+            "role": "TEXT DEFAULT 'user'",
+            # Connexion Google (LS-refonte). `oauth_google_id` est le "sub"
+            # renvoyé par Google — stable, contrairement à l'email qu'un
+            # utilisateur peut changer côté Google sans que ça nous soit
+            # signalé. NULL pour tout compte créé par mot de passe.
+            "oauth_provider": "TEXT",
+            "oauth_google_id": "TEXT",
+            # Quota de recherches d'un compte non abonné (LS-refonte). Remis à
+            # zéro dès que `search_count_date` diffère d'aujourd'hui — voir
+            # `repository.check_and_count_search`, qui porte toute la logique
+            # de remise à zéro pour ne pas la dupliquer ailleurs.
+            "search_count_today": "INTEGER DEFAULT 0",
+            "search_count_date": "TEXT",
+            # Preuve de consentement aux CGU/politique de confidentialité
+            # (retour utilisateur : une case à cocher, obligatoire, à
+            # l'inscription). L'horodatage compte : « a accepté » ne suffit
+            # pas à documenter un consentement RGPD, « a accepté tel jour »
+            # si. NULL pour tout compte créé avant cette colonne — aucune
+            # inscription rétroactive à reconstituer.
+            "accepted_terms_at": "TIMESTAMP",
+        },
         "menus": {
             "source_url": "TEXT",     # D-023 — provenance de la carte, pour l'audit
             # Texte brut releve par l'OCR, conserve integralement.
@@ -318,3 +480,12 @@ def _migrate(cursor) -> None:
         for column, sql_type in columns.items():
             if column not in existing:
                 cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {sql_type}")
+
+    # Unique, mais NULL-safe (index partiel, supporté par SQLite et Postgres) :
+    # deux comptes créés par mot de passe (donc sans `oauth_google_id`) ne se
+    # heurtent jamais à cette contrainte — seuls deux identifiants Google
+    # identiques le feraient, ce qui ne devrait jamais arriver.
+    cursor.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_oauth_google_id "
+        "ON users(oauth_google_id) WHERE oauth_google_id IS NOT NULL"
+    )

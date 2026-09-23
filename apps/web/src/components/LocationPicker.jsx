@@ -51,6 +51,8 @@ function CarteSelection({ centre, onValider, onFermer }) {
       carte = L.map(conteneur.current, { attributionControl: true })
         .setView([centre.lat, centre.lng], 14);
 
+      // CARTO Voyager exige désormais une clé sur ce sous-domaine (tuiles
+      // "APIKEY REQUIRED" en production). Retour à OSM officiel, sans clé.
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: "&copy; OpenStreetMap",

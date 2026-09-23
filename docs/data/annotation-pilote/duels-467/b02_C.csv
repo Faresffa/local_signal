@@ -1,0 +1,77 @@
+paire;choix;confiance;raison
+P0080;B;forte;La Capannina n'a aucune couverture presse ni fidélité affichée quand Hugo & Co fonctionne sur réservation avec fermeture le dimanche pour une clientèle de chef
+P0081;A;moyenne;La Crêperie des Pêcheurs pousse un code de réduction TheFork pour attirer du passage quand La Capannina reste un restaurant de quartier fermé deux jours
+P0082;B;faible;Le Delmas ouvre 7j/7 de 9h à 1h30 sans coupure, amplitude encore supérieure à celle de la Crêperie des Pêcheurs déjà tournée vers le passage
+P0083;B;forte;Pavane a des clients fidèles depuis six ans et ferme le lundi quand Le Delmas tourne toute la semaine sans interruption
+P0084;B;faible;Tcham n'a aucune couverture ni fidélité documentée alors que Pavane a une presse locale et des habitués cités nommément
+P0085;A;forte;Sanuki fonctionne en continu 7j/7 dix-huit heures par jour sans aucune coupure, contrairement à Tcham fermé le dimanche avec peu de tables
+P0086;B;moyenne;Sanuki ouvre en continu sept jours sur sept sans jamais fermer quand Les Arènes ferme le dimanche
+P0087;B;forte;Terra Nera est un lieu de tournage d'Emily in Paris qui attire une fréquentation touristique dédiée, bien au-delà du modèle de brasserie des Arènes
+P0088;B;forte;Terra Nera vit du tourisme lié à la série alors que L'Épidon fonctionne avec une cuisine minuscule et un couple pour environ trente couverts
+P0089;B;moyenne;Jardin des Pâtes est référencé par l'office de tourisme officiel de Paris et par le Petit Futé, deux guides pour visiteurs, quand L'Épidon n'a aucune couverture
+P0090;B;faible;Plante de Jade tourne en continu sept jours sur sept sans coupure quand Jardin des Pâtes garde une coupure entre les services malgré sa couverture touristique
+P0091;A;moyenne;Plante de Jade tourne en continu sept jours sur sept et un avis la décrit explicitement comme touristique, un signal plus net que Le Cèdre qui mise sur la vente à emporter sans marqueur touristique identifié
+P0092;A;moyenne;Pizza Verone tourne en continu toute la semaine et un avis la juge chère sans intérêt particulier, un profil plus captif du passage que Le Cèdre qui mise sur la vente à emporter à prix modeste
+P0093;B;forte;Pizza Verone tourne sans coupure toute la semaine quand Sushirama ferme le dimanche avec des habitués citant la gérante nommément
+P0094;A;moyenne;L'Auberge Saint-Séverin tourne tard le soir sans coupure toute la semaine quand Sushirama ferme le dimanche avec un service coupé midi/soir
+P0095;A;moyenne;Casimodo et L'Auberge Saint-Séverin tournent tous deux en continu toute la semaine, mais les avis sur Casimodo décrivent une gestion qui ne cherche pas à fidéliser
+P0096;A;moyenne;Casimodo tourne en continu sans jour de fermeture quand Yue Dore ferme au moins un jour et des habitués mentionnent le patron par son rôle
+P0097;B;moyenne;Yue Dore porte l'attribut clientèle touristes sans fermeture connue, quand El Cervantes ferme le lundi avec une ambiance décrite comme fréquentée par des étudiants du quartier
+P0098;A;faible;Ozumaki n'a aucun avis collecté et mise sur la livraison, un signal faible mais plus proche du passage qu'El Cervantes fermé le lundi et centré sur les étudiants
+P0099;A;faible;Ozumaki n'a ni presse ni fidélité documentée quand Taboulé se présente comme cuisine familiale faite maison sans aucun attribut touriste déclaré
+P0100;B;moyenne;Selva limite ses horaires mais bénéficie d'une couverture par un blog de visiteurs anglophone, un signal de notoriété touristique que n'a pas Taboulé
+P0101;B;faible;La Petite Bretonne porte l'attribut clientèle touristes et étudiants sans fermeture hebdomadaire claire quand Selva limite fortement ses jours et horaires de service
+P0102;B;moyenne;La Petite Bretonne affiche l'attribut touristes sans jour de fermeture net, quand Seoul Mama ferme le dimanche avec un couple de chefs aux commandes
+P0103;B;forte;La Fontaine tourne en continu sept jours sur sept quand Seoul Mama ferme le dimanche avec un service coupé midi/soir tenu par un couple de chefs
+P0104;B;faible;Chez Nicos est un comptoir à emporter avec très peu de places ouvert en continu de 10h à 2h toute la semaine, un modèle plus tourné vers le passage que La Fontaine
+P0105;egalite;moyenne;La Dolce Vita et Chez Nicos tournent tous deux en continu sept jours sur sept sans aucune fermeture ni fidélité documentée
+P0106;A;faible;La Parenthèse Latine propose un service en drive en plein Paris, un signe de restauration rapide à très fort volume, plus marqué que La Dolce Vita
+P0107;B;faible;Bistro des Lettres appartient à un groupe de restauration en Asie et propose un concept d'expérience unique pour visiteurs, encore plus tourné vers le passage que la restauration rapide de La Parenthèse Latine
+P0108;B;forte;Bistro des Lettres est détenu par un groupe international avec un concept pensé pour une expérience unique de visiteurs, à l'opposé de Guang Ming où plusieurs avis disent y aller depuis l'enfance
+P0109;A;forte;Un avis qualifie explicitement Il Gigolo de lieu touristique et un média local le décrit comme à clientèle mixte parisiens/touristes, quand Guang Ming craint d'être submergé par les touristes selon un avis, preuve qu'il ne l'est pas encore
+P0110;B;moyenne;Un avis qualifie Il Gigolo de lieu touristique avec une clientèle mixte parisiens/touristes selon la presse locale, quand Casa Mia fonctionne sur réservation avec des horaires très restreints typiques d'une cuisine de destination
+P0111;A;moyenne;Izgara est un kebab de quartier à prix modeste sans aucune couverture, quand Casa Mia impose des horaires très restreints sur réservation propres à une cuisine gastronomique visitée spécifiquement
+P0112;egalite;faible;Izgara et India StreEAT ferment tous deux plusieurs jours ou ont des horaires resserrés, sans signal touristique dominant identifié pour l'un ou l'autre
+P0113;A;moyenne;Mirama est référencé par le guide touristique officiel de Paris et tourne en continu toute la semaine, quand India StreEAT ferme deux jours avec une couverture par un blog s'adressant à des résidents parisiens
+P0114;B;faible;Mirama est cité par le guide touristique officiel de Paris en plus de tourner en continu toute la semaine, un cran au-dessus de Sunny malgré des horaires similaires
+P0115;B;moyenne;Topoly tourne en continu de 11h30 à minuit sans aucune fermeture et met en scène sa cuisine en vitrine, un modèle plus orienté passage que Sunny
+P0116;A;faible;Topoly tourne en continu toute la semaine avec une cuisine en spectacle, un signal de passage plus net que Le Val de Grace dont l'activité même de restaurant semble incertaine
+P0117;A;faible;Le Val de Grace a un statut d'activité incertain mais Chez l'oncle Lin a des habitués documentés, dont un client relatant un semestre entier de repas hebdomadaires
+P0118;B;forte;Allard a été repris par le groupe Alain Ducasse et porte l'attribut clientèle touristes avec une couverture par des guides internationaux, quand Chez l'oncle Lin a des clients réguliers sur plusieurs mois
+P0119;B;moyenne;Allard attire une clientèle internationale via sa reprise par un grand groupe et sa couverture par des guides internationaux, plus que Hugo & Co qui fonctionne sur réservation en circuit plus fermé
+P0120;A;forte;Chez Nicos est un comptoir à emporter ouvert en continu toute la semaine, quand Taboulé ferme le lundi avec une coupure en après-midi typique d'un service traditionnel
+P0121;A;forte;Chez Nicos tourne en continu toute la semaine sans jour de fermeture, quand Seoul Mama ferme le dimanche avec un couple de chefs aux commandes
+P0122;A;moyenne;Yue Dore porte l'attribut clientèle touristes sans fermeture connue, quand Seoul Mama ferme le dimanche et repose sur un couple de chefs identifiés
+P0123;B;forte;Yue Dore porte l'attribut clientèle touristes, quand Sushirama ferme le dimanche avec des habitués fidèles depuis plusieurs années
+P0124;A;forte;La Parenthèse Latine propose un service en drive et tourne en continu toute la semaine, un modèle de restauration rapide à très fort passage, contrairement à Sushirama fermé le dimanche
+P0125;A;moyenne;La Parenthèse Latine avec son service en drive est un modèle de restauration rapide bien plus orienté passage qu'un kebab de quartier comme Izgara
+P0126;B;faible;Crêperie des Pêcheurs pousse un code de réduction pour attirer du passage et n'a aucun jour de fermeture identifié, un cran au-dessus d'Izgara
+P0127;B;faible;Mirama est cité par le guide touristique officiel de Paris en plus de tourner en continu toute la semaine, un signal un peu plus net que la Crêperie des Pêcheurs
+P0128;B;faible;Topoly met en scène sa cuisine en vitrine et tourne en continu sans aucune fermeture, un cran au-dessus de Mirama malgré la présence de Mirama dans un guide touristique officiel
+P0129;B;faible;Topoly tourne en continu toute la semaine avec une mise en scène de sa cuisine, un signal de passage un peu plus fort que celui d'Allard malgré la reprise par un grand groupe
+P0130;A;faible;Plante de Jade tourne en continu toute la semaine sans aucune coupure, un signal de passage légèrement plus fort que celui d'Allard
+P0131;A;forte;Casimodo tourne en continu toute la semaine avec des avis décrivant un service qui ne cherche pas à fidéliser, quand Jardin des Pâtes garde une coupure entre les services
+P0132;A;moyenne;Casimodo tourne en continu toute la semaine avec des avis décrivant un service sans souci de fidélisation, un signal plus net que Le Val de Grace dont l'activité est incertaine
+P0133;B;forte;Terra Nera est un lieu de tournage d'Emily in Paris qui génère une fréquentation touristique dédiée, sans commune mesure avec Le Val de Grace
+P0134;B;forte;Terra Nera attire une fréquentation touristique liée à son statut de lieu de tournage, un signal bien plus fort que celui de Pizza Verone
+P0135;B;moyenne;Le Cèdre tourne en continu jusqu'à 2h du matin toute la semaine avec de la vente à emporter à petit prix, un modèle plus capté par le passage que Selva qui restreint fortement ses jours et horaires de service et pratique des tarifs plus élevés
+P0136;A;moyenne;L'Auberge Saint-Séverin tourne tard le soir en continu toute la semaine, un modèle plus tourné vers le passage que Selva qui restreint fortement ses jours et horaires
+P0137;A;faible;L'Auberge Saint-Séverin tourne un peu plus longtemps en continu que Sunny et multiplie le service tardif en soirée
+P0138;B;faible;Les Arènes portent l'attribut clientèle touristes et groupes en plus de tourner en continu six jours sur sept, un cran au-dessus de Sunny
+P0139;B;moyenne;Les Arènes portent l'attribut clientèle touristes et groupes avec un service en continu, quand Ozumaki n'a aucun avis collecté et mise sur la livraison locale
+P0140;egalite;faible;Ozumaki n'a aucun avis ni couverture identifiable et Il Gigolo est à la fois qualifié de touristique par un avis et de favori local dans un autre, deux profils incertains difficiles à départager
+P0141;B;moyenne;Un avis qualifie Il Gigolo de lieu touristique avec une clientèle mixte parisiens/touristes selon la presse locale, quand India StreEAT ferme deux jours et est décrit par un blog s'adressant à des résidents parisiens comme discret et authentique
+P0142;B;faible;India StreEAT porte l'attribut clientèle touristes sans fermeture aussi marquée qu'El Cervantes, fermé le lundi et fréquenté par des étudiants du quartier selon la recherche web
+P0143;A;faible;El Cervantes ferme le lundi et cible des étudiants du quartier, un profil très légèrement plus tourné passage que Chez l'oncle Lin qui a des clients réguliers sur plusieurs mois
+P0144;A;forte;La Petite Bretonne porte l'attribut clientèle touristes et groupes sans fermeture hebdomadaire nette, quand Chez l'oncle Lin a des clients réguliers documentés sur plusieurs mois
+P0145;B;forte;La Petite Bretonne porte l'attribut clientèle touristes et groupes, quand Guang Ming craint ouvertement d'être submergé par les touristes selon un avis, preuve qu'il ne l'est pas encore
+P0146;A;forte;La Dolce Vita tourne en continu toute la semaine et un avis la compare explicitement à une imitation servie aux touristes, quand Guang Ming a des clients qui y vont depuis l'enfance
+P0147;A;faible;La Dolce Vita tourne en continu toute la semaine avec un avis évoquant une cuisine imitation pour touristes, un signal légèrement plus fort que celui de La Fontaine
+P0148;egalite;moyenne;Le Delmas et La Fontaine tournent tous deux en continu sept jours sur sept sur de longues amplitudes sans aucune fidélité ni presse locale documentée
+P0149;B;forte;Le Delmas tourne en continu de 9h à 1h30 toute la semaine, quand Casa Mia fonctionne sur réservation avec des horaires très restreints propres à une cuisine de destination
+P0150;B;forte;Bistro des Lettres est porté par un groupe de restauration international avec un concept pensé comme expérience touristique, quand Casa Mia fonctionne en horaires très restreints sur réservation
+P0151;A;faible;Bistro des Lettres appartient à un groupe international et est référencé par un guide anglophone pour visiteurs avec un concept d'expérience, un signal un peu plus fort que celui de Sanuki
+P0152;B;forte;Sanuki tourne en continu dix-huit heures par jour toute la semaine sans aucune coupure, quand Hugo & Co fonctionne sur réservation avec fermeture le dimanche
+P0153;A;moyenne;La Capannina n'a ni jour de fermeture net ni fidélité documentée, à la différence de L'Épidon de l'Odéon qui repose sur un couple pour une trentaine de couverts
+P0154;A;faible;L'Épidon de l'Odéon et Pavane sont tous deux de petites adresses locales, mais L'Épidon ne montre aucun signe de fidélité de longue durée aussi explicite que celui documenté chez Pavane
+P0155;egalite;moyenne;Taboulé et Tcham sont tous deux de petits restaurants familiaux fermés un jour, sans couverture presse ni signal de passage dominant pour l'un ou l'autre

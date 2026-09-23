@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0705;B;moyenne;L'Écritoire est sur la place touristique de la Sorbonne avec un café jugé cher par un avis, alors que Balzar a des habitués mentionnés et une presse locale
+P0706;B;faible;L'Écritoire occupe la place de la Sorbonne prisée des visiteurs sans presse locale, contrairement à Amore e Gusto qui reste une pizzeria de quartier standard
+P0707;A;faible;Dame n'a que des avis parlant de la cathédrale, signal touristique par défaut même si le dossier est probablement mal apparié
+P0708;A;faible;Même remarque, le dossier Dame n'est rattaché qu'à des avis de visiteurs de la cathédrale, incohérence à signaler
+P0709;B;moyenne;Thaiger se présente en anglais comme un restaurant thaï authentique et figure sur des plateformes de réservation pour visiteurs
+P0710;B;forte;La Crêperie du Cloître est explicitement taguée touristes, classée par Tripadvisor et visée par un avis dénonçant un piège à touristes
+P0711;A;forte;La Crêperie du Cloître a un tag touristes explicite et un avis de piège à touristes, contre La Pie Noir plus fréquentée en semaine
+P0712;B;moyenne;Le site de La Sarrasine est jugé commercial générique et ses avis sont tous en langues étrangères, contre La Pie Noir aux touches plus personnelles
+P0713;A;forte;Bonjour Viêt Nam est salué par Time Out Paris pour son côté familial et fait maison, contre le profil plus générique de La Sarrasine
+P0714;A;faible;Royal Bombay n'a aucune presse identifiée et se situe sur un boulevard très touristique, contre le papier de presse locale sur Bonjour Viêt Nam
+P0715;A;moyenne;Les Fêtes Galantes est présentée comme une découverte sur un forum de voyageurs anglophone, signal plus direct que le menu étudiant de Royal Bombay
+P0716;B;forte;Les Fêtes Galantes est recommandée sur un forum de voyageurs anglophone alors que Pan Asie a des clients qui en parlent comme leur restaurant préféré depuis des années
+P0717;A;faible;Pan Asie est explicitement tagué touristes par Google alors que Panda Wok évoque des habitués et des tarifs étudiants sans tag touristes
+P0718;B;forte;Restaurant Boutebrie est un restaurant social du CASVP à horaires très restreints sans pertinence touristique, contrairement au buffet Panda Wok
+P0719;B;forte;Boutebrie reste un restaurant social quasi fermé au public, alors que La Table d'Hami est une vraie destination gastronomique ouverte à tous
+P0720;A;moyenne;Chez le Libanais est présenté par un blog anglophone comme une adresse au cœur de Paris, contre la reconnaissance gastronomique française (Gault&Millau) de La Table d'Hami
+P0721;A;moyenne;Chez le Libanais reste une vente à emporter sur rue touristique couverte par un blog anglophone, contre Hébé qui est un restaurant de chef avec presse locale
+P0722;B;faible;Hébé cumule presse locale et guide anglophone pour visiteurs alors qu'Atelier Carnem n'a que de la presse gastronomique française
+P0723;A;faible;Le Petit Prince de Paris semble fermé et vendu via des coffrets-cadeaux généralistes, profil plus occasionnel que la presse gastronomique locale d'Atelier Carnem, dossier à vérifier
+P0724;A;forte;Bouillon Racine est partenaire déclaré de l'Office du Tourisme de Paris, signal explicite et unique dans ce corpus
+P0725;A;forte;Le partenariat de Bouillon Racine avec l'Office du Tourisme dépasse largement le profil générique du Lac de l'Ouest
+P0726;A;moyenne;Le Lac de l'Ouest est sur une rue très touristique sans aucune presse, alors que les avis sur I Diavoletti témoignent d'une fidélité de dix ans
+P0727;A;faible;I Diavoletti reste un restaurant de quartier tagué touristes alors que Muku est une destination gastronomique sur réservation couverte par la presse locale
+P0728;B;moyenne;Muku est un lieu récent porté par le buzz des réseaux sociaux et du guide Michelin, alors que Savannah revendique quarante ans de clientèle fidèle
+P0729;B;forte;Le Souvlaki Athénien est sur la rue de la Huchette, rue emblématique des restaurants pour visiteurs, contre la fidélité de quarante ans de Savannah Café
+P0730;A;faible;Le Grenier de Notre Dame est tagué touristes par Google et plus fréquenté le week-end sans presse locale malgré son ancienneté, un peu plus que Le Souvlaki Athénien
+P0731;A;faible;Café Latin se présente en anglais comme au cœur du Quartier latin et n'a aucune presse française, signal un peu plus net que celui du Grenier de Notre Dame
+P0732;B;forte;Café Latin cible un public anglophone alors que Pura Vida a un habitué qui vient plusieurs fois par semaine et connaît le patron par son prénom
+P0733;A;forte;Loulou' est un concept brunch tendance mis en avant par Sortiraparis sur un boulevard très fréquenté par les visiteurs, contre le profil très local de Pura Vida
+P0734;A;forte;Loulou' est un lieu de passage touristique alors que Foyer mon Vietnam est décrit comme une adresse cachée et familiale
+P0735;A;forte;Le Berthoud est mis en avant par un blog de tournées gastronomiques touristiques, alors que Foyer mon Vietnam reste une adresse locale discrète
+P0736;B;moyenne;Le Berthoud est repris par un blog de tours gastronomiques pour visiteurs, alors que Pacha a un client qui témoigne y venir plusieurs fois par semaine avec ses amis
+P0737;B;moyenne;Maison de Gyros est sur la rue de la Huchette et référencée par un guide anglophone pour voyageurs, contre le témoignage d'habitué sur Pacha
+P0738;B;faible;Maison de Gyros est référencée par un guide destiné aux voyageurs, contre Les Balkans qui n'a aucune présence en ligne identifiée, dossier Les Balkans incohérent car les avis décrivent une cuisine indonésienne alors que la fiche indique pizza
+P0739;B;moyenne;Les Baux reçoit des avis de découverte très enthousiastes en anglais pour un bar à cocktails et musique live, contre Les Balkans dont le dossier reste incohérent et sans presse
+P0740;B;moyenne;Mr & Mrs Crab est devenu viral sur TikTok avec plus de cent mille abonnés, signal d'attraction à distance plus fort que les avis de découverte des Baux
+P0741;B;moyenne;La viralité TikTok de Mr & Mrs Crab est un signal plus fort que le profil mixte de brasserie de quartier du Petit Cardinal, qui diffuse les matchs pour ses habitués
+P0742;A;faible;Un avis sur La Bobine mentionne explicitement des touristes québécois qui la recommandent, signal ténu mais présent, contre Le Petit Cardinal
+P0743;B;moyenne;Mexi & Co est critiqué comme misant sur un décor photogénique plutôt que sur la cuisine, signal de restaurant tourné vers le passage, contre La Bobine aux horaires très locaux
+P0744;A;forte;Mexi & Co est critiqué pour son décor tape-à-l'œil masquant une cuisine médiocre, alors que Balzar est une institution avec habitués mentionnés et presse locale
+P0745;A;moyenne;L'Écritoire est sur la place touristique de la Sorbonne avec un café jugé cher, contre Hébé qui est un restaurant de chef avec presse locale et pedigree gastronomique
+P0746;A;forte;Hébé est un restaurant commercial ouvert à tous alors que Boutebrie est un restaurant social à horaires restreints sans pertinence touristique
+P0747;B;forte;Le Berthoud est repris par un blog de tournées gastronomiques touristiques, alors que Boutebrie reste un restaurant social non commercial
+P0748;B;forte;Les Fêtes Galantes est présentée comme une découverte sur un forum de voyageurs anglophone, alors que Foyer mon Vietnam est une adresse locale cachée
+P0749;A;forte;Le partenariat de Bouillon Racine avec l'Office du Tourisme est le signal le plus explicite du corpus, largement au-dessus des Fêtes Galantes
+P0750;A;forte;Le partenariat de Bouillon Racine avec l'Office du Tourisme dépasse le profil neutre d'Amore e Gusto
+P0751;A;moyenne;Le Souvlaki Athénien est sur la rue de la Huchette emblématique des restaurants pour visiteurs, contre Amore e Gusto qui accepte les titres-restaurant signe d'une clientèle salariée locale
+P0752;A;forte;Le Souvlaki Athénien est sur la rue de la Huchette très touristique, contre le profil très local de Pura Vida
+P0753;A;forte;La viralité TikTok de Mr & Mrs Crab est un signal fort d'attraction de visiteurs, contre le profil très local de Pura Vida
+P0754;B;moyenne;La viralité TikTok de Mr & Mrs Crab dépasse le signal d'habitués de Pan Asie, même si Pan Asie est aussi tagué touristes
+P0755;B;faible;Mexi & Co est critiqué comme un lieu misant sur l'apparence plutôt que la cuisine, signal un peu plus net que le tag touristes de Pan Asie qui a par ailleurs des clients fidèles
+P0756;A;moyenne;Mexi & Co est critiqué comme un piège esthétique pour passants, contre les témoignages de fidélité de dix ans sur I Diavoletti
+P0757;A;faible;I Diavoletti est explicitement tagué touristes et groupes par Google, un peu plus que Balzar qui a une presse locale et des habitués mentionnés
+P0758;A;faible;Le dossier Dame ne contient que des avis sur la cathédrale, signal touristique par défaut, contre l'institution locale que semble être Balzar
+P0759;B;faible;Le dossier Dame reste incohérent et rattaché uniquement à des avis de visiteurs, contre la fidélité de quarante ans de Savannah Café
+P0760;A;faible;Les Balkans reste un dossier incohérent sur une rue touristique sans aucune presse, contre la fidélité de quarante ans de Savannah Café
+P0761;A;faible;Les Balkans est un dossier incohérent sur une rue touristique sans démarche de destination affirmée, contre Muku qui est une adresse recherchée avec presse locale
+P0762;B;faible;Muku attire par le buzz des réseaux sociaux et le guide Michelin, alors que Panda Wok a des habitués et des tarifs étudiants qui l'ancrent localement
+P0763;A;moyenne;Maison de Gyros est sur la rue de la Huchette et référencée par un guide destiné aux voyageurs, contre les habitués du buffet Panda Wok
+P0764;A;faible;Maison de Gyros est sur une rue touristique référencée par un guide de voyageurs, un peu plus que Luisa Maria qui a une reconnaissance de presse locale
+P0765;A;faible;Luisa Maria n'a qu'une reconnaissance de presse locale incertaine, contre le papier de Time Out Paris sur le caractère familial et fait maison de Bonjour Viêt Nam
+P0766;B;moyenne;Le Grenier de Notre Dame est tagué touristes et plus fréquenté le week-end sans presse locale malgré son ancienneté, contre le papier de Time Out sur Bonjour Viêt Nam
+P0767;A;moyenne;La Crêperie du Cloître est visée par un avis dénonçant un piège à touristes et classée par Tripadvisor, signal plus direct que le simple tag touristes du Grenier de Notre Dame
+P0768;A;faible;La Crêperie du Cloître a un avis explicite de piège à touristes, contre Le Petit Prince de Paris dont le statut semble fermé et l'ancien usage plutôt occasionnel via des coffrets-cadeaux, dossier à vérifier
+P0769;A;faible;Le Petit Prince de Paris semble être un lieu à expérience occasionnelle vendu via des coffrets-cadeaux, contre le profil de vente à emporter plus quotidien de Chez le Libanais
+P0770;A;moyenne;Loulou' est un concept brunch tendance mis en avant par Sortiraparis sur un boulevard très touristique, contre le profil de vente à emporter de Chez le Libanais
+P0771;B;faible;Le site de La Sarrasine est jugé plus commercial que porteur d'une identité de maison, signal de restaurant tourné vers le client de passage, un peu plus que Loulou'
+P0772;A;faible;Les Baux reçoit des avis de découverte très enthousiastes en anglais pour un bar à cocktails et musique live, signal un peu plus net que le profil commercial de La Sarrasine
+P0773;B;faible;Les Baux, bar à cocktails et musique live à avis unanimement enthousiastes en anglais, un peu plus tourné vers le visiteur que Thaiger qui vise aussi un public anglophone
+P0774;A;moyenne;Thaiger se présente en anglais comme un restaurant thaï authentique sur des plateformes pour visiteurs, contre la reconnaissance gastronomique française de La Table d'Hami
+P0775;B;faible;Un avis sur La Bobine mentionne explicitement des touristes québécois qui la recommandent, contre la reconnaissance gastronomique de La Table d'Hami
+P0776;B;moyenne;Un avis sur La Bobine évoque explicitement des touristes qui la recommandent, contre la presse gastronomique française d'Atelier Carnem
+P0777;B;faible;Royal Bombay n'a aucune presse identifiée et se situe sur un boulevard très touristique, contre la presse gastronomique française d'Atelier Carnem
+P0778;A;faible;Royal Bombay est sur le Boulevard Saint-Michel très touristique sans presse identifiée, un peu plus que Le Petit Cardinal qui diffuse les matchs pour ses habitués
+P0779;A;faible;Le Petit Cardinal reste une brasserie générique de carrefour sans habitués mentionnés, un peu plus que La Pie Noir qui a une fréquentation plus marquée en semaine et des touches personnelles dans les avis
+P0780;B;moyenne;Le Lac de l'Ouest est sur une rue très touristique avec une identité de cuisine incertaine et sans aucune presse, contre La Pie Noir plus fréquentée en semaine
+P0781;B;faible;Café Latin se présente en anglais comme au cœur du Quartier latin, signal un peu plus net que le profil neutre du Lac de l'Ouest
+P0782;A;forte;Café Latin cible un public anglophone alors que Pacha a un client qui témoigne y venir plusieurs fois par semaine avec ses amis
+P0783;A;moyenne;L'Écritoire est sur la place touristique de la Sorbonne avec un café jugé cher, contre le témoignage d'habitué régulier sur Pacha

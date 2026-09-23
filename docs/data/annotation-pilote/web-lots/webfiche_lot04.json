@@ -1,0 +1,278 @@
+{
+  "osm_n4040156223": {
+    "nom": "Sabraj",
+    "presse_francophone": ["aucune mention trouvée (Sortiraparis n'a qu'une fiche annuaire sans texte éditorial, sortiraparis.com/en/lieux/1995-sabraj)"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "restaurant-sabraj-paris.fr, bilingue français/anglais, se présente comme restaurant indien installé dans une salle du XIVe siècle avec pierres et poutres d'origine, près du Panthéon (restaurant-sabraj-paris.fr/en/)",
+    "reseaux_sociaux": ["compte Instagram mentionnant l'adresse, post référencé (instagram.com/p/B9mtIteIc0E)"],
+    "autres_faits": ["Yelp indique l'établissement fermé (\"CLOSED - Updated July 2025\"), en contradiction avec le site officiel et d'autres annuaires qui le présentent actif (yelp.com/biz/sabraj-paris)"],
+    "incertitudes": "statut ouvert/fermé contradictoire entre les sources ; à vérifier sur place."
+  },
+  "osm_n4936562224": {
+    "nom": "Cucina Mutualité",
+    "presse_francophone": [
+      "Gilles Pudlowski, non daté précisément : « Ducasse séduit à l'italienne » (gillespudlowski.com/213967)",
+      "Gilles Pudlowski, non daté précisément : « Paris 5e : l'Italie flamboyante d'Alessandro Lucassino » (gillespudlowski.com/338876)"
+    ],
+    "guides_visiteurs": ["Guide Michelin (guide.michelin.com), article en anglais « Inside Cucina Mutualité, Alain Ducasse's Italian Restaurant »"],
+    "site_officiel": "cucina-mutualite.com : se présentait comme restaurant italien d'Alain Ducasse (établissement fermé depuis 2025)",
+    "reseaux_sociaux": ["page Facebook CucinaMutualite (facebook.com/CucinaMutualite)"],
+    "autres_faits": [
+      "ouvert fin 2018 par le groupe Alain Ducasse à la Maison de la Mutualité",
+      "chef mentionné : Matteo Lorenzini selon une source, Alessandro Lucassino selon Pudlowski",
+      "fermeture annoncée le 17 février 2025",
+      "remplacé en décembre 2025 par un établissement nommé « La Maison de la Mutualité » selon une source"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n2910108225": {
+    "nom": "La Fourmi Ailée",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Petit Futé le classe en cuisine française / bistrot-brasserie (petitfute.co.uk, version anglophone du guide)"],
+    "site_officiel": "aucun trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "le lieu occupait auparavant une librairie liée à une des premières universités françaises selon une source",
+      "décor inspiré des cafés littéraires parisiens, avec cheminée",
+      "fermeture annuelle mi-juillet à mi-août"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n3734865225": {
+    "nom": "Le Clou de Paris",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée spécifique (uniquement plateformes de réservation)"],
+    "site_officiel": "le-clou-de-paris-restaurant.eatbu.com, se présente en anglais (« Authentic Parisian Dining with Fast Service and Welcoming Atmosphere »)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["ouvert 7j/7 de 8h à minuit, sert petit-déjeuner, omelettes, moules marinière, steak frites"],
+    "incertitudes": ""
+  },
+  "osm_n1930542226": {
+    "nom": "Le Perraudin",
+    "presse_francophone": ["aucune mention trouvée en presse éditoriale (sites consultés = annuaires : paris-bistro.com, restoaparis.com)"],
+    "guides_visiteurs": ["Petit Futé (petitfute.co.uk, édition anglophone du guide) référence l'établissement"],
+    "site_officiel": "leperraudin.fr, en français, se présente comme « cuisine traditionnelle française » et raconte l'histoire du lieu (ancien bougnat)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "établissement daté de 1872 selon une source",
+      "ancien « bougnat » (débit de charbon et de boissons) racheté et nommé par M. et Mme Perraudin en 1923, tenu par cette famille pendant 64 ans (jusque vers 1987)",
+      "longtemps « cantine » des étudiants et professeurs du Quartier latin",
+      "propriétaires changés depuis mais le nom a été conservé",
+      "décor Belle Époque conservé"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n7159616227": {
+    "nom": "Respiro",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "respiro-paris.fr, se présente en français/anglais comme trattoria-pizzeria sicilienne",
+    "reseaux_sociaux": ["compte Instagram @respiro_paris (instagram.com/respiro_paris)"],
+    "autres_faits": [
+      "fondé par Francesco Casisa, pizzaïolo originaire de Sicile",
+      "ouvert du mardi au dimanche"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n1930542230": {
+    "nom": "La Parenthèse Latine",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun trouvé",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "enregistrée comme SAS « LA PARENTHESE LATINE », SIRET 990 117 608 00010 (annuaire-entreprises.data.gouv.fr)",
+      "activité déclarée : restauration rapide, vente de boissons chaudes/froides, pâtisserie, chocolaterie, glaces"
+    ],
+    "incertitudes": "à ne pas confondre avec un autre établissement « La Parenthèse » à une adresse différente (boulevard cité sur Tripadvisor, d-23569780) ; nom trop générique pour être sûr que toutes les mentions concernent bien le 65 bd Saint-Germain."
+  },
+  "osm_n2386622236": {
+    "nom": "Le Procope",
+    "presse_francophone": [
+      "Sortiraparis : « Le Procope : le plus ancien café de Paris à redécouvrir » (sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/308769)",
+      "Le Bonbon : « Cette institution mythique du 6e est l'un des plus vieux restaurants de Paris » (lebonbon.fr/paris/pepites/institution-plus-vieux-cafe-restaurants-paris)"
+    ],
+    "guides_visiteurs": [
+      "Paris je t'aime, office de tourisme officiel (parisjetaime.com/eng/restaurant/le-procope-p3345)",
+      "VisitParisRegion (visitparisregion.com/fr/le-procope)",
+      "The Parisian Guide, en anglais : « Le Café Procope: Where History and Cuisine Meet in Paris's Oldest Restaurant » (theparisianguide.com)"
+    ],
+    "site_officiel": "procope.com, bilingue français/anglais, se présente comme « plus ancien café-restaurant de Paris »",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "fondé en 1686 par le Sicilien Francesco Procopio Dei Coltelli",
+      "fréquenté historiquement par Voltaire, Rousseau, Montesquieu, et par les Cordeliers (Danton, Marat) pendant la Révolution",
+      "associé par la légende à la genèse de l'Encyclopédie et à Benjamin Franklin"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n9725595237": {
+    "nom": "Royal Bombay",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "deux sites relevés (royalbombay.com et restaurant-indien.fr) se présentant comme « restaurant indien à Paris 13e » — adresse différente de celle du lot (bd Saint-Michel), correspondance incertaine",
+    "reseaux_sociaux": ["page Facebook « Royal Bombay Saint-Michel » (facebook.com/royalbombaySM)"],
+    "autres_faits": ["se présente comme ambassadeur de la cuisine indienne traditionnelle depuis 1998, situé près du Jardin du Luxembourg"],
+    "incertitudes": "les sites web trouvés (royalbombay.com, restaurant-indien.fr) semblent concerner un établissement du même nom dans le 13e arrondissement, pas nécessairement celui du 76 bd Saint-Michel ; à vérifier avant d'attribuer leur contenu à cette adresse."
+  },
+  "osm_n1547972240": {
+    "nom": "Anahuacalli",
+    "presse_francophone": ["Sortiraparis, fiche lieu (en anglais sur le site FR) : sortiraparis.com/en/lieux/402-anahuacalli"],
+    "guides_visiteurs": ["Gayot, guide gastronomique anglophone (gayot.com/restaurants/anahuacalli-paris-75005-france_10pa051109)"],
+    "site_officiel": "aucun site propre clairement identifié (uniquement des pages de réservation : metro.rest, eatbu.com)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "revendique une cuisine mexicaine « pré-colombienne », par opposition au tex-mex",
+      "chef mentionné : Tony Spinosa, originaire de Veracruz",
+      "plat signature cité : le mole poblano"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n9856963241": {
+    "nom": "Chez le Libanais",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["NoGarlicNoOnions, blog food/travel anglophone : « Chez Le Libanais: Proudly Lebanese and Tasty, in the Heart of Paris! » (nogarlicnoonions.com)"],
+    "site_officiel": "aucun trouvé (page Facebook uniquement)",
+    "reseaux_sociaux": ["page Facebook « Chez le Libanais » (facebook.com/chezlelibanais)"],
+    "autres_faits": [
+      "adresse parfois donnée comme « 35 et 36 rue Saint-André-des-Arts »",
+      "ouvert 7j/7 de 11h à minuit",
+      "cuisine libanaise halal, deux fours saj mentionnés"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n8843031248": {
+    "nom": "Le Reminet",
+    "presse_francophone": ["aucune mention trouvée en presse généraliste ; fiche descriptive Gault&Millau, en anglais (fr.gaultmillau.com/en/restaurants/le-reminet)"],
+    "guides_visiteurs": ["Trip.com, guide voyage anglophone (us.trip.com/restaurant/france/paris/detail/le-reminet-17121521)"],
+    "site_officiel": "lereminet.fr, en français, se présente comme restaurant « au charme ancien »",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "présenté comme une « institution » du Quartier latin depuis près de trente ans",
+      "chef cité par Gault&Millau : Nicolas Asseline",
+      "situé dans un immeuble classé, vue sur Notre-Dame et l'Île Saint-Louis, cave voûtée"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n8843031249": {
+    "nom": "Le Montebello",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée spécifique"],
+    "site_officiel": "site mentionné (restaurant-montebello-paris.fr) mais non consulté directement ; contenu non vérifié",
+    "reseaux_sociaux": ["page Facebook « restaurantmontebello » (facebook.com/restaurantmontebello)"],
+    "autres_faits": ["terrasse avec vue sur Notre-Dame mise en avant par plusieurs fiches"],
+    "incertitudes": ""
+  },
+  "osm_n6532221250": {
+    "nom": "Dae Jang",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun trouvé (uniquement pages de livraison/réservation : Uber Eats, res-menu.net)",
+    "reseaux_sociaux": ["aucune mention trouvée au-delà des fiches d'annuaire (Corner, Mapstr)"],
+    "autres_faits": ["enregistré comme SARL à l'adresse 31-33 rue Descartes"],
+    "incertitudes": ""
+  },
+  "osm_n6532221252": {
+    "nom": "Savannah Café",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["Eater, média gastronomique anglophone, fiche dédiée (eater.space/savannah-cafe)"],
+    "site_officiel": "savannahcafe.fr, bilingue français/anglais",
+    "reseaux_sociaux": ["page Facebook « SavannahCafeParis » (facebook.com/SavannahCafeParis)"],
+    "autres_faits": ["fondé en 1985 par Richard Sahlani, dans un ancien atelier de maçon"],
+    "incertitudes": ""
+  },
+  "osm_n1941648254": {
+    "nom": "Étoile Gourmet",
+    "presse_francophone": ["Sortiraparis, article (en anglais sur le site FR) « Étoile Gourmet: the restaurant with authentic Asian flavours and unforgettable karaoke evenings » (sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/322602), et fiche lieu dédiée"],
+    "guides_visiteurs": ["Novacircle, en anglais : « Etoile Gourmet: Authentic Chinese Dining in Paris' Saint-Germain » (novacircle.com)"],
+    "site_officiel": "etoilegourmet.com, se présente en français/anglais/chinois, nom chinois 聚福楼",
+    "reseaux_sociaux": ["aucune mention trouvée précise"],
+    "autres_faits": [
+      "propose un espace karaoké (KTV) et une salle de réception privée",
+      "cuisine présentée comme originaire du Sichuan et de Shanghai selon les sources"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n6532221254": {
+    "nom": "La Scarpetta",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "lascarpettaparis.fr, bilingue français/anglais, restaurant italien (pizza, pâtes)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucun fait notable trouvé au-delà des horaires et du style de décor (bistrot simple avec terrasse)"],
+    "incertitudes": "nom générique (« La Scarpetta » existe dans d'autres villes) ; vérifier que les mentions concernent bien le 29 rue Descartes."
+  },
+  "osm_n3797279255": {
+    "nom": "L'Oie qui Fume",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel dédié clairement identifié (citineo.fr est une page d'annuaire, pas un site propre)",
+    "reseaux_sociaux": ["page Facebook mentionnée sous le nom « CAFESIAMNOTREDAME », lien avec l'établissement non confirmé"],
+    "autres_faits": ["nom complet relevé ailleurs : « Hostellerie de l'Oie qui Fume »"],
+    "incertitudes": "à ne pas confondre avec « Au Chien qui Fume », établissement distinct ; la page Facebook associée porte un nom différent du restaurant, lien à vérifier."
+  },
+  "osm_n4326240262": {
+    "nom": "Chez Hamadi",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun trouvé (citineo.fr et localoria.com sont des pages d'annuaire générées, pas un site propre)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "restaurant tunisien tenu par une équipe tunisienne",
+      "présenté par plusieurs fiches comme une « institution » du Quartier latin redécouverte par des générations d'étudiants",
+      "spécialité citée : l'osbane, tripe farcie tunisienne"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n1750350273": {
+    "nom": "Izgara",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun trouvé",
+    "reseaux_sociaux": ["page Facebook et présence Uber Eats sous le nom « Izgara Dürüm & Lahmacun »"],
+    "autres_faits": ["cuisine turque (dürüm, lahmacun, grillades au feu de bois)"],
+    "incertitudes": "l'adresse du lot ne donne pas de numéro (« Rue Mouffetard » seule) ; les résultats pointent vers le 34 rue Mouffetard, correspondance non confirmée. Un « Izgara Kebab » homonyme existe aussi dans le 17e arrondissement — ne pas confondre."
+  },
+  "osm_n1750350274": {
+    "nom": "Kokodak",
+    "presse_francophone": ["aucune mention trouvée en presse écrite classique"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "restaurants-kokodak.com (mentionné, contenu non consulté en détail)",
+    "reseaux_sociaux": ["forte présence TikTok, hashtags #fooding #foodtok #restaurantcoreen #barbecuecoreen, contenu à tonalité humoristique, plusieurs comptes identifiés (ex. @vivi.nuts)"],
+    "autres_faits": [
+      "ouvert en 2024 selon une source",
+      "cuisine fusion coréo-italienne/japonaise, spécialités poulet frit coréen et udon"
+    ],
+    "incertitudes": "une vidéo TikTok évoque un « Kokodak dans le 12e » — possible autre adresse/enseigne du même nom, à ne pas confondre avec celui du 36 rue Mouffetard."
+  },
+  "osm_n13917145276": {
+    "nom": "La Rôtisserie",
+    "presse_francophone": ["Sortiraparis, en anglais sur le site FR : « The Rôtisserie d'Argent reopens its terrace on Quai de la Tournelle » (sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/224015)"],
+    "guides_visiteurs": ["Paris je t'aime, office de tourisme officiel, sous le nom « La Rôtisserie de la Tour d'Argent » (parisjetaime.com/eng/restaurant/la-rotisserie-de-la-tour-d-argent-p3439)"],
+    "site_officiel": "rotisseriedargent.com, bilingue français/anglais",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "présenté comme l'annexe du restaurant étoilé La Tour d'Argent, dirigé par André Terrail",
+      "terrasse rénovée fin 2016, vue sur Notre-Dame"
+    ],
+    "incertitudes": "le nom dans le lot est « La Rôtisserie » (sans « d'Argent ») ; toutes les sources trouvées concernent « La Rôtisserie d'Argent » au 19 quai de la Tournelle — à confirmer qu'il s'agit bien du même établissement que celui identifié par l'id OSM."
+  },
+  "osm_n7288511279": {
+    "nom": "Mirama",
+    "presse_francophone": ["aucune mention trouvée en presse dédiée (au-delà de l'annuaire guides-restaurants.fr)"],
+    "guides_visiteurs": ["Paris je t'aime, office de tourisme officiel (parisjetaime.com/eng/restaurant/mirama-p566)"],
+    "site_officiel": "mirama.fr, en français",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["présenté par plusieurs sources comme l'un des plus anciens restaurants chinois de Paris, réputé pour son canard laqué"],
+    "incertitudes": ""
+  },
+  "osm_n6554764280": {
+    "nom": "Karavaki Au Jardin du Luxembourg",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["findmeglutenfree.com, catalogue anglophone spécialisé sans-gluten, fiche dédiée — pas un guide touristique généraliste"],
+    "site_officiel": "aucun site propre distinctement identifié (uniquement pages d'annuaire)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["cuisine présentée comme crétoise (et non grecque générique) selon une source ; situé près du Jardin du Luxembourg"],
+    "incertitudes": ""
+  }
+}

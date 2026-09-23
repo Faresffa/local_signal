@@ -1,0 +1,79 @@
+paire;choix;confiance;raison
+P0471;B;faible;Pee Bee vend pizzas-burgers-cocktails de 9h a 2h avec une carte concue pour le flux, quand les Raviolis vivent aussi de la livraison de quartier
+P0472;B;forte;Butumak ne sert que le dejeuner du lundi au vendredi et prend les titres restaurant, c'est une cantine de bureau et d'etudiants
+P0473;B;moyenne;Kitchen Ter(re) est une table de chef avec site en anglais et reservation obligatoire, Butumak ferme le week-end
+P0474;B;moyenne;Chez Zareta affiche 7 jours sur 7 de 10h30 a 22h30 et un site bilingue, Kitchen Ter(re) ferme dimanche et lundi comme une table de fond de semaine
+P0475;B;moyenne;Respiro se vend par son classement Tripadvisor et des retours de visiteurs enthousiastes, Chez Zareta reste une maison familiale de cuisine tchetchene
+P0476;A;moyenne;Respiro capitalise sur un classement d'agregateur et une trattoria a personnage, Le Buisson ardent a une frequentation plutot de semaine
+P0477;A;forte;Brasserie d'hotel ouverte 7j/7 de 11h30 a 2h du matin sans coupure, c'est le profil du passage
+P0478;A;faible;Les deux vivent du flux, mais La Bucherie se presente elle-meme par la vue et sert burgers et English breakfast
+P0479;A;forte;La Bucherie vend une vue et une carte internationale, Le Petit Bal perdu est chronique par la presse food francophone
+P0480;B;moyenne;La Truffiere joue la cave voutee et le site bilingue haut de gamme, Le Petit Bal perdu est une guinguette chroniquee pour des Parisiens
+P0481;B;forte;Union Square est une formule 19,90 burgers-fajitas sans site propre, referencee par un planificateur de voyage
+P0482;B;forte;Union Square est un restaurant a theme a formule fixe, Atsushi Tanaka est une table d'auteur a menus longs
+P0483;B;faible;Atsushi Tanaka est porte par des guides internationaux anglophones, Racina garde selon un avis une clientele d'habitues
+P0484;A;moyenne;BigBang est un barbecue coreen a sites en francais ou l'on revient entre amis, Racina est plus expose au flux
+P0485;A;forte;L'Annexe ouvre 7h-23h tous les jours et depend d'une maison mere dont le site est en anglais par defaut
+P0486;A;forte;Roger de Beyrouth est une petite maison familiale sans site, L'Annexe a l'amplitude et la carte d'un bistrot de passage
+P0487;B;faible;Roger de Beyrouth ouvre en continu le week-end et declare une clientele touristes, Bo Bun 11 prend les titres restaurant et vise les etudiants
+P0488;B;moyenne;Le Soufflot ouvre de 6h30 a 1h avec une grande terrasse, Bo Bun 11 est une cantine vietnamienne bon marche
+P0489;B;forte;Messieurs Kim a un site en francais seulement et des habitues remercies dans les avis, Le Soufflot est un cafe a tres large amplitude
+P0490;B;forte;LM Restaurant vend une grande terrasse face au jardin avec un site bilingue, Messieurs Kim est une petite adresse de quartier
+P0491;B;faible;LM Restaurant ouvre 7j/7 en continu et se presente en deux langues, Otiamo est dans une rue calme mais ses retours sont surtout de visiteurs
+P0492;B;faible;Otiamo est raconte par des clients de passage, Celina remplit aussi une fonction de cafe de quartier de 9h a 2h
+P0493;A;faible;Papilla a un site bilingue et des visiteurs qui y reviennent cinq fois pendant leur sejour, Celina reste un cafe-brasserie de rue
+P0494;A;moyenne;Un avis decrit un promoteur qui accoste devant la porte d'Olympie, c'est la signature du racolage de passage
+P0495;B;forte;Au vieux cedre est un comptoir a emporter sans presse ni site, Olympie racole devant sa porte
+P0496;A;faible;Saigon d'Antan est ouvert 7j/7 en soiree et relaye par une fiche anglophone, Au vieux cedre est surtout un comptoir a emporter
+P0497;A;moyenne;Anatolie Durum est nettement plus frequente le week-end et sert jusqu'a minuit, Saigon d'Antan fait 61% de son affluence en semaine
+P0498;A;faible;Anatolie Durum ouvre jusqu'a minuit avec une pointe de week-end, Li Thang est une adresse tibetaine minuscule et invisible - dossiers d'avis visiblement intervertis
+P0499;A;faible;Li Thang n'a ni site ni presse mais reste un restaurant du soir, Ribouldingue est une table d'abats chroniquee par la presse francophone
+P0500;A;forte;Le Saint-Andre ouvre 7h-1h tous les jours sans site propre, Ribouldingue est une adresse d'abats pour connaisseurs
+P0501;A;forte;Le Saint-Andre a 18h d'amplitude quotidienne, Sushiyaki est une maison de couple decrite comme simple et sans pretention
+P0502;A;moyenne;Sushiyaki declare une clientele touristes et ouvre tard, L'Escarpolette est un brunch relaye par des medias et TikTok francophones
+P0503;A;forte;L'Atelier Maitre Albert est pousse par l'office de tourisme de Paris et France.fr, c'est une adresse de visiteurs
+P0504;B;forte;Kootchi est une maison afghane familiale depuis 1996 avec un menu a 12,50, l'Atelier est promu par les offices de tourisme
+P0505;A;moyenne;La Scarpetta a un site bilingue et des retours presque tous de visiteurs, Kootchi est chroniquee par des medias food francophones
+P0506;B;moyenne;Le Petit Pantheon vit d'une formule a 17 euros racontee par des visiteurs etrangers et d'une fiche de voyage anglophone
+P0507;B;forte;La vie en fruits est un comptoir du lundi au vendredi avec clientele fidele du quartier, Le Petit Pantheon vise le visiteur
+P0508;B;moyenne;La Table de Colette est un gastronomique bilingue reference par des guides anglophones, La vie en fruits est une cantine de midi
+P0509;A;forte;Le Petit Chatelet vend l'histoire du batiment et la vue sur Notre-Dame, La Table de Colette ne sert que du lundi au vendredi
+P0510;B;moyenne;Le Petit Chatelet mise sur la vue et l'histoire du lieu, Pee Bee reste une pizzeria-bar au fonctionnement plus mixte
+P0511;B;moyenne;Le Jardin du Roy est une brasserie d'hotel ouverte jusqu'a 2h, Celina garde une fonction de cafe de quartier
+P0512;B;moyenne;Otiamo a un site propre et des retours de visiteurs enchantes, Racina garde une clientele d'habitues selon un avis
+P0513;B;moyenne;Racina est un italien de rue passante ouvert midi et soir, Au vieux cedre est essentiellement un comptoir a emporter
+P0514;A;moyenne;Kitchen Ter(re) est listee au Michelin avec un site en version anglaise, Au vieux cedre n'a aucune visibilite hors annuaires
+P0515;A;moyenne;Kitchen Ter(re) figure dans un guide pour visiteurs avec site anglais, L'Escarpolette est un brunch couvert par des medias parisiens
+P0516;B;forte;Respiro est classe sur Tripadvisor et raconte par des visiteurs, L'Escarpolette vit du brunch de week-end parisien
+P0517;B;faible;LM Restaurant vend sa terrasse face au jardin 7j/7 en continu, Respiro reste une trattoria a service coupe
+P0518;B;moyenne;LM Restaurant est une brasserie de terrasse ouverte en continu, La Truffiere est une table gastronomique couverte par la presse pro francophone
+P0519;A;faible;Anatolie Durum sert jusqu'a minuit avec une pointe de week-end, La Truffiere travaille sur reservation en semaine
+P0520;B;moyenne;Anatolie Durum est nettement plus frequente le week-end et ouvre tard, Le Buisson ardent fait 54% de son affluence en semaine
+P0521;B;faible;Le Buisson ardent a terrasse, happy hour et des retours de familles en visite, Sushiyaki est une maison de couple sans pretention
+P0522;B;faible;Sushiyaki declare une clientele touristes et groupes, Kootchi est une maison familiale chroniquee par la presse food francophone
+P0523;B;forte;Pee Bee ouvre 9h-2h avec cocktails et burgers, Kootchi est un afghan familial a menu du midi
+P0524;B;forte;Pee Bee joue la large amplitude et la carte de flux, Messieurs Kim a un site en francais et des habitues
+P0525;B;forte;Le Saint-Andre ouvre 7h-1h tous les jours, Messieurs Kim ferme le dimanche avec une carte a 12 euros
+P0526;A;forte;Le Saint-Andre a 18h d'amplitude quotidienne, La vie en fruits est un comptoir de midi en semaine
+P0527;A;forte;Le Soufflot ouvre de 6h30 a 1h avec grande terrasse, La vie en fruits vit de clients du quartier a dix minutes a pied
+P0528;B;moyenne;L'Annexe depend d'une maison mere dont le site est en anglais par defaut en douze langues, Le Soufflot garde profs et etudiants du quartier
+P0529;B;faible;Le Petit Chatelet vend explicitement l'histoire et la vue, L'Annexe reste un bistrot a large amplitude
+P0530;B;moyenne;Le Petit Chatelet mise sur le batiment historique et la vue, La Scarpetta est une pizzeria bilingue plus banale
+P0531;B;forte;Ribouldingue est une table d'abats chroniquee par la presse francophone, La Scarpetta ratisse plus large
+P0532;A;moyenne;Le Petit Bal perdu a une terrasse tres exposee et une notoriete sociale recente, Ribouldingue vise les amateurs d'abats
+P0533;A;moyenne;Chez Zareta ouvre 7j/7 en continu avec site bilingue et retours de sejours parisiens, Le Petit Bal perdu est chronique pour des Parisiens
+P0534;B;forte;Union Square est une formule a prix fixe burgers-fajitas sans site propre, Chez Zareta est une maison familiale
+P0535;B;forte;Union Square vit d'une formule de flux, Butumak ne sert que le midi en semaine
+P0536;B;forte;La Bucherie vend sa vue et une carte internationale 7j/7, Butumak ferme le week-end
+P0537;A;forte;La Bucherie est decrite par des agregateurs comme une adresse tres touristique, Saigon d'Antan fait 61% de son affluence en semaine
+P0538;B;moyenne;Atsushi Tanaka est porte par des guides et medias internationaux anglophones, Saigon d'Antan est une cantine vietnamienne de semaine
+P0539;A;moyenne;Atsushi Tanaka figure dans un guide international pour visiteurs, La Table de Colette ne sert que du lundi au vendredi
+P0540;B;forte;L'Atelier Maitre Albert est reference par l'office de tourisme de Paris, La Table de Colette ferme le week-end
+P0541;A;faible;L'Atelier est promu par des sites de tourisme officiels, Papilla vit surtout d'un bouche a oreille de visiteurs deja sur place
+P0542;A;forte;Olympie a un promoteur devant la porte selon un avis, BigBang est un barbecue coreen ou l'on revient entre amis
+P0543;B;moyenne;Les Raviolis ouvrent 7j/7 avec service continu et ne vivent que d'annuaires, BigBang a deux sites en francais et des habitues
+P0544;A;moyenne;Les Raviolis ouvrent 7j/7 sans site propre, Roger de Beyrouth est une petite maison libanaise constante depuis des decennies
+P0545;A;faible;Roger de Beyrouth ouvre 7j/7 en continu le week-end et declare une clientele touristes, Li Thang est minuscule et fermee le dimanche
+P0546;B;forte;Le Petit Pantheon vit d'une formule a 17 euros et d'une fiche de voyage anglophone, Li Thang n'a aucune visibilite
+P0547;B;forte;Le Petit Pantheon est raconte par des visiteurs etrangers venus deux soirs de suite, Bo Bun 11 est une cantine a titres restaurant
+P0548;B;forte;Le Jardin du Roy est une brasserie d'hotel ouverte jusqu'a 2h, Bo Bun 11 est une petite cantine vietnamienne

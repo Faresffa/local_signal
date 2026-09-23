@@ -23,6 +23,9 @@ export default function Reserve({ restaurant, onBack, onDone }) {
   const [personnes, setPersonnes] = useState(2);
   const [date, setDate] = useState(aujourdhui());
   const [creneau, setCreneau] = useState(null);
+  // Piège à robots (anti-spam) : jamais vu ni rempli par une personne, voir
+  // le champ dans le formulaire et backend/main.py::create_reservation.
+  const [siteWeb, setSiteWeb] = useState("");
 
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle");
@@ -51,6 +54,7 @@ export default function Reserve({ restaurant, onBack, onDone }) {
         num_persons: personnes,
         date,
         time_slot: creneau,
+        site_web: siteWeb,
       });
       setConfirmation(res);
       setStatus("done");
@@ -86,6 +90,22 @@ export default function Reserve({ restaurant, onBack, onDone }) {
       <p className="detail__meta">{restaurant.name}</p>
 
       <form className="form" onSubmit={soumettre} style={{ marginTop: 28 }} noValidate>
+        {/* Piège à robots : hors champ visuel, hors tabulation, hors lecteur
+            d'écran. Un humain ne peut pas le remplir ; un robot qui traite
+            le formulaire sans exécuter le CSS le remplit souvent. */}
+        <div className="champ-piege" aria-hidden="true">
+          <label htmlFor="site_web">Site web</label>
+          <input
+            id="site_web"
+            name="site_web"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={siteWeb}
+            onChange={(e) => setSiteWeb(e.target.value)}
+          />
+        </div>
+
         <div className="formfield">
           <label htmlFor="nom">Nom de la réservation</label>
           <input

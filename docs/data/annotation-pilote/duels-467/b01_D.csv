@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0001;A;moyenne;Il Gigolo est sur la Huchette, rue-trappe touristique par excellence, avec un avis qui le dit explicitement, plus fort que la légende littéraire de Verlaine relayée par des guides voyageurs
+P0002;A;moyenne;Verlaine est repris par des guides de voyage (mindtrip, trip.com) et l'attribut Touristes, contre une pizzeria de quartier sans signal éditorial fort
+P0003;A;forte;La Mosquée est fichée comme Attraction sur Tripadvisor, un site associé à un monument-hammam, bien au-dessus d'une pizzeria de quartier
+P0004;A;forte;La Mosquée fonctionne comme une attraction touristique documentée, Toranj n'a aucune mention web au-delà de son site en français
+P0005;B;faible;les Saveurs d'Abyssinie bénéficient d'un blog anglophone dédié à la découverte culturelle, Toranj n'a aucune presse ni guide identifié
+P0006;A;faible;Happiz est listé sur HappyCow et des avis de voyageurs en repartant de Paris apparaissent, signal légèrement plus fort que le blog culturel d'Abyssinie
+P0007;B;moyenne;Bistrot Vin Sobre est défendu par des habitués comme une institution de quartier menacée de fermeture, signal local très fort face à Happiz
+P0008;A;moyenne;New Aqib a un avis explicite de voyageur de passage à Paris, Vin Sobre a une identité de quartier affirmée par ses clients
+P0009;B;moyenne;le traiteur à emporter n'a aucune existence web, clientèle de dépannage quotidien, plus local que New Aqib
+P0010;A;forte;Rosemonde vise un public large avec brunch et capacité événementielle, le traiteur asiatique est un point de retrait de quartier sans aucune trace en ligne
+P0011;A;faible;Bazurto s'appuie sur la notoriété télé du chef et une seconde adresse à Tignes, station de ski touristique, signal de destination plus marqué que Rosemonde
+P0012;B;moyenne;Bazurto est porté par un chef médiatique et une identité de marque nationale, Hoki Sushi est décrit comme une adresse à volonté pour étudiants et familles du quartier
+P0013;A;moyenne;Hoki Sushi cible un public de passage en formule à volonté, Le Vauquelin est présenté par ses clients comme une institution familiale de quartier
+P0014;B;forte;Bistro des Lettres est cité par un guide anglophone pour visiteurs et son concept de lettre différée cible explicitement une expérience touristique
+P0015;B;forte;Bistro des Lettres cultive un concept-gadget repris par un guide de voyageurs, Phô5 est une gargote de quartier sans aucun signal éditorial
+P0016;A;faible;The Cod House est un bar à cocktails signature qui peut attirer au-delà du quartier, alors que Phô5 reste une petite adresse locale sans signal
+P0017;B;faible;The Cod House a un concept de bar à cocktails destiné à une clientèle de sortie plus large, Octant reste discret avec seulement un compte Instagram
+P0018;B;faible;Octant se positionne en cuisine fusion à vocation large, Sushiko est une adresse de quartier sans aucune mention presse ni guide
+P0019;B;forte;Allard est cité par le Guide Michelin et une plateforme anglophone de classement international, très au-dessus de Sushiko qui n'a aucune presse
+P0020;A;forte;Allard cumule Michelin, reprise par le groupe Ducasse et des prix élevés selon les avis, contre un bar à tapas étudiant sans signal touristique
+P0021;A;moyenne;Le Saint-Pierre reçoit des avis explicites de voyageurs venus dîner pendant leur séjour, El Cervantes est fréquenté par des étudiants du quartier
+P0022;B;moyenne;Selva est mis en avant par un blog anglophone destiné aux visiteurs de Paris, signal plus fort que Le Saint-Pierre
+P0023;A;moyenne;La Fourmi Ailée est citée comme étape d'un food tour organisé, signal de dépendance au passage plus net que Selva
+P0024;A;forte;La Fourmi Ailée sert de halte à des food tours, Veganil sert notamment le menu étudiant de Jussieu, clientèle locale par définition
+P0025;A;forte;Sorza est sur l'Île Saint-Louis très touristique avec des avis majoritairement de visiteurs revenant lors de séjours à Paris, contre Veganil orienté étudiants
+P0026;B;forte;Sorza cumule localisation touristique et avis de visiteurs étrangers réguliers, très au-dessus d'un kebab de quartier sans aucun signal
+P0027;A;moyenne;L'Épidon n'a pas de signal touristique fort mais dépasse un kebab sans aucune presence web identifiée
+P0028;A;moyenne;L'Épidon reste une petite adresse familiale sans guide, mais Taeng Thai se décrit lui-même explicitement comme un repère d'habitués du quartier
+P0029;B;forte;Cucina Mutualité est un restaurant du groupe Ducasse couvert par le Guide Michelin, très au-dessus de Taeng Thai qui revendique sa clientèle d'habitués
+P0030;A;moyenne;Le Procope est référencé par l'office de tourisme officiel de Paris, un cran au-dessus de Cucina Mutualité malgré sa couverture Michelin
+P0031;A;forte;Le Procope est un monument touristique célébré par l'office de tourisme, El Sur est un lieu culturel communautaire (tango, concerts, festival) tourné vers ses habitués
+P0032;B;faible;India StreEAT a un site en quinze langues et une histoire de fondateur mise en scène, El Sur a une identité communautaire plus ancrée malgré une fiche Sortiraparis
+P0033;B;faible;India StreEAT bénéficie d'un blog francophone qui le dit authentique aux Parisiens mais aussi d'un site multilingue, Paris Antalya n'a qu'une découverte TikTok locale
+P0034;A;faible;la formule à volonté de Sumo attire un public large de passage, Paris Antalya reste un kebab de rue découvert via les réseaux sociaux
+P0035;A;moyenne;Sumo mise sur un buffet à volonté pouvant attirer un public de passage, Dae Jang est salué pour fidéliser autant les habitués que les nouveaux venus
+P0036;B;moyenne;Dae Jang fidélise des habitués selon les avis, La Soummam attire jusqu'à des clients venus spécialement d'Orléans pour ses concerts de jazz manouche
+P0037;B;moyenne;La Soummam attire pour ses concerts mais reste un lieu de quartier, Le Petit Médicis fait face à Luxembourg avec des avis multilingues et des critiques de piège touristique
+P0038;B;forte;Le Petit Médicis est jugé touristique par ses propres clients face aux Jardins du Luxembourg, Raviolis Queen reste une petite adresse de quartier sans signal
+P0039;A;forte;5 Séverin est qualifié explicitement de piège à touristes par un avis client, Raviolis Queen n'a aucun signal touristique
+P0040;A;faible;Il Gigolo est sur la rue la plus touristique du Quartier Latin et sans site officiel propre, un cran au-dessus de 5 Séverin malgré son avis de piège à touristes
+P0041;A;forte;Sorza cumule localisation touristique et clientèle étrangère répétée, bien au-dessus de Happiz qui reste une petite pizzeria végane de quartier
+P0042;B;moyenne;Selva est recommandé par un blog de visiteurs anglophone, Happiz reste porté par sa niche diététique de quartier
+P0043;B;moyenne;Selva bénéficie d'une couverture de blog pour visiteurs, New Aqib reste un restaurant indien de quartier sans guide identifié
+P0044;B;faible;The Cod House développe un concept de bar à cocktails destiné à une sortie plus large que le quartier, New Aqib reste ancré dans son quartier
+P0045;A;moyenne;The Cod House cultive un concept de bar signature plus destiné à une clientèle de sortie, Taeng Thai se revendique repère d'habitués
+P0046;B;forte;Cucina Mutualité, restaurant Ducasse couvert par Michelin, dépasse largement un kebab de quartier sans aucune trace éditoriale
+P0047;B;moyenne;El Sur a une histoire culturelle communautaire documentée par son propre site, un cran au-dessus d'un kebab sans aucun signal
+P0048;A;faible;El Sur est plus documenté comme lieu culturel accueillant du public varié, Dae Jang reste discret et salué pour fidéliser ses habitués
+P0049;A;forte;Il Gigolo, sur la rue la plus touristique du Quartier Latin, dépend bien plus du passage que Dae Jang qui fidélise ses habitués
+P0050;B;moyenne;La Soummam attire un public venu spécialement pour ses concerts, mais Il Gigolo reste sur une rue emblématique du tourisme parisien
+P0051;A;moyenne;La Maison de Verlaine est reprise par des guides de voyage internationaux, plus dépendante du passage que La Soummam qui reste un lieu de quartier animé par la musique
+P0052;B;forte;La Maison de Verlaine cultive une légende littéraire reprise par des guides touristiques, Raviolis Queen est une petite adresse de quartier sans signal
+P0053;A;forte;Allard, restaurant Michelin du groupe Ducasse, dépend bien plus du passage qu'une petite adresse de raviolis sans aucune presse
+P0054;A;forte;Allard cumule couverture Michelin et prix élevés selon les avis, bien au-dessus de Bazurto malgré la notoriété de son chef
+P0055;B;moyenne;Bazurto est porté par un chef médiatique et une seconde adresse dans une station de ski, plus orienté destination que le buffet Sumo
+P0056;B;forte;La Mosquée fonctionne comme une attraction touristique documentée, bien au-dessus du buffet de quartier Sumo
+P0057;A;forte;La Mosquée de Paris est fichée comme attraction touristique, Sushiko reste une adresse de quartier sans aucune mention presse ou guide
+P0058;B;faible;Veganil mise sur un décor à thème inspiré du Louvre et des mentions non confirmées dans des guides, un signal légèrement plus fort que Sushiko qui reste sans aucune trace éditoriale
+P0059;A;moyenne;Rosemonde vise un public large avec brunch et location événementielle, Veganil reste centré sur les étudiants de Jussieu
+P0060;A;faible;Rosemonde a une ambition de brasserie parisienne plus large, Hoki Sushi reste une formule à volonté pour étudiants et familles
+P0061;B;faible;Hoki Sushi en formule à volonté attire un public plus large de passage que Toranj qui reste sans aucun signal touristique
+P0062;A;moyenne;Vita Nuova, proche du jardin du Luxembourg avec des avis très majoritairement étrangers, dépend plus du passage que Toranj
+P0063;B;faible;Vita Nuova est situé près du Luxembourg avec des avis très majoritairement étrangers, plus dépendant du passage que les Saveurs d'Abyssinie
+P0064;A;faible;Le Saint-Pierre reçoit des avis explicites de voyageurs en séjour à Paris, un cran au-dessus des Saveurs d'Abyssinie
+P0065;B;faible;Le Saint-Pierre a des avis de voyageurs explicitement en séjour à Paris, plus marqué que Phô5 qui reste sans signal
+P0066;B;forte;5 Séverin est qualifié de piège à touristes par ses propres clients, bien au-dessus de Phô5 qui reste une petite adresse locale
+P0067;B;forte;5 Séverin est explicitement qualifié de piège à touristes, très au-dessus d'India StreEAT malgré son site multilingue
+P0068;A;moyenne;India StreEAT a un site en quinze langues et une histoire de fondateur mise en scène, le traiteur asiatique n'a strictement aucune présence web
+P0069;A;forte;La Fourmi Ailée sert d'étape à des food tours organisés, bien au-dessus du traiteur de quartier sans aucune trace en ligne
+P0070;B;forte;La Fourmi Ailée est une étape de food tour documentée, L'Épidon reste une petite adresse familiale sans guide touristique
+P0071;A;faible;L'Épidon reste discret mais Paris Antalya, kebab découvert via TikTok, semble encore plus ancré dans une consommation de passage rapide
+P0072;B;faible;Octant se positionne en cuisine fusion à ambition plus large, Paris Antalya reste un kebab de rue sans signal éditorial fort
+P0073;B;forte;Bistro des Lettres cultive un concept-gadget repris par un guide de voyageurs, Octant reste discret avec un simple compte Instagram
+P0074;A;moyenne;Le Procope, référencé par l'office de tourisme officiel, dépasse le concept-gadget de Bistro des Lettres pourtant déjà orienté visiteurs
+P0075;A;moyenne;Le Procope, monument touristique célébré par l'office de tourisme, dépasse Le Petit Médicis malgré ses critiques de piège touristique
+P0076;A;forte;Le Petit Médicis est jugé touristique par ses propres clients face au Luxembourg, bien au-dessus d'El Cervantes fréquenté par des étudiants du quartier
+P0077;egalite;faible;El Cervantes revendique une clientèle étudiante du quartier tandis que Vin Sobre est défendu comme institution locale par ses habitués, deux profils très locaux difficiles à départager
+P0078;B;moyenne;Le Vauquelin est décrit par ses clients comme une institution familiale explicite tenue par les mêmes patrons depuis des années, signal local plus fort que Vin Sobre
+P0079;A;forte;Sorza cumule localisation touristique sur l'Île Saint-Louis et avis de visiteurs étrangers récurrents, bien au-dessus du Vauquelin, institution familiale de quartier

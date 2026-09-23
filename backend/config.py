@@ -35,12 +35,26 @@ OUTSCRAPER_API_KEY = os.environ.get("OUTSCRAPER_API_KEY", "")
 # =============================================================================
 # CORS — origines autorisées en production (D-016)
 # =============================================================================
-# En local (`.env` vide), accepte toutes les origines pour compatibilité dev.
-# En production, restrict à l'URL de l'interface web déployée.
+# JAMAIS « * » PAR DÉFAUT (LS-31).
+#
+# La spécification CORS interdit d'associer `allow_origins=["*"]` à
+# `allow_credentials=True` : le navigateur refuse alors TOUTE requête portant un
+# cookie de session. Comme l'authentification repose précisément sur un cookie
+# (voir plus bas), le défaut « * » rendait la connexion inopérante dès que le
+# front et l'API ne partagent pas la même origine — c'est-à-dire en production.
+#
+# Le défaut liste donc explicitement les origines de développement. En
+# production, ALLOWED_ORIGINS doit porter l'URL réelle du front :
 #   Railway : ALLOWED_ORIGINS="https://web-service.up.railway.app"
+_ORIGINES_DEV = ",".join([
+    "http://localhost:5173",    # web, Vite
+    "http://127.0.0.1:5173",
+    "http://localhost:8081",    # mobile, Expo web
+    "http://127.0.0.1:8081",
+])
 ALLOWED_ORIGINS = [
     origin.strip()
-    for origin in os.environ.get("ALLOWED_ORIGINS", "*").split(",")
+    for origin in os.environ.get("ALLOWED_ORIGINS", _ORIGINES_DEV).split(",")
     if origin.strip()
 ]
 
@@ -52,7 +66,14 @@ ALLOWED_ORIGINS = [
 # pour mesurer la perte de précision d'extraction sur le jeu labellisé.
 VISION_PROVIDER = os.environ.get("VISION_PROVIDER", "groq")  # "groq" | "claude"
 
-GROQ_VISION_MODEL = "qwen/qwen3.6-27b"
+# LE CATALOGUE GROQ BOUGE SOUS LES PIEDS DU CODE, et une reference perimee ne
+# se voit pas : elle rend `404 model does not exist`, que le pipeline compte
+# comme « page non analysable ». Panne reelle du 15 septembre 2026 —
+# `qwen/qwen3.6-27b` retire en cours de recolte, 493 restaurants ayant une vraie
+# carte enregistres comme n'en ayant pas. Le nom vient donc de l'environnement,
+# et `python -m backend.ingestion.menu_scan.verifier` controle qu'il repond
+# avant de lancer une recolte de plusieurs heures.
+GROQ_VISION_MODEL = os.environ.get("GROQ_VISION_MODEL", "qwen/qwen3.8-27b")
 
 # Modele execute EN LOCAL via Ollama (D-032). Ni quota ni facture : c'est ce qui
 # rend la lecture des 1 120 pages du Quartier latin possible en quelques heures
@@ -82,20 +103,23 @@ MENU_SCAN_MAX_IMAGE_MB = 5  # refus au-delà, avant tout appel facturé
 USE_MOCK_DATA = True
 
 # =============================================================================
-# LOCAL SIGNAL — pondérations du score statique  (D-008)
+# LOCAL SIGNAL — pondérations du score statique  (D-008, recalibrées D-049)
 # =============================================================================
 # « Ce qu'est le restaurant », indépendamment de qui cherche.
 #
-# STATUT : PROVISOIRES. Ces valeurs sont des points de départ, PAS des résultats.
-# Elles doivent être dérivées du jeu labellisé (D-006) selon la procédure décrite
-# dans docs/methodologie/evaluation.md. Ne pas les présenter comme justifiées.
+# Poids dérivés de la vérité terrain (467 restaurants, comparaison par paires,
+# D-042 à D-045) : la langue des avis prédit mieux le classement de référence
+# que le menu sur la zone témoin, donc son poids monte au-dessus de celui du
+# menu. Le prix, dont le signal propre était faible sur cette zone, redescend.
+# La zone touristique remonte légèrement — voir D-049 pour le raisonnement
+# complet et pourquoi ces poids ne sont pas la pondération dérivée « brute ».
 #
-# Le signal menu domine car c'est le seul disponible pour un restaurant sans
-# aucun avis — la contrainte n°1 du projet (D-001, D-004).
-WEIGHT_MENU = 0.40          # à calibrer — signal menu (scan de carte)
-WEIGHT_LANGUAGE = 0.30      # à calibrer — langue des avis, lissée
-WEIGHT_PRICE = 0.15         # à calibrer — anomalie de prix vs quartier
-WEIGHT_TOURIST_ZONE = 0.15  # à calibrer — pénalité de zone touristique
+# Le signal menu reste substantiel car c'est le seul disponible pour un
+# restaurant sans aucun avis — la contrainte n°1 du projet (D-001, D-004).
+WEIGHT_MENU = 0.30          # recalibré D-049 — signal menu (scan de carte)
+WEIGHT_LANGUAGE = 0.40      # recalibré D-049 — langue des avis, lissée
+WEIGHT_PRICE = 0.10         # recalibré D-049 — anomalie de prix vs quartier
+WEIGHT_TOURIST_ZONE = 0.20  # recalibré D-049 — pénalité de zone touristique
 
 # Les étoiles ne participent plus au classement (D-007) : elles contredisent
 # l'intention du produit, ne discriminent rien, et dépendent de la popularité.
@@ -136,7 +160,17 @@ TOURIST_PENALTY_MAX = 1.0   # hors scoring depuis D-027
 # pas *pénalisé* (D-001).
 LANGUAGE_SMOOTHING_ALPHA = 5.0    # à calibrer — force du lissage
 LANGUAGE_PRIOR = 0.5              # a priori neutre en l'absence d'avis — à calibrer
-LANGUAGE_CONFIDENCE_FULL = 20     # nb d'avis au-delà duquel l'info est jugée fiable
+# Nombre d'avis au-delà duquel l'information est jugée pleinement fiable.
+#
+# Était à 20, ce qui était optimiste : à 20 avis la marge d'erreur sur la
+# proportion est encore de ± 22 points à 95 %, soit assez pour confondre un
+# restaurant de quartier avec un attrape-touristes. À 50, elle tombe à ± 14
+# points — le seuil où l'estimation sépare réellement les deux.
+#
+# STATUT : dérivé du calcul de marge d'erreur, pas posé à vue. Reste à vérifier
+# sur le jeu labellisé que ce seuil correspond bien au point où l'indicateur
+# devient prédictif (D-006).
+LANGUAGE_CONFIDENCE_FULL = 50
 
 # =============================================================================
 # Anomalie de prix
@@ -182,8 +216,38 @@ PROXIMITY_DECAY_FACTOR = 0.5
 # ne doit pas devancer un très bon restaurant à 200 m.
 RANKING_WEIGHT_PROXIMITY = 0.30  # à calibrer
 
-# Langue cible pour le score de langue
-TARGET_LANGUAGE = "fr"
+# Langue cible pour le score de langue — LA LANGUE DU QUARTIER, pas du produit.
+#
+# Elle était écrite en dur à « fr » alors que le projet doit fonctionner dans
+# n'importe quelle ville (CLAUDE.md §8). À Barcelone, « une carte sans espagnol
+# mais avec de l'anglais » est le signal touristique ; à Paris c'est « sans
+# français ». Le même code, avec « fr » figé, aurait pénalisé toutes les cartes
+# barcelonaises.
+#
+# Chaque zone porte donc sa langue. La valeur par défaut reste le français,
+# puisque la zone témoin est parisienne, mais elle est désormais un DÉFAUT et
+# non une constante — c'est la différence entre un produit localisable et un
+# produit français.
+#
+# À compléter au fur et à mesure des villes couvertes.
+LANGUE_PAR_ZONE = {
+    "paris": "fr",
+    "quartier-latin": "fr",
+}
+
+TARGET_LANGUAGE = os.environ.get("TARGET_LANGUAGE", "fr").strip() or "fr"
+
+
+def langue_de_zone(zone: str | None) -> str:
+    """
+    Langue locale attendue dans une zone.
+
+    Retombe sur `TARGET_LANGUAGE` pour une zone inconnue : mieux vaut un défaut
+    explicite qu'une erreur au milieu d'un calcul en lot.
+    """
+    if not zone:
+        return TARGET_LANGUAGE
+    return LANGUE_PAR_ZONE.get(zone.strip().lower(), TARGET_LANGUAGE)
 
 # =============================================================================
 # UI — Design System
@@ -208,16 +272,73 @@ SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "lax")
 # SESSION_COOKIE_SAMESITE=none).
 SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
 
-# Nombre de restaurants visibles par recherche pour un visiteur non connecté.
-# Le classement reste inchangé (tri avant troncature) : moins de résultats,
-# jamais de moins bons résultats.
+# =============================================================================
+# Connexion Google (OAuth 2.0) — LS-refonte
+# =============================================================================
+# Vides par défaut (D-016) : sans ces deux valeurs, `/api/auth/google/login`
+# répond une erreur claire plutôt que d'échouer plus loin sans explication.
+# Obtenues via l'assistant `google-oauth-setup.sh` (Google Cloud Console).
+GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "")
+GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", "")
+
+# Doit être déclarée telle quelle dans la console Google Cloud (Authorized
+# redirect URIs) — Google refuse toute URI qui ne correspond pas exactement,
+# donc surchargeable ici plutôt qu'en dur pour suivre un déploiement.
+GOOGLE_OAUTH_REDIRECT_URI = os.environ.get(
+    "GOOGLE_OAUTH_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback"
+)
+
+# Où renvoyer le navigateur une fois la session ouverte.
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+
+# Nombre de restaurants visibles par recherche pour un visiteur non connecté
+# OU un compte connecté non abonné (LS-refonte — la limite suit l'abonnement,
+# pas la connexion). Le classement reste inchangé (tri avant troncature) :
+# moins de résultats, jamais de moins bons résultats.
 ANON_RESULTS_LIMIT = int(os.environ.get("ANON_RESULTS_LIMIT", "5"))
+
+# Nombre de RECHERCHES par jour pour un compte connecté non abonné
+# (LS-refonte, retour utilisateur : "limiter vraiment les recherches").
+# Distinct de ANON_RESULTS_LIMIT, qui borne les résultats D'UNE recherche —
+# celui-ci borne le nombre de recherches elles-mêmes. Ne s'applique qu'aux
+# comptes connectés : un visiteur anonyme n'a pas d'identifiant auquel
+# rattacher un compteur qui survivrait à la fermeture du navigateur.
+# À CALIBRER : 5/jour est un point de départ, pas une valeur mesurée.
+SEARCHES_PER_DAY_NON_ABONNE = int(os.environ.get("SEARCHES_PER_DAY_NON_ABONNE", "5"))
+
+# Vue technique du calcul — exposition du detail par indicateur (LS-16).
+#
+# D-009 impose de ne montrer aucun score a l'utilisateur : il veut une liste de
+# restaurants, pas un tableau de bord, et il n'a pas a connaitre l'algorithme.
+# Ce panneau expose pourtant la contribution chiffree de chaque indicateur.
+#
+# Il reste indispensable pour verifier le calcul pendant le developpement et
+# pour instruire le memoire — d'ou ce commutateur plutot qu'une suppression.
+# FAUX PAR DEFAUT : ce qui part en production ne l'expose pas.
+EXPOSE_DETAIL_CALCUL = os.environ.get("EXPOSE_DETAIL_CALCUL", "false").lower() == "true"
 
 # =============================================================================
 # Base de données
 # =============================================================================
 # Chemin absolu : la base ne dépend plus du répertoire d'où on lance la commande.
-DB_PATH = str(ROOT_DIR / "local_signal.db")
+#
+# SURCHARGEABLE PAR L'ENVIRONNEMENT (LS-21). La valeur par défaut reste la base
+# de travail à la racine ; `DB_PATH` permet de pointer ailleurs sans toucher au
+# code. C'est ce qui rend les tests exécutables sur une base jetable, et c'est
+# indispensable en intégration continue où aucune base réelle n'existe.
+DB_PATH = os.environ.get("DB_PATH", "").strip() or str(ROOT_DIR / "local_signal.db")
+
+# Corpus des cartes soumises (LS-38).
+#
+# Les images y sont conservées pour pouvoir VÉRIFIER ce que la lecture en a
+# tiré et RETRAITER sans recollecter. Elles ne sont jamais servies par l'API :
+# conserver un matériau de recherche et redistribuer une œuvre sont deux choses
+# différentes, et seule la première est défendable.
+#
+# Hors du dépôt et hors sauvegarde de base : ce dossier grossit, et une base
+# qu'on ne peut plus restaurer parce qu'elle pèse six gigaoctets d'images est
+# une base perdue. `data/corpus/` est ignoré par Git.
+CORPUS_DIR = os.environ.get("CORPUS_DIR", "").strip() or str(ROOT_DIR / "data" / "corpus")
 
 # Si définie (Railway/Supabase), bascule tout le module backend.db sur Postgres.
 # Vide en local par défaut : les contributeurs gardent SQLite sans rien configurer.

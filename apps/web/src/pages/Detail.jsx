@@ -2,27 +2,41 @@
 //
 // Fiche restaurant : visuel à gauche, informations et explication à droite.
 //
-// C'est le seul endroit où le détail du calcul est accessible, et encore, il
-// est replié (D-009).
+// Le score chiffré (verdict + X/10) est visible d'emblée depuis D-050
+// (supersède D-009). Ce qui reste replié — et le sera toujours — c'est le
+// détail indicateur par indicateur (`DetailCalcul`, LS-16) : la différence
+// entre un chiffre qu'on regarde et un tableau de bord qu'on doit
+// interpréter, la limite que D-009 posait, tient encore pour ce panneau-là.
 
 import { useEffect, useState } from "react";
 import {
-  ArrowLeft, Clock, ForkKnife, GlobeSimple, MapPin, Phone,
+  ArrowLeft, Clock, ForkKnife, GlobeSimple, Heart, MapPin, Phone,
 } from "@phosphor-icons/react";
 
 import { fetchRestaurant } from "../api";
+import AjouterCarte from "../components/AjouterCarte";
+import Avis from "../components/Avis";
 import CartePhotos from "../components/CartePhotos";
 import PhotoRestaurant from "../components/PhotoRestaurant";
 import DetailCalcul from "../components/DetailCalcul";
+import Verdict from "../components/Verdict";
 import WhyPanel from "../components/WhyPanel";
 import { CardSkeleton, ErrorState } from "../components/States";
-import { distance, hours, verdict } from "../lib/display";
+import { useFavori } from "../lib/hooks";
+import { distance, hours } from "../lib/display";
 
 const FACT_ICON = { display: "inline", verticalAlign: "-2px", marginRight: 6 };
 
-export default function Detail({ restaurant, onBack, onReserve }) {
+export default function Detail({
+  restaurant, onBack, onReserve, user, onSeConnecter, onUnlock,
+}) {
   const [full, setFull] = useState(restaurant);
   const [error, setError] = useState(null);
+
+  const abonne = user?.role === "subscriber" || user?.role === "admin";
+  const { favori, toggle: toggleFavori } = useFavori(
+    full?.id, full?.favori, abonne, user ? onUnlock : onSeConnecter,
+  );
 
   // La liste ne porte pas tout : la fiche recharge les champs complets,
   // en gardant l'objet de la liste comme affichage immédiat.
@@ -37,7 +51,6 @@ export default function Detail({ restaurant, onBack, onReserve }) {
   if (error) return <ErrorState message={error} onRetry={onBack} />;
   if (!full) return <CardSkeleton />;
 
-  const v = verdict(full.local_signal, full.confidence);
   const openingHours = hours(full.opening_hours);
   const dist = distance(full.distance_m);
 
@@ -81,7 +94,26 @@ export default function Detail({ restaurant, onBack, onReserve }) {
         </div>
 
         <div>
-          <span className={`verdict verdict--${v.tone}`}>{v.label}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Verdict localSignal={full.local_signal} confidence={full.confidence} />
+
+            <button
+              type="button"
+              className={`card__favori card__favori--detail${favori ? " is-favori" : ""}`}
+              onClick={toggleFavori}
+              aria-pressed={favori}
+              aria-label={favori ? "Retirer des favoris" : "Ajouter aux favoris"}
+              title={
+                !user
+                  ? "Connectez-vous pour ajouter des favoris"
+                  : abonne
+                    ? (favori ? "Retirer des favoris" : "Ajouter aux favoris")
+                    : "S'abonner pour ajouter des favoris"
+              }
+            >
+              <Heart size={16} weight={favori ? "fill" : "regular"} />
+            </button>
+          </div>
 
           <h1 className="detail__title" style={{ marginTop: 12 }}>{full.name}</h1>
 
@@ -128,6 +160,28 @@ export default function Detail({ restaurant, onBack, onReserve }) {
           >
             Réserver une table
           </button>
+
+          {/* LES DEUX GESTES DE CONTRIBUTION, DANS CET ORDRE.
+              L'avis vient en premier parce qu'il se lit autant qu'il s'écrit :
+              un visiteur qui descend la fiche cherche ce que les autres en ont
+              dit. L'ajout de carte vient ensuite — c'est un geste plus rare,
+              mais c'est celui qui construit l'actif du projet (§3). */}
+          <Avis
+            restaurantId={full.id}
+            user={user}
+            onSeConnecter={onSeConnecter}
+          />
+
+          <AjouterCarte
+            restaurantId={full.id}
+            // Une carte lue change le signal menu : on recharge la fiche
+            // plutôt que de laisser un score périmé à l'écran.
+            onLue={() => {
+              fetchRestaurant(full.id)
+                .then((d) => setFull((f) => ({ ...f, ...d })))
+                .catch(() => {});
+            }}
+          />
         </div>
       </div>
     </>

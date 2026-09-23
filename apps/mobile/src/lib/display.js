@@ -13,9 +13,11 @@ const SEUIL_MIXTE = 45;
 /**
  * Traduit un Local Signal en verdict lisible.
  *
- * Règle d'affichage (D-009) : jamais de score chiffré par défaut.
- * Une confiance faible ne produit pas un verdict tiède mais un verdict
- * explicitement incertain.
+ * D-009 (« jamais de score chiffré par défaut ») est SUPERSÉDÉE par D-050
+ * (web, à répercuter ici) : le score est désormais affiché à côté du
+ * verdict — voir `scoreSur10` et components/ui.js::Verdict. Une confiance
+ * faible ne produit pas un verdict tiède mais un verdict explicitement
+ * incertain.
  *
  * Retourne la clé de couleur plutôt que la couleur : le composant la résout
  * selon le thème courant.
@@ -26,6 +28,12 @@ export function verdict(localSignal, confidence = 1) {
   if (localSignal >= SEUIL_LOCAL) return { label: "Profil local", tone: "local" };
   if (localSignal >= SEUIL_MIXTE) return { label: "Profil mixte", tone: "mixed" };
   return { label: "Profil touristique", tone: "tourist" };
+}
+
+/** Le Local Signal, affiché sur 10 (D-050). `null` si inconnu. */
+export function scoreSur10(localSignal) {
+  if (localSignal == null) return null;
+  return (localSignal / 10).toFixed(1).replace(".", ",");
 }
 
 /** Couleurs d'un verdict dans le thème courant. */

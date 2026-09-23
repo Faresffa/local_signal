@@ -14,14 +14,19 @@ import { Feather } from "@expo/vector-icons";
 
 import { radius, spacing, useColors } from "../theme";
 import {
-  hue, verdictColors, visualBackground, visualForeground,
+  hue, scoreSur10, verdictColors, visualBackground, visualForeground,
 } from "../lib/display";
 
 /* ------------------------------------------------------------------ Verdict */
 
-export function Verdict({ tone, label, size = "md" }) {
+// `localSignal` optionnel : le chiffre (D-050, supersède D-009) ne s'affiche
+// que si l'appelant le transmet. Tous les écrans le font désormais — voir
+// DiscoverScreen.js et DetailScreen.js — mais le composant reste utilisable
+// sans, plutôt que de forcer une prop partout d'un coup.
+export function Verdict({ tone, label, localSignal, size = "md" }) {
   const colors = useColors();
   const { background, text } = verdictColors(tone, colors);
+  const score = scoreSur10(localSignal);
 
   return (
     <View
@@ -33,6 +38,11 @@ export function Verdict({ tone, label, size = "md" }) {
     >
       <Text style={[s.verdictText, { color: text }, size === "lg" && s.verdictTextLg]}>
         {label}
+        {score && (
+          <Text style={[s.verdictScore, size === "lg" && s.verdictTextLg]}>
+            {"  " + score + "/10"}
+          </Text>
+        )}
       </Text>
     </View>
   );
@@ -185,6 +195,9 @@ const s = StyleSheet.create({
   verdictLg: { paddingHorizontal: 14, paddingVertical: 7 },
   verdictText: { fontSize: 12, fontWeight: "600" },
   verdictTextLg: { fontSize: 13 },
+  // Le chiffre, plus gras que le mot qui le précède (D-050) — même logique
+  // que .verdict__score côté web.
+  verdictScore: { fontWeight: "800" },
 
   visual: { width: "100%", alignItems: "center", justifyContent: "center" },
 

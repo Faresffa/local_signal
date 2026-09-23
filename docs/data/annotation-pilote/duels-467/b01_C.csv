@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0001;B;moyenne;Il Gigolo s'auto-decrit "touristy place" dans un avis, rue de la Huchette est le repaire classique du flux touristique
+P0002;B;moyenne;Deux guides touristiques internationaux citent explicitement Verlaine comme adresse touristique, contre une pizzeria plus generique
+P0003;A;forte;La Mosquee est classee "Attraction" sur Tripadvisor et ouvre 7j/7 en continu 15h/jour, signal touristique fort
+P0004;B;forte;La Mosquee reste une attraction touristique repertoriee, bien plus qu'un restaurant persan sans couverture web
+P0005;B;faible;Abyssinie est reprise par un blog anglophone sur le brunch ethiopien avec horaires dominicaux dedies, signal leger de decouverte
+P0006;B;faible;Happiz ouvre en continu le dimanche et figure sur HappyCow, appli utilisee par les voyageurs vegans
+P0007;B;forte;Vin Sobre est decrit par ses clients comme une institution de quartier menacee de fermeture, signal local tres fort
+P0008;B;moyenne;Vin Sobre a une identite de quartier tres marquee (campagne anti-fermeture) bien plus forte que New Aqib
+P0009;A;forte;Traiteur Asiatique est un comptoir a emporter pur, zero presence web, avis de clients qui viennent chercher leur dejeuner habituel
+P0010;A;forte;Rosemonde ouvre 18h/jour 7j/7 avec brunch recherche en ligne et avis de visiteurs decus d'un premier passage
+P0011;B;faible;Rosemonde cumule horaires extremes et avis de passants mecontents, signal de flux plus fort qu'un restaurant de chef ferme le week-end
+P0012;A;moyenne;Bazurto est porte par un chef media et a une deuxieme adresse a Tignes, station de loisirs, signal de destination plus fort que Hoki Sushi frequente par etudiants et familles
+P0013;B;moyenne;Le Vauquelin est une institution familiale citee comme telle par ses clients, bien plus locale que Hoki Sushi
+P0014;A;forte;Bistro des Lettres a un concept touristique assume (lettre a soi-meme) repris par un guide visiteur anglophone, contre une institution locale
+P0015;A;forte;Bistro des Lettres cible un public visiteur explicite, bien plus qu'un restaurant de pho neutre sans couverture
+P0016;A;faible;The Cod House est un bar a cocktails concept sans aucun avis local etabli, plus proche d'une destination de sortie que d'un repere de quartier
+P0017;A;faible;The Cod House a une couverture presse dediee a son concept de bar, Octant reste tres discret avec des horaires restreints
+P0018;A;faible;Octant, restaurant concept a horaires tres restreints, semble plus destine a etre recherche que Sushiko qui vante son bon rapport qualite-prix de quartier
+P0019;B;forte;Allard est un bistrot historique repris par Alain Ducasse avec couverture Michelin internationale, bien plus qu'un sushi de quartier
+P0020;B;forte;Allard, institution gastronomique internationale, domine largement un bar a tapas etudiant de quartier
+P0021;A;moyenne;Le Saint-Pierre recueille des avis explicitement formules en langage de voyage ("on my travels to Paris") contre un lieu etudiant
+P0022;A;faible;Le Saint-Pierre ouvre en continu 7j/7 avec des avis de vacanciers, plus que Selva ferme le lundi
+P0023;A;moyenne;La Fourmi Ailee est citee par un guide touristique anglophone et un avis mentionne explicitement un "food tour"
+P0024;A;moyenne;La Fourmi Ailee a un signal touristique plus etabli que Veganil, dont un avis vante justement le menu etudiant pour Jussieu
+P0025;A;forte;Sorza est sur l'Ile Saint-Louis dans un batiment historique classe, avis tres majoritairement en anglais dont des touristes fideles depuis des annees
+P0026;A;forte;Sorza depasse largement en signal touristique un simple kebab de quartier
+P0027;A;faible;Izgara, kebab a emporter rapide, correspond a un format de restauration de passage plus que le petit bistrot familial Epidon
+P0028;egalite;faible;Taeng Thai est explicitement decrit par un client comme "un lieu local, peu de touristes" mais Epidon n'a aucun signal ni dans un sens ni dans l'autre
+P0029;B;forte;Cucina Mutualite, restaurant du groupe Ducasse couvert par le Michelin, est une destination bien plus que Taeng Thai qualifie de lieu local
+P0030;A;forte;Le Procope est le plus vieux restaurant de Paris, reference par l'office de tourisme officiel, signal touristique maximal du corpus
+P0031;B;forte;Le Procope surclasse largement un restaurant argentin communautaire de quartier
+P0032;B;faible;El Sur est un lieu culturel communautaire enracine depuis 20 ans, India StreEAT plus recent avec un site en 15 langues et reservation obligatoire
+P0033;A;moyenne;Paris Antalya est decouvert via une video TikTok et ouvre 12h/jour 7j/7, signal de flux plus fort qu'India StreEAT porte par un blog pour residents
+P0034;B;faible;Paris Antalya, decouverte TikTok et tres larges horaires quotidiens, l'emporte de peu sur le buffet Sumo
+P0035;A;moyenne;Sumo fonctionne en formule buffet a volonte, format plus passant, contre Dae Jang dont un avis souligne explicitement la fidelisation des habitues
+P0036;A;moyenne;La Soummam attire des clients venus specifiquement d'Orleans pour la musique live, signal de clientele non locale plus fort que Dae Jang
+P0037;B;forte;Le Petit Medicis recoit un avis le qualifiant explicitement de "rather touristy place" avec des avis majoritairement en langues etrangeres
+P0038;A;moyenne;Le Petit Medicis a un signal touristique explicite plus fort que Raviolis Queen, plus generique
+P0039;A;forte;5 Severin recoit un avis parlant explicitement de "piege a touristes" et pratiques jugees trompeuses
+P0040;B;faible;5 Severin cumule un avis de "piege a touristes" avec accusation d'arnaque, signal plus severe que l'auto-description "nice touristy place" d'Il Gigolo
+P0041;B;moyenne;Sorza, sur l'Ile Saint-Louis avec des touristes fideles de longue date, surpasse Happiz sur le signal touristique
+P0042;A;faible;Selva beneficie d'un article dedie complet dans un blog visiteur anglophone, plus cible que les mentions incidentes de Happiz
+P0043;A;faible;Selva a une couverture presse visiteur plus etablie que New Aqib, fidelise par des habitues nommes
+P0044;A;faible;The Cod House, concept de bar a cocktails avec couverture presse dediee, contre New Aqib fidelise par des habitues nommes
+P0045;A;moyenne;Taeng Thai est explicitement decrit comme un lieu local par un avis, contre le concept de bar destination The Cod House
+P0046;A;forte;Cucina Mutualite, restaurant Ducasse couvert par le Michelin, ecrase en signal touristique un simple kebab de quartier
+P0047;A;faible;Izgara, kebab a emporter, correspond a un format de passage plus que El Sur, hub culturel communautaire enracine depuis 20 ans
+P0048;egalite;faible;Dae Jang et El Sur montrent tous deux des signaux forts d'habitues et de communaute sans aucun signal touristique
+P0049;A;forte;Il Gigolo s'auto-decrit comme touristique sur une rue emblematique du tourisme, contre Dae Jang fidelise par des habitues
+P0050;A;moyenne;Il Gigolo a un signal touristique explicite et assume, La Soummam attire plutot des amateurs de musique venus de loin mais pas des touristes classiques
+P0051;A;moyenne;La Maison de Verlaine est citee par des guides touristiques internationaux comme adresse touristique, La Soummam reste une niche musicale
+P0052;A;moyenne;La Maison de Verlaine a un signal touristique etabli par des guides, contre Raviolis Queen sans couverture web
+P0053;A;forte;Allard, institution gastronomique historique couverte par le Michelin international, domine largement Raviolis Queen
+P0054;B;moyenne;Allard est une institution centenaire au rayonnement international plus etabli que Bazurto, plus recent
+P0055;B;faible;Sumo en formule buffet a volonte cible un passage de groupes plus large que Bazurto, qui demande reservation aupres d'amateurs du chef
+P0056;B;forte;La Mosquee de Paris, attraction touristique repertoriee, domine largement un restaurant buffet de quartier
+P0057;B;forte;La Mosquee de Paris ecrase en signal touristique un restaurant de sushis de quartier sans couverture web
+P0058;B;faible;Veganil beneficie d'une couverture reseaux sociaux et de guides plus large que Sushiko, simple valeur de quartier
+P0059;B;forte;Rosemonde cumule horaires extremes et avis de visiteurs decus, bien plus touristique que Veganil oriente etudiants
+P0060;B;forte;Rosemonde, brasserie a horaires tres larges et recherchee pour le brunch, domine largement Hoki Sushi
+P0061;B;faible;Hoki Sushi en formule buffet a volonte est un format legerement plus passant que le restaurant persan Toranj
+P0062;B;moyenne;Vita Nuova ouvre tous les jours en continu et recueille des avis vantant son accueil des touristes, plus que Toranj sans couverture web
+P0063;A;moyenne;Vita Nuova a un signal touristique plus etabli (ouverture continue, avis vantant les touristes) que Les Saveurs d'Abyssinie
+P0064;A;moyenne;Le Saint-Pierre recoit des avis au langage de voyageurs et ouvre 7j/7 en continu, plus que Les Saveurs d'Abyssinie fermee le lundi
+P0065;B;moyenne;Le Saint-Pierre a un signal touristique plus marque que Pho5, restaurant discret sans couverture web
+P0066;B;forte;5 Severin recoit un avis explicite de "piege a touristes", signal bien plus fort que Pho5
+P0067;B;forte;5 Severin est explicitement qualifie de piege a touristes, bien au-dela du signal local d'India StreEAT
+P0068;A;moyenne;India StreEAT, avec reservation en ligne et site en 15 langues, est plus etabli commercialement que Traiteur Asiatique, pur comptoir a emporter local
+P0069;B;forte;La Fourmi Ailee est citee par un guide touristique et un avis mentionne un food tour, contre Traiteur Asiatique purement local
+P0070;B;moyenne;La Fourmi Ailee a un signal touristique etabli (guide, food tour, ouverture continue) plus fort que le petit bistrot familial Epidon
+P0071;A;moyenne;Paris Antalya, decouverte via TikTok avec de tres larges horaires quotidiens, a un signal de passage plus fort qu'Epidon
+P0072;A;faible;Paris Antalya a un signal de decouverte et d'horaires etablis, Octant reste tres discret avec des horaires restreints et aucune donnee d'avis
+P0073;A;forte;Bistro des Lettres, concept touristique assume avec couverture guide visiteur, domine largement Octant peu documente
+P0074;B;forte;Le Procope, plus vieux restaurant de Paris reference par l'office de tourisme, a un statut de landmark touristique institutionnel plus fort que le concept plus recent de Bistro des Lettres
+P0075;B;moyenne;Le Procope, landmark touristique institutionnel, surpasse Le Petit Medicis pourtant deja qualifie de "touristy" par un avis
+P0076;A;forte;Le Petit Medicis a un signal touristique explicite et des avis majoritairement etrangers, bien plus qu'El Cervantes oriente etudiants
+P0077;B;moyenne;El Cervantes, plus festif et oriente etudiants de passage, depend davantage du flux que Vin Sobre, institution locale au tres fort ancrage
+P0078;egalite;faible;Vin Sobre et Le Vauquelin sont tous deux decrits par leurs clients comme des institutions familiales de quartier sans aucun signal touristique
+P0079;A;forte;Sorza, sur l'Ile Saint-Louis dans un batiment historique avec des touristes fideles de longue date, domine largement Le Vauquelin, institution familiale locale

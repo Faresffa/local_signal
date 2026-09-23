@@ -15,6 +15,7 @@ import json
 import sys
 from datetime import datetime
 
+from backend import config
 from backend.core.scoring.engine import compute_local_signal
 from backend.core.scoring.geo_score import tourist_pressure
 from backend.db.models import get_connection, init_db
@@ -163,10 +164,32 @@ def score_zone(zone: str) -> int:
                AND m.scanned_at = last.latest
         """)
     }
+    # Rattachement des avis recoltes (LS-01). Cette ligne portait
+    # `r["reviews"] = []` : le tableau etait vide a chaque recalcul, donc
+    # l'indicateur langue valait 0,50 pour TOUS les restaurants — 30 % du poids
+    # du score qui ne separait personne. C'etait la cause exacte, et elle
+    # tenait en une ligne.
+    #
+    # `lang` est deja detectee a la collecte et stockee : `count_local_reviews`
+    # la reutilise sans relancer `langdetect`, qui est lent et dont le resultat
+    # ne changerait pas.
+    avis: dict[str, list[dict]] = {}
+    for row in conn.execute(
+        "SELECT restaurant_id, text, lang FROM reviews"
+    ):
+        avis.setdefault(row["restaurant_id"], []).append(
+            {"text": row["text"], "lang": row["lang"]}
+        )
+
     with_menu = 0
+    with_reviews = 0
 
     for r in restaurants:
-        r["reviews"] = []             # pas d'avis : le lissage gère (D-003)
+        # Sans avis, le lissage rend l'a priori neutre (D-003) : on ne penalise
+        # pas l'absence d'information.
+        r["reviews"] = avis.get(r["id"], [])
+        if r["reviews"]:
+            with_reviews += 1
         r["type"] = r.get("cuisine")   # `price_score` compare à cuisine égale
 
         obs = menus.get(r["id"])
@@ -186,6 +209,7 @@ def score_zone(zone: str) -> int:
             with_menu += 1
 
     print(f"[Scoring] {with_menu} restaurants disposent d'une carte extraite.")
+    print(f"[Scoring] {with_reviews} restaurants disposent d'avis avec leur texte.")
 
     # Cohorte de pression touristique, calculée une seule fois pour tout le lot
     # (D-027). C'est ici — en lot, hors du chemin d'une requête — que le rang en
@@ -206,8 +230,12 @@ def score_zone(zone: str) -> int:
     cursor = conn.cursor()
 
     for r in restaurants:
+        # La langue locale attendue depend de la ZONE, pas du produit (LS-06).
+        # Sans cela, une carte barcelonaise sans espagnol serait jugee avec le
+        # critere parisien.
         result = compute_local_signal(
-            r, sites, peers=restaurants, cohort_pressures=cohort_pressures
+            r, sites, peers=restaurants, cohort_pressures=cohort_pressures,
+            target_lang=config.langue_de_zone(r.get("zone")),
         )
         cursor.execute("""
             UPDATE restaurants

@@ -2,9 +2,9 @@
 //
 // Écran « autour de moi » : géolocalisation, filtres, liste de résultats.
 //
-// Règle d'affichage (D-009) : aucun score visible par défaut. L'utilisateur
-// voit un verdict lisible et la première raison en français ; le détail du
-// calcul est sur la fiche, derrière « pourquoi ? ».
+// Le verdict porte un mot ET le Local Signal chiffré (D-050, supersède
+// D-009) ; la première raison en français reste affichée à côté. Le détail
+// indicateur par indicateur, lui, est sur la fiche, derrière « pourquoi ? ».
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -18,12 +18,19 @@ import { fetchCuisines, fetchRestaurants } from "../api";
 import {
   CardSkeleton, EmptyState, ErrorState, Loading, Verdict,
 } from "../components/ui";
+import BarreSignal from "../components/BarreSignal";
+import CarteVerrouillee from "../components/CarteVerrouillee";
 import PhotoRestaurant from "../components/PhotoRestaurant";
 import ChoixLieu from "../components/ChoixLieu";
 import Filtres from "../components/Filtres";
 import { radius, spacing, useColors } from "../theme";
 import { distance, verdict } from "../lib/display";
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
+
+// Cartes verrouillées affichées au-delà de la limite (LS-19) — plafond
+// purement visuel, pour ne pas dérouler quarante cadenas quand la zone en
+// compte 423. Même valeur que sur le web : c'est le même produit (D-037).
+const MAX_CARTES_VERROUILLEES = 6;
 
 // Zone d'évaluation, utilisée si la géolocalisation est refusée. On ne bloque
 // jamais l'écran sur un message d'erreur de permission.
@@ -73,6 +80,9 @@ function Carte({ item, onOpen, isDark, index }) {
         style={({ pressed }) => [
           s.card,
           { backgroundColor: colors.surface, borderColor: colors.border },
+          // UN SEUL premier, pas trois : trois cartes mises en avant sur cinq
+          // ne distinguent plus rien (LS-12).
+          index === 0 && { borderColor: colors.brand, borderWidth: 2 },
           pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
         ]}
       >
@@ -83,11 +93,52 @@ function Carte({ item, onOpen, isDark, index }) {
           photoUrl={item.photo_url}
           isDark={isDark}
         />
+        {/* Rang dans le classement : la liste est déjà verticale, un par un,
+            le chiffre le rend explicite plutôt que déductible de l'ordre
+            (LS-refonte, cohérent avec la carte web). */}
+        <View
+          style={[
+            s.rang,
+            {
+              backgroundColor: index === 0 ? colors.brand : colors.surface,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              s.rangText,
+              { color: index === 0 ? colors.onBrand : colors.text },
+            ]}
+          >
+            {index + 1}
+          </Text>
+        </View>
         {dist && (
           <View style={[s.distance, { backgroundColor: colors.surface }]}>
             <Text style={[s.distanceText, { color: colors.text }]}>{dist}</Text>
           </View>
         )}
+        {index === 0 && (
+          <View style={[s.premier, { backgroundColor: colors.brand }]}>
+            <Text style={[s.premierText, { color: colors.onBrand }]}>
+              Meilleur profil local
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* Barre et verdict, juste sous la photo : c'est la premiere chose lue
+          apres l'image, avant meme le nom. Identique au web (LS-14). */}
+      <View style={s.signal}>
+        <View style={{ flex: 1 }}>
+          <BarreSignal
+            valeur={item.local_signal}
+            ton={v.tone}
+            delai={Math.min(index * 60, 400) + 180}
+            label={`${v.label} — ${item.name}`}
+          />
+        </View>
+        <Verdict tone={v.tone} label={v.label} localSignal={item.local_signal} />
       </View>
 
       <View style={s.cardBody}>
@@ -107,7 +158,6 @@ function Carte({ item, onOpen, isDark, index }) {
         )}
 
           <View style={s.cardFoot}>
-            <Verdict tone={v.tone} label={v.label} />
             <Feather name="chevron-right" size={18} color={colors.textFaint} />
           </View>
         </View>
@@ -116,7 +166,8 @@ function Carte({ item, onOpen, isDark, index }) {
   );
 }
 
-export default function DiscoverScreen({ onOpen }) {
+export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
+  const abonne = user?.role === "subscriber" || user?.role === "admin";
   const colors = useColors();
   const isDark = useColorScheme() === "dark";
 
@@ -138,6 +189,11 @@ export default function DiscoverScreen({ onOpen }) {
   const [options, setOptions] = useState([]);
 
   const [restaurants, setRestaurants] = useState([]);
+  const [total, setTotal] = useState(0);
+  // Explique pourquoi le premier résultat n'a pas forcément le meilleur
+  // Local Signal (retour utilisateur, même ajout côté web) — le classement
+  // mêle authenticité et proximité (D-008).
+  const [expliqueClassement, setExpliqueClassement] = useState(false);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
 
@@ -186,19 +242,69 @@ export default function DiscoverScreen({ onOpen }) {
       ouvert: filtres.ouvert,
       reservation: filtres.reservation,
       avecCarte: filtres.avecCarte,
+      scoreMin: filtres.scoreMin,
+      scoreMax: filtres.scoreMax,
       limit: 30,
     })
-      .then((data) => { setRestaurants(data.restaurants ?? []); setStatus("ready"); })
+      .then((data) => {
+        const liste = data.restaurants ?? [];
+        setRestaurants(liste);
+        // `count` est le nombre de restaurants qui CORRESPONDENT, pas le
+        // nombre renvoyé. L'écart est exactement ce qui est masqué.
+        setTotal(data.count ?? liste.length);
+        setStatus("ready");
+      })
       .catch((e) => { setError(e.message); setStatus("error"); });
   }, [origine, radiusM, filtres]);
 
   useEffect(() => { load(); }, [load]);
 
+  // UN UTILISATEUR CONNECTÉ NE MASQUE RIEN. Le serveur applique déjà la
+  // limite ; on ne fait que la rendre lisible plutôt que de laisser croire
+  // que le quartier ne compte que cinq restaurants.
+  const masques = user ? 0 : Math.max(0, total - restaurants.length);
+
   const entete = (
     <View style={s.header}>
-      <Text style={[s.title, { color: colors.text }]}>
-        {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
-      </Text>
+      <View style={s.titleRow}>
+        <Text style={[s.title, { color: colors.text, flex: 1 }]}>
+          {lieu ? `Autour de ${lieu.label}` : "Autour de vous"}
+        </Text>
+
+        {/* ACCÈS AU COMPTE SANS TROISIÈME ONGLET (D-037). Connecté, l'initiale
+            vaut confirmation silencieuse : on voit d'un coup d'œil que la
+            session tient, sans ligne de texte en plus. Déconnecté en revanche,
+            une icône seule se perdait dans l'en-tête — personne n'y voyait un
+            accès à la création de compte (retour utilisateur). Le libellé le
+            rend explicite, comme "Se connecter" dans la nav du web. */}
+        <Pressable
+          onPress={onCompte}
+          accessibilityRole="button"
+          accessibilityLabel={user ? "Mon compte" : "Se connecter"}
+          hitSlop={8}
+          style={[
+            user ? s.compte : s.compteInvite,
+            {
+              backgroundColor: user ? colors.brand : colors.brandSoft,
+              borderColor: user ? colors.brand : colors.brand,
+            },
+          ]}
+        >
+          {user ? (
+            <Text style={[s.compteInitiale, { color: colors.onBrand }]}>
+              {(user.name || user.email).trim().charAt(0).toUpperCase()}
+            </Text>
+          ) : (
+            <>
+              <Feather name="user" size={15} color={colors.brand} />
+              <Text style={[s.compteInviteText, { color: colors.brand }]}>
+                Se connecter
+              </Text>
+            </>
+          )}
+        </Pressable>
+      </View>
+
       <Text style={[s.lede, { color: colors.textMuted }]}>
         {denied && !lieu
           ? "Position indisponible. Résultats pour le Quartier latin."
@@ -255,12 +361,39 @@ export default function DiscoverScreen({ onOpen }) {
         cuisines={options}
         nbResultats={status === "ready" ? restaurants.length : null}
         chargement={status === "loading"}
+        abonne={abonne}
+        onUnlock={onUnlock}
       />
 
       {status === "ready" && (
-        <Text style={[s.count, { color: colors.textFaint }]}>
-          {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""}
+        <View style={s.countRow}>
+          <Text style={[s.count, { color: colors.textFaint }]}>
+            {masques > 0
+              ? `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""} `
+                + `affiché${restaurants.length > 1 ? "s" : ""} sur ${total}`
+              : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
+          </Text>
+          <Pressable
+            onPress={() => setExpliqueClassement((v) => !v)}
+            accessibilityRole="button"
+            style={s.sortBouton}
+          >
+            <Feather name="info" size={12} color={colors.textFaint} />
+            <Text style={[s.sortTexte, { color: colors.textFaint }]}>
+              Authenticité et proximité
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
+      {expliqueClassement && (
+        <Text style={[s.explication, { color: colors.textMuted }]}>
+          Le classement combine le Local Signal du restaurant (authenticité)
+          et sa distance jusqu'à vous : un restaurant très proche peut donc
+          apparaître avant un restaurant mieux noté mais plus loin. Le score
+          de chaque restaurant reste visible sur sa carte.
         </Text>
+      )}
       )}
     </View>
   );
@@ -303,6 +436,16 @@ export default function DiscoverScreen({ onOpen }) {
       renderItem={({ item, index }) => (
         <Carte item={item} onOpen={onOpen} isDark={isDark} index={index} />
       )}
+      ListFooterComponent={
+        masques > 0 ? (
+          <View style={{ gap: spacing.md, marginTop: spacing.md }}>
+            {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) })
+              .map((_, i) => (
+                <CarteVerrouillee key={`verrou-${i}`} onInscription={onCompte} />
+              ))}
+          </View>
+        ) : null
+      }
     />
   );
 }
@@ -310,7 +453,29 @@ export default function DiscoverScreen({ onOpen }) {
 const s = StyleSheet.create({
   list: { padding: spacing.lg, paddingBottom: spacing.xxxl },
   header: { marginBottom: spacing.lg },
+  titleRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   title: { fontSize: 28, fontWeight: "700", letterSpacing: -0.5 },
+  // 40 points : la cible tactile la plus petite qui reste confortable au pouce
+  // dans un coin d'écran.
+  compte: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  compteInitiale: { fontSize: 16, fontWeight: "700" },
+  compteInvite: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    minHeight: 40,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+  },
+  compteInviteText: { fontSize: 13, fontWeight: "700" },
   lede: { fontSize: 15, marginTop: 4, lineHeight: 21 },
 
   chips: { gap: 8, paddingVertical: spacing.md },
@@ -323,19 +488,47 @@ const s = StyleSheet.create({
   },
   chipText: { fontSize: 14, fontWeight: "500" },
 
-  count: { fontSize: 13, marginTop: 4 },
+  countRow: {
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    marginTop: 4,
+  },
+  count: { fontSize: 13 },
+  sortBouton: { flexDirection: "row", alignItems: "center", gap: 4, minHeight: 30 },
+  sortTexte: { fontSize: 11 },
+  explication: { fontSize: 12, lineHeight: 17, marginTop: 4 },
 
   card: { borderRadius: radius.lg, borderWidth: 1, overflow: "hidden" },
   cardBody: { padding: spacing.md, gap: 5 },
   name: { fontSize: 17, fontWeight: "600", letterSpacing: -0.2 },
   meta: { fontSize: 14 },
   reason: { fontSize: 13, lineHeight: 18, marginTop: 2 },
+  // Le verdict a remonte sous la photo (LS-14) : le pied ne porte plus que
+  // le chevron, qui s'aligne donc a droite.
   cardFoot: {
     marginTop: 8,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
   },
+
+  // Barre et verdict sur une meme ligne, entre la photo et le corps.
+  signal: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+  },
+
+  premier: {
+    position: "absolute",
+    right: 12,
+    bottom: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+  },
+  premierText: { fontSize: 11, fontWeight: "700" },
 
   distance: {
     position: "absolute",
@@ -346,4 +539,16 @@ const s = StyleSheet.create({
     borderRadius: radius.pill,
   },
   distanceText: { fontSize: 12, fontWeight: "600" },
+
+  rang: {
+    position: "absolute",
+    left: 12,
+    top: 12,
+    width: 24,
+    height: 24,
+    borderRadius: radius.pill,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rangText: { fontSize: 12, fontWeight: "700" },
 });

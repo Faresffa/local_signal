@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { addFavori, removeFavori } from "../api";
+
 /**
  * Révèle un élément quand il entre dans le viewport.
  *
@@ -124,4 +126,39 @@ export function useGeolocation() {
   }, [supported, demandes]);
 
   return { position, denied, relocate: () => setDemandes((n) => n + 1) };
+}
+
+/**
+ * Bascule un restaurant en favori — réservé aux comptes abonnés
+ * (backend/main.py::_require_abonne). Un compte connecté mais non abonné qui
+ * clique est redirigé vers l'abonnement (`onUnlock`), jamais vers une erreur
+ * 403 brute.
+ *
+ * Mise à jour optimiste : l'état visuel change avant la réponse serveur, et
+ * revient en arrière si l'appel échoue — un cœur qui met une seconde à
+ * réagir donne l'impression que le clic n'a pas marché.
+ */
+export function useFavori(restaurantId, initial, abonne, onUnlock, onChange) {
+  const [favori, setFavori] = useState(Boolean(initial));
+  useEffect(() => { setFavori(Boolean(initial)); }, [restaurantId, initial]);
+
+  const [enCours, setEnCours] = useState(false);
+
+  const toggle = useCallback(async () => {
+    if (!abonne) { onUnlock?.(); return; }
+    const precedent = favori;
+    setFavori(!precedent);
+    setEnCours(true);
+    try {
+      if (precedent) await removeFavori(restaurantId);
+      else await addFavori(restaurantId);
+      onChange?.(!precedent);
+    } catch {
+      setFavori(precedent);
+    } finally {
+      setEnCours(false);
+    }
+  }, [abonne, favori, restaurantId, onUnlock, onChange]);
+
+  return { favori, toggle, enCours };
 }

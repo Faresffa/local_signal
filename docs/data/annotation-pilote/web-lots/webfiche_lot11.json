@@ -1,0 +1,290 @@
+{
+  "osm_n4467001568": {
+    "nom": "Mavrommátis",
+    "presse_francophone": [
+      "Sortiraparis, article \"Mavrommatis, the Michelin-starred Greek restaurant for a Mediterranean getaway in Paris\" : présenté comme une table étoilée, temple de la gastronomie hellénique à Paris depuis 1993 (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/200224-mavrommatis-the-star-studded-greek-table-for-a-mediterranean-getaway-in-paris)"
+    ],
+    "guides_visiteurs": [
+      "Guide MICHELIN : une étoile depuis 2018, fiche dans le guide MICHELIN France 2026 (https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/mavrommatis)"
+    ],
+    "site_officiel": "non identifié avec certitude dans les recherches effectuées",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Institution de la cuisine grecque à Paris depuis 1981 selon plusieurs fiches (petitfute, lesrestos) ; une autre source (Sortiraparis) situe l'ouverture en 1993 — divergence non résolue (https://www.lesrestos.com/restaurant/fiche/paris/mavrommatis) (https://www.sortiraparis.com/en/where-to-eat-in-paris/restaurant/articles/200224-mavrommatis-the-star-studded-greek-table-for-a-mediterranean-getaway-in-paris)",
+      "Tenu par les frères Andreas et Evagoras Mavrommatis, d'origine chypriote (https://restodeparis.com/en/restaurant/mavrommatis/)"
+    ],
+    "incertitudes": "date de création divergente selon les sources (1981 vs 1993) ; nom de rue non vérifié directement (adresse 42 Rue Daubenton confirmée par plusieurs fiches)"
+  },
+  "osm_n1750443570": {
+    "nom": "La Muraille du Phénix",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": [
+      "Restaurant Guru (fiche généraliste multilingue) le présente comme un restaurant chinois/thaï/vietnamien avec menus très abordables (https://restaurantguru.com/La-muraille-du-phenix-Paris-2)"
+    ],
+    "site_officiel": "site propre existant (lamurailleduphenix.com), contenu non vérifié en détail (https://www.lamurailleduphenix.com/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Restaurant chinois/vietnamien/thaï au 179 Rue Saint-Jacques, décrit comme économique et populaire pour ses menus complets à petit prix (Yelp, mapstr)"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n9741157570": {
+    "nom": "Bistrot Vin Sobre (Le Vin Sobre)",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les recherches",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Bistrot classique du 5e arrondissement, au moins 30 % de vins nature (bio/biodynamie) selon Raisin.digital (https://www.raisin.digital/en/le-vin-sobre-1300/)",
+      "Menu affiché uniquement à l'ardoise selon Eater Space (https://eater.space/le-vin-sobre)"
+    ],
+    "incertitudes": "nom trouvé dans les sources est \"Le Vin Sobre\", à rapprocher de \"Bistrot Vin Sobre\" du CSV — possible variante de nom pour le même établissement au 25 Rue des Feuillantines"
+  },
+  "osm_n1695642573": {
+    "nom": "Bouillon Racine",
+    "presse_francophone": [
+      "Sortiraparis, page lieu \"Racine Broth\" / \"Brasserie le bouillon racine\" : établissement partenaire de l'Office du Tourisme de Paris, présenté pour son décor Art nouveau classé monument historique (https://www.sortiraparis.com/en/lieux/981-racine-broth) (https://www.sortiraparis.com/hotel-restaurant/restaurant/articles/14173-brasserie-le-bouillon-racine)"
+    ],
+    "guides_visiteurs": [
+      "France Channel TV, \"Restaurant in review: Bouillon Racine\" — contenu à visée touristique/expatrié anglophone sur la tradition des bouillons parisiens (https://www.francechannel.tv/Blog/Gastronomy/RESTAURANT-IN-REVIEW-BOUILLON-RACINE)",
+      "Wikipedia anglophone consacre une entrée générique aux \"Bouillon\" (restaurant) mentionnant Bouillon Racine (https://en.wikipedia.org/wiki/Bouillon_(restaurant))"
+    ],
+    "site_officiel": "site en anglais/français (bouillonracine.fr), section \"menus\" en anglais consultée (https://www.bouillonracine.fr/en/menus/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Existe depuis 1906, classé Monument Historique pour son décor Art nouveau (boiseries sculptées, miroirs biseautés, opalines) (https://www.francechannel.tv/Blog/Gastronomy/RESTAURANT-IN-REVIEW-BOUILLON-RACINE)",
+      "Organise des soirées jazz les 1er et 3e mardis du mois"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n390266577": {
+    "nom": "Les Pipos",
+    "presse_francophone": [
+      "Paris-Bistro (média francophone spécialisé bistrots/bars à vins) référence Les Pipos dans sa sélection (https://www.paris-bistro.com/choisir/paris5/les-pipos)"
+    ],
+    "guides_visiteurs": [
+      "Falstaff (média vin international, contenu multilingue) consacre une fiche à Les Pipos (https://www.falstaff.com/en/winebars/les-pipos)",
+      "Wine Terroirs (blog anglophone sur le vin) référence Les Pipos dans sa sélection de bars à vins parisiens (https://www.wineterroirs.com/2004/08/paris_wine_bars_1.html)"
+    ],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Nom tiré de \"pipo\", surnom des élèves de l'École Polytechnique, située en face du bar",
+      "Concerts live les vendredis et samedis soirs selon plusieurs fiches"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n6742366578": {
+    "nom": "Le Jardin Saint-Germain",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée d'un guide de voyage dédié dans les recherches effectuées"],
+    "site_officiel": "site propre (le-jardin-saint-germain.eatbu.com), texte en anglais consulté (\"Authentic Parisian Dining\") — orientation clientèle internationale/touristique visible dans la formulation (https://le-jardin-saint-germain.eatbu.com/?lang=en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["aucune mention trouvée"],
+    "incertitudes": "établissement récent semble-t-il (peu de traces presse), à confirmer"
+  },
+  "osm_n1681555579": {
+    "nom": "Rebalto (Rebalto Pinseria)",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site propre en français (rebalto.com), se présente comme \"Pinsa Romana Artisanale à Paris 5e\" (https://www.rebalto.com/)",
+    "reseaux_sociaux": [
+      "Compte Instagram actif @rebalto_pinseria, utilisé aussi pour les réservations selon plusieurs fiches (https://www.instagram.com/rebalto_pinseria/)"
+    ],
+    "autres_faits": [
+      "Spécialisé en pinsa romana (pâte à 72h de fermentation), positionnement différent d'une pizzeria classique"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n1110738581": {
+    "nom": "Papilla",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site propre bilingue (papilla-paris.fr), version anglaise consultée, mentionne un établissement également à Boulogne-Billancourt (https://papilla-paris.fr/en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Adresse trouvée dans les sources : 9 Rue Soufflot, et non Rue Paillet comme indiqué dans le CSV — à vérifier, possible seconde entrée ou erreur d'adresse"
+    ],
+    "incertitudes": "divergence d'adresse : le CSV indique Rue Paillet, les sources trouvées (TripAdvisor \"Papilla Soufflot\", pagesjaunes, thefork) situent l'établissement Rue Soufflot ; peut s'agir du même restaurant avec deux rues adjacentes ou d'un homonyme"
+  },
+  "osm_n1681555581": {
+    "nom": "Edogawa",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site trouvé via un système de commande en ligne (edogawa.onataste.fr), pas de site vitrine propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Restaurant japonais à volonté (buffet), formule à prix fixe (15,80€ midi / 20,80€ soir selon une source)"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n3085086585": {
+    "nom": "Ostra Paris",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée d'un guide de voyage dédié"],
+    "site_officiel": "site propre bilingue (ostra.fr), équipe présentée comme parlant français/anglais/espagnol/portugais — orientation clientèle internationale explicite (https://ostra.fr/en/home-en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Ouvert en mai 2023 selon mapstr, dans le quartier Saint-Michel, à deux pas de Notre-Dame",
+      "Huîtres issues d'une production familiale sur l'Île de Ré (Ferme des Baleines), présentées comme distributeur exclusif à Paris pour ces huîtres médaillées d'or"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n3085086586": {
+    "nom": "Ladelice Sushi",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Restaurant asiatique (sushi/poulet/nems) à emporter et sur place, gamme de prix 10-20€"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n3085086587": {
+    "nom": "Latin Saint-Jacques (Le Latin St. Jacques)",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée d'un guide de voyage dédié, mais présence sur agrégateurs multilingues type evendo.com orientés voyageurs (https://evendo.com/locations/france/paris/latin-quarter/restaurant/le-latin-saint-jacques)"],
+    "site_officiel": "site trouvé (le-latin-saint-jacques.eatbu.com), contenu non vérifié en détail",
+    "reseaux_sociaux": ["Page Facebook \"Restaurant Le Latin Saint Jacques\" (https://www.facebook.com/LeLatinSaintJacques/)"],
+    "autres_faits": ["Bistrot français classique (bœuf bourguignon, grillades) selon plusieurs fiches"],
+    "incertitudes": ""
+  },
+  "osm_n2038949589": {
+    "nom": "Chez René",
+    "presse_francophone": [
+      "Les Restos (lesrestos.com), article \"Un déjeuner Chez René\" dans sa rubrique critiques (https://www.lesrestos.com/critiques/tous-les-gouts/passionnement/article/dejeuner-chez-rene)",
+      "Paris Bouge référence l'établissement dans ses fiches de lieux (https://www.parisbouge.com/places/3281)"
+    ],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié dans les recherches",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Institution de la Rive Gauche depuis les années 1950 selon plusieurs fiches",
+      "Cuisine puisant dans la tradition lyonnaise (quenelle, rosette, etc.)"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n310363590": {
+    "nom": "Café Jussieu",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["Café/bar de quartier situé à l'angle de la Rue Linné, proche du métro Jussieu"],
+    "incertitudes": ""
+  },
+  "osm_n3350341593": {
+    "nom": "Fraternité Vietnamienne",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Décrit par plusieurs fiches (mapstr, sluurpy) comme petit restaurant familial, dans une zone touristique mais sans ambiance touristique marquée (\"tiny restaurant in a tourist area but without the tourist vibe\")"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n1129806595": {
+    "nom": "Pizza Roma",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site propre (pizza-roma.fr), présente l'historique de l'enseigne (https://www.pizza-roma.fr/nos-restaurants/rue-des-ecoles/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Première adresse de l'enseigne Pizza Roma, ouverte en 1968 selon le site officiel, tenue par une famille d'origine italienne (famille Esposito)"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n2930568596": {
+    "nom": "Girasole",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site propre (girasole.fr), version anglaise identifiée dans les résultats (http://girasole.fr/en)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["Situé face au Jardin des Plantes"],
+    "incertitudes": ""
+  },
+  "osm_n1813684597": {
+    "nom": "Les Arènes",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Bistrot/bar à vin familial tenu par \"Mimi et Nono\" selon plusieurs fiches (foodyparis, restaurantguru)",
+      "Menu qui change toutes les deux semaines selon la saison"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n1702570598": {
+    "nom": "Chez Nicos",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site vitrine identifié",
+    "reseaux_sociaux": [
+      "Compte Instagram actif @cheznicos (https://www.instagram.com/cheznicos/)"
+    ],
+    "autres_faits": [
+      "Comptoir à emporter (crêpes/panini), très peu de places assises, chef nommé Nico selon travelpal.ai"
+    ],
+    "incertitudes": ""
+  },
+  "osm_n2928019600": {
+    "nom": "Luisa Maria",
+    "presse_francophone": [
+      "Paris Bouge référence l'établissement (https://www.parisbouge.com/places/2140)",
+      "Selon plusieurs fiches, sélectionné parmi les 10 meilleures pizzerias de Paris par \"un grand magazine\" en 2015 — nom du média non identifié précisément dans les sources consultées"
+    ],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Ouvert le 23 mai 2013 selon restoaparis.com",
+      "Présenté par Giovanni Guida, restaurateur qui a aussi ouvert La Madonnina, Maria Luisa, La Briciola et L'Altra (groupe/enseigne multiple)"
+    ],
+    "incertitudes": "nom du magazine ayant classé l'établissement parmi les 10 meilleures pizzerias non identifié précisément"
+  },
+  "osm_n2838981601": {
+    "nom": "Le Passage",
+    "presse_francophone": [
+      "Paris Bouge référence le lieu dans ses fiches (\"#restaurant #baravin #bistrot #paris\") (https://www.parisbouge.com/places/4721)"
+    ],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel propre identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["Bistrot de quartier, cuisine française revisitée selon plusieurs fiches"],
+    "incertitudes": ""
+  },
+  "osm_n2939352601": {
+    "nom": "Le Petit Cardinal",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Situé à l'angle Rue Monge / Rue du Cardinal Lemoine, juste en face de la station de métro Cardinal Lemoine — attention : l'adresse du CSV indique \"75015 Paris\", incohérente avec la localisation Quartier Latin / Rue Monge (5e arrondissement) trouvée dans les sources"
+    ],
+    "incertitudes": "incohérence de code postal : CSV indique 75015, alors que toutes les sources situent l'établissement au 29 Rue Monge dans le 5e arrondissement (75005) — probable erreur dans les données source, à signaler"
+  },
+  "osm_n2740164604": {
+    "nom": "En face",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "aucun site officiel identifié avec certitude",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": [
+      "Un établissement \"En Face de La Petite Périgourdine\" est référencé au 28 Rue des Écoles (mapstr), avec cuisine italienne/française/brasserie — à la même adresse existe aussi un restaurant italien distinct nommé \"L'Élica\""
+    ],
+    "incertitudes": "homonymie/confusion possible entre \"En face\" (nom du CSV), \"En Face de La Petite Périgourdine\" et \"L'Élica\", tous trois associés au 28 Rue des Écoles dans les résultats de recherche — identification non certaine"
+  },
+  "osm_n9849041608": {
+    "nom": "Le Petit Médicis",
+    "presse_francophone": ["aucune mention trouvée"],
+    "guides_visiteurs": ["aucune mention trouvée"],
+    "site_officiel": "site propre bilingue (lepetitmedicis.com), slogan \"Modern food and authentic bistro\" en anglais, terrasse donnant sur le Jardin du Luxembourg mise en avant (https://www.lepetitmedicis.com/en/)",
+    "reseaux_sociaux": ["aucune mention trouvée"],
+    "autres_faits": ["Service annoncé bilingue selon plusieurs fiches, salon privé disponible"],
+    "incertitudes": ""
+  }
+}

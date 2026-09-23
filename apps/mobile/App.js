@@ -14,10 +14,19 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
+import AboutScreen from "./src/screens/AboutScreen";
+import CGUScreen from "./src/screens/CGUScreen";
+import CompteScreen from "./src/screens/CompteScreen";
+import ConfidentialiteScreen from "./src/screens/ConfidentialiteScreen";
+import ContactScreen from "./src/screens/ContactScreen";
+import DonsScreen from "./src/screens/DonsScreen";
 import DetailScreen from "./src/screens/DetailScreen";
 import DiscoverScreen from "./src/screens/DiscoverScreen";
+import PricingScreen from "./src/screens/PricingScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
+import MotifCouverts from "./src/components/MotifCouverts";
+import { useCurrentUser } from "./src/lib/auth";
 import { spacing, useColors } from "./src/theme";
 
 // Transition d'écran.
@@ -84,6 +93,7 @@ export default function App() {
 
   const [tab, setTab] = useState("discover");
   const [stack, setStack] = useState(null); // { screen, restaurant }
+  const { user, login, signup, logout, unsubscribe, supprimerCompte } = useCurrentUser();
 
   function ouvrirFiche(restaurant) {
     setStack({ screen: "detail", restaurant });
@@ -93,14 +103,89 @@ export default function App() {
     setStack({ screen: "reserve", restaurant });
   }
 
+  // LE COMPTE N'EST PAS UN TROISIÈME ONGLET (D-037). Deux onglets, et deux
+  // seulement : « Découvrir » et « Scanner » sont deux activités, se connecter
+  // n'en est pas une — c'est un détour qu'on fait pour revenir à ce qu'on
+  // faisait. D'où un écran empilé, et un retour qui ramène exactement d'où
+  // l'on vient, fiche comprise.
+  function ouvrirCompte(depuis = null, motif = null) {
+    setStack({ screen: "compte", depuis, motif });
+  }
+
+  function fermerCompte() {
+    // Revenir à la fiche d'où venait la demande de connexion, plutôt qu'à la
+    // liste : sinon il faut refaire la recherche, retrouver le restaurant, et
+    // le geste qu'on voulait faire est oublié en chemin.
+    setStack(stack?.depuis ? { screen: "detail", restaurant: stack.depuis } : null);
+  }
+
+  // Pages légales : n'existent aujourd'hui que depuis la case à cocher de
+  // l'inscription (CompteScreen). Le retour rouvre le compte en gardant le
+  // mode « inscription » — sans `modeDepart`, CompteScreen repartirait sur
+  // « connexion » et l'utilisateur perdrait ce qu'il avait commencé à remplir.
+  function ouvrirLegal(page) {
+    setStack({ screen: page });
+  }
+
+  function ouvrirPricing() {
+    setStack({ screen: "pricing" });
+  }
+
+  // Filtre premium verrouillé (D-050) : un compte déjà connecté va direct à
+  // l'abonnement, un visiteur doit d'abord créer un compte — même logique
+  // que `demanderDeverrouillage` côté web (App.jsx).
+  function demanderDeverrouillage() {
+    if (user) {
+      ouvrirPricing();
+    } else {
+      setStack({
+        screen: "compte",
+        modeDepart: "signup",
+        motif: "Un abonnement débloque le filtre de score et les restaurants favoris.",
+      });
+    }
+  }
+
   // Un écran empilé recouvre les onglets : on ne mélange pas une fiche et une
   // barre de navigation qui suggère qu'on est ailleurs.
   const contenu = stack ? (
-    stack.screen === "detail" ? (
+    stack.screen === "compte" ? (
+      <CompteScreen
+        user={user}
+        motif={stack.motif}
+        modeDepart={stack.modeDepart}
+        onLogin={async (identifiants) => { await login(identifiants); fermerCompte(); }}
+        onSignup={async (champs) => { await signup(champs); fermerCompte(); }}
+        onLogout={async () => { await logout(); setStack(null); }}
+        onBack={fermerCompte}
+        onGoToCGU={() => ouvrirLegal("cgu")}
+        onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
+        onGoToPricing={ouvrirPricing}
+        onUnsubscribe={unsubscribe}
+        onDeleteAccount={async () => { await supprimerCompte(); setStack(null); }}
+      />
+    ) : stack.screen === "cgu" ? (
+      <CGUScreen
+        onBack={() => setStack({ screen: "compte", modeDepart: "signup" })}
+        onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
+      />
+    ) : stack.screen === "confidentialite" ? (
+      <ConfidentialiteScreen
+        onBack={() => setStack({ screen: "compte", modeDepart: "signup" })}
+        onGoToCGU={() => ouvrirLegal("cgu")}
+      />
+    ) : stack.screen === "pricing" ? (
+      <PricingScreen user={user} onBack={() => setStack({ screen: "compte" })} />
+    ) : stack.screen === "detail" ? (
       <DetailScreen
         restaurant={stack.restaurant}
         onBack={() => setStack(null)}
         onReserve={ouvrirReservation}
+        user={user}
+        onSeConnecter={() => ouvrirCompte(
+          stack.restaurant,
+          "Un compte permet de laisser un avis, et de le modifier ou le retirer quand vous voulez.",
+        )}
       />
     ) : (
       <ReserveScreen
@@ -110,7 +195,12 @@ export default function App() {
       />
     )
   ) : tab === "discover" ? (
-    <DiscoverScreen onOpen={ouvrirFiche} />
+    <DiscoverScreen
+      onOpen={ouvrirFiche}
+      user={user}
+      onCompte={() => ouvrirCompte()}
+      onUnlock={demanderDeverrouillage}
+    />
   ) : (
     <ScanScreen />
   );
@@ -118,7 +208,7 @@ export default function App() {
   // Le mouvement dit ce qui vient de se passer : un écran empilé glisse depuis
   // la droite (on s'enfonce dans une pile), un changement d'onglet se substitue
   // en fondu (on se déplace latéralement).
-  const cle = stack ? `${stack.screen}-${stack.restaurant.id}` : tab;
+  const cle = stack ? `${stack.screen}-${stack.restaurant?.id ?? "moi"}` : tab;
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.background }]}>
@@ -165,6 +255,13 @@ export default function App() {
           })}
         </View>
       )}
+
+      {/* EN AVANT-PLAN, PAS EN ARRIÈRE-PLAN (retour utilisateur) : rendu en
+          dernier plutôt qu'en premier, le motif peint par-dessus tout —
+          écrans, onglets compris — au lieu de disparaître derrière les cartes
+          et photos opaques. `pointerEvents="none"` : il ne intercepte jamais
+          un appui. Noir en clair, rouge de marque en sombre. */}
+      <MotifCouverts color={isDark ? colors.brand : "#17140f"} />
     </SafeAreaView>
   );
 }

@@ -1,0 +1,78 @@
+paire;choix;confiance;raison
+P0628;A;moyenne;Brasserie des Prés est un groupe avec 220 places et guides pour visiteurs, Nossa mise sur un menu tournant qui fidélise des habitués
+P0629;A;moyenne;Café Latin se présente aussi en anglais comme coeur du Quartier Latin, Nossa cultive une petite salle de habitués avec réservation
+P0630;B;faible;Le Marmiton de Lutèce est repris par deux guides IA pour voyageurs et sert une cuisine savoyarde très touristique, léger écart avec Café Latin
+P0631;A;moyenne;Auberge Notre-Dame n'a qu'une fiche annuaire et un site tout en anglais, plus dépendante que Le Marmiton de Lutèce
+P0632;B;forte;Auberge Notre-Dame ne vit que de fiches annuaire et d'un site anglophone, Tsuru se présente comme un simple restaurant de quartier sans aucune presse
+P0633;B;moyenne;Royal Bombay reste ambigu mais sans marqueur fort, Tsuru est décrit par Google même comme un restaurant de quartier
+P0634;A;faible;Phô Cardinal est positionné comme adresse de déjeuner de travail rapide, signal plus local que Royal Bombay resté flou
+P0635;A;forte;Osteria Brutto est un concept hype new-yorkais couvert par la presse et les guides visiteurs, Phô Cardinal n'a aucune existence en ligne
+P0636;A;moyenne;Osteria Brutto cumule presse française et guide anglophone pour un concept branché, Bistrot 31 n'a aucun signal identifiable
+P0637;A;moyenne;Sweet KT est relayé par un guide voyage et une vidéo TikTok virale à thème, Bistrot 31 reste sans aucune trace éditoriale
+P0638;B;moyenne;Sweet KT a un guide voyage et un thème gimmick pour visiteurs, Le Mékong n'a aucune presence en ligne (avis incohérents avec un restaurant universitaire, à signaler)
+P0639;A;faible;Le Mékong reste très peu visible mais L'Olivier a des avis explicites mentionnant des habitués, donc relativement plus local (avis de Le Mékong incohérents, à signaler)
+P0640;A;faible;Gyoza Mura n'a laissé aucune trace de fidélisation locale alors que L'Olivier a des habitués confirmés, léger écart
+P0641;A;forte;Cèpe & Figue est repris par des blogs d'hôtel et TikTok dans une cour touristique, Gyoza Mura est invisible en ligne et confondu avec d'autres enseignes
+P0642;A;moyenne;Mavrommátis est une table étoilée Michelin, tourisme gastronomique plus marqué que Cèpe & Figue
+P0643;A;forte;Mavrommátis attire un tourisme gastronomique via son étoile Michelin, Hûng-Yên reste un restaurant familial sans aucune presse
+P0644;A;moyenne;Les Baux affiche Touristes et Groupes dans ses attributs et un concept de bar à concerts, Hûng-Yên reste discret et familial
+P0645;A;moyenne;Les Baux cible groupes et touristes selon Google, L'Oie qui Fume garde des prix modestes et une image de maison familiale
+P0646;B;forte;Café Saint-Germain n'a qu'un site de réservation en anglais et des guides pour visiteurs, L'Oie qui Fume reste modeste et familial malgré l'absence de presse
+P0647;A;moyenne;Welcome to Istanbul est mis en avant par des guides pour visiteurs anglophones et sa vue, un cran au-dessus de Café Saint-Germain
+P0648;B;forte;Welcome to Istanbul est promu par des guides voyageurs explicitement pour sa vue, Le Grenier de Notre Dame est le plus ancien restaurant végétarien de Paris avec des fournisseurs fidèles depuis 1978
+P0649;B;forte;Rosie's Smokehouse est un concept américain de bar sportif fréquenté par des visiteurs réguliers en séjour, Le Grenier de Notre Dame a un ancrage local historique depuis 1978
+P0650;B;moyenne;Rosie's Smokehouse cible un public de passage avec son concept bar sportif américain, La Cochonaille reste invisible en ligne malgré son ancienneté depuis 1965
+P0651;B;moyenne;Quartier Latin cumule un fort volume d'avis sur les plateformes de réservation, La Cochonaille n'a aucune trace de presse ni de guide
+P0652;B;forte;Mr & Mrs Crab est viral sur TikTok avec un format spectacle pensé pour les réseaux, Quartier Latin n'a pas de signal touristique fort
+P0653;A;forte;Mr & Mrs Crab cultive une viralité TikTok orientée visiteurs de passage, Au Moulin à Vent est validé par Gault&Millau, une reconnaissance plus locale
+P0654;B;forte;Le Bistro du Périgord est référencé par un guide IA pour touristes et cible un tarif élevé près d'un site connu, Au Moulin à Vent est un bistrot historique reconnu par la presse gastronomique française
+P0655;A;moyenne;Le Bistro du Périgord est positionné par un guide voyageur anglophone avec un tarif élevé, Loulou' reste un concept brunch plus généraliste
+P0656;B;forte;Loulou' est couvert par Sortiraparis comme adresse brunch tendance, La Taverne du Cap Vert et du Brésil n'a qu'une page Facebook et des avis parlant de habitués
+P0657;B;forte;La Vieille Tour est présentée par un guide voyageur comme adresse authentique près de la rue Mouffetard, La Taverne du Cap Vert et du Brésil reste une adresse de habitués sans presse
+P0658;A;faible;La Vieille Tour est mise en avant par un guide voyageur pour son authenticité, Bistro Italien n'a aucune promotion identifiée (adresse incertaine, à signaler)
+P0659;A;moyenne;Bistro Italien reste sans aucun signal touristique fort malgré une adresse incertaine, Bambou est totalement invisible en ligne
+P0660;B;forte;Chez le Libanais est ciblé par un guide anglophone et listé Touristes/Étudiants par Google dans une rue très touristique, Bambou n'a ni presse ni site ni réseaux (fiche peut-être confondue avec un traiteur, à signaler)
+P0661;A;moyenne;Bistro des Livres est repris par deux médias français et voisine une librairie emblématique, Chez le Libanais reste un comptoir à emporter plus modeste
+P0662;A;moyenne;Bouillon Racine est partenaire officiel de l'Office du Tourisme de Paris, un signal plus fort que la presse de quartier de Bistro des Livres
+P0663;A;forte;Bouillon Racine est partenaire de l'Office du Tourisme et classé monument historique, le CROUS est par définition réservé aux étudiants munis d'une carte Izly
+P0664;A;forte;Loubnane a une histoire locale profonde mais reste un restaurant ouvert au public, le CROUS est structurellement fermé aux non-étudiants
+P0665;A;moyenne;La Méthode est référencée par un guide IA voyageur et s'affiche pour tous publics, Loubnane a des avis d'habitués en français vantant sa cuisine libanaise
+P0666;A;moyenne;La Méthode a une présence un peu plus tournée vers les visiteurs, Colbeh cultive une tradition musicale et une clientèle fidèle depuis 1982
+P0667;B;forte;Brasserie des Prés est reprise par deux guides pour visiteurs et appartient à un groupe de grande capacité, Colbeh reste un lieu culturel authentique avec musique live depuis 1982
+P0668;A;moyenne;La Vieille Tour est mise en avant par un guide voyageur pour son authenticité de quartier, Phô Cardinal se positionne comme une adresse de déjeuner rapide local
+P0669;B;faible;L'Olivier a des avis explicites mentionnant des habitués, Phô Cardinal reste très peu documenté mais sans signal de fidélisation confirmé, écart ténu
+P0670;B;moyenne;Au Moulin à Vent est repris par deux blogs de voyage anglophones en plus de Gault&Millau, L'Olivier n'a que la critique française de Pudlowski et des avis mentionnant des habitués
+P0671;B;forte;Welcome to Istanbul est promu par des guides voyageurs pour sa vue, Au Moulin à Vent est un bistrot historique validé par un guide gastronomique français
+P0672;B;moyenne;Welcome to Istanbul cible explicitement les visiteurs via des guides anglophones, Osteria Brutto a au moins une couverture par la presse française locale en plus des guides voyageurs
+P0673;A;moyenne;Osteria Brutto cumule presse française et guide anglophone pour un concept hype, Sweet KT n'a qu'un guide voyage et une vidéo virale à thème
+P0674;A;moyenne;Sweet KT est relayé par un guide voyage et une vidéo TikTok à thème, Quartier Latin n'a pas de guide ni de presse identifiés
+P0675;B;moyenne;Mavrommátis est une table étoilée Michelin qui attire un tourisme gastronomique, Quartier Latin n'a pas de signal touristique fort au-delà du volume d'avis
+P0676;B;forte;Mavrommátis attire un tourisme gastronomique via son étoile Michelin, Tsuru est décrit comme un simple restaurant de quartier sans presse
+P0677;B;moyenne;Bistrot 31 reste sans signal fort mais Tsuru est explicitement présenté par Google comme un restaurant de quartier, donc plus local
+P0678;B;faible;Les Baux affiche Touristes et Groupes dans ses attributs pour un concept de bar à concerts, Bistrot 31 n'a aucune donnée exploitable, écart ténu
+P0679;A;moyenne;Le Bistro du Périgord est ciblé par un guide voyageur anglophone avec un tarif élevé près d'un site connu, Les Baux reste plus ambigu sans presse ni guide
+P0680;B;moyenne;Le Bistro du Périgord est positionné par un guide voyageur pour touristes avec un tarif plus élevé, Rosie's Smokehouse n'a qu'une page Facebook
+P0681;A;forte;Rosie's Smokehouse est un concept américain fréquenté par des visiteurs revenant à chaque séjour à Paris, Nossa mise sur un menu tournant qui fidélise une clientèle régulière
+P0682;A;faible;Le Mékong reste sans aucune presence en ligne (avis incohérents avec un restaurant universitaire, à signaler), Nossa a une mention de presse locale et un système de menu fidélisant des habitués
+P0683;B;faible;Le Mékong et Bambou sont tous deux quasi invisibles en ligne, écart ténu en faveur de Le Mékong (les deux dossiers ont des avis potentiellement incohérents, à signaler)
+P0684;A;moyenne;Bambou reste un lieu ouvert au public malgré une fiche possiblement confondue avec un traiteur, le CROUS est structurellement réservé aux étudiants avec carte Izly
+P0685;B;forte;Brasserie des Prés est reprise par deux guides pour visiteurs et appartient à un groupe de grande capacité, le CROUS est par définition fermé au public non étudiant
+P0686;A;faible;Brasserie des Prés appartient à un groupe de plus grande capacité pensé pour un flux touristique important, Café Latin reste comparable mais sans backing de groupe, écart ténu
+P0687;A;moyenne;Mr & Mrs Crab cultive une viralité TikTok pensée pour les visiteurs de passage, Café Latin n'a qu'un guide voyage classique
+P0688;B;forte;Mr & Mrs Crab est un concept viral sur TikTok orienté visiteurs, Royal Bombay reste ambigu et sans marqueur touristique fort
+P0689;B;moyenne;La Méthode a une présence plus tournée vers les guides voyageurs, Royal Bombay reste flou mais sans signal touristique fort identifié
+P0690;B;moyenne;La Méthode est référencée par un guide IA voyageur, La Cochonaille est totalement invisible en ligne malgré son ancienneté
+P0691;B;moyenne;Bistro Italien n'a pas de signal touristique fort malgré une adresse incertaine, La Cochonaille reste plus invisible encore, sans aucune trace de presse
+P0692;B;forte;Bouillon Racine est partenaire officiel de l'Office du Tourisme de Paris et classé monument historique, Bistro Italien n'a aucune promotion identifiée
+P0693;A;moyenne;Bouillon Racine est partenaire de l'Office du Tourisme, un signal plus fort que le guide anglophone modeste de Chez le Libanais
+P0694;A;moyenne;Cèpe & Figue est relayée par des blogs d'hôtel et TikTok dans une cour touristique, Chez le Libanais reste un comptoir à emporter plus modeste malgré son guide voyageur
+P0695;A;faible;Colbeh a au moins un guide voyageur qui le référence, Gyoza Mura reste totalement invisible et confondu avec d'autres enseignes, écart ténu
+P0696;A;forte;Café Saint-Germain n'a qu'un site de réservation en anglais et des guides pour visiteurs, Colbeh cultive une tradition musicale authentique et une clientèle fidèle depuis 1982
+P0697;A;forte;Auberge Notre-Dame ne vit que de fiches annuaire et d'un site tout en anglais, L'Oie qui Fume reste modeste et familial malgré l'absence de presse
+P0698;A;forte;Auberge Notre-Dame n'a qu'une fiche annuaire et un site anglophone, Le Grenier de Notre Dame a un ancrage historique local depuis 1978
+P0699;A;forte;Le Marmiton de Lutèce est repris par deux guides voyageurs pour sa cuisine savoyarde typée touriste, Le Grenier de Notre Dame a un ancrage historique local depuis 1978
+P0700;A;forte;Le Marmiton de Lutèce est repris par deux guides voyageurs et cible une clientèle touristique, La Taverne du Cap Vert et du Brésil n'a qu'une page Facebook et des avis de habitués
+P0701;A;moyenne;Bistro des Livres est repris par deux médias français et voisine une librairie emblématique, Loulou' n'a qu'un article Sortiraparis pour un concept brunch plus généraliste
+P0702;A;moyenne;Bistro des Livres est repris par deux médias français et voisine une librairie emblématique, Hûng-Yên reste un restaurant familial discret sans presse
+P0703;A;faible;Hûng-Yên a des avis évoquant une clientèle qui n'est pas du quartier, Loubnane a des avis d'habitués plus affirmés, écart ténu
+P0704;A;moyenne;La Vieille Tour est mise en avant par un guide voyageur pour son authenticité de quartier, Loubnane a une histoire profonde et des avis d'habitués plus ancrés localement

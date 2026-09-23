@@ -1,0 +1,80 @@
+paire;choix;confiance;raison
+P0549;A;forte;7j/7 midi-minuit avec menus 18/24 EUR et equipe multilingue contre un gastronomique ferme samedi et dimanche, donc adosse a une clientele de semaine
+P0550;A;moyenne;les deux vivent du flux mais l'Hostellerie ouvre 7j/7 sans jour de fermeture quand La Grange ferme le lundi et ferme tot le dimanche
+P0551;A;moyenne;service continu 11h30-23h sept jours sur sept, formule sandwichs-crepes-salades a emporter, modele de passage pur face a un bistrot qui ferme le lundi
+P0552;A;forte;7j/7 en continu contre un thai ferme le dimanche avec deux services courts, livraison et emporte, donc un fonds de clientele de quartier
+P0553;A;faible;le thai ferme le dimanche mais tourne midi et soir, l'autre est une table a abats a 29 EUR que le passage evite spontanement
+P0554;B;forte;chalet savoyard 7j/7 en service continu contre une table specialisee dans les abats, cuisine que la clientele de passage ne commande pas
+P0555;A;forte;7j/7 12h-22h30 sans coupure avec site en anglais oriente visiteurs, contre un traiteur asiatique de rue calme sans site ni reservation
+P0556;A;faible;la vente de glaces artisanales a emporter capte du passage, le traiteur de la rue Royer-Collard travaille plutot la commande
+P0557;B;moyenne;Loubnane ferme dimanche et lundi et ne sert pas le mardi midi, modele de table de rendez-vous ; Mano Nera ajoute le comptoir a glaces
+P0558;B;forte;maison ouverte depuis 1982 avec deux services courts et deux jours de fermeture, contre un etablissement 7j/7 de 9h a 2h du matin
+P0559;A;moyenne;fondue et raclette avec grosse presence TheFork et clientele visiteuse marquee, face a une brasserie de flux mais plus mixte en semaine
+P0560;B;moyenne;L'Escarmouche vit explicitement des groupes et banquets, un avis emane d'une accompagnatrice de groupes de touristes
+P0561;B;faible;les deux sont des machines a flux ; la Bucherie ouvre 15h par jour avec burgers, pizzas et English breakfast, carte calibree pour tous les publics
+P0562;A;forte;terrasse chauffee, happy hour a 7 EUR et carte internationale 9h-minuit contre un bistrot ferme le dimanche avec deux services courts
+P0563;B;moyenne;petit libanais familial sans site, constant depuis des decennies, face a une institution de 1872 dont la clientele vient pour le decor
+P0564;B;moyenne;le libanais vit de ses habitues alors que le Petit Pantheon vend un menu 17 EUR trois services, format d'appel typique du passage
+P0565;A;moyenne;menu 17 EUR trois services et attribut Groupes, contre un vietnamien familial dont les avis signalent le rapport qualite-prix du quartier
+P0566;B;forte;brasserie 7h-minuit sur la place de la Sorbonne, 17h d'amplitude sans site propre, contre un vietnamien a deux services courts
+P0567;A;faible;les Patios ouvrent 17h par jour dont le petit dejeuner ; la Solita ferme le lundi et ne fait pas le matin
+P0568;A;moyenne;pizzeria en service continu 12h-23h avec site bilingue, contre une echoppe de nouilles a livraison et titres restaurant
+P0569;A;moyenne;service continu 7j/7 contre un vietnamien ferme le dimanche avec deux services separes, modele de quartier
+P0570;A;moyenne;pizzeria de l'ile Saint-Louis ouverte 7j/7 et en continu le week-end, contre une dizaine de tables tenues par un couple et fermees le dimanche
+P0571;A;moyenne;le Paradiso sert midi et soir tous les jours ; Colbeh n'ouvre qu'a 18h sauf le dimanche, un horaire de destination et non de passage
+P0572;B;moyenne;Mejane ouvre de 8h a 1h30 tous les jours, amplitude de cafe qui capte le passage ; Colbeh ne fait que le soir
+P0573;B;moyenne;Mejane 8h-1h30 7j/7 contre un pho ferme le dimanche, a deux services, decrit comme adapte au dejeuner de travail
+P0574;A;faible;le pho ouvre six jours et fait beaucoup d'emporte et de livraison ; Paldo ferme le lundi et vit d'habitues venus pour le jjajangmyeon
+P0575;A;forte;italien avec terrasse, deuxieme adresse a Boulogne et site bilingue, contre une cantine coreenne sans site ni site de reservation
+P0576;A;faible;Papilla a une terrasse et une seconde implantation ; L'Oie qui Fume ferme le lundi et n'ouvre que le midi le dimanche
+P0577;A;faible;Maison Perchee est nettement plus frequentee le week-end et ouvre a 9h le samedi, profil brunch de loisir contre une maison fermee le lundi
+P0578;A;moyenne;table savoyarde a fondue avec menus 21-30 EUR, produit d'appel du passage, contre un bistrot a brunch tenu par son compte Instagram
+P0579;A;faible;brasserie adossee a un hotel et ouverte 11h30-2h tous les jours : la clientele hebergee et nocturne fait le chiffre
+P0580;B;forte;brasserie d'hotel 7j/7 jusqu'a 2h contre une table fermee dimanche et lundi avec deux services courts, economie de bistrot de quartier
+P0581;B;forte;un restaurant universitaire du CROUS a 3,30 EUR ouvert 11h30-14h en semaine ne peut structurellement pas dependre du passage
+P0582;A;forte;meme a 90 EUR par personne Sagan reste un commerce ouvert au public, la cantine CROUS est reservee aux etudiants sur carte Izly
+P0583;A;faible;le Relais Fac ouvre de 8h a 2h et capte le passage de la journee, mais il ferme le dimanche ; Sagan ferme dimanche et lundi et ne fait pas le midi en debut de semaine
+P0584;B;moyenne;Pee Bee ouvre 7j/7 dont le dimanche de 9h a 2h avec pizzas, burgers et cocktails ; le Relais Fac ferme le dimanche
+P0585;B;forte;Tsuru ferme le dimanche avec deux services courts et accepte les titres restaurant, profil de dejeuner de quartier
+P0586;B;moyenne;Ya Bayte sert en continu jusqu'a 22h30 avec commande sur borne et comptoir, format rapide qui vit du flux ; Tsuru ferme le dimanche
+P0587;A;moyenne;street food en service continu 7j/7 contre une table de chef couverte par la presse food parisienne, dont l'audience est locale
+P0588;A;faible;Otto ouvre de 12h a 2h alors que La Table de Colette ferme le week-end entier, ce qui la coupe du public de loisir
+P0589;B;moyenne;le comptoir a shawarma en continu 7j/7 capte plus de passage que le libanais familial de la rue Monge, ferme entre les services en semaine
+P0590;A;moyenne;Mejane ouvre 8h-1h30 tous les jours et fait bar et terrasse ; Roger de Beyrouth coupe entre les services cinq jours sur sept
+P0591;B;moyenne;Mejane tient 17h d'amplitude quotidienne contre un vietnamien ferme le dimanche avec deux services separes
+P0592;A;forte;chalet a fondue 7j/7 en service continu avec site en version anglaise destine aux visiteurs, contre une dizaine de tables tenues par un couple
+P0593;B;moyenne;les deux tournent 7j/7, mais le Chalet est entierement construit sur le produit savoyard et une vitrine en anglais
+P0594;A;faible;la Solita ouvre en continu 12h-23h six jours ; Pee Bee ferme a minuit du mardi au samedi et garde une clientele de cocktails plus locale
+P0595;B;forte;pizzeria en continu pres de Notre-Dame avec site bilingue, contre une table de chef MOF relayee par Le Fooding et Gault&Millau
+P0596;A;faible;Otto ouvre jusqu'a 2h du matin tous les jours quand Tsuru ferme le dimanche et coupe entre deux services courts
+P0597;A;moyenne;L'Oie qui Fume sert en continu jusqu'a minuit six jours sur sept avec menu a moins de 20 EUR ; Tsuru ferme le dimanche
+P0598;B;faible;les deux ferment un jour ; le Paradiso ouvre en continu les samedi et dimanche, ce que L'Oie qui Fume ne fait pas le dimanche apres 16h
+P0599;A;faible;le Paradiso coupe entre les services cinq jours sur sept, signe d'un fonds de clientele reguliere ; Papilla exploite terrasse et seconde adresse
+P0600;A;forte;italien a terrasse ouvert le week-end contre un gastronomique ferme samedi et dimanche, donc cale sur une clientele de semaine
+P0601;B;moyenne;La Table de Colette ne travaille que du lundi au vendredi, le pho ouvre six jours et fait emporte et livraison
+P0602;B;moyenne;Perraudin est une institution de 1872 dont le decor Belle Epoque est le produit ; le pho vit de formules bon marche et de rapidite
+P0603;B;faible;memes horaires de bistrot classique, mais Perraudin vend une histoire de 1872 et un decor, argument de visite et non d'habitude
+P0604;A;faible;le Petit Pantheon ouvre sept jours sur sept avec un menu d'appel a 17 EUR ; Maison Perchee ferme plus tot le dimanche et travaille le brunch
+P0605;A;moyenne;La Methode ouvre 9h-2h tous les jours, 17h d'amplitude sans coupure, contre un bistrot a brunch ferme des 22h30 le dimanche
+P0606;A;forte;7j/7 de 9h a 2h contre une table specialisee dans les abats, produit qui selectionne une clientele avertie
+P0607;A;moyenne;les deux ferment deux jours, mais La Cote ou la Cuisse vend un concept et un decor de pierre, quand le thai fait livraison et emporte
+P0608;B;faible;Sagan ferme dimanche et lundi et ne sert pas le midi en debut de semaine, amplitude la plus etroite des deux
+P0609;B;forte;table savoyarde a fondue avec menus 21-30 EUR et terrasse, produit d'appel evident, contre un kappo ferme deux jours a 90 EUR
+P0610;A;faible;les deux vendent de la fondue ; l'Hostellerie ouvre midi et soir tous les jours jusqu'a minuit avec equipe multilingue
+P0611;A;faible;L'Escarmouche vit des groupes et banquets de 15 a 100 couverts, un chiffre d'affaires de reservation collective encore plus dependant du flux exterieur
+P0612;B;forte;banquets et groupes 7j/7 jusqu'a minuit contre une echoppe de nouilles a 23 EUR avec livraison et habitues
+P0613;A;forte;fondue et raclette rue Mouffetard avec forte presence sur les plateformes, contre une cantine de nouilles a titres restaurant et livraison
+P0614;A;faible;Pain d'Epices sert en continu 11h30-23h sept jours sur sept, amplitude superieure a celle du Vieux Bistrot qui garde un jour de fermeture
+P0615;A;forte;service continu 7j/7 avec terrasse et vente a emporter contre un restaurant universitaire reserve aux etudiants a 3,30 EUR
+P0616;B;forte;la cantine CROUS ferme le week-end et n'est accessible qu'aux etudiants ; le traiteur Bambou a une terrasse et sert le public
+P0617;B;moyenne;Loubnane ferme dimanche et lundi et ne sert pas le mardi midi ; Bambou exploite une terrasse tres mise en avant par les avis
+P0618;B;faible;le Relais Fac ouvre de 8h a 2h six jours et fait bar, amplitude bien superieure aux deux services courts de Loubnane
+P0619;B;faible;le Relais Fac capte la journee entiere de 8h a 2h ; Colbeh n'ouvre qu'a 18h sauf le dimanche
+P0620;A;moyenne;La Grange ouvre des 8h30 et sert en continu jusqu'a 23h avec happy hour et restauration sur le pouce ; Colbeh ne fait que le soir
+P0621;B;moyenne;bistrot ouvert 8h30-23h en continu avec petit dejeuner et emporte, contre un vietnamien ferme le dimanche a deux services
+P0622;B;faible;Hung-Yen ouvre sept jours sur sept, Paldo ferme le lundi et est decrit comme une cantine d'habitues
+P0623;B;moyenne;Mano Nera ajoute la vente de glaces artisanales a emporter, activite de trottoir ; Paldo reste une salle a deux services fermee le lundi
+P0624;B;forte;brasserie 7h-minuit sur la place de la Sorbonne, terrasse et brunch, contre un italien de rue calme a deux services
+P0625;B;faible;les deux ouvrent tres large ; le Jardin du Roy est adosse a un hotel et ferme a 2h, ce qui ajoute la clientele hebergee
+P0626;B;faible;la Bucherie ouvre 15h par jour avec une carte melant burgers, pizzas et English breakfast, calibrage plus large encore que la brasserie d'hotel
+P0627;A;forte;terrasse, happy hour et carte internationale 9h-minuit contre un comptoir de street food libanaise soutenu par la presse food parisienne

@@ -1,0 +1,87 @@
+paire;choix;confiance;raison
+P001;A;moyenne;Crab reste ouvert de midi à minuit tous les jours sans coupure et affiche 1502 photos, la Crêperie fonctionne avec un service coupé classique midi et soir
+P002;B;forte;Brava vit de la vente à emporter et de la livraison avec un accueil familial reconnu, Crab ouvre en continu jusqu'à minuit tous les jours
+P003;A;faible;Yokorama ouvre 7 jours sur 7 sur deux services longs sans aucun jour de fermeture, Brava ferme une partie du dimanche et mise sur l'emporter familial
+P004;A;moyenne;Arrivederci cumule 2351 photos publiées, un niveau extrême dans ce corpus, contre 167 pour Yokorama qui reste équilibré entre semaine et week-end
+P005;A;forte;Arrivederci affiche un flux de passage massif avec 2351 photos et aucune fermeture, Pirosmani a des habitués qui le fréquentent depuis des années
+P006;A;faible;L'Estrapade n'a qu'une photo publiée et un avis raconte l'avoir choisi pour fuir les endroits touristiques en le trouvant vide de clients, un signal encore plus local que Pirosmani
+P007;egalite;faible;Les deux ferment plusieurs jours, pratiquent un service coupé classique et leurs avis parlent d'habitués ou d'une recherche délibérée d'un lieu loin du tourisme
+P008;B;moyenne;India StreEAT ferme deux jours par semaine avec un service coupé et un avis mentionne une sixième visite du même client, Hoki Sushi ouvre tous les jours sans interruption
+P009;A;moyenne;Hoki Sushi n'a aucun jour de fermeture, Arya Bhavan ferme le lundi et un avis précise une fréquentation hebdomadaire du client
+P010;A;moyenne;Un avis sur Hon Ki dit explicitement y revenir à chaque séjour à Paris et vante son caractère authentique recherché par des voyageurs, Arya Bhavan a un client qui vient au moins une fois par semaine
+P011;B;moyenne;Hon Ki a des avis de voyageurs qui y reviennent à chaque passage à Paris en quête d'authenticité, Atelier Carmen est fréquenté par des couples et familles sans ce registre de voyage
+P012;B;moyenne;Bonvivant ouvre de 10h à 1h tous les jours à l'identique et reçoit des tablées de plus de dix personnes, Atelier Carmen ne sert que le dîner sur réservation
+P013;B;moyenne;Bonvivant a des horaires très larges et continus toute la semaine avec des groupes nombreux, Sushiyaki ferme le dimanche et ses avis évoquent une petite adresse appréciée du quartier
+P014;B;faible;Taeng Thai a un avis explicite disant qu'il y a très peu de touristes et que c'est un vrai repère local, Sushiyaki ferme seulement le dimanche sans signal aussi marqué
+P015;B;moyenne;Ya Bayté fonctionne en commande au comptoir avec très peu de places assises et une amplitude quasi continue toute la semaine, Taeng Thai a un avis qui le présente explicitement comme peu fréquenté par les touristes
+P016;A;moyenne;Le Grenier est nettement plus fréquenté le week-end et cumule 1379 photos publiées, Ya Bayté reste un format rapide mais moins visible avec 248 photos
+P017;egalite;faible;Le Grenier est très fréquenté le week-end avec un nombre de photos très élevé, Au Père Louis a des avis explicites de clients qui reviennent plusieurs fois pendant leur séjour à Paris, les deux profils sont comparables
+P018;B;faible;Sahara Café est un bar à chicha nocturne ouvert à l'identique tous les jours avec des avis très clivants typiques d'un passage unique, Au Père Louis a plutôt des clients qui reviennent d'un voyage à l'autre
+P019;A;forte;Sahara Café est un bar nocturne aux horaires identiques toute la semaine avec des concerts le week-end, Le Bluff est nettement plus fréquenté en semaine ce qui trahit une clientèle de bureau ou d'habitués
+P020;A;forte;L'Annexe ouvre de 7h à 23h tous les jours et un avis le qualifie explicitement de piège à touristes, Le Bluff est nettement plus fréquenté en semaine qu'en week-end
+P021;B;moyenne;L'Annexe a une amplitude encore plus large que El Sur et un avis le qualifie explicitement de piège à touristes
+P022;B;moyenne;Un avis sur Selva dit vouloir y retourner à chaque séjour à Paris et raconte l'avoir découvert en marchant au hasard dans les rues, El Sur reste plus modéré sur ces signaux
+P023;B;forte;Bicla a des horaires très restreints, aucun attribut touriste déclaré et un avis de diaspora mexicaine qui dit s'y sentir comme à la maison, Selva a un avis explicite de retour à chaque voyage à Paris
+P024;B;moyenne;Bicla reste un établissement très local avec des jours de fermeture nombreux, La Ferrandaise ferme le dimanche mais un avis évoque une troisième visite au fil des années ce qui reste plus modéré que le profil de Bicla
+P025;A;moyenne;Mexi & Co ouvre avec les mêmes horaires larges tous les jours sans fermeture et ses avis très polarisés évoquent des clients de passage, La Ferrandaise ferme le dimanche avec un habitué revenu plusieurs fois au fil des ans
+P026;B;faible;L'Époque a des avis explicites de touristes revenus trois fois en trois jours de séjour à Paris, Mexi & Co a des horaires larges mais des avis moins centrés sur un récit de voyage
+P027;A;moyenne;L'Époque a des avis très explicites de visiteurs en court séjour qui reviennent plusieurs fois, Khaaw Hoom ferme le dimanche avec des avis simples sur une cuisine faite maison
+P028;A;faible;La Cava Voltini a un avis qui la qualifie de l'un des lieux favoris à Paris et un accueil personnalisé du patron sans horaires connus, Khaaw Hoom ferme le dimanche avec des avis modestes
+P029;B;forte;A Braccetto ouvre jusqu'à 2h du matin avec une amplitude de plus de 15h par jour, une fréquentation dominée par le week-end et des groupes de plus de 20 personnes, La Cava Voltini reste un petit restaurant tenu par un patron
+P030;B;forte;A Braccetto a des horaires extrêmes jusqu'à 2h du matin et une fréquentation nettement plus forte le week-end avec brunchs et concerts, bien au-delà du profil de la Crêperie des Pêcheurs
+P031;B;faible;La Crêperie des Pêcheurs a un avis qui mentionne une réduction obtenue via une application de réservation et évoque la forte concurrence de crêperies du quartier, Yokorama reste équilibré entre semaine et week-end
+P032;egalite;faible;Les deux ouvrent sept jours sur sept sans jour de fermeture avec des profils d'accueil chaleureux assez comparables
+P033;B;moyenne;Taeng Thai a un avis qui le présente explicitement comme peu fréquenté par les touristes, Hoki Sushi ouvre sept jours sur sept sans aucune fermeture
+P034;A;forte;Au Père Louis ouvre jusqu'à minuit six jours sur sept et ses avis racontent des retours multiples pendant un même voyage à Paris, Taeng Thai est présenté par un avis comme un vrai repère local peu touristique
+P035;A;moyenne;Au Père Louis a des horaires très larges jusqu'à minuit et des avis de voyage explicites, La Cava Voltini reste un petit restaurant de patron sans horaires connus
+P036;B;faible;La Cava Voltini a un avis qui la qualifie de lieu favori à Paris, Brava Pizza reste ancrée sur la vente à emporter et l'accueil familial
+P037;A;moyenne;L'Estrapade n'a qu'une photo publiée et un avis explicite dit avoir cherché à éviter les lieux touristiques, un signal bien plus local que Brava Pizza
+P038;B;forte;Bonvivant a des horaires très larges et continus toute la semaine avec des tablées nombreuses, L'Estrapade a un avis qui revendique explicitement d'éviter les lieux touristiques
+P039;B;forte;Bonvivant ouvre largement toute la semaine avec des groupes nombreux typiques d'une clientèle de sortie, Bicla reste un établissement très local à horaires restreints
+P040;A;moyenne;Hon Ki a des avis explicites de touristes qui y reviennent à chaque séjour à Paris, Bicla reste ancré dans une clientèle communautaire fidèle
+P041;A;faible;L'Époque a des avis plus explicites et répétés de touristes en court séjour que Hon Ki
+P042;B;moyenne;L'Époque a des avis explicites de visiteurs revenus plusieurs fois pendant un court séjour à Paris, Sushiyaki n'a qu'une affection de quartier exprimée dans ses avis
+P043;egalite;faible;Les deux ferment le dimanche, pratiquent un service coupé classique et ont des avis assez génériques sans signal marqué de tourisme ou d'ancrage local
+P044;A;faible;Atelier Carmen ne sert que le dîner sur réservation ce qui en fait une adresse de destination, Khaaw Hoom a des avis simples sur une cuisine faite maison sans registre de voyage
+P045;B;moyenne;Ya Bayté fonctionne en commande au comptoir avec très peu de places assises, un format de passage rapide, Atelier Carmen ne sert que le dîner sur réservation
+P046;B;moyenne;Un avis sur Selva dit vouloir y revenir à chaque séjour à Paris et raconte une découverte en marchant au hasard, Ya Bayté reste un format de restauration rapide au comptoir
+P047;A;forte;Selva a un avis explicite de retour à chaque voyage à Paris et des tarifs élevés, La Ferrandaise a un habitué revenu plusieurs fois au fil des années
+P048;A;faible;Le Bluff ouvre très tard tous les jours jusqu'à 1h du matin malgré une fréquentation plus forte en semaine, La Ferrandaise ferme le dimanche avec un habitué fidèle
+P049;B;moyenne;India StreEAT ferme deux jours par semaine avec un service coupé et un avis de sixième visite, Le Bluff ouvre largement tous les jours jusqu'à 1h du matin
+P050;B;forte;Le Grenier est nettement plus fréquenté le week-end avec 1379 photos publiées, India StreEAT ferme deux jours par semaine avec un habitué fidèle
+P051;A;moyenne;A Braccetto ouvre jusqu'à 2h du matin avec une fréquentation dominée par le week-end et des évènements de groupe, Le Grenier reste très fréquenté le week-end mais avec des horaires moins extrêmes
+P052;A;moyenne;A Braccetto a des horaires encore plus extrêmes que L'Annexe avec cabaret et concerts et des groupes de plus de 20 personnes
+P053;B;moyenne;L'Annexe ouvre de 7h à 23h tous les jours et un avis le qualifie explicitement de piège à touristes, Arrivederci a un service coupé classique malgré son très grand nombre de photos
+P054;A;faible;Sahara Café est un bar nocturne aux horaires identiques toute la semaine avec des avis très clivants typiques d'un passage unique, Arrivederci garde un ancrage familial avec un repas dominical en famille
+P055;A;forte;Sahara Café est un bar nocturne à forte rotation avec des avis très clivants, Arya Bhavan a un client qui vient au moins une fois par semaine
+P056;B;moyenne;El Sur propose concerts et sport dans un cadre donnant sur la rue avec une fréquentation plus forte le week-end, Arya Bhavan a un habitué hebdomadaire
+P057;A;moyenne;Mr & Mrs Crab ouvre de midi à minuit tous les jours sans coupure avec un concept de combo pensé pour le passage, El Sur reste plus modéré malgré son cadre animé
+P058;A;forte;Mr & Mrs Crab a des horaires très larges sans coupure et une forte visibilité, Pirosmani a des habitués fidèles depuis des années au sein d'une communauté d'amateurs de cuisine géorgienne
+P059;B;forte;Mexi & Co ouvre avec les mêmes horaires larges tous les jours et ses avis très polarisés trahissent une clientèle de passage, Pirosmani a des habitués fidèles depuis des années
+P060;B;faible;Mexi & Co a des horaires plus larges et uniformes toute la semaine sans jour de fermeture, la Crêperie pratique un service coupé classique
+P061;A;forte;Au Père Louis ouvre jusqu'à minuit six jours sur sept avec des avis explicites de voyage répété, Atelier Carmen ne sert que le dîner sur réservation sans attribut touriste déclaré
+P062;A;moyenne;Au Père Louis a des avis plus explicitement centrés sur un voyage à Paris que Mexi & Co, malgré des horaires larges dans les deux cas
+P063;B;moyenne;Le Grenier est nettement plus fréquenté le week-end avec un nombre de photos très élevé, la Crêperie reste sur un service coupé plus classique
+P064;A;forte;A Braccetto a des horaires extrêmes jusqu'à 2h du matin avec une forte proportion de fréquentation le week-end, India StreEAT ferme deux jours par semaine avec un habitué de longue date
+P065;B;forte;A Braccetto a des horaires bien plus extrêmes et évènementiels que Le Bluff, qui reste plus fréquenté en semaine
+P066;A;faible;Taeng Thai a un avis qui le présente explicitement comme un vrai repère local peu touristique, un signal plus fort que la simple fréquentation de semaine du Bluff
+P067;A;faible;Taeng Thai a un avis explicite qui le décrit comme peu fréquenté par les touristes, ce qui rend Khaaw Hoom relativement plus dépendant du passage par comparaison
+P068;egalite;faible;Les deux ferment un jour par semaine, pratiquent un service coupé et ont des avis assez génériques sur une cuisine faite maison ou familiale
+P069;B;forte;Bonvivant ouvre très largement toute la semaine jusqu'à 1h du matin avec des tablées de plus de dix personnes, Brava Pizza reste ancrée sur la vente à emporter familiale
+P070;A;faible;Mr & Mrs Crab a des horaires uniformes sans aucune fermeture de midi à minuit tous les jours, Bonvivant reste tout aussi large mais avec un ancrage brasserie plus classique
+P071;B;moyenne;Mr & Mrs Crab a des horaires continus sans aucun jour de fermeture, Selva a des horaires plus restreints malgré un avis explicite de retour à chaque voyage à Paris
+P072;A;moyenne;Selva a un avis explicite de retour à chaque séjour à Paris avec des tarifs élevés, Hoki Sushi a un accueil chaleureux et personnalisé plus proche d'une clientèle fidélisée
+P073;B;moyenne;Pirosmani a des habitués fidèles depuis des années au sein d'une communauté d'amateurs de cuisine géorgienne, Hoki Sushi ouvre sept jours sur sept sans fermeture avec des avis plus génériques
+P074;B;forte;Sahara Café est un bar nocturne à forte rotation avec des avis très clivants, Pirosmani a des habitués fidèles depuis des années
+P075;B;moyenne;Sahara Café est un bar nocturne aux horaires identiques toute la semaine, La Cava Voltini reste un petit restaurant tenu par un patron avec un accueil personnalisé
+P076;A;faible;Arya Bhavan a un avis explicite de fréquentation hebdomadaire, un signal plus fort d'ancrage local que l'avis élogieux mais plus touristique sur La Cava Voltini
+P077;B;faible;Hon Ki a des avis explicites de touristes qui y reviennent à chaque séjour à Paris, Ya Bayté reste un format rapide au comptoir mais sans ce registre de voyage aussi marqué
+P078;B;moyenne;L'Époque a des avis explicites de visiteurs revenus plusieurs fois pendant un court séjour à Paris, Ya Bayté reste un format de restauration rapide sans ce récit de voyage
+P079;A;faible;L'Annexe ouvre de 7h à 23h tous les jours et un avis le qualifie explicitement de piège à touristes, un signal direct un peu plus fort que les récits de voyage sur L'Époque
+P080;A;forte;Arrivederci cumule 2351 photos publiées et une forte visibilité, Bicla reste un établissement très local à horaires restreints sans attribut touriste déclaré
+P081;A;forte;El Sur propose concerts et sport dans un cadre donnant sur la rue avec une fréquentation plus forte le week-end, Bicla reste un établissement très local à horaires restreints
+P082;A;moyenne;El Sur a une fréquentation plus marquée le week-end et un cadre tourné vers la rue, La Ferrandaise ferme le dimanche avec un habitué revenu plusieurs fois au fil des années
+P083;B;faible;L'Estrapade n'a qu'une photo publiée et un avis revendique explicitement d'éviter les lieux touristiques, un signal plus local que La Ferrandaise
+P084;B;moyenne;L'Estrapade a un avis explicite d'évitement des lieux touristiques et très peu de photos publiées, Sushiyaki reste ouvert toute la semaine sauf le dimanche
+P085;A;faible;Yokorama n'a aucun jour de fermeture alors que Sushiyaki ferme le dimanche, avec des avis affectueux de quartier
+P086;B;moyenne;Atelier Carmen ne sert que le dîner sur réservation sans attribut touriste déclaré, Yokorama ouvre sept jours sur sept sans fermeture avec un avis le qualifiant de meilleur sushi de Paris

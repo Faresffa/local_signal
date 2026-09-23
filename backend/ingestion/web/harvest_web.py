@@ -51,16 +51,29 @@ def _log(message: str) -> None:
         print(message, flush=True)
 
 
-def candidates(zone: str, limit: int | None = None) -> list[dict]:
+def candidates(zone: str, limit: int | None = None,
+               manquants: bool = False) -> list[dict]:
     """
     Restaurants de la zone susceptibles d'avoir une carte en ligne.
 
     Ceux qui n'ont ni tag `website:menu` ni site web sont écartés d'emblée :
     aucun appel réseau ne sert à rien pour eux. C'est la majorité — et c'est
     le fait central que cette méthode ne peut pas contourner (D-001).
+
+    `manquants` ÉCARTE CEUX DONT LA CARTE EST DÉJÀ LUE. Sans ce filtre, relancer
+    la récolte sur une zone à moitié faite repaie la totalité : sur le Quartier
+    latin, 349 sites interrogés pour 62 cartes réellement manquantes. Le quota
+    du modèle est la ressource rare ici, et le reste du pipeline est idempotent
+    — la reprise doit l'être aussi.
     """
+    exclusion = """
+           AND NOT EXISTS (
+                 SELECT 1 FROM menus m WHERE m.restaurant_id = restaurants.id
+           )
+    """ if manquants else ""
+
     conn = get_connection()
-    rows = conn.execute("""
+    rows = conn.execute(f"""
         SELECT id, name, website, menu_url
           FROM restaurants
          WHERE zone = ?
@@ -68,6 +81,7 @@ def candidates(zone: str, limit: int | None = None) -> list[dict]:
                 (menu_url IS NOT NULL AND menu_url != '')
              OR (website  IS NOT NULL AND website  != '')
            )
+           {exclusion}
       ORDER BY (menu_url IS NULL OR menu_url = ''), name
     """, (zone,)).fetchall()
     conn.close()
@@ -145,12 +159,40 @@ def harvest_one(resto: dict, provider: str | None, dry_run: bool) -> dict:
     return {"status": "scored", "name": name, "detail": scored["score"]}
 
 
+def verifier_modele(provider: str | None) -> None:
+    """
+    Un appel minuscule avant de lancer des heures de récolte.
+
+    POURQUOI CETTE FONCTION EXISTE. Le 15 septembre 2026, `qwen/qwen3.6-27b` a
+    été retiré du catalogue Groq pendant une récolte. Chaque appel a répondu
+    `404 model does not exist`, que `harvest_one` attrape comme n'importe quelle
+    erreur et reporte en « pas une carte ». Résultat : 3 117 restaurants
+    parcourus, **493 pages de carte bien réelles enregistrées comme n'en étant
+    pas**, et un rapport final annonçant « Cartes scorées : 0 » sans un mot sur
+    la cause.
+
+    Le défaut n'est pas le modèle disparu — un catalogue bouge. Le défaut est
+    qu'une panne totale et une absence de données se ressemblaient à l'arrivée.
+    Deux secondes de vérification au départ valent mieux qu'un rapport qui ment.
+    """
+    try:
+        analyze_menu_text("Entrée 8 EUR. Plat 15 EUR. Dessert 6 EUR.", provider=provider)
+    except Exception as e:
+        _log(f"[Web] ARRET — le modele ne repond pas : {type(e).__name__}: {e}")
+        _log("[Web] Rien n'a ete tente. Verifier GROQ_TEXT_MODEL / la cle, puis relancer.")
+        raise SystemExit(1)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Amorce le signal menu depuis le web (D-023).",
     )
     parser.add_argument("zone", choices=sorted(ZONES), help="zone à traiter")
     parser.add_argument("--limit", type=int, help="nombre de restaurants à traiter")
+    parser.add_argument(
+        "--manquants", action="store_true",
+        help="ne traiter que les restaurants dont la carte n'est pas encore lue",
+    )
     parser.add_argument(
         "--dry-run", action="store_true",
         help="mesure la couverture sans appeler le modèle (aucun coût)",
@@ -166,7 +208,12 @@ def main():
     args = parser.parse_args()
 
     init_db()
-    targets = candidates(args.zone, args.limit)
+
+    # Avant tout : le modele repond-il ? (voir `verifier_modele`)
+    if not args.dry_run:
+        verifier_modele(args.provider)
+
+    targets = candidates(args.zone, args.limit, args.manquants)
 
     if not targets:
         print(

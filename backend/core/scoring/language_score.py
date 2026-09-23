@@ -34,23 +34,52 @@ def count_local_reviews(reviews: list[dict], target_lang: str) -> tuple[int, int
     """
     Compte les avis rédigés dans la langue cible.
 
-    Utilise la clé 'lang' si elle est pré-renseignée (données mockées), sinon
-    lance la détection automatique.
+    UN AVIS INDÉTECTABLE NE COMPTE NI POUR NI CONTRE — il sort du total.
+
+    C'est la correction d'un défaut mesuré. La collecte stocke délibérément
+    `lang = None` quand le texte est trop court pour qu'une langue soit
+    identifiée (« Super ! », une suite d'émojis) : mieux vaut « je ne sais
+    pas » qu'une langue inventée (D-012). Or cette fonction relançait la
+    détection dans ce cas, produisant exactement la valeur que la collecte
+    avait refusé d'inventer.
+
+    Effet observé sur Toppoki : 22 avis français sur 50, score attendu 0,445,
+    score obtenu 0,500 — soit précisément l'a priori, par accident. Trois avis
+    indétectables avaient été re-détectés comme français.
+
+    Les compter dans le total serait aussi faux : un avis dont on ignore la
+    langue n'est pas un avis en langue étrangère. Le retirer des deux côtés
+    laisse la proportion se calculer sur les seules preuves disponibles, et le
+    lissage bayésien fait le reste quand elles sont peu nombreuses.
+
+    DISTINCTION IMPORTANTE entre clé absente et clé nulle :
+
+        {"text": "..."}                clé absente  -> on détecte (mocks, D-003)
+        {"text": "...", "lang": None}  clé nulle    -> indétectable, écarté
+        {"text": "...", "lang": "fr"}  clé remplie  -> on la croit
 
     Returns:
-        (nombre d'avis en langue cible, nombre total d'avis)
+        (nombre d'avis en langue cible, nombre d'avis dont la langue est connue)
     """
-    total = len(reviews)
     local = 0
+    connus = 0
 
     for review in reviews:
-        lang = review.get("lang")
-        if not lang:
+        if "lang" in review:
+            lang = review["lang"]
+            if not lang:
+                # Explicitement indétectable : la collecte a déjà tranché.
+                continue
+        else:
             lang = detect_language(review.get("text", ""))
+            if not lang or lang == "unknown":
+                continue
+
+        connus += 1
         if lang == target_lang:
             local += 1
 
-    return local, total
+    return local, connus
 
 
 def score_language(

@@ -6,20 +6,27 @@
 # pertinence (distance, filtres) est évaluée à la requête. C'est ce qui permet
 # de rester instantané sur une base nationale.
 
+import logging
 import re
+import secrets
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlencode
 
+import requests
 from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import Optional
 
 from backend import config
-from backend.core.auth import security
-from backend.core.auth.dependencies import get_current_user, get_current_user_optional
+from backend.core.auth import limitation, security
+from backend.core.auth.dependencies import (
+    get_current_user, get_current_user_optional, jeton_de_session, require_admin,
+)
 from backend.core.cuisines import label as cuisine_label, options as cuisine_options
 from backend.core.filters.criteres import (
-    TRANCHES_PRIX, appliquer as appliquer_filtres, est_ouvert,
+    appliquer as appliquer_filtres, est_ouvert,
 )
 from backend.core.scoring.engine import explain
 from backend.core.scoring.geo_score import haversine, score_geo_user
@@ -27,15 +34,32 @@ from backend.core.scoring.menu_score import score_menu
 from backend.ingestion.menu_scan.client import analyze_menu_image
 from backend.db.models import init_db
 from backend.db import repository as repo
+from backend.core.journal import JournalRequetes, configurer as configurer_journal
+from backend.core.stockage import ErreurStockage, stockage
 
 # --- Init ---
+# La journalisation d'abord : sans elle, une erreur pendant `init_db` ne
+# laisserait aucune trace (LS-25).
+configurer_journal()
 init_db()
+
+# Les sessions expirees sont des donnees personnelles conservees sans raison
+# (LS-29). Purgees au demarrage : a raison d'un deploiement par jour, cela
+# suffit sans ajouter de tache planifiee.
+_purgees = repo.purge_expired_sessions()
+if _purgees:
+    logging.getLogger("api").info("%d session(s) expiree(s) purgee(s)", _purgees)
 
 app = FastAPI(
     title="Local Signal API",
     description="API REST pour l'application Local Signal — scoring et filtrage de restaurants",
     version="0.1.0",
 )
+
+# --- Journalisation : une ligne par requete, avec sa duree (LS-25) ---
+# Enregistre AVANT le CORS pour que la trace couvre aussi les requetes que le
+# CORS rejette — sinon un blocage d'origine serait invisible cote serveur.
+app.add_middleware(JournalRequetes)
 
 # --- CORS (permet au frontend React de consommer l'API) ---
 app.add_middleware(
@@ -56,6 +80,11 @@ class ReservationRequest(BaseModel):
     num_persons: int = 2
     date: str
     time_slot: str
+    # Piège à robots (retour utilisateur : anti-spam) : un champ que
+    # Reserve.jsx cache visuellement, mais qu'un robot qui remplit tous les
+    # champs d'un formulaire renseigne quand même. Un humain ne le voit
+    # jamais, donc ne le remplit jamais.
+    site_web: Optional[str] = None
 
 
 class ReservationResponse(BaseModel):
@@ -70,6 +99,10 @@ class SignupRequest(BaseModel):
     email: str
     password: str
     name: Optional[str] = None
+    # Case à cocher obligatoire (retour utilisateur), preuve de consentement
+    # RGPD aux CGU/politique de confidentialité — voir `accepted_terms_at`
+    # dans backend/db/models.py.
+    accepted_terms: bool = False
 
 
 class LoginRequest(BaseModel):
@@ -77,10 +110,31 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class PasswordChangeRequest(BaseModel):
+    mot_de_passe_actuel: str
+    nouveau_mot_de_passe: str
+
+
 class UserResponse(BaseModel):
     id: int
     email: str
     name: Optional[str] = None
+    # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Renvoyé au
+    # client pour qu'il puisse, par exemple, afficher un lien vers un futur
+    # panneau d'administration — mais AUCUNE route protégée ne doit se fier
+    # à ce que le client affirme : `require_admin` relit toujours le rôle en
+    # base, jamais une valeur transmise par le front.
+    role: str = "user"
+    # Rendu UNIQUEMENT aux clients qui le réclament par l'en-tête
+    # `X-Jeton-Session` — le mobile. Un navigateur reçoit `None` et s'appuie
+    # sur son cookie httpOnly, qu'aucun script de la page ne peut lire : lui
+    # renvoyer le jeton en clair annulerait cette protection (LS-40).
+    token: Optional[str] = None
+
+
+class AvisRequest(BaseModel):
+    rating: Optional[int] = None
+    text: Optional[str] = None
 
 
 # =============================================================================
@@ -98,11 +152,14 @@ def list_restaurants(
     # --- Filtres issus des donnees collectees (D-034) ---
     # Ils retirent des lignes, ils ne reordonnent rien : le classement reste
     # celui du Local Signal module par la proximite (D-008).
-    tranche_prix: Optional[str] = Query(
-        None, description=f"Tranche de budget : {', '.join(TRANCHES_PRIX)}"),
     ouvert: bool = Query(False, description="Uniquement ceux ouverts maintenant"),
     reservation: bool = Query(False, description="Uniquement ceux qui acceptent les reservations"),
     avec_carte: bool = Query(False, description="Uniquement ceux dont la carte a ete lue"),
+    # Réservé aux abonnés (retour utilisateur) — silencieusement ignoré
+    # pour les autres, voir plus bas. Le filtre reste affiché à tout le
+    # monde côté interface, seule son activation est verrouillée (D-050).
+    score_min: Optional[float] = Query(None, description="Local Signal minimum, 0-100 (reserve aux abonnes)"),
+    score_max: Optional[float] = Query(None, description="Local Signal maximum, 0-100 (reserve aux abonnes)"),
     limit: int = Query(50, description="Nombre maximum de résultats"),
     user: Optional[dict] = Depends(get_current_user_optional),
 ):
@@ -115,6 +172,37 @@ def list_restaurants(
     `lat` et `lng` sont OBLIGATOIRES : pas de coordonnées par défaut, le projet
     doit fonctionner dans n'importe quelle ville (CLAUDE.md §8).
     """
+    # QUOTA DE RECHERCHES (LS-refonte) : un compte connecté non abonné a un
+    # nombre de recherches limité par jour, pas seulement un nombre de
+    # résultats limité par recherche — les deux limites sont distinctes et
+    # se cumulent. Un visiteur anonyme ou un abonné/admin n'est jamais
+    # concerné : le premier n'a pas de compteur auquel se rattacher, les
+    # deux autres n'ont pas de quota.
+    # Renvoyé dans la réponse (voir `return` en bas) pour que le front
+    # affiche le quota AVANT que la limite ne soit atteinte, pas seulement
+    # au moment où elle bloque (retour utilisateur : "doit être claire,
+    # affichée").
+    quota = None
+    if user and user.get("role") == "user":
+        autorisee, restantes = repo.check_and_count_search(
+            user["id"], config.SEARCHES_PER_DAY_NON_ABONNE
+        )
+        if not autorisee:
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Quota de {config.SEARCHES_PER_DAY_NON_ABONNE} recherches "
+                    "par jour atteint. Revenez demain, ou abonnez-vous pour "
+                    "des recherches illimitées."
+                ),
+            )
+        quota = {"restantes": restantes, "limite": config.SEARCHES_PER_DAY_NON_ABONNE}
+
+    # Calculé ici, réutilisé plus bas pour la limite de résultats, les
+    # filtres premium et le marquage des favoris — un seul calcul plutôt que
+    # plusieurs définitions divergentes du même rôle.
+    abonne = bool(user) and user.get("role") in ("subscriber", "admin")
+
     restaurants = repo.get_restaurants_near(lat, lng, radius_m=radius, limit=500)
 
     # --- Filtres (pertinence, dynamique) ---
@@ -140,10 +228,14 @@ def list_restaurants(
     # filtre qui porte sur la presence meme (`avec_carte`).
     restaurants = appliquer_filtres(
         restaurants,
-        tranche_prix=tranche_prix,
         ouvert_maintenant=ouvert,
         avec_reservation=reservation,
         avec_carte=avec_carte,
+        # Un compte non abonné qui forge la requête ne doit pas pouvoir
+        # activer ces filtres depuis l'URL — c'est un avantage de
+        # l'abonnement, pas une donnée à protéger (voir criteres.py::appliquer).
+        score_min=score_min if abonne else None,
+        score_max=score_max if abonne else None,
     )
 
     # --- Classement : Local Signal modulé par la proximité (D-008) ---
@@ -160,11 +252,29 @@ def list_restaurants(
 
     restaurants.sort(key=lambda r: r["scoring"]["score_final"], reverse=True)
 
-    # Visiteur non connecté : accès limité (D-0xx), premier avantage réel des
-    # comptes. Le tri a déjà eu lieu au-dessus — la limite retire des résultats,
-    # elle ne dégrade jamais leur ordre.
-    effective_limit = limit if user else min(limit, config.ANON_RESULTS_LIMIT)
-    return {"count": len(restaurants), "restaurants": restaurants[:effective_limit]}
+    # SEUL L'ABONNEMENT LÈVE LA LIMITE (LS-refonte) — pas la simple connexion.
+    # Avant, tout compte connecté voyait tout ; ça enlevait la seule raison de
+    # payer, puisque créer un compte suffisait déjà à tout débloquer. Le
+    # tri a déjà eu lieu au-dessus — la limite retire des résultats, elle ne
+    # dégrade jamais leur ordre. (`abonne` calculé plus haut.)
+    effective_limit = limit if abonne else min(limit, config.ANON_RESULTS_LIMIT)
+    resultats = restaurants[:effective_limit]
+
+    # Marque les favoris (LS-refonte) — un seul aller-retour base plutôt
+    # qu'un par carte : `get_favorite_ids` renvoie un ensemble, le marquage
+    # est local.
+    if abonne:
+        favoris = repo.get_favorite_ids(user["id"])
+        for r in resultats:
+            r["favori"] = r["id"] in favoris
+
+    return {
+        "count": len(restaurants),
+        "restaurants": resultats,
+        # `None` pour tout le monde sauf un compte non abonné — c'est
+        # justement le seul cas où un quota de recherches existe.
+        "quota": quota,
+    }
 
 
 def _build_scoring(
@@ -229,6 +339,7 @@ def get_restaurant(
     restaurant_id: str,
     lat: Optional[float] = Query(None, description="Latitude de l'utilisateur"),
     lng: Optional[float] = Query(None, description="Longitude de l'utilisateur"),
+    user: Optional[dict] = Depends(get_current_user_optional),
 ):
     """
     Détail d'un restaurant, avec sa dernière carte scannée si elle existe.
@@ -244,23 +355,13 @@ def get_restaurant(
     if lat is not None and lng is not None:
         resto["scoring"] = _build_scoring(resto, lat, lng)
     else:
-        signals = resto.get("signals") or {}
-        local = {
-            "local_signal": resto.get("local_signal") or 0.0,
-            "confidence": resto.get("confidence") or 0.0,
-            "signals": signals,
-        }
-        relevance = {"proximity": None, "distance_m": None}
-        resto["scoring"] = {
-            "score_final": None,
-            **local,
-            "relevance": relevance,
-            "reasons": explain(local, relevance) if signals else [],
-        }
+        resto["scoring"] = _scoring_sans_position(resto)
 
     resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
     resto["menu"] = repo.get_latest_menu(restaurant_id)
     resto["ouvert_maintenant"] = est_ouvert(resto.get("opening_hours"))
+    if user and user.get("role") in ("subscriber", "admin"):
+        resto["favori"] = restaurant_id in repo.get_favorite_ids(user["id"])
 
     # --- Detail du calcul, pour inspection (D-034) ---
     #
@@ -272,9 +373,43 @@ def get_restaurant(
     # Il expose ce qu'aucune explication en langage naturel ne peut rendre :
     # la contribution chiffree de chaque indicateur, le poids redistribue, et
     # les observations brutes qui ont produit la note.
-    resto["detail_calcul"] = _detail_calcul(resto)
+    # VERROUILLEE PAR DEFAUT (LS-16). D-009 impose de ne montrer aucun score :
+    # ce panneau expose l'algorithme indicateur par indicateur. Il reste
+    # indispensable pour verifier le calcul et instruire le memoire, mais il
+    # n'a rien a faire devant un utilisateur.
+    # `EXPOSE_DETAIL_CALCUL=true` l'active pour tout le monde en développement
+    # et pour la soutenance ; un compte admin le voit dans tous les cas
+    # (LS-refonte) — c'est le seul rôle pour qui ce panneau a un usage réel une
+    # fois le produit en ligne.
+    if config.EXPOSE_DETAIL_CALCUL or (user and user.get("role") == "admin"):
+        resto["detail_calcul"] = _detail_calcul(resto)
     repo.log_consultation(restaurant_id, resto["name"], resto.get("local_signal"))
     return resto
+
+
+def _scoring_sans_position(resto: dict) -> dict:
+    """
+    Bloc `scoring` d'un restaurant regardé hors contexte utilisateur.
+
+    Même forme que `_build_scoring`, mais sans `lat`/`lng` : `score_final` et
+    la proximité restent `None` puisqu'il n'y a personne dont mesurer la
+    distance. Le Local Signal, lui, ne dépend pas de qui regarde (D-008), donc
+    reste plein — c'est ce qui rend cette vue utile pour la page admin, qui
+    parcourt toute la base sans point de départ.
+    """
+    signals = resto.get("signals") or {}
+    local = {
+        "local_signal": resto.get("local_signal") or 0.0,
+        "confidence": resto.get("confidence") or 0.0,
+        "signals": signals,
+    }
+    relevance = {"proximity": None, "distance_m": None}
+    return {
+        "score_final": None,
+        **local,
+        "relevance": relevance,
+        "reasons": explain(local, relevance) if signals else [],
+    }
 
 
 def _detail_calcul(resto: dict) -> dict:
@@ -327,6 +462,108 @@ def _detail_calcul(resto: dict) -> dict:
         ),
         "ponderations_calibrees": False,
     }
+
+
+# =============================================================================
+# ADMINISTRATION (LS-refonte) — réservé aux comptes `role = "admin"`
+# =============================================================================
+#
+# Parcourt TOUTE la base, pas un rayon autour d'un point : ces deux routes
+# n'ont donc pas de `lat`/`lng`, contrairement à `/api/restaurants`. Le
+# `scoring` renvoyé est celui de `_scoring_sans_position` — même Local Signal,
+# mais sans prétendre à une pertinence qui n'a pas de sens ici.
+#
+# `require_admin` relit le rôle en base à chaque appel (voir sa docstring) :
+# aucune de ces deux routes ne fait confiance à autre chose.
+
+@app.get("/api/admin/restaurants")
+def admin_list_restaurants(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    q: Optional[str] = Query(None, description="Filtre par nom"),
+    admin: dict = Depends(require_admin),
+):
+    """
+    Tous les restaurants de la base, paginés — la vue d'ensemble admin.
+
+    Même forme que `/api/restaurants` (`scoring`, `cuisine_label`, etc.) pour
+    que le front réutilise `RestaurantCard` tel quel, sans variante.
+    """
+    restaurants = repo.get_restaurants(limit=limit, offset=offset, q=q)
+    for r in restaurants:
+        r["scoring"] = _scoring_sans_position(r)
+        r["cuisine_label"] = cuisine_label(r.get("cuisine"))
+        r["ouvert_maintenant"] = est_ouvert(r.get("opening_hours"))
+    return {
+        "total": repo.count_restaurants(q=q),
+        "limit": limit,
+        "offset": offset,
+        "restaurants": restaurants,
+    }
+
+
+@app.get("/api/admin/restaurants/{restaurant_id}")
+def admin_get_restaurant(restaurant_id: str, admin: dict = Depends(require_admin)):
+    """
+    Fiche complète d'un restaurant : tous les champs bruts de la base, le
+    détail du calcul (toujours, indépendamment de `EXPOSE_DETAIL_CALCUL`), le
+    dernier menu lu, les photos de carte, les avis et les métadonnées des
+    cartes soumises.
+    """
+    resto = repo.get_restaurant(restaurant_id)
+    if not resto:
+        raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+
+    resto["scoring"] = _scoring_sans_position(resto)
+    resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
+    resto["ouvert_maintenant"] = est_ouvert(resto.get("opening_hours"))
+    resto["menu"] = repo.get_latest_menu(restaurant_id)
+    resto["detail_calcul"] = _detail_calcul(resto)
+    resto["cartes"] = repo.get_menu_submissions(restaurant_id)
+    resto["avis"] = repo.get_user_reviews(restaurant_id, limit=100)
+    return resto
+
+
+class AdminUpdateRestaurantRequest(BaseModel):
+    opening_hours: Optional[str] = None
+    cuisine: Optional[str] = None
+
+
+@app.patch("/api/admin/restaurants/{restaurant_id}")
+def admin_update_restaurant(
+    restaurant_id: str,
+    req: AdminUpdateRestaurantRequest,
+    admin: dict = Depends(require_admin),
+):
+    """
+    Corrige les horaires ou le type de cuisine d'un restaurant.
+
+    Volontairement restreint à `CHAMPS_MODIFIABLES_ADMIN`
+    (backend/db/repository.py) : ce n'est pas un CRUD générique sur la base,
+    seulement la correction des deux champs les plus visiblement faux au
+    quotidien. Étendre la liste se fait là, pas en assouplissant cette route.
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+
+    champs = {k: v for k, v in req.model_dump().items() if v is not None}
+    if not champs:
+        raise HTTPException(status_code=400, detail="Rien à modifier.")
+
+    repo.update_restaurant_fields(restaurant_id, champs)
+    return repo.get_restaurant(restaurant_id)
+
+
+@app.delete("/api/admin/avis/{avis_id}")
+def admin_delete_avis(avis_id: int, admin: dict = Depends(require_admin)):
+    """
+    Retire n'importe quel avis (modération) — `DELETE /api/restaurant/{id}/avis`
+    ne retire que celui de l'appelant, délibérément (D-029) ; cette route-ci
+    existe pour contourner cette limite, réservée à `require_admin`.
+    """
+    if not repo.delete_review_by_id(avis_id):
+        raise HTTPException(status_code=404, detail="Avis introuvable.")
+    return {"message": "Avis supprimé."}
 
 
 @app.get("/api/restaurant/{restaurant_id}/photo")
@@ -395,8 +632,13 @@ def stats(zone: Optional[str] = Query(None, description="Filtrer par zone")):
     return repo.label_stats(zone)
 
 
-def _issue_session(response: Response, user_id: int) -> None:
-    """Ouvre une session et pose le cookie httpOnly correspondant."""
+def _issue_session(response: Response, user_id: int) -> str:
+    """
+    Ouvre une session, pose le cookie httpOnly, et rend le jeton.
+
+    Le jeton rendu n'est transmis au client que s'il l'a demandé
+    (`_jeton_demande`). Le cookie, lui, est posé dans tous les cas.
+    """
     token = security.generate_session_token()
     expires_at = datetime.now(timezone.utc) + timedelta(days=config.SESSION_TTL_DAYS)
     repo.create_session(user_id, security.hash_token(token), expires_at.isoformat())
@@ -409,48 +651,233 @@ def _issue_session(response: Response, user_id: int) -> None:
         max_age=config.SESSION_TTL_DAYS * 86400,
         path="/",
     )
+    return token
 
 
-def _to_user_response(user: dict) -> UserResponse:
-    return UserResponse(id=user["id"], email=user["email"], name=user.get("name"))
+def _jeton_demande(request: Request) -> bool:
+    """
+    Le client réclame-t-il le jeton dans le corps de la réponse ?
+
+    Explicite plutôt que deviné. On pourrait renifler l'agent utilisateur pour
+    reconnaître un mobile : ce serait fragile et silencieusement faux le jour
+    où l'agent change. Un en-tête que seul le client mobile pose dit exactement
+    ce qu'il veut, et le web n'a rien à faire pour continuer à ne pas le
+    recevoir.
+    """
+    return (request.headers.get("x-jeton-session") or "").lower() in {"1", "oui", "true"}
+
+
+def _to_user_response(user: dict, token: Optional[str] = None) -> UserResponse:
+    return UserResponse(
+        id=user["id"],
+        email=user["email"],
+        name=user.get("name"),
+        role=user.get("role") or "user",
+        token=token,
+    )
 
 
 @app.post("/api/auth/signup", response_model=UserResponse)
-def signup(req: SignupRequest, response: Response):
+def signup(req: SignupRequest, request: Request, response: Response):
     """Crée un compte et ouvre immédiatement une session (connexion auto)."""
+    # Avant toute validation : créer des comptes en masse n'a aucun usage
+    # légitime, et chaque création coûte un hachage bcrypt (LS-28).
+    limitation.garder_inscription(request)
+
     email = req.email.strip().lower()
+    nom = (req.name or "").strip()
     if not _EMAIL_RE.match(email):
         raise HTTPException(status_code=400, detail="Adresse email invalide.")
+    # Nom d'utilisateur obligatoire (LS-refonte) : c'est lui qui s'affiche
+    # partout (avis, en-tête) — un compte sans nom retombait sur l'email,
+    # que D-039 interdit justement de montrer à d'autres utilisateurs.
+    if not nom:
+        raise HTTPException(status_code=400, detail="Le nom d'utilisateur est requis.")
     if len(req.password) < 8:
         raise HTTPException(
             status_code=400, detail="Le mot de passe doit contenir au moins 8 caractères."
+        )
+    # Case à cocher obligatoire (retour utilisateur) — sans preuve de
+    # consentement, les CGU/politique de confidentialité ne sont que du
+    # texte affiché, jamais accepté.
+    if not req.accepted_terms:
+        raise HTTPException(
+            status_code=400,
+            detail="Vous devez accepter les CGU et la politique de confidentialité.",
         )
     if repo.get_user_by_email(email):
         raise HTTPException(status_code=409, detail="Cet email est déjà utilisé.")
 
     user_id = repo.create_user(
-        email=email, password_hash=security.hash_password(req.password), name=req.name
+        email=email, password_hash=security.hash_password(req.password), name=nom,
+        accepted_terms_at=datetime.now(timezone.utc).isoformat(),
     )
-    _issue_session(response, user_id)
-    return _to_user_response(repo.get_user_by_id(user_id))
+    jeton = _issue_session(response, user_id)
+    return _to_user_response(
+        repo.get_user_by_id(user_id), jeton if _jeton_demande(request) else None
+    )
 
 
 @app.post("/api/auth/login", response_model=UserResponse)
-def login(req: LoginRequest, response: Response):
+def login(req: LoginRequest, request: Request, response: Response):
     """Vérifie les identifiants et ouvre une session."""
+    # AVANT la vérification du mot de passe, jamais après : un compteur qui ne
+    # s'incrémente qu'en cas d'échec avéré laisse passer autant de tentatives
+    # qu'on veut tant qu'elles échouent vite (LS-28).
+    limitation.garder_connexion(request, req.email)
+
     user = repo.get_user_by_email(req.email)
     # Message générique dans les deux cas : ne jamais révéler si l'email existe.
     if not user or not security.verify_password(req.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect.")
 
-    _issue_session(response, user["id"])
-    return _to_user_response(user)
+    # Connexion réussie : on efface le compteur du compte, pour ne pas pénaliser
+    # l'utilisateur maladroit qui finit par retrouver son mot de passe.
+    limitation.liberer_connexion(req.email)
+
+    jeton = _issue_session(response, user["id"])
+    return _to_user_response(user, jeton if _jeton_demande(request) else None)
+
+
+# --- Connexion Google (OAuth 2.0) — LS-refonte ------------------------------
+#
+# Flux "authorization code" côté serveur (RFC 6749 §4.1), pas le flux
+# implicite : le Client Secret ne quitte jamais ce serveur, contrairement à un
+# jeton émis directement au navigateur.
+#
+# `state` protège contre le CSRF (RFC 6749 §10.12) : un attaquant qui forgerait
+# un lien vers /callback avec son propre `code` ne connaît pas la valeur posée
+# dans le cookie `ls_oauth_state`, donc sa requête est rejetée avant tout appel
+# à Google.
+#
+# Ces deux routes sont des NAVIGATIONS DE PAGE (le navigateur y est redirigé
+# par Google), pas des appels `fetch` — d'où `RedirectResponse` plutôt qu'un
+# `UserResponse` JSON : il n'y a personne côté React pour lire un JSON ici.
+
+_GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+_GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+_GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
+_OAUTH_STATE_COOKIE = "ls_oauth_state"
+
+
+@app.get("/api/auth/google/login")
+def google_login(response: Response):
+    """Redirige vers l'écran de consentement Google."""
+    if not config.GOOGLE_OAUTH_CLIENT_ID:
+        raise HTTPException(
+            status_code=503,
+            detail="Connexion Google non configurée (GOOGLE_OAUTH_CLIENT_ID manquant).",
+        )
+
+    state = secrets.token_urlsafe(24)
+    params = {
+        "client_id": config.GOOGLE_OAUTH_CLIENT_ID,
+        "redirect_uri": config.GOOGLE_OAUTH_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "state": state,
+        # Réaffiche le compte Google déjà connu au lieu de forcer un choix de
+        # compte à chaque connexion — un aller-retour de moins.
+        "prompt": "select_account",
+    }
+    redirect = RedirectResponse(f"{_GOOGLE_AUTH_URL}?{urlencode(params)}")
+    redirect.set_cookie(
+        key=_OAUTH_STATE_COOKIE,
+        value=state,
+        httponly=True,
+        secure=config.SESSION_COOKIE_SECURE,
+        samesite=config.SESSION_COOKIE_SAMESITE,
+        max_age=600,  # le temps de l'aller-retour Google, pas plus
+        path="/api/auth/google",
+    )
+    return redirect
+
+
+@app.get("/api/auth/google/callback")
+def google_callback(
+    request: Request,
+    response: Response,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+):
+    """Échange le code contre un profil Google, ouvre ou crée le compte."""
+    echec = f"{config.FRONTEND_URL}/?erreur=google"
+
+    if error or not code:
+        return RedirectResponse(echec)
+
+    cookie_state = request.cookies.get(_OAUTH_STATE_COOKIE)
+    if not state or not cookie_state or not secrets.compare_digest(state, cookie_state):
+        return RedirectResponse(echec)
+
+    jeton = requests.post(
+        _GOOGLE_TOKEN_URL,
+        data={
+            "code": code,
+            "client_id": config.GOOGLE_OAUTH_CLIENT_ID,
+            "client_secret": config.GOOGLE_OAUTH_CLIENT_SECRET,
+            "redirect_uri": config.GOOGLE_OAUTH_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        },
+        timeout=10,
+    )
+    if jeton.status_code != 200:
+        logging.getLogger("local_signal").error(
+            "google_oauth: echange de code refuse (%s)", jeton.status_code
+        )
+        return RedirectResponse(echec)
+
+    access_token = jeton.json().get("access_token")
+    profil = requests.get(
+        _GOOGLE_USERINFO_URL,
+        headers={"Authorization": f"Bearer {access_token}"},
+        timeout=10,
+    )
+    if profil.status_code != 200:
+        return RedirectResponse(echec)
+
+    infos = profil.json()
+    google_id = infos.get("sub")
+    email = (infos.get("email") or "").strip().lower()
+    if not google_id or not email:
+        return RedirectResponse(echec)
+
+    user = repo.get_user_by_google_id(google_id)
+    if not user:
+        existant = repo.get_user_by_email(email)
+        if existant:
+            # Même produit, même compte (D-037) : quelqu'un qui a un compte
+            # par mot de passe et se connecte un jour avec Google ne doit pas
+            # se retrouver avec deux comptes distincts.
+            repo.link_google_id(existant["id"], google_id)
+            user = existant
+        else:
+            # Mot de passe aléatoire, jamais révélé à personne : rend la
+            # connexion par mot de passe infaisable pour ce compte tant qu'il
+            # n'en a pas choisi un explicitement (D-016 : jamais de secret
+            # prévisible, y compris pour un compte qu'on crée nous-mêmes).
+            secret_inutilisable = security.hash_password(secrets.token_urlsafe(32))
+            user_id = repo.create_google_user(
+                email=email,
+                password_hash=secret_inutilisable,
+                name=infos.get("name"),
+                google_id=google_id,
+            )
+            user = repo.get_user_by_id(user_id)
+
+    redirect = RedirectResponse(config.FRONTEND_URL)
+    redirect.delete_cookie(_OAUTH_STATE_COOKIE, path="/api/auth/google")
+    _issue_session(redirect, user["id"])
+    return redirect
 
 
 @app.post("/api/auth/logout")
 def logout(request: Request, response: Response):
     """Révoque la session courante (si elle existe) et efface le cookie."""
-    token = request.cookies.get(config.SESSION_COOKIE_NAME)
+    # Même lecture que l'authentification : un mobile se déconnecte par
+    # l'en-tête, faute de cookie à envoyer (LS-40).
+    token = jeton_de_session(request)
     if token:
         repo.delete_session(security.hash_token(token))
     response.delete_cookie(config.SESSION_COOKIE_NAME, path="/")
@@ -463,9 +890,165 @@ def me(user: dict = Depends(get_current_user)):
     return _to_user_response(user)
 
 
+# =============================================================================
+# ABONNEMENT — DÉMONSTRATION, AUCUN PAIEMENT RÉEL (LS-refonte)
+# =============================================================================
+#
+# CE QUE CES DEUX ROUTES NE SONT PAS : un encaissement. Rien ici ne parle à un
+# processeur de paiement — elles ne font que basculer `role` entre "user" et
+# "subscriber" pour que l'expérience abonné (Pricing.jsx, la limite levée sur
+# /api/restaurants) soit testable avant qu'une vraie intégration (Stripe ou
+# équivalent) existe. Le jour où elle existera, ces routes seront le point
+# qu'un webhook de paiement confirmé appellera — pas remplacées, complétées.
+
+@app.post("/api/subscribe", response_model=UserResponse)
+def subscribe(user: dict = Depends(get_current_user)):
+    """Passe le compte connecté en `role = "subscriber"`. Démonstration."""
+    if user.get("role") == "admin":
+        return _to_user_response(user)
+    repo.set_user_role(user["id"], "subscriber")
+    return _to_user_response(repo.get_user_by_id(user["id"]))
+
+
+@app.post("/api/subscribe/annuler", response_model=UserResponse)
+def unsubscribe(user: dict = Depends(get_current_user)):
+    """Repasse le compte connecté en `role = "user"`. Démonstration."""
+    if user.get("role") == "admin":
+        return _to_user_response(user)
+    repo.set_user_role(user["id"], "user")
+    return _to_user_response(repo.get_user_by_id(user["id"]))
+
+
+@app.post("/api/auth/mot-de-passe")
+def changer_mot_de_passe(req: PasswordChangeRequest, user: dict = Depends(get_current_user)):
+    """
+    Change le mot de passe du compte connecté.
+
+    Fonctionne aussi pour un compte ouvert par Google : son mot de passe
+    actuel est un secret aléatoire que personne ne connaît (backend/main.py,
+    `google_callback`), donc `mot_de_passe_actuel` échouera toujours pour lui
+    tant qu'il n'en a pas déjà choisi un — ce qui est le comportement voulu,
+    pas un bug : personne ne doit pouvoir changer un mot de passe qu'il ne
+    connaît pas déjà.
+    """
+    if not security.verify_password(req.mot_de_passe_actuel, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Mot de passe actuel incorrect.")
+    if len(req.nouveau_mot_de_passe) < 8:
+        raise HTTPException(
+            status_code=400, detail="Le nouveau mot de passe doit contenir au moins 8 caractères."
+        )
+    repo.set_password_hash(user["id"], security.hash_password(req.nouveau_mot_de_passe))
+    return {"message": "Mot de passe modifié."}
+
+
+# =============================================================================
+# FAVORIS — réservés aux abonnés (LS-refonte)
+# =============================================================================
+
+def _require_abonne(user: dict) -> None:
+    if user.get("role") not in ("subscriber", "admin"):
+        raise HTTPException(
+            status_code=403, detail="Réservé aux comptes abonnés."
+        )
+
+
+@app.get("/api/favoris")
+def lister_favoris(user: dict = Depends(get_current_user)):
+    """Restaurants favoris du compte connecté, même forme qu'une recherche."""
+    _require_abonne(user)
+    favoris = repo.get_favorite_restaurants(user["id"])
+    for r in favoris:
+        r["scoring"] = _scoring_sans_position(r)
+        r["cuisine_label"] = cuisine_label(r.get("cuisine"))
+        r["ouvert_maintenant"] = est_ouvert(r.get("opening_hours"))
+        r["favori"] = True
+    return {"restaurants": favoris}
+
+
+@app.post("/api/favoris/{restaurant_id}")
+def ajouter_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
+    _require_abonne(user)
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+    repo.add_favorite(user["id"], restaurant_id)
+    return {"message": "Ajouté aux favoris."}
+
+
+@app.delete("/api/favoris/{restaurant_id}")
+def retirer_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
+    _require_abonne(user)
+    repo.remove_favorite(user["id"], restaurant_id)
+    return {"message": "Retiré des favoris."}
+
+
+# =============================================================================
+# DROITS DE LA PERSONNE — RGPD (LS-29)
+# =============================================================================
+#
+# Le produit collecte une adresse e-mail et un mot de passe. Le droit d'acces,
+# le droit a l'effacement et le droit a la portabilite en decoulent. Ce ne sont
+# pas des fonctionnalites de confort : ce sont des obligations, et l'absence de
+# formulaire de suppression est ce qu'un jury reperera en premier devant un
+# ecran d'inscription.
+
+
+@app.get("/api/auth/mes-donnees")
+def mes_donnees(user: dict = Depends(get_current_user)):
+    """
+    Toutes les donnees rattachees au compte connecte.
+
+    Droit d'acces et droit a la portabilite d'un seul coup : la reponse est du
+    JSON, donc un format structure et lisible par machine, ce que le reglement
+    demande pour la portabilite.
+
+    L'empreinte du mot de passe n'y figure jamais : elle n'aide en rien la
+    personne et faciliterait une attaque hors ligne si l'export fuitait.
+    """
+    return repo.export_user_data(user["id"])
+
+
+@app.delete("/api/auth/compte")
+def supprimer_compte(request: Request, response: Response,
+                     user: dict = Depends(get_current_user)):
+    """
+    Efface definitivement le compte connecte et tout ce qui s'y rattache.
+
+    SUPPRESSION REELLE, PAS DESACTIVATION. Basculer `is_active` laisserait
+    l'adresse en base : c'est un masquage, pas un effacement.
+
+    Le cookie est retire dans la foulee : sans cela le navigateur continuerait
+    d'envoyer un jeton devenu orphelin, et l'utilisateur verrait une erreur
+    d'authentification au lieu d'une deconnexion propre.
+    """
+    efface = repo.delete_user(user["id"])
+    response.delete_cookie(config.SESSION_COOKIE_NAME, path="/")
+    return {
+        "message": "Compte supprime.",
+        "efface": efface,
+    }
+
+
 @app.post("/api/reservations", response_model=ReservationResponse)
-def create_reservation(req: ReservationRequest):
-    """Crée une nouvelle réservation."""
+def create_reservation(req: ReservationRequest, request: Request):
+    """
+    Crée une nouvelle réservation.
+
+    Route publique, sans authentification — c'était le seul formulaire du
+    site sans aucune garde anti-spam (retour utilisateur). Deux protections,
+    comme sur l'inscription (LS-28) : une limite de débit par adresse, et un
+    piège à robots.
+    """
+    # Un robot qui remplit tout le formulaire touche ce champ ; un humain ne
+    # le voit jamais (Reserve.jsx) et ne le remplit donc jamais. On renvoie
+    # un succès de façade plutôt qu'une erreur, pour ne pas apprendre au
+    # robot à retirer ce champ précis la prochaine fois.
+    if (req.site_web or "").strip():
+        return ReservationResponse(
+            id=0, message=f"Réservation confirmée pour {req.user_name} à {req.restaurant_name}",
+        )
+
+    limitation.garder_reservation(request)
+
     reservation_id = repo.save_reservation(
         restaurant_id=req.restaurant_id,
         restaurant_name=req.restaurant_name,
@@ -502,6 +1085,11 @@ def list_tourist_sites(zone: Optional[str] = Query(None, description="Filtrer pa
 @app.post("/api/menu/scan")
 async def scan_menu(
     image: UploadFile = File(...),
+    restaurant_id: Optional[str] = Query(
+        None,
+        description="Restaurant auquel rattacher la carte. Sans lui, l'analyse "
+                    "est rendue mais n'enrichit pas la base (LS-07).",
+    ),
     provider: Optional[str] = Query(
         None,
         description="Forcer un fournisseur de vision ('groq' ou 'claude'). "
@@ -524,6 +1112,11 @@ async def scan_menu(
             "notes": str,
         }
     """
+    # Le restaurant est vérifié AVANT de lire l'image et d'appeler le modèle :
+    # un identifiant erroné ne doit pas coûter un appel de vision (LS-07).
+    if restaurant_id and not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
     content = await image.read()
 
     max_bytes = config.MENU_SCAN_MAX_IMAGE_MB * 1024 * 1024
@@ -548,11 +1141,259 @@ async def scan_menu(
     signal = analysis.to_menu_signal()
     scored = score_menu(signal)
 
+    # LE SCAN ENRICHIT LA BASE (LS-07, CLAUDE.md §3).
+    #
+    # L'analyse etait jusqu'ici rendue puis jetee : la base de menus, presentee
+    # comme le seul actif defendable du projet, ne se construisait pas par les
+    # scans. Elle le fait desormais — des qu'un restaurant est designe.
+    #
+    # LA PHOTO EST CONSERVEE, ELLE AUSSI, QUAND UN RESTAURANT EST DESIGNE
+    # (D-038). Cette route et `POST /api/restaurant/{id}/carte` font le meme
+    # geste ; en conserver l'image d'un cote et la jeter de l'autre rendait la
+    # verification possible ou impossible selon le chemin emprunte par
+    # l'utilisateur, ce qui n'a aucun sens. Le corpus reste interne et n'est
+    # jamais servi.
+    #
+    # SANS RESTAURANT, ON NE CONSERVE RIEN. Une carte qu'on ne peut rattacher a
+    # aucun etablissement ne documente rien de verifiable : la garder ferait
+    # grossir un stock d'images sans usage, ce qui est exactement ce que D-021
+    # refusait. L'analyse est rendue a l'ecran, et c'est tout.
+    enregistre = False
+    conservee = False
+
+    if restaurant_id:
+        menu_id = repo.save_menu_scan(
+            restaurant_id=restaurant_id,
+            provider=provider or config.VISION_PROVIDER,
+            observations=analysis.model_dump(exclude={"readable", "notes"}),
+            menu_score=scored["score"],
+            readable=analysis.readable,
+        )
+        enregistre = True
+
+        # L'echec du depot ne doit pas annuler une analyse reussie : le score
+        # est deja calcule et il est juste. On perd la piece justificative,
+        # pas la mesure.
+        try:
+            cle = stockage().deposer(contenu=content, type_mime=image.content_type)
+            repo.save_menu_submission(
+                restaurant_id=restaurant_id,
+                corpus_key=cle,
+                mime=image.content_type,
+                octets=len(content),
+                user_id=None,
+                menu_id=menu_id,
+            )
+            conservee = True
+        except ErreurStockage:
+            conservee = False
+
     return {
+        "enregistre": enregistre,
+        "conservee": conservee,
         "provider": provider or config.VISION_PROVIDER,
         "readable": analysis.readable,
         "observations": analysis.model_dump(exclude={"readable", "notes"}),
         "menu_score": scored["score"],
         "details": scored["details"],
         "notes": analysis.notes,
+    }
+
+
+# =============================================================================
+# AVIS LAISSÉS PAR NOS UTILISATEURS (LS-39)
+# =============================================================================
+#
+# CE QU'ILS NE FONT PAS : entrer dans le calcul du score. Ils sont stockés et
+# affichés, rien de plus. Les faire compter avant d'avoir mesuré leur biais
+# reviendrait à réintroduire la popularité par la porte de service — le défaut
+# même que le projet existe pour corriger (D-001, D-007).
+#
+# Ils constituent en revanche un actif : une base d'avis dont NOUS connaissons
+# la provenance, contrairement à ceux d'un fournisseur tiers.
+
+
+@app.get("/api/restaurant/{restaurant_id}/avis")
+def lister_avis(restaurant_id: str,
+                user: Optional[dict] = Depends(get_current_user_optional)):
+    """
+    Avis laissés sur un restaurant, et celui de l'utilisateur s'il en a un.
+
+    Renvoyer son propre avis à part évite un second appel : l'interface doit
+    savoir s'il faut proposer « laisser un avis » ou « modifier le mien ».
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
+    return {
+        "avis": repo.get_user_reviews(restaurant_id),
+        "le_mien": repo.get_own_review(restaurant_id, user["id"]) if user else None,
+        "connecte": bool(user),
+    }
+
+
+@app.post("/api/restaurant/{restaurant_id}/avis")
+def laisser_avis(restaurant_id: str, req: AvisRequest,
+                 user: dict = Depends(get_current_user)):
+    """
+    Dépose ou met à jour l'avis de l'utilisateur connecté.
+
+    `get_current_user` impose la connexion : un visiteur reçoit 401, et
+    l'interface l'oriente alors vers l'écran de connexion. C'est délibéré — un
+    avis anonyme ne serait ni modifiable ni supprimable par son auteur, et ne
+    pourrait pas entrer dans son droit d'accès (D-029).
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
+    texte = (req.text or "").strip()
+    if req.rating is None and not texte:
+        raise HTTPException(
+            status_code=400, detail="Un avis doit porter une note ou un texte."
+        )
+    if req.rating is not None and not 1 <= req.rating <= 5:
+        raise HTTPException(status_code=400, detail="La note va de 1 à 5.")
+    if len(texte) > 2000:
+        raise HTTPException(status_code=400, detail="Avis trop long (2000 caractères).")
+
+    # La langue est détectée à l'écriture et stockée : la recalculer plus tard
+    # sur des milliers d'avis coûterait cher, et le résultat serait le même.
+    langue = None
+    if len(texte) >= 12:
+        try:
+            from langdetect import detect, DetectorFactory
+            DetectorFactory.seed = 0
+            langue = detect(texte)
+        except Exception:
+            langue = None
+
+    repo.save_user_review(restaurant_id, user["id"], req.rating, texte or None, langue)
+    return {
+        "message": "Avis enregistré.",
+        "le_mien": repo.get_own_review(restaurant_id, user["id"]),
+    }
+
+
+@app.delete("/api/restaurant/{restaurant_id}/avis")
+def retirer_avis(restaurant_id: str, user: dict = Depends(get_current_user)):
+    """Retire son propre avis. L'auteur en reste maître."""
+    if not repo.delete_user_review(restaurant_id, user["id"]):
+        raise HTTPException(status_code=404, detail="Aucun avis à retirer.")
+    return {"message": "Avis retiré."}
+
+
+# =============================================================================
+# CARTE SOUMISE DEPUIS LA FICHE D'UN RESTAURANT (LS-38)
+# =============================================================================
+
+
+@app.post("/api/restaurant/{restaurant_id}/carte")
+async def soumettre_carte(
+    restaurant_id: str,
+    image: UploadFile = File(...),
+    analyser: bool = Query(True, description="Lire la carte dans la foulée"),
+    user: Optional[dict] = Depends(get_current_user_optional),
+):
+    """
+    Reçoit la photo d'une carte, la conserve, et la lit.
+
+    C'EST LE MÉCANISME PAR LEQUEL L'ACTIF DU PROJET SE CONSTRUIT
+    (CLAUDE.md §3). Jusqu'ici le scan existait en écran séparé, sans restaurant
+    rattaché : l'analyse était rendue puis perdue. Ici la carte est liée au
+    restaurant dès l'envoi.
+
+    L'IMAGE EST CONSERVÉE DANS LE CORPUS, jamais servie (LS-38). Ce qui rend la
+    conservation défendable, c'est précisément qu'elle n'est pas redistribuée :
+    on garde un matériau de vérification, on ne republie pas l'œuvre.
+
+    La connexion n'est PAS exigée : le premier réflexe d'un utilisateur devant
+    une carte affichée en vitrine est de la photographier, pas de créer un
+    compte. La soumission est alors simplement anonyme.
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+
+    contenu = await image.read()
+    if not contenu:
+        raise HTTPException(status_code=400, detail="Image vide.")
+
+    plafond = config.MENU_SCAN_MAX_IMAGE_MB * 1024 * 1024
+    if len(contenu) > plafond:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Image trop volumineuse (max {config.MENU_SCAN_MAX_IMAGE_MB} Mo).",
+        )
+
+    try:
+        cle = stockage().deposer(contenu, image.content_type)
+    except ErreurStockage as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # L'ANALYSE PEUT ÉCHOUER SANS PERDRE LA CARTE. Le fichier est déjà déposé :
+    # si le modèle est indisponible, la contribution est conservée et relisible
+    # plus tard. L'inverse — analyser puis stocker — perdrait la photo à chaque
+    # panne du fournisseur.
+    menu_id = None
+    analyse = None
+    erreur_analyse = None
+
+    if analyser:
+        try:
+            resultat = analyze_menu_image(contenu, image.filename or "carte.jpg")
+            note = score_menu(resultat.to_menu_signal())
+            menu_id = repo.save_menu_scan(
+                restaurant_id=restaurant_id,
+                provider=config.VISION_PROVIDER,
+                observations=resultat.model_dump(exclude={"readable", "notes"}),
+                menu_score=note["score"],
+                readable=resultat.readable,
+            )
+            analyse = {
+                "readable": resultat.readable,
+                "menu_score": note["score"],
+                "details": note["details"],
+            }
+        except Exception as e:
+            erreur_analyse = type(e).__name__
+
+    repo.save_menu_submission(
+        restaurant_id=restaurant_id,
+        corpus_key=cle,
+        mime=image.content_type,
+        octets=len(contenu),
+        user_id=user["id"] if user else None,
+        menu_id=menu_id,
+    )
+
+    return {
+        "message": "Merci — la carte est enregistrée.",
+        "conservee": True,
+        "analysee": analyse is not None,
+        "analyse": analyse,
+        "erreur_analyse": erreur_analyse,
+    }
+
+
+@app.get("/api/restaurant/{restaurant_id}/cartes")
+def lister_cartes(restaurant_id: str):
+    """
+    Cartes soumises pour ce restaurant.
+
+    Rend des MÉTADONNÉES, jamais les images : le corpus n'est pas servi. Ce qui
+    est exposé, c'est qu'une contribution existe et quand elle a eu lieu — de
+    quoi dire « 3 cartes ont été envoyées », pas de quoi les afficher.
+    """
+    if not repo.get_restaurant(restaurant_id):
+        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
+    soumissions = repo.get_menu_submissions(restaurant_id)
+    return {
+        "nombre": len(soumissions),
+        "cartes": [
+            {
+                "id": s["id"],
+                "soumise_le": s["submitted_at"],
+                "lue": s["menu_id"] is not None,
+            }
+            for s in soumissions
+        ],
     }
