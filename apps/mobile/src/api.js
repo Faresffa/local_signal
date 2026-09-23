@@ -97,6 +97,15 @@ export async function fetchRestaurant(id) {
   return request(`/api/restaurant/${encodeURIComponent(id)}`);
 }
 
+/**
+ * Recherche un restaurant par nom, sans position — pour associer une carte
+ * scannée au bon restaurant (ScanScreen.js). Publique, champs minimaux.
+ */
+export async function rechercherRestaurants(q) {
+  if (!q || q.trim().length < 2) return { restaurants: [] };
+  return request(`/api/restaurants/recherche?q=${encodeURIComponent(q.trim())}`);
+}
+
 /** Cuisines réellement présentes en base, pour alimenter les filtres. */
 export async function fetchCuisines(zone) {
   const query = zone ? `?zone=${encodeURIComponent(zone)}` : "";

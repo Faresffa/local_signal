@@ -3599,3 +3599,407 @@ prévu. Le classement obtenu se rapproche de la vérité terrain sans s'y
 identifier : c'est un compromis entre la mesure et la logique du projet, pas
 un ajustement mécanique.
 
+---
+
+## D-054 — Finition produit : identité, classement expliqué, pages institutionnelles, scan lié
+
+**Date :** 2026-09-22 · **Statut :** actif
+
+### Contexte
+
+Premier retour explicite sur le passage « projet de mémoire » → « application
+professionnelle » : *« il faut que ce soit vraiment une application
+professionnelle [...] faut pas mettre [mémoire HETIC] du tout. »* Trois
+demandes concrètes accompagnaient ce cap : expliquer pourquoi le premier
+résultat d'une recherche n'a pas toujours le meilleur Local Signal, ajouter
+À propos / Contact / Dons, et refaire le scan mobile qui n'attachait aucune
+carte à un restaurant.
+
+### Décision
+
+**Retrait de la mention « mémoire HETIC ».** Pied de page web (`App.jsx`)
+et toute occurrence utilisateur-visible équivalente sur mobile (il n'y en
+avait pas). **Non touché, volontairement** : les mentions « provisoire »
+dans `WhyPanel.jsx` / `DetailCalcul.jsx` (pondérations non calibrées) — §10
+de CLAUDE.md rend cette rigueur non négociable pour la soutenance, et ces
+panneaux sont déjà repliés derrière un « pourquoi ? », pas la vitrine du
+produit. La ligne « Tarif indicatif, pas encore arrêté » de Pricing.jsx et
+PricingScreen.js a, elle, été retirée : le bouton déjà bloqué dit à lui
+seul qu'aucun paiement n'a lieu, la remarque était redondante.
+
+**Le classement s'explique, plutôt que d'afficher « Triés par score ».**
+Ce libellé était trompeur — le classement n'est pas le score seul, mais
+Local Signal × 0,70 + proximité × 0,30 (D-008, `engine.py`). Un bouton
+« Classement : authenticité et proximité » (web : `Discover.jsx`, mobile :
+`DiscoverScreen.js`) révèle une phrase au clic plutôt que d'imposer un
+paragraphe permanent — l'explication n'intéresse que qui se demande
+pourquoi le premier résultat n'a pas le meilleur chiffre.
+
+**Trois pages institutionnelles, web et mobile.** `About` (le paradoxe de
+l'invisibilité, sans mention d'origine académique), `Contact`
+(`fareshafianepro@gmail.com`, lien `mailto:`), `Dons` — bouton
+volontairement bloqué, même traitement que le bouton d'abonnement (D-049) :
+la page existe, le geste non, jusqu'à ce qu'un vrai moyen existe. Sur
+mobile, sans pied de page, ces trois liens vivent au bas de `CompteScreen.js`
+(connecté et non connecté) — seul endroit qu'un compte, quel que soit son
+état, traverse forcément.
+
+**Le scan mobile s'attache désormais à un restaurant.** Jusqu'ici
+`ScanScreen.js` appelait `/api/menu/scan`, la route anonyme : l'analyse
+s'affichait puis se perdait, sans rejoindre le corpus structuré qui est
+l'actif du projet (CLAUDE.md §3) — exactement le défaut que
+`AjouterCarte.jsx` avait déjà corrigé côté web (D-038, D-039), jamais
+répercuté côté mobile. Nouveau parcours : chercher le restaurant par nom →
+photographier sa carte (`envoyerCarte`, pas `scanMenu`) → avis facultatif
+si connecté (`laisserAvis`). Une route publique,
+`GET /api/restaurants/recherche`, a été ajoutée pour ce sélecteur — nom et
+adresse ne sont pas des données sensibles, déjà visibles via la recherche
+géographique ; elle réutilise `repo.get_restaurants(q=...)`, déjà écrite
+pour la page admin.
+
+**Aucun repli anonyme si le restaurant est introuvable.** Choix délibéré :
+c'est précisément ce repli que ce chantier retire. Un restaurant manquant de
+la base reste un trou à combler autrement (import OSM), pas une carte
+scannée sans rattache.
+
+### Conséquences
+
+- `RangeSlider.js` (D-052) et ce chantier confirment le même principe :
+  généraliser plutôt que dupliquer dès qu'un deuxième appelant apparaît.
+- Aucune fonctionnalité de scan n'existe encore pour créer un restaurant
+  absent de la base depuis l'app — limite connue, pas un oubli.
+- Les pages À propos / Contact / Dons restent volontairement courtes
+  (« on sera vide, on expliquera un petit peu ») : à enrichir plus tard,
+  pas à combler de contenu inventé maintenant.
+- Si un jour le don devient réellement payant, `Dons.jsx` / `DonsScreen.js`
+  suivent le même chemin que Pricing le jour où un vrai processeur de
+  paiement sera intégré (D-049).
+
+---
+
+## D-055 — Rôle restaurateur : revendication/création validée à la main, et fréquentation par compte
+
+**Date :** 2026-09-23 · **Statut :** actif
+
+### Contexte
+
+Premier chantier B2B du produit : donner à un restaurant sa propre
+interface de gestion, distincte du compte client. Demande explicite,
+avec deux points structurants laissés ouverts à la décision de
+l'utilisateur plutôt que tranchés par défaut :
+
+1. Comment un compte devient-il légitimement propriétaire d'une fiche —
+   et que faire d'un restaurant qui n'est pas encore dans la base ?
+2. Un restaurateur abonné doit pouvoir voir *qui* a consulté sa fiche
+   (au moins un nom) — cela suppose de rattacher une consultation à un
+   compte, ce que le schéma refusait jusqu'ici par choix de vie privée
+   (`consultations` sans `user_id`, commentaire explicite dans
+   `repository.py` : « délibérément non rattaché »). Comment obtenir le
+   consentement à ce changement ?
+
+### Décision
+
+**1. Revendication ou création, toujours validée par un humain.** Réponse
+littérale de l'utilisateur : *« la deuxième option me semble plus
+logique. C'est-à-dire qu'il fait la demande et nous, on valide. Après, il
+a l'accès. [...] s'il y a un restaurant qui est nouveau aussi, qui
+n'existe pas, il peut le créer dans notre place [...] et nous, on doit
+valider [...] au premier temps, et après, peut-être on fera une
+validation automatique. »* D'où `restaurant_claims` (`backend/db/models.py`) :
+une demande porte soit un `restaurant_id` existant (revendication), soit
+des champs `proposed_*` (nom, adresse, lat/lng, cuisine, téléphone) pour
+une fiche qui n'existe pas encore. Dans les deux cas, la fiche publique
+n'est touchée qu'à l'approbation (`repository.py::approve_claim`) — jamais
+avant. Une fiche créée par approbation prend l'identifiant
+`manuel_<uuid>`, pour ne jamais entrer en collision avec les identifiants
+`osm_n...` de la collecte OSM, et son `local_signal` reste `NULL` (D-012) :
+elle apparaît « Non évaluée » jusqu'au prochain calcul batch, exactement
+comme n'importe quelle fiche incomplète. Aucune validation automatique
+n'est implémentée pour l'instant — conforme à la demande, à rouvrir
+explicitement si le volume de demandes le justifie un jour.
+
+**2. Rattacher `consultations.user_id`, avec un consentement regroupé dans
+les CGU plutôt qu'un opt-in séparé.** Réponse littérale, après que
+l'opt-in granulaire proposé a été explicitement refusé : *« on met ça
+dans le règlement qui coche au début [...] comme sur tous les autres
+sites, en fait. Il y a plein de règlements où personne ne va dire [...]
+donc on va faire pareil, on met dans le règlement au début et après, ça
+passe. »* La colonne `user_id` est ajoutée à `consultations`
+(`_migrate()`, nullable — NULL pour tout visiteur non connecté, qui n'a de
+toute façon pas d'identifiant stable). Le consentement n'est **pas** un
+second opt-in : il est couvert par la case déjà cochée à l'inscription
+(`accepted_terms`), et CGU.jsx / Confidentialite.jsx disclosent
+explicitement cette pratique en toutes lettres plutôt que de la laisser
+implicite dans le seul texte des CGU — engagement pris pour la
+défendabilité du mémoire, au-delà de ce que la conformité minimale
+exigerait.
+
+**Palier gratuit / abonné, porté par la demande, pas par le compte
+client.** `restaurant_claims.abonne` est un booléen distinct de
+`users.role` : un restaurateur gratuit voit un total et quelques noms
+récents (`get_recent_visitor_names`), un restaurateur abonné voit le
+détail complet (`get_visitor_details`) et, plus tard, pourra cibler des
+notifications — non implémenté à ce stade, seule l'analytique existe.
+Distinguer les deux abonnements (client à 3 €, restaurateur envisagé plus
+cher) évite de faire porter au rôle `user/subscriber/admin` une
+signification qu'il n'a pas.
+
+**Le restaurateur ne modifie que le contact, jamais le menu.**
+`update_restaurant_contact` n'autorise que `phone`, `reservation_url`,
+`opening_hours`. Delibéré, pas encore rouvert : laisser un restaurateur
+déclarer lui-même son menu court-circuiterait D-014 (le modèle observe,
+il ne juge pas) — un menu auto-déclaré fausserait le signal menu de la
+même façon qu'un score auto-déclaré fausserait le Local Signal. Les
+réponses aux avis, évoquées dans la demande initiale comme réservées aux
+restaurateurs abonnés, ne sont pas construites dans ce chantier — même
+raison que les notifications ciblées : l'infrastructure (envoi, droit de
+retrait de l'avis d'origine) n'existe pas encore.
+
+**Droits RGPD étendus en conséquence.** `export_user_data` inclut
+désormais les consultations d'un compte ; `delete_user` les délie (`user_id
+= NULL`) plutôt que de les supprimer — même geste que pour les cartes
+soumises (D-039) : la valeur du corpus de fréquentation d'un restaurateur
+ne doit pas dépendre de la durée de vie du compte de chacun de ses
+visiteurs.
+
+### Conséquences
+
+- Nouvelles routes : `POST /api/restaurateur/demande`,
+  `GET /api/restaurateur/statut`, `GET`/`PATCH
+  /api/restaurateur/mon-restaurant`, `GET
+  /api/restaurateur/mon-restaurant/visites` côté restaurateur ;
+  `GET /api/admin/demandes-restaurateur` et les deux routes de décision
+  côté admin — toutes vérifiées par test manuel de bout en bout (demande,
+  validation, tableau de bord, modification de contact, comptage des
+  visites aux deux paliers, export et effacement RGPD) avant ce commit.
+- `Restaurateur.jsx` (web) : formulaire de demande (recherche + revendication,
+  ou proposition avec `LocationPicker` réutilisé tel quel), état d'attente,
+  tableau de bord. Entrée dans le menu déroulant de `Nav.jsx`. `Admin.jsx`
+  gagne un second onglet, « Demandes restaurateur », pour la file de
+  validation.
+- **Mobile non touché par ce chantier.** Contrairement au rattrapage
+  systématique fait en D-052, cette fonctionnalité n'a pas été demandée
+  pour mobile dans ce message — à traiter explicitement si/quand demandé,
+  plutôt que supposé.
+- Reste ouvert, dans l'ordre où la demande initiale les évoquait : réponses
+  aux avis (abonné), notifications ciblées (abonné), page tarif
+  restaurateur dédiée, et la question méthodologique de fond sur un futur
+  droit d'édition du menu par le restaurateur lui-même.
+
+---
+
+## D-056 — Compte restaurateur séparé du compte client dès l'inscription (corrige D-055)
+
+**Date :** 2026-09-23 · **Statut :** actif — **corrige un point de D-055**,
+le reste de D-055 (table `restaurant_claims`, validation humaine,
+distinction d'abonnement, édition limitée au contact, consultations
+rattachées au compte) reste vrai tel quel.
+
+### Contexte
+
+D-055 faisait d'un compte restaurateur un compte client (`role` `user` /
+`subscriber` / `admin`) qui *demandait ensuite* à gérer un restaurant,
+depuis une page accessible dans le menu déroulant du compte. Relecture
+explicite de l'utilisateur en la testant : *« il faut séparer les deux
+comptes, je pense [...] un compte, quand il est créé, il est créé
+directement en tant que restaurateur [...] ça n'a pas la même
+fonctionnalité. »* Un compte client qui « devient » restaurateur en cours
+de route mélangeait deux identités qui n'ont rien en commun
+fonctionnellement — répertoire de restaurants d'un côté, gestion d'un
+restaurant de l'autre.
+
+### Décision
+
+**Un compte restaurateur se crée directement comme tel, jamais par
+requalification.** `users.role` gagne la valeur `'restaurateur'`,
+posée dès l'`INSERT` (`repo.create_restaurateur_account`) — jamais par un
+`set_user_role` a posteriori sur un compte déjà client. La demande de
+revendication/création de fiche est créée dans la **même connexion, avant
+le commit** : un compte restaurateur sans demande jointe ne doit jamais
+exister, même un instant.
+
+**Un formulaire d'inscription à part, pas le formulaire client suivi d'une
+demande.** `SignupRestaurateur.jsx` (web) réunit les champs de compte et la
+recherche/proposition de restaurant en un seul geste, via
+`POST /api/auth/signup-restaurateur`. L'ancienne route
+`POST /api/restaurateur/demande` (créer une demande depuis un compte déjà
+existant) n'est pas supprimée — elle reste utile à un restaurateur qui
+voudrait ajouter une seconde adresse, ou redéposer après un refus — mais
+elle est désormais **réservée aux comptes déjà `role = 'restaurateur'`**
+(403 sinon) : un compte client n'y a plus accès, ni dans l'API ni dans
+l'interface (le lien « Espace restaurateur » du menu déroulant client a été
+retiré).
+
+**Navigation entièrement différente pour un compte restaurateur.**
+`Nav.jsx` : pas de « Découvrir », pas de « S'abonner », pas de « Profil »,
+pas de « Favoris » — aucun n'a de sens pour un compte qui ne cherche pas de
+restaurant mais en gère un. À la place : « Mon restaurant » (le tableau de
+bord), et dans le menu déroulant, seulement « Paramètres » et
+« Se déconnecter ». `Settings.jsx` masque la section Abonnement client pour
+ce rôle — l'abonnement restaurateur est un mécanisme différent
+(`restaurant_claims.abonne`), pas encore une fonctionnalité de ce panneau.
+`App.jsx` redirige automatiquement un compte restaurateur qui atterrit sur
+« discover » (connexion, rechargement de session) vers son tableau de bord.
+
+**Reste identique à D-055 :** la validation humaine de la demande
+(`Admin.jsx`, onglet « Demandes restaurateur »), le palier gratuit/abonné
+porté par `restaurant_claims.abonne` (pas par `role`), l'édition limitée
+aux champs de contact (D-014), et le rattachement de
+`consultations.user_id` avec consentement regroupé dans les CGU.
+
+### Conséquences
+
+- `Restaurateur.jsx` perd son formulaire de demande (déplacé dans
+  `SignupRestaurateur.jsx`) : il ne fait plus que refléter l'état de LA
+  demande créée à l'inscription (en attente / refusée / tableau de bord).
+  Le cas « aucune demande trouvée » (qui ne devrait plus arriver) affiche un
+  message de contact plutôt qu'un formulaire dupliqué.
+- Vérifié de bout en bout dans le navigateur : inscription restaurateur
+  (revendication d'une fiche réelle) → nav strictement restaurateur dès la
+  création → validation admin → tableau de bord déverrouillé, avant ce
+  commit.
+- **Deux comptes de démonstration créés pour tester la suite (avis,
+  fréquentation, future messagerie ciblée)** : `nour.restaurateur.demo@example.com`
+  (non abonné, restaurant « La Table de Nour ») et
+  `marco.restaurateur.demo@example.com` (abonné, restaurant « Osteria
+  Bellini »), mot de passe `motdepasse123` pour les deux. Chacun possède un
+  restaurant `manuel_...` (local_signal `NULL`, comme toute fiche non
+  encore scorée — D-012), une dizaine de consultations simulées (mélange de
+  comptes clients identifiés et de visiteurs anonymes, étalées sur les dix
+  derniers jours) et 2-3 avis. Cinq comptes clients de démonstration
+  (`*.demo@example.com`) portent ces visites et avis. **Les notifications
+  ciblées elles-mêmes ne sont pas construites** — cette donnée sert à
+  peupler le tableau de bord existant (fréquentation, avis), pas à tester
+  un envoi qui n'existe pas encore.
+- Mobile toujours non touché — même remarque que D-055.
+
+---
+
+## D-057 — Statut d'abonnement restaurateur visible, et sa page de tarifs
+
+**Date :** 2026-09-23 · **Statut :** actif
+
+### Contexte
+
+Retour utilisateur après avoir testé D-056 en conditions réelles : *« il
+faut que ça se voit aussi. [...] il faut que ça ait écrit restaurateur.
+Abonné ou pas abonné. Et il leur faut leur page d'abonnement aussi [...]
+avec lister bien sûr les différents trucs qu'ils peuvent faire. »* Le badge
+de compte (`Nav.jsx`) n'affichait que « Restaurateur », sans dire si la
+formule payante était active, et aucune page n'exposait les deux paliers
+— contrairement au compte client (`Pricing.jsx`).
+
+À la même occasion, un vrai bug a été signalé (voir « Problème connexe » ci-dessous).
+
+### Décision
+
+**Le statut d'abonnement restaurateur voyage avec le compte.**
+`UserResponse` gagne `restaurateur_abonne` (`Optional[bool]`), calculé dans
+`_to_user_response` en relisant `restaurant_claims.abonne` de la demande
+active — uniquement pour `role = "restaurateur"`, `None` sinon. Choix
+délibéré de le poser côté serveur plutôt que de multiplier les appels côté
+client : c'est la même logique que `role` lui-même, disponible partout où
+le compte l'est (badge, garde d'affichage) sans requête supplémentaire.
+`Nav.jsx` affiche désormais « Restaurateur · Abonné » ou
+« Restaurateur · Non abonné ».
+
+**`PricingRestaurateur.jsx`, même gabarit que `Pricing.jsx`.** Grille à
+deux formules (gratuit / 10 € — placeholder, même réserve que le tarif
+client), bouton **volontairement bloqué** (même décision que D-049 : aucun
+processeur de paiement branché, aucun clic ne doit donner l'illusion de
+fonctionner). Les routes de bascule (`POST /api/restaurateur/abonnement`
+et son pendant `/annuler`) existent côté serveur — même schéma que
+`/api/subscribe` côté client — mais ne sont appelées par aucun bouton visible ;
+elles resservent le jour où un vrai paiement existe, ou pour des comptes
+de démonstration créés en base directement.
+
+### Problème connexe (pas une décision, un correctif)
+
+Le retour utilisateur venait avec une capture d'écran : « Impossible de
+charger » sur le tableau de bord restaurateur ET sur l'onglet admin des
+demandes. Cause identifiée : le serveur backend partagé (port 8000,
+lancé par une autre session, sans `--reload`) tournait encore sur le code
+d'avant D-055/D-056 — toutes les routes `/api/restaurateur/*` et
+`/api/admin/demandes-restaurateur` lui étaient inconnues (404). Vérifié
+en reproduisant l'erreur avec une instance de test isolée sur le port 8002
+pointée sur l'ancien code, puis en confirmant que le code actuel fonctionne
+une fois servi. **Non résolu par cette session** : redémarrer le processus
+partagé du port 8000 a été refusé par le mode automatique (appartient à une
+autre session) — signalé à l'utilisateur plutôt que contourné.
+
+### Conséquences
+
+- Vérifié dans le navigateur aux deux états (`nour.restaurateur.demo`,
+  non abonné ; `marco.restaurateur.demo`, abonné) : badge, lien « S'abonner »
+  dans la nav (masqué une fois abonné, même logique que côté client), et
+  les deux rendus de `PricingRestaurateur.jsx`.
+- Le serveur partagé du port 8000 doit être redémarré (par son propriétaire,
+  ou avec l'autorisation explicite de l'utilisateur) pour que tout ce
+  chantier (D-055 à D-057) soit réellement utilisable hors de cette session.
+  **Résolu** : redémarré avec l'accord explicite de l'utilisateur
+  (« arrete tout et relance »), désormais avec `--reload`.
+
+---
+
+## D-058 — Statut restaurateur visible et filtrable dans la liste admin
+
+**Date :** 2026-09-23 · **Statut :** actif
+
+### Contexte
+
+Retour utilisateur : *« pour l'admin, il doit avoir la liste des restos et
+en haut, il voit les restos qui sont validés puis les restos en attente
+[...] il doit avoir des filtres [...] resto validé, resto en attente et
+resto sans restaurateur. Comme ça il voit toute la liste. »* L'onglet
+« Demandes restaurateur » (D-055) ne montre que la file en attente ; il
+manquait une vue sur l'ensemble des 10 000+ restaurants avec leur statut
+restaurateur, pour répondre à « qui a déjà un restaurateur, qui est en
+cours, qui n'a personne ».
+
+### Décision
+
+**Le statut restaurateur devient une propriété calculée de chaque
+restaurant, jamais stockée.** Trois états mutuellement exclusifs, dérivés
+de `restaurants.owner_user_id` et de `restaurant_claims.status` :
+`valide` (fiche possédée), `en_attente` (demande déposée, pas tranchée),
+`sans` (ni l'un ni l'autre). Un seul jeu d'expressions SQL
+(`_RESTAURATEUR_VALIDE`, `_RESTAURATEUR_EN_ATTENTE`, `_RESTAURATEUR_SANS`,
+`backend/db/repository.py`) sert à la fois de clause de filtre et de clé
+de tri — les deux ne peuvent pas diverger puisque c'est littéralement le
+même texte SQL.
+
+**Le calcul est OPT-IN, pas systématique.** `get_restaurants()` sert aussi
+`/api/restaurants/recherche` (10 résultats) et `/api/cuisines` (TOUTE la
+base, à chaque chargement de Découvrir) — deux chemins chauds qui n'ont
+rien à faire de ce statut. Lui payer une sous-requête `EXISTS` par ligne
+aurait ralenti l'appli pour tout le monde pour une fonctionnalité que
+seul l'admin utilise. `avec_statut_restaurateur=False` par défaut ;
+`/api/admin/restaurants` est le seul appelant qui le passe à `True`.
+
+**Sans filtre, l'ordre reste utile.** `ORDER BY restaurateur_rang ASC,
+local_signal DESC` place les fiches validées en tête, puis les demandes en
+attente, puis le reste — exactement ce qu'un admin doit pouvoir repérer
+sans activer un filtre, conforme à la demande (« en haut, il voit les
+restos qui sont validés puis les restos en attente »). Les trois boutons
+de filtre (`Admin.jsx`) restreignent ensuite à un seul statut si besoin.
+
+**Affichage : un badge sur `RestaurantCard`, pas un nouveau composant.**
+`restaurant.restaurateur_statut` n'existe que sur les réponses de
+`/api/admin/restaurants` — la carte l'ignore silencieusement partout
+ailleurs (Découvrir, favoris n'ont jamais ce champ). Badge coin bas-droit
+pour ne pas entrer en collision avec le rang (haut-gauche), la distance
+(bas-gauche) et « Meilleur profil local » (haut-droit) — collision réelle
+sinon, puisque le premier restaurant listé est désormais souvent validé.
+
+### Conséquences
+
+- `repo.get_restaurants`/`count_restaurants` gagnent `restaurateur_statut`
+  (filtre) et `avec_statut_restaurateur` (calcul) ; `/api/admin/restaurants`
+  gagne le paramètre `restaurateur_statut`.
+- Vérifié directement en base (les trois filtres et l'ordre par défaut)
+  avant ce commit ; vérification navigateur non refaite ici, le motif
+  étant le même schéma déjà validé pour D-055/D-056/D-057.
+- Aucun changement pour `/api/restaurants` (recherche géographique,
+  utilisateur final) ni `/api/cuisines` : ce chantier est strictement
+  admin.
+

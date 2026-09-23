@@ -766,6 +766,30 @@ img {
   color: var(--color-on-brand);
 }
 
+/* Statut restaurateur (D-057, vue admin uniquement — `RestaurantCard`
+   ignore ce champ partout ailleurs, il n'existe que sur les réponses de
+   `/api/admin/restaurants`). Coin bas-droit : haut-gauche porte le rang,
+   bas-gauche la distance, haut-droit « Meilleur profil local ». */
+.card__restaurateur {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 1;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  backdrop-filter: blur(14px) saturate(180%);
+}
+.card__restaurateur--valide {
+  background: var(--color-local-soft);
+  color: var(--color-local);
+}
+.card__restaurateur--en_attente {
+  background: var(--color-mixed-soft);
+  color: var(--color-mixed);
+}
+
 /* Le verdict remonte sur le visuel : c'est l'information la plus distinctive
    de la carte, elle ne doit pas se noyer dans le pied. */
 .card__verdict {

@@ -74,9 +74,29 @@ function Section({ titre, colors, children }) {
   );
 }
 
+// Pas de pied de page sur mobile (D-037) : ces liens vivent ici, seul
+// endroit où un compte — connecté ou non — passe forcément. Miroir du pied
+// de page web (À propos / Contact / Faire un don).
+function LiensBasDePage({ onGoToAbout, onGoToContact, onGoToDons, colors }) {
+  return (
+    <View style={s.piedLiens}>
+      <Pressable onPress={onGoToAbout} style={s.piedLien}>
+        <Text style={[s.piedLienTexte, { color: colors.textFaint }]}>À propos</Text>
+      </Pressable>
+      <Pressable onPress={onGoToContact} style={s.piedLien}>
+        <Text style={[s.piedLienTexte, { color: colors.textFaint }]}>Contact</Text>
+      </Pressable>
+      <Pressable onPress={onGoToDons} style={s.piedLien}>
+        <Text style={[s.piedLienTexte, { color: colors.textFaint }]}>Faire un don</Text>
+      </Pressable>
+    </View>
+  );
+}
+
 export default function CompteScreen({
   user, onLogin, onSignup, onLogout, onBack, motif, modeDepart,
   onGoToCGU, onGoToConfidentialite, onGoToPricing, onUnsubscribe, onDeleteAccount,
+  onGoToAbout, onGoToContact, onGoToDons,
 }) {
   const colors = useColors();
   const entree = useEntree(60);
@@ -299,6 +319,13 @@ export default function CompteScreen({
           <View style={{ marginTop: spacing.xl }}>
             <Button title="Se déconnecter" variant="ghost" icon="log-out" onPress={onLogout} />
           </View>
+
+          <LiensBasDePage
+            onGoToAbout={onGoToAbout}
+            onGoToContact={onGoToContact}
+            onGoToDons={onGoToDons}
+            colors={colors}
+          />
         </Animated.View>
       </ScrollView>
     );
@@ -425,6 +452,13 @@ export default function CompteScreen({
                 : "Pas encore de compte ? Créer un compte"}
             </Text>
           </Pressable>
+
+          <LiensBasDePage
+            onGoToAbout={onGoToAbout}
+            onGoToContact={onGoToContact}
+            onGoToDons={onGoToDons}
+            colors={colors}
+          />
         </View>
         </Animated.View>
       </ScrollView>
@@ -488,6 +522,13 @@ const s = StyleSheet.create({
   section: { marginTop: spacing.xl, paddingTop: spacing.lg, borderTopWidth: 1 },
   sectionTitre: { fontSize: 16, fontWeight: "700", marginBottom: spacing.sm },
   sectionAide: { fontSize: 12, lineHeight: 17 },
+
+  piedLiens: {
+    flexDirection: "row", justifyContent: "center", gap: spacing.lg,
+    marginTop: spacing.xl,
+  },
+  piedLien: { minHeight: 44, justifyContent: "center" },
+  piedLienTexte: { fontSize: 12, fontWeight: "500" },
 
   lien: { fontSize: 14, fontWeight: "600" },
 });

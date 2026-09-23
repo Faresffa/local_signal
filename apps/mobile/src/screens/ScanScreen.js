@@ -2,64 +2,114 @@
 //
 // Scan de carte : la fonctionnalité centrale du projet (D-004).
 //
-// L'utilisateur est debout devant le restaurant. Il photographie la carte
-// affichée en vitrine et obtient une réponse en quelques secondes, sans qu'un
-// seul avis ne soit nécessaire. C'est la réponse au paradoxe de l'invisibilité
-// (D-001), et ce qui justifie une application native plutôt qu'un site.
+// LIÉ À UN RESTAURANT DÈS L'ENVOI (retour utilisateur : « on ne saura même
+// pas c'est quel restaurant, c'est nul pour l'instant »). L'écran demandait
+// jusqu'ici une photo sans jamais savoir de quel restaurant elle venait :
+// l'analyse s'affichait puis se perdait, sans rejoindre le corpus structuré
+// qui est l'actif du projet (CLAUDE.md §3). Le parcours est maintenant :
+// chercher le restaurant → photographier sa carte → avis facultatif, même
+// mécanisme que `AjouterCarte.jsx` côté web (D-038, D-039), auquel cet écran
+// s'aligne.
+//
+// LA RECHERCHE PAR NOM EST VOLONTAIRE, PAS PAR POSITION. L'utilisateur est
+// debout devant le restaurant, souvent avec un GPS imprécis en intérieur ; il
+// connaît le nom affiché sur la devanture. `GET /api/restaurants/recherche`
+// est public et ne porte aucune donnée sensible (backend/main.py).
+//
+// UN RESTAURANT INTROUVABLE N'A PAS DE REPLI VERS UN ENVOI ANONYME. C'est un
+// choix délibéré : la version précédente de cet écran était précisément cet
+// envoi anonyme, et c'est ce que ce chantier corrige. Un restaurant manquant
+// de la base reste un trou à combler autrement (import OSM), pas une carte
+// scannée à laisser sans rattache.
 
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   ActivityIndicator, Image, Pressable, ScrollView,
-  StyleSheet, Text, View,
+  StyleSheet, Text, TextInput, View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
-import { scanMenu } from "../api";
-import { Button, Verdict } from "../components/ui";
+import { envoyerCarte, laisserAvis, rechercherRestaurants } from "../api";
+import { Button } from "../components/ui";
 import { radius, spacing, useColors } from "../theme";
 
-// Seuils du verdict menu. PROVISOIRES : à caler sur le jeu labellisé (D-006).
-const SEUIL_LOCAL = 0.7;
-const SEUIL_MIXTE = 0.45;
-
-function verdictMenu(score) {
-  if (score >= SEUIL_LOCAL) return { label: "Profil local", tone: "local" };
-  if (score >= SEUIL_MIXTE) return { label: "Profil mixte", tone: "mixed" };
-  return { label: "Profil touristique", tone: "tourist" };
+function Etoiles({ note, onChange, colors }) {
+  return (
+    <View style={{ flexDirection: "row", gap: 4 }}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Pressable
+          key={n}
+          onPress={() => onChange(note === n ? null : n)}
+          accessibilityRole="button"
+          accessibilityLabel={`${n} sur 5`}
+          hitSlop={8}
+          style={{ padding: 3 }}
+        >
+          <Feather
+            name="star"
+            size={24}
+            color={n <= (note || 0) ? colors.mixed : colors.borderStrong}
+          />
+        </Pressable>
+      ))}
+    </View>
+  );
 }
 
-/** Traduit les observations de la carte en phrases lisibles (D-009). */
-function explications(obs, details) {
-  const out = [];
-  if (details?.cuisine_count === 1 && details?.dish_count) {
-    out.push(`Carte resserrée : ${details.dish_count} plats, une seule cuisine.`);
-  } else if (details?.cuisine_count > 2) {
-    out.push(`Carte dispersée : ${details.cuisine_count} cuisines différentes.`);
-  }
-  if (details?.language_count >= 4) {
-    out.push(`Carte traduite en ${details.language_count} langues.`);
-  }
-  if (details?.has_tourist_menu) out.push("Propose une formule « menu touristique ».");
-  if (details?.has_dish_photos) out.push("La carte affiche des photos des plats.");
-  if (obs?.vernacular_ratio >= 0.6) out.push("Les plats gardent leurs noms d'origine.");
-  return out;
-}
-
-export default function ScanScreen() {
+export default function ScanScreen({ user }) {
   const colors = useColors();
 
+  // --- Étape 1 : quel restaurant ---------------------------------------
+  const [recherche, setRecherche] = useState("");
+  const [resultats, setResultats] = useState([]);
+  const [recherchant, setRecherchant] = useState(false);
+  const [restaurant, setRestaurant] = useState(null);
+  const rechercheId = useRef(0);
+
+  useEffect(() => {
+    const terme = recherche.trim();
+    if (terme.length < 2) { setResultats([]); return; }
+
+    const id = ++rechercheId.current;
+    setRecherchant(true);
+    const t = setTimeout(() => {
+      rechercherRestaurants(terme)
+        .then((d) => { if (rechercheId.current === id) setResultats(d.restaurants ?? []); })
+        .catch(() => { if (rechercheId.current === id) setResultats([]); })
+        .finally(() => { if (rechercheId.current === id) setRecherchant(false); });
+    }, 300);
+    return () => clearTimeout(t);
+  }, [recherche]);
+
+  // --- Étape 2 : photo ----------------------------------------------------
   const [photo, setPhoto] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [openDetail, setOpenDetail] = useState(false);
+
+  // --- Étape 3 : avis facultatif -------------------------------------------
+  const [avisOuvert, setAvisOuvert] = useState(false);
+  const [note, setNote] = useState(null);
+  const [texteAvis, setTexteAvis] = useState("");
+  const [envoiAvis, setEnvoiAvis] = useState(false);
+  const [avisEnvoye, setAvisEnvoye] = useState(false);
+
+  function changerRestaurant() {
+    setRestaurant(null);
+    setPhoto(null);
+    setResult(null);
+    setError(null);
+    setAvisOuvert(false);
+    setAvisEnvoye(false);
+    setNote(null);
+    setTexteAvis("");
+  }
 
   async function lancer(depuisCamera) {
     setError(null);
     setResult(null);
-    setOpenDetail(false);
 
     const permission = depuisCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
@@ -88,7 +138,7 @@ export default function ScanScreen() {
     setLoading(true);
 
     try {
-      setResult(await scanMenu(uri));
+      setResult(await envoyerCarte(restaurant.id, uri));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -96,22 +146,31 @@ export default function ScanScreen() {
     }
   }
 
-  // Le résultat se révèle au lieu d'apparaître : après six secondes d'attente,
-  // une apparition brutale se lit comme un rechargement d'écran plutôt que
-  // comme une réponse. La révélation dit « voilà ce que j'ai trouvé ».
-  const reveal = useRef(new Animated.Value(0)).current;
+  async function publierAvis() {
+    if (!note && !texteAvis.trim()) return;
+    setEnvoiAvis(true);
+    try {
+      await laisserAvis(restaurant.id, { rating: note, text: texteAvis.trim() || null });
+      setAvisEnvoye(true);
+      setAvisOuvert(false);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setEnvoiAvis(false);
+    }
+  }
 
+  // Le résultat se révèle au lieu d'apparaître : après plusieurs secondes
+  // d'attente, une apparition brutale se lit comme un rechargement d'écran.
+  const reveal = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (!result) { reveal.setValue(0); return; }
     const animation = Animated.timing(reveal, {
-      toValue: 1,
-      duration: 480,
-      useNativeDriver: true,
+      toValue: 1, duration: 480, useNativeDriver: true,
     });
     animation.start();
     return () => animation.stop();
   }, [result, reveal]);
-
   const styleReveal = {
     opacity: reveal,
     transform: [
@@ -120,47 +179,87 @@ export default function ScanScreen() {
     ],
   };
 
-  const score = result?.menu_score;
-  const v = score != null ? verdictMenu(score) : null;
-  const raisons = result ? explications(result.observations, result.details) : [];
+  // --- Étape 1 : pas encore de restaurant choisi ---------------------------
+  if (!restaurant) {
+    return (
+      <ScrollView contentContainerStyle={s.page} keyboardShouldPersistTaps="handled">
+        <Text style={[s.title, { color: colors.text }]}>Scanner une carte</Text>
+        <Text style={[s.lede, { color: colors.textMuted }]}>
+          Cherchez d'abord le restaurant — la photo rejoint sa fiche, et
+          alimente son score dès l'envoi.
+        </Text>
 
+        <View style={[s.recherche, { borderColor: colors.borderStrong }]}>
+          <Feather name="search" size={16} color={colors.textFaint} />
+          <TextInput
+            value={recherche}
+            onChangeText={setRecherche}
+            placeholder="Nom du restaurant"
+            placeholderTextColor={colors.textFaint}
+            style={[s.rechercheInput, { color: colors.text }]}
+            autoCorrect={false}
+          />
+        </View>
+
+        {recherchant && <ActivityIndicator color={colors.brand} style={{ marginTop: spacing.md }} />}
+
+        {!recherchant && recherche.trim().length >= 2 && resultats.length === 0 && (
+          <Text style={[s.lede, { color: colors.textFaint, marginTop: spacing.md }]}>
+            Aucun restaurant trouvé pour « {recherche.trim()} ». Vérifiez
+            l'orthographe, ou repérez-le d'abord depuis « Découvrir ».
+          </Text>
+        )}
+
+        <View style={{ marginTop: spacing.sm }}>
+          {resultats.map((r) => (
+            <Pressable
+              key={r.id}
+              onPress={() => setRestaurant(r)}
+              style={[s.option, { borderColor: colors.border }]}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={[s.optionNom, { color: colors.text }]}>{r.name}</Text>
+                <Text style={[s.optionMeta, { color: colors.textMuted }]}>
+                  {[r.cuisine_label, r.address].filter(Boolean).join(" · ")}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={18} color={colors.textFaint} />
+            </Pressable>
+          ))}
+        </View>
+      </ScrollView>
+    );
+  }
+
+  // --- Étapes 2 et 3 : restaurant choisi, photo puis avis ------------------
   return (
     <ScrollView contentContainerStyle={s.page}>
-      <Text style={[s.title, { color: colors.text }]}>Scanner une carte</Text>
+      <Pressable onPress={changerRestaurant} style={s.back} accessibilityRole="button">
+        <Feather name="arrow-left" size={17} color={colors.brand} />
+        <Text style={[s.backText, { color: colors.brand }]}>Changer de restaurant</Text>
+      </Pressable>
+
+      <Text style={[s.title, { color: colors.text }]}>{restaurant.name}</Text>
       <Text style={[s.lede, { color: colors.textMuted }]}>
-        Photographiez la carte affichée en vitrine. Aucun avis n'est nécessaire
-        pour obtenir une évaluation.
+        Photographiez la carte affichée en vitrine. Aucun avis n'est
+        nécessaire pour contribuer.
       </Text>
 
-      <View style={s.actions}>
-        <Button
-          title="Prendre une photo"
-          icon="camera"
-          onPress={() => lancer(true)}
-          disabled={loading}
-        />
-        <Button
-          title="Choisir une image"
-          icon="image"
-          variant="ghost"
-          onPress={() => lancer(false)}
-          disabled={loading}
-        />
-      </View>
+      {!result && (
+        <View style={s.actions}>
+          <Button title="Prendre une photo" icon="camera" onPress={() => lancer(true)} disabled={loading} />
+          <Button title="Choisir une image" icon="image" variant="ghost" onPress={() => lancer(false)} disabled={loading} />
+        </View>
+      )}
 
       {photo && (
-        <Image
-          source={{ uri: photo }}
-          style={[s.preview, { backgroundColor: colors.skeleton }]}
-        />
+        <Image source={{ uri: photo }} style={[s.preview, { backgroundColor: colors.skeleton }]} />
       )}
 
       {loading && (
         <View style={s.loading}>
           <ActivityIndicator color={colors.brand} />
-          <Text style={[s.loadingText, { color: colors.textMuted }]}>
-            Lecture de la carte en cours
-          </Text>
+          <Text style={[s.loadingText, { color: colors.textMuted }]}>Envoi et lecture en cours</Text>
         </View>
       )}
 
@@ -171,123 +270,116 @@ export default function ScanScreen() {
         </View>
       )}
 
-      {result && !result.readable && (
-        <Animated.View
-          style={[s.card, styleReveal, { backgroundColor: colors.surface, borderColor: colors.border }]}
-        >
-          <Text style={[s.cardTitle, { color: colors.text }]}>Carte illisible</Text>
-          <Text style={[s.body, { color: colors.textMuted }]}>{result.notes}</Text>
-          <Text style={[s.body, { color: colors.textMuted, marginTop: 6 }]}>
-            Rapprochez-vous, évitez les reflets et cadrez la carte entière.
-          </Text>
-        </Animated.View>
-      )}
-
-      {result?.readable && v && (
+      {result && (
         <Animated.View style={[s.card, styleReveal, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Verdict tone={v.tone} label={v.label} size="lg" />
-
-          <View style={{ marginTop: spacing.md, gap: 7 }}>
-            {raisons.map((r) => (
-              <View key={r} style={s.raisonRow}>
-                <View style={[s.dot, { backgroundColor: colors.brand }]} />
-                <Text style={[s.body, { color: colors.text, flex: 1 }]}>{r}</Text>
-              </View>
-            ))}
+          <View style={s.okRow}>
+            <Feather name="check-circle" size={18} color={colors.local} />
+            <Text style={[s.body, { color: colors.text, flex: 1 }]}>{result.message}</Text>
           </View>
 
-          <Pressable
-            onPress={() => setOpenDetail((o) => !o)}
-            accessibilityRole="button"
-            style={{ marginTop: spacing.md, minHeight: 30, justifyContent: "center" }}
-          >
-            <Text style={[s.link, { color: colors.brand }]}>
-              {openDetail ? "Masquer le détail" : "Pourquoi ?"}
+          {result.analysee ? (
+            <Text style={[s.body, { color: colors.textMuted, marginTop: 6 }]}>
+              Carte lue : signal de {Math.round((result.analyse?.menu_score ?? 0) * 100)} / 100.
+              {result.analyse?.readable === false
+                && " Le texte était partiellement illisible — la photo est conservée et sera relue."}
             </Text>
-          </Pressable>
+          ) : (
+            <Text style={[s.body, { color: colors.textMuted, marginTop: 6 }]}>
+              La lecture automatique n'a pas abouti cette fois. La photo est
+              enregistrée et sera relue : rien n'est perdu.
+            </Text>
+          )}
 
-          {openDetail && (
-            <View style={[s.detail, { borderTopColor: colors.border }]}>
-              {/* Le score chiffré n'apparaît qu'ici, volontairement (D-009). */}
-              <Ligne label="Signal menu" value={`${Math.round(score * 100)} / 100`} />
-              <Ligne
-                label="Cuisines"
-                value={result.observations.cuisines.join(", ") || "non détectée"}
-              />
-              <Ligne label="Plats" value={String(result.observations.dish_count)} />
-              <Ligne
-                label="Langues"
-                value={result.observations.languages.join(", ") || "non détectée"}
-              />
-              <Ligne
-                label="Noms d'origine"
-                value={`${Math.round(result.observations.vernacular_ratio * 100)} %`}
-              />
-              <Text style={[s.note, { color: colors.textFaint }]}>
-                Pondérations provisoires, non encore calibrées sur un jeu de
-                données labellisé.
-              </Text>
+          {/* AVIS FACULTATIF, RÉSERVÉ À UN COMPTE CONNECTÉ — même règle que
+              Avis.js sur la fiche : un avis anonyme ne serait ni modifiable
+              ni supprimable par son auteur. */}
+          {user && !avisEnvoye && (
+            <View style={{ marginTop: spacing.lg, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: colors.border }}>
+              {!avisOuvert ? (
+                <Button
+                  title="Ajouter un avis (facultatif)"
+                  icon="star"
+                  variant="ghost"
+                  onPress={() => setAvisOuvert(true)}
+                />
+              ) : (
+                <View style={{ gap: spacing.sm }}>
+                  <Etoiles note={note} onChange={setNote} colors={colors} />
+                  <TextInput
+                    value={texteAvis}
+                    onChangeText={setTexteAvis}
+                    placeholder="Ce que vous avez mangé, l'accueil…"
+                    placeholderTextColor={colors.textFaint}
+                    multiline
+                    style={[s.avisInput, { color: colors.text, borderColor: colors.border }]}
+                  />
+                  <Button
+                    title={envoiAvis ? "Publication…" : "Publier l'avis"}
+                    onPress={publierAvis}
+                    disabled={envoiAvis || (!note && !texteAvis.trim())}
+                  />
+                </View>
+              )}
             </View>
           )}
+
+          {avisEnvoye && (
+            <Text style={[s.body, { color: colors.local, marginTop: spacing.md }]}>
+              Avis publié — merci.
+            </Text>
+          )}
+
+          <Pressable onPress={changerRestaurant} style={{ marginTop: spacing.lg, minHeight: 44, justifyContent: "center" }}>
+            <Text style={[s.link, { color: colors.brand }]}>Scanner un autre restaurant</Text>
+          </Pressable>
         </Animated.View>
       )}
     </ScrollView>
   );
 }
 
-function Ligne({ label, value }) {
-  const colors = useColors();
-  return (
-    <View style={s.ligne}>
-      <Text style={[s.ligneLabel, { color: colors.textMuted }]}>{label}</Text>
-      <Text style={[s.ligneValue, { color: colors.text }]}>{value}</Text>
-    </View>
-  );
-}
-
 const s = StyleSheet.create({
   page: { padding: spacing.lg, paddingBottom: spacing.xxxl },
-  title: { fontSize: 28, fontWeight: "700", letterSpacing: -0.5 },
+  title: { fontSize: 26, fontWeight: "700", letterSpacing: -0.4 },
   lede: { fontSize: 15, lineHeight: 21, marginTop: 4, marginBottom: spacing.lg },
+
+  back: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: spacing.md, minHeight: 44 },
+  backText: { fontSize: 15, fontWeight: "600" },
+
+  recherche: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    paddingHorizontal: 13, paddingVertical: 11,
+    borderWidth: 1, borderRadius: radius.sm,
+  },
+  rechercheInput: { flex: 1, fontSize: 15, padding: 0 },
+
+  option: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    paddingVertical: 12, borderBottomWidth: 1,
+  },
+  optionNom: { fontSize: 15, fontWeight: "600" },
+  optionMeta: { fontSize: 12, marginTop: 2 },
 
   actions: { gap: spacing.sm },
 
-  preview: {
-    width: "100%",
-    height: 210,
-    borderRadius: radius.md,
-    marginTop: spacing.lg,
-  },
+  preview: { width: "100%", height: 210, borderRadius: radius.md, marginTop: spacing.lg },
 
   loading: { alignItems: "center", gap: spacing.sm, marginTop: spacing.lg },
   loadingText: { fontSize: 14 },
 
   error: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "flex-start",
-    padding: spacing.md,
-    borderRadius: radius.sm,
-    marginTop: spacing.lg,
+    flexDirection: "row", gap: 10, alignItems: "flex-start",
+    padding: spacing.md, borderRadius: radius.sm, marginTop: spacing.lg,
   },
   errorText: { flex: 1, fontSize: 14, lineHeight: 19 },
 
-  card: {
-    marginTop: spacing.lg,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderRadius: radius.md,
-  },
-  cardTitle: { fontSize: 17, fontWeight: "600", marginBottom: 6 },
+  card: { marginTop: spacing.lg, padding: spacing.md, borderWidth: 1, borderRadius: radius.md },
+  okRow: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
   body: { fontSize: 14, lineHeight: 19 },
-
-  raisonRow: { flexDirection: "row", gap: 9 },
-  dot: { width: 5, height: 5, borderRadius: 3, marginTop: 7 },
   link: { fontSize: 14, fontWeight: "600" },
 
-  detail: { marginTop: spacing.md, paddingTop: spacing.md, borderTopWidth: 1, gap: 7 },
-  ligne: { flexDirection: "row", justifyContent: "space-between", gap: spacing.md },
-  ligneLabel: { fontSize: 13 },
-  ligneValue: { fontSize: 13, fontWeight: "600" },
-  note: { fontSize: 12, lineHeight: 17, marginTop: spacing.sm },
+  avisInput: {
+    borderWidth: 1, borderRadius: radius.sm, padding: spacing.sm,
+    minHeight: 70, fontSize: 14, textAlignVertical: "top",
+  },
 });

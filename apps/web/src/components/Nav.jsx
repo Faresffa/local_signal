@@ -6,7 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  CaretDown, ForkKnife, Gear, Heart, Moon, SignOut, Sun, User,
+  CaretDown, ForkKnife, Gear, Heart, Moon, SignOut, Storefront, Sun, User,
 } from "@phosphor-icons/react";
 
 import { useTheme } from "../lib/hooks";
@@ -17,6 +17,7 @@ const ROLE_LABEL = {
   admin: "Admin",
   subscriber: "Abonné",
   user: "Compte gratuit",
+  restaurateur: "Restaurateur",
 };
 
 export default function Nav({ page, onNavigate, user, onLogout }) {
@@ -24,6 +25,10 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
   const [stuck, setStuck] = useState(false);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const menuRef = useRef(null);
+  // COMPTE SÉPARÉ, NAVIGATION SÉPARÉE (D-055 v2) : un restaurateur n'a
+  // aucune des fonctionnalités client (recherche, abonnement, favoris),
+  // donc aucun des liens qui y mènent n'a de sens pour lui.
+  const estRestaurateur = user?.role === "restaurateur";
 
   // La bordure de la barre n'apparaît qu'une fois la page défilée. Un
   // IntersectionObserver sur une sentinelle plutôt qu'un écouteur de scroll,
@@ -65,7 +70,7 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
       <nav className="shell nav__inner" aria-label="Navigation principale">
         <button
           className="nav__brand"
-          onClick={() => onNavigate("discover")}
+          onClick={() => onNavigate(estRestaurateur ? "restaurateur" : "discover")}
           aria-label="Local Signal, retour à l'accueil"
         >
           <span className="nav__mark" aria-hidden="true">
@@ -74,13 +79,26 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
           Local Signal
         </button>
 
-        <button
-          className="nav__link"
-          aria-current={page === "discover" ? "page" : undefined}
-          onClick={() => onNavigate("discover")}
-        >
-          Découvrir
-        </button>
+        {!estRestaurateur && (
+          <button
+            className="nav__link"
+            aria-current={page === "discover" ? "page" : undefined}
+            onClick={() => onNavigate("discover")}
+          >
+            Découvrir
+          </button>
+        )}
+
+        {estRestaurateur && (
+          <button
+            className="nav__link"
+            aria-current={page === "restaurateur" ? "page" : undefined}
+            onClick={() => onNavigate("restaurateur")}
+          >
+            <Storefront size={15} weight="bold" style={{ verticalAlign: "-2px", marginRight: 4 }} />
+            Mon restaurant
+          </button>
+        )}
 
         {/* Réservé aux comptes admin — l'API refuse de toute façon (403) à
             quiconque d'autre, ce lien n'est que du confort de navigation. */}
@@ -107,6 +125,18 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
           </button>
         )}
 
+        {/* Même logique côté restaurateur, sur un abonnement différent
+            (`restaurant_claims.abonne`, D-056) — invisible une fois abonné. */}
+        {estRestaurateur && !user.restaurateur_abonne && (
+          <button
+            className="nav__link"
+            aria-current={page === "pricing-restaurateur" ? "page" : undefined}
+            onClick={() => onNavigate("pricing-restaurateur")}
+          >
+            S'abonner
+          </button>
+        )}
+
         <button
           className="nav__theme"
           onClick={toggle}
@@ -128,31 +158,48 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
               <User size={16} weight="bold" />
               <span className="nav__profileName">{user.name || user.email}</span>
               <span className={`nav__role nav__role--${user.role}`}>
-                {ROLE_LABEL[user.role] || ROLE_LABEL.user}
+                {estRestaurateur
+                  ? `Restaurateur · ${user.restaurateur_abonne ? "Abonné" : "Non abonné"}`
+                  : ROLE_LABEL[user.role] || ROLE_LABEL.user}
               </span>
               <CaretDown size={11} weight="bold" className="nav__profileCaret" />
             </button>
 
             {menuOuvert && (
               <div className="nav__dropdown" role="menu">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="nav__dropdownItem"
-                  onClick={() => aller("profil")}
-                >
-                  <User size={16} weight="light" />
-                  Profil
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="nav__dropdownItem"
-                  onClick={() => aller("favoris")}
-                >
-                  <Heart size={16} weight="light" />
-                  Restaurants favoris
-                </button>
+                {!estRestaurateur && (
+                  <>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="nav__dropdownItem"
+                      onClick={() => aller("profil")}
+                    >
+                      <User size={16} weight="light" />
+                      Profil
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="nav__dropdownItem"
+                      onClick={() => aller("favoris")}
+                    >
+                      <Heart size={16} weight="light" />
+                      Restaurants favoris
+                    </button>
+                  </>
+                )}
+                {estRestaurateur && (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className="nav__dropdownItem"
+                    onClick={() => aller("pricing-restaurateur")}
+                  >
+                    <Storefront size={16} weight="light" />
+                    Abonnement
+                  </button>
+                )}
                 <button
                   type="button"
                   role="menuitem"

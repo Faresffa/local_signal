@@ -20,6 +20,9 @@ import Admin from "./pages/Admin";
 import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
 import Favoris from "./pages/Favoris";
+import Restaurateur from "./pages/Restaurateur";
+import SignupRestaurateur from "./pages/SignupRestaurateur";
+import PricingRestaurateur from "./pages/PricingRestaurateur";
 import Settings from "./pages/Settings";
 import CGU from "./pages/CGU";
 import Confidentialite from "./pages/Confidentialite";
@@ -72,12 +75,26 @@ export default function App() {
   // qu'il voulait faire est oublié en chemin.
   const [retour, setRetour] = useState("discover");
   const {
-    user, login, signup, logout, subscribe, unsubscribe, supprimerCompte,
+    user, login, signup, signupRestaurateur, logout, subscribe, unsubscribe,
+    subscribeRestaurateur, supprimerCompte,
   } = useCurrentUser();
 
   // Chaque changement d'écran repart du haut : sans cela on arrive au milieu
   // d'une fiche après avoir fait défiler une longue liste.
   useEffect(() => { window.scrollTo({ top: 0 }); }, [page]);
+
+  // UN COMPTE RESTAURATEUR N'A PAS DE PAGE D'ACCUEIL CLIENT (D-055 v2) :
+  // « Découvrir » suppose un rôle qui n'est plus le sien depuis que les
+  // comptes sont séparés à l'inscription. Ce garde-fou joue à la connexion
+  // ET au rechargement d'une session existante — `page` ne bouge que s'il
+  // est resté sur la valeur par défaut, pour ne jamais écraser une
+  // navigation volontaire (settings, CGU…) déjà en cours.
+  useEffect(() => {
+    if (user?.role === "restaurateur" && page === "discover") {
+      setPage("restaurateur");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // Ne change plus après le montage (rien ne la remet à jour) : un `const`
   // suffit, pas besoin d'un état React pour une valeur figée au chargement.
@@ -176,8 +193,12 @@ export default function App() {
 
           {page === "login" && (
             <Login
-              onLogin={async (credentials) => { await login(credentials); naviguer(retour); }}
+              onLogin={async (credentials) => {
+                const u = await login(credentials);
+                naviguer(u.role === "restaurateur" ? "restaurateur" : retour);
+              }}
               onGoToSignup={() => naviguer("signup")}
+              onGoToSignupRestaurateur={() => naviguer("signup-restaurateur")}
               onBack={() => naviguer(retour)}
               erreurInitiale={
                 erreurGoogle
@@ -190,6 +211,17 @@ export default function App() {
           {page === "signup" && (
             <Signup
               onSignup={async (fields) => { await signup(fields); naviguer(retour); }}
+              onGoToLogin={() => naviguer("login")}
+              onGoToSignupRestaurateur={() => naviguer("signup-restaurateur")}
+              onBack={() => naviguer(retour)}
+              onGoToCGU={() => ouvrirLegal("cgu")}
+              onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
+            />
+          )}
+
+          {page === "signup-restaurateur" && (
+            <SignupRestaurateur
+              onSignup={async (fields) => { await signupRestaurateur(fields); naviguer("restaurateur"); }}
               onGoToLogin={() => naviguer("login")}
               onBack={() => naviguer(retour)}
               onGoToCGU={() => ouvrirLegal("cgu")}
@@ -209,6 +241,14 @@ export default function App() {
             />
           )}
 
+          {page === "pricing-restaurateur" && (
+            <PricingRestaurateur
+              user={user}
+              onAbonner={async () => { await subscribeRestaurateur(); naviguer(retour); }}
+              onBack={() => naviguer(retour)}
+            />
+          )}
+
           {page === "profil" && user && (
             <Profile
               user={user}
@@ -221,10 +261,14 @@ export default function App() {
             <Favoris user={user} onOpen={openDetail} onUnlock={demanderDeverrouillage} />
           )}
 
+          {page === "restaurateur" && (
+            <Restaurateur onSeConnecter={demanderConnexion} />
+          )}
+
           {page === "settings" && user && (
             <Settings
               user={user}
-              onBack={() => naviguer("discover")}
+              onBack={() => naviguer(user.role === "restaurateur" ? "restaurateur" : "discover")}
               onGoToPricing={() => naviguer("pricing")}
               onUnsubscribe={unsubscribe}
               onDeleteAccount={async () => {

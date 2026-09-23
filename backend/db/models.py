@@ -364,6 +364,40 @@ def init_db():
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id)")
 
+    # --- Demandes restaurateur (rôle restaurateur, chantier D-055) ---
+    # Une demande = soit revendiquer un restaurant existant (`restaurant_id`
+    # renseigné), soit en proposer un nouveau (`restaurant_id` NULL, les
+    # champs `proposed_*` portent l'info le temps de la validation). Dans les
+    # deux cas la fiche n'est modifiée qu'à l'approbation (`approve_claim`) —
+    # jamais avant, pour ne pas laisser une demande non validée changer une
+    # fiche publique. Validation humaine uniquement pour l'instant (décision
+    # utilisateur explicite, voir DECISIONS.md) : pas d'auto-validation.
+    # Pas de FOREIGN KEY vers `restaurants`, même raison que `favorites` et
+    # `consultations` : pipelines différents, une fiche réimportée ne doit
+    # jamais invalider une demande déjà traitée.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS restaurant_claims (
+            id {_AUTOINCREMENT_PK},
+            user_id INTEGER NOT NULL,
+            restaurant_id TEXT,
+            proposed_name TEXT,
+            proposed_address TEXT,
+            proposed_lat REAL,
+            proposed_lng REAL,
+            proposed_cuisine TEXT,
+            proposed_phone TEXT,
+            message TEXT,
+            status TEXT NOT NULL DEFAULT 'en_attente',
+            abonne INTEGER NOT NULL DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            decided_at TIMESTAMP,
+            decided_by INTEGER,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_claims_user ON restaurant_claims(user_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_claims_status ON restaurant_claims(status)")
+
     _migrate(cursor)
 
     conn.commit()
@@ -380,6 +414,18 @@ def _migrate(cursor) -> None:
     on lit le schéma existant et on ne pose que ce qui manque.
     """
     additions = {
+        "consultations": {
+            # Rattache une consultation au compte qui l'a faite (rôle
+            # restaurateur, D-055) — NULL pour les visiteurs non connectés,
+            # qui n'ont pas d'identifiant stable. Revient sur le choix
+            # documenté à la création de la table (« délibérément non
+            # rattaché », pour la vie privée) : demande explicite de
+            # l'utilisateur, un restaurateur abonné doit pouvoir savoir qui a
+            # consulté sa fiche. Le consentement est couvert par la case à
+            # cocher CGU à l'inscription, pas par un opt-in séparé — décision
+            # produit assumée, voir DECISIONS.md.
+            "user_id": "INTEGER",
+        },
         "restaurants": {
             "menu_url": "TEXT",           # D-023
             "google_place_id": "TEXT",    # D-025 — identifiant, cachable sans réserve
@@ -422,6 +468,13 @@ def _migrate(cursor) -> None:
             # Motif de selection des photos, conserve pour l'audit :
             # « lot groupe du 05/11/2025 — 12 pages, 5 analysees ».
             "photos_motif": "TEXT",
+            # Compte restaurateur validé propriétaire de la fiche (rôle
+            # restaurateur, chantier D-055). NULL tant qu'aucune demande n'a
+            # été approuvée — voir `restaurant_claims`. Pas de FOREIGN KEY,
+            # même raison que `favorites.restaurant_id` : deux pipelines
+            # d'alimentation différents, un restaurant réimporté depuis OSM
+            # ne doit jamais échouer parce qu'un compte a disparu.
+            "owner_user_id": "INTEGER",
         },
         "users": {
             # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Les

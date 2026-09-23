@@ -79,7 +79,29 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
       </section>
 
       <section className="legal__section">
-        <h2>5. Fiabilité des informations</h2>
+        <h2>5. Compte restaurateur</h2>
+        <p>
+          Un compte peut demander à gérer la fiche d'un restaurant, en le
+          revendiquant ou en le proposant s'il n'existe pas encore dans notre
+          base. Cette demande est examinée et validée par une personne de
+          l'équipe avant tout accès — il n'y a pas de validation automatique
+          à ce stade. Une fois la fiche obtenue, le compte restaurateur peut
+          en modifier les coordonnées (téléphone, lien de réservation,
+          horaires) et consulter sa fréquentation.
+        </p>
+        <p>
+          <strong>En créant un compte, vous acceptez que la consultation
+          d'une fiche restaurant en étant connecté soit visible du
+          restaurateur propriétaire de cette fiche</strong> (nombre de
+          visites et, selon sa formule d'abonnement, votre identité parmi ses
+          visiteurs récents) — voir la politique de confidentialité pour le
+          détail de ce que cela recouvre et comment y renoncer en supprimant
+          votre compte.
+        </p>
+      </section>
+
+      <section className="legal__section">
+        <h2>6. Fiabilité des informations</h2>
         <p>
           Les informations sur les restaurants (horaires, prix, adresse,
           score) proviennent de sources publiques (OpenStreetMap notamment) et
@@ -93,7 +115,7 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
       </section>
 
       <section className="legal__section">
-        <h2>6. Résiliation</h2>
+        <h2>7. Résiliation</h2>
         <p>
           Vous pouvez supprimer votre compte à tout moment depuis{" "}
           <em>Paramètres → Vos données</em> ; la suppression est définitive et
@@ -103,7 +125,7 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
       </section>
 
       <section className="legal__section">
-        <h2>7. Propriété intellectuelle</h2>
+        <h2>8. Propriété intellectuelle</h2>
         <p>
           Le nom « Local Signal », son logo et le fonctionnement du service
           (méthode de calcul du score) appartiennent au projet. Les données de
@@ -113,10 +135,10 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
       </section>
 
       <section className="legal__section">
-        <h2>8. Contact</h2>
+        <h2>9. Contact</h2>
         <p>
           Pour toute question sur ces conditions :{" "}
-          <em>[à compléter — adresse de contact du projet]</em>.
+          <a href="mailto:fareshafianepro@gmail.com">fareshafianepro@gmail.com</a>.
         </p>
       </section>
 

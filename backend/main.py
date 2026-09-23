@@ -125,6 +125,12 @@ class UserResponse(BaseModel):
     # à ce que le client affirme : `require_admin` relit toujours le rôle en
     # base, jamais une valeur transmise par le front.
     role: str = "user"
+    # Abonnement RESTAURATEUR (`restaurant_claims.abonne`), distinct de
+    # `role` — un compte restaurateur non abonné a quand même `role =
+    # "restaurateur"`. `None` pour tout compte qui n'est pas restaurateur ;
+    # calculé dans `_to_user_response` pour être visible partout où le
+    # compte l'est (badge de `Nav.jsx`), sans appel réseau supplémentaire.
+    restaurateur_abonne: Optional[bool] = None
     # Rendu UNIQUEMENT aux clients qui le réclament par l'en-tête
     # `X-Jeton-Session` — le mobile. Un navigateur reçoit `None` et s'appuie
     # sur son cookie httpOnly, qu'aucun script de la page ne peut lire : lui
@@ -135,6 +141,50 @@ class UserResponse(BaseModel):
 class AvisRequest(BaseModel):
     rating: Optional[int] = None
     text: Optional[str] = None
+
+
+class RestaurateurClaimRequest(BaseModel):
+    # `restaurant_id` renseigné = revendication d'une fiche existante.
+    # Laissé vide = proposition d'un nouveau restaurant, avec les champs
+    # `proposed_*` — au moins `proposed_name`/`proposed_lat`/`proposed_lng`
+    # dans ce cas (vérifié dans la route, pas ici : les deux usages du même
+    # modèle ont des champs obligatoires différents).
+    restaurant_id: Optional[str] = None
+    message: Optional[str] = None
+    proposed_name: Optional[str] = None
+    proposed_address: Optional[str] = None
+    proposed_lat: Optional[float] = None
+    proposed_lng: Optional[float] = None
+    proposed_cuisine: Optional[str] = None
+    proposed_phone: Optional[str] = None
+
+
+class RestaurateurContactRequest(BaseModel):
+    phone: Optional[str] = None
+    reservation_url: Optional[str] = None
+    opening_hours: Optional[str] = None
+
+
+class SignupRestaurateurRequest(BaseModel):
+    # Champs de compte, mêmes règles que `SignupRequest` (D-055 v2 : un
+    # compte restaurateur n'est jamais un compte client requalifié, il a
+    # donc son propre formulaire d'inscription, pas un formulaire client
+    # suivi d'une demande séparée).
+    email: str
+    password: str
+    name: Optional[str] = None
+    accepted_terms: bool = False
+    # Mêmes champs que `RestaurateurClaimRequest` : revendication
+    # (`restaurant_id`) ou proposition (`proposed_*`), déposée dans le même
+    # geste que la création du compte.
+    restaurant_id: Optional[str] = None
+    message: Optional[str] = None
+    proposed_name: Optional[str] = None
+    proposed_address: Optional[str] = None
+    proposed_lat: Optional[float] = None
+    proposed_lng: Optional[float] = None
+    proposed_cuisine: Optional[str] = None
+    proposed_phone: Optional[str] = None
 
 
 # =============================================================================
@@ -277,6 +327,32 @@ def list_restaurants(
     }
 
 
+@app.get("/api/restaurants/recherche")
+def rechercher_restaurants(q: str = Query(..., min_length=2, description="Nom recherché")):
+    """
+    Recherche par nom, sans position — pour associer une carte scannée au bon
+    restaurant (retour utilisateur : « on ne saura même pas c'est quel
+    restaurant »).
+
+    PUBLIQUE, PAS `require_admin` : le nom et l'adresse d'un restaurant ne
+    sont pas des données sensibles, ils sont déjà visibles via la recherche
+    géographique (`/api/restaurants`). Champs minimaux — c'est un sélecteur,
+    pas une liste de résultats classée : le scoring n'a rien à y faire.
+    """
+    restaurants = repo.get_restaurants(limit=10, q=q.strip())
+    return {
+        "restaurants": [
+            {
+                "id": r["id"],
+                "name": r["name"],
+                "address": r.get("address"),
+                "cuisine_label": cuisine_label(r.get("cuisine")),
+            }
+            for r in restaurants
+        ]
+    }
+
+
 def _build_scoring(
     restaurant: dict, user_lat: float, user_lng: float, radius: float = None
 ) -> dict:
@@ -383,7 +459,10 @@ def get_restaurant(
     # fois le produit en ligne.
     if config.EXPOSE_DETAIL_CALCUL or (user and user.get("role") == "admin"):
         resto["detail_calcul"] = _detail_calcul(resto)
-    repo.log_consultation(restaurant_id, resto["name"], resto.get("local_signal"))
+    repo.log_consultation(
+        restaurant_id, resto["name"], resto.get("local_signal"),
+        user_id=user["id"] if user else None,
+    )
     return resto
 
 
@@ -481,21 +560,30 @@ def admin_list_restaurants(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     q: Optional[str] = Query(None, description="Filtre par nom"),
+    restaurateur_statut: Optional[str] = Query(
+        None, description="'valide', 'en_attente' ou 'sans' (D-057)"
+    ),
     admin: dict = Depends(require_admin),
 ):
     """
     Tous les restaurants de la base, paginés — la vue d'ensemble admin.
 
     Même forme que `/api/restaurants` (`scoring`, `cuisine_label`, etc.) pour
-    que le front réutilise `RestaurantCard` tel quel, sans variante.
+    que le front réutilise `RestaurantCard` tel quel, sans variante. Porte
+    en plus `restaurateur_statut` sur chaque fiche (`valide` / `en_attente`
+    / `sans`) et, sans filtre, trie les fiches validées puis en attente en
+    premier (D-057) — c'est précisément ce qu'un admin doit pouvoir traiter.
     """
-    restaurants = repo.get_restaurants(limit=limit, offset=offset, q=q)
+    restaurants = repo.get_restaurants(
+        limit=limit, offset=offset, q=q,
+        restaurateur_statut=restaurateur_statut, avec_statut_restaurateur=True,
+    )
     for r in restaurants:
         r["scoring"] = _scoring_sans_position(r)
         r["cuisine_label"] = cuisine_label(r.get("cuisine"))
         r["ouvert_maintenant"] = est_ouvert(r.get("opening_hours"))
     return {
-        "total": repo.count_restaurants(q=q),
+        "total": repo.count_restaurants(q=q, restaurateur_statut=restaurateur_statut),
         "limit": limit,
         "offset": offset,
         "restaurants": restaurants,
@@ -564,6 +652,33 @@ def admin_delete_avis(avis_id: int, admin: dict = Depends(require_admin)):
     if not repo.delete_review_by_id(avis_id):
         raise HTTPException(status_code=404, detail="Avis introuvable.")
     return {"message": "Avis supprimé."}
+
+
+# --- File d'attente des demandes restaurateur (D-055) — validation humaine ---
+
+@app.get("/api/admin/demandes-restaurateur")
+def admin_lister_demandes(admin: dict = Depends(require_admin)):
+    """Demandes restaurateur en attente, les plus anciennes d'abord."""
+    return {"demandes": repo.get_pending_claims()}
+
+
+@app.post("/api/admin/demandes-restaurateur/{claim_id}/valider")
+def admin_valider_demande(claim_id: int, admin: dict = Depends(require_admin)):
+    """
+    Valide une demande : pose le propriétaire sur la fiche, la crée si elle
+    n'existait pas encore (proposition d'un nouveau restaurant).
+    """
+    resultat = repo.approve_claim(claim_id, admin["id"])
+    if not resultat:
+        raise HTTPException(status_code=404, detail="Demande introuvable.")
+    return resultat
+
+
+@app.post("/api/admin/demandes-restaurateur/{claim_id}/refuser")
+def admin_refuser_demande(claim_id: int, admin: dict = Depends(require_admin)):
+    """Refuse une demande restaurateur. La fiche visée, si elle existe, n'est pas touchée."""
+    repo.reject_claim(claim_id, admin["id"])
+    return {"message": "Demande refusée."}
 
 
 @app.get("/api/restaurant/{restaurant_id}/photo")
@@ -668,11 +783,16 @@ def _jeton_demande(request: Request) -> bool:
 
 
 def _to_user_response(user: dict, token: Optional[str] = None) -> UserResponse:
+    abonne = None
+    if user.get("role") == "restaurateur":
+        claim = repo.get_claim_active_for_user(user["id"])
+        abonne = bool(claim["abonne"]) if claim else False
     return UserResponse(
         id=user["id"],
         email=user["email"],
         name=user.get("name"),
         role=user.get("role") or "user",
+        restaurateur_abonne=abonne,
         token=token,
     )
 
@@ -715,6 +835,59 @@ def signup(req: SignupRequest, request: Request, response: Response):
     jeton = _issue_session(response, user_id)
     return _to_user_response(
         repo.get_user_by_id(user_id), jeton if _jeton_demande(request) else None
+    )
+
+
+@app.post("/api/auth/signup-restaurateur", response_model=UserResponse)
+def signup_restaurateur(req: SignupRestaurateurRequest, request: Request, response: Response):
+    """
+    Crée un compte restaurateur et sa demande de revendication/création,
+    dans le même geste, et ouvre la session (D-055 v2).
+
+    MÊMES VALIDATIONS QUE `signup`, PLUS CELLES DE LA DEMANDE. Un compte
+    restaurateur n'est jamais moins bien protégé qu'un compte client parce
+    qu'il vient d'un formulaire différent.
+    """
+    limitation.garder_inscription(request)
+
+    email = req.email.strip().lower()
+    nom = (req.name or "").strip()
+    if not _EMAIL_RE.match(email):
+        raise HTTPException(status_code=400, detail="Adresse email invalide.")
+    if not nom:
+        raise HTTPException(status_code=400, detail="Le nom d'utilisateur est requis.")
+    if len(req.password) < 8:
+        raise HTTPException(
+            status_code=400, detail="Le mot de passe doit contenir au moins 8 caractères."
+        )
+    if not req.accepted_terms:
+        raise HTTPException(
+            status_code=400,
+            detail="Vous devez accepter les CGU et la politique de confidentialité.",
+        )
+    if repo.get_user_by_email(email):
+        raise HTTPException(status_code=409, detail="Cet email est déjà utilisé.")
+
+    if req.restaurant_id:
+        if not repo.get_restaurant(req.restaurant_id):
+            raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+    elif not (req.proposed_name and req.proposed_lat is not None and req.proposed_lng is not None):
+        raise HTTPException(
+            status_code=400,
+            detail="Nom, latitude et longitude sont nécessaires pour proposer un nouveau restaurant.",
+        )
+
+    resultat = repo.create_restaurateur_account(
+        email=email, password_hash=security.hash_password(req.password), name=nom,
+        accepted_terms_at=datetime.now(timezone.utc).isoformat(),
+        restaurant_id=req.restaurant_id, message=req.message,
+        proposed_name=req.proposed_name, proposed_address=req.proposed_address,
+        proposed_lat=req.proposed_lat, proposed_lng=req.proposed_lng,
+        proposed_cuisine=req.proposed_cuisine, proposed_phone=req.proposed_phone,
+    )
+    jeton = _issue_session(response, resultat["user_id"])
+    return _to_user_response(
+        repo.get_user_by_id(resultat["user_id"]), jeton if _jeton_demande(request) else None
     )
 
 
@@ -979,6 +1152,144 @@ def retirer_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
     _require_abonne(user)
     repo.remove_favorite(user["id"], restaurant_id)
     return {"message": "Retiré des favoris."}
+
+
+# =============================================================================
+# RÔLE RESTAURATEUR (D-055)
+# =============================================================================
+#
+# COMPTE SÉPARÉ, PAS UN COMPTE CLIENT QUI DEVIENT RESTAURATEUR (retour
+# utilisateur explicite, D-055 v2) : `POST /api/auth/signup-restaurateur`
+# crée le compte avec `role = 'restaurateur'` dès l'inscription, avec sa
+# demande de revendication ou de création jointe dans le même geste
+# (`repo.create_restaurateur_account`). La fiche visée n'est modifiée qu'à
+# la validation humaine (`approve_claim`), comme avant. Le statut
+# d'abonnement restaurateur (`abonne` sur `restaurant_claims`) reste
+# distinct du `role` client (`user`/`subscriber`/`admin`) — un compte
+# restaurateur n'a d'ailleurs plus aucune des fonctionnalités client.
+
+@app.post("/api/restaurateur/demande")
+def demander_restaurateur(req: RestaurateurClaimRequest, user: dict = Depends(get_current_user)):
+    """
+    Dépose une SECONDE demande pour un compte restaurateur déjà existant
+    (par exemple après un refus, ou pour une seconde adresse) — la première
+    demande se fait exclusivement à l'inscription
+    (`POST /api/auth/signup-restaurateur`). Réservée aux comptes déjà
+    restaurateurs : un compte client n'a plus ce chemin (D-055 v2).
+    """
+    if user.get("role") != "restaurateur":
+        raise HTTPException(status_code=403, detail="Réservé aux comptes restaurateur.")
+    if repo.get_claim_active_for_user(user["id"]):
+        raise HTTPException(status_code=409, detail="Une demande est déjà en cours ou validée.")
+
+    if req.restaurant_id:
+        if not repo.get_restaurant(req.restaurant_id):
+            raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
+    elif not (req.proposed_name and req.proposed_lat is not None and req.proposed_lng is not None):
+        raise HTTPException(
+            status_code=400,
+            detail="Nom, latitude et longitude sont nécessaires pour proposer un nouveau restaurant.",
+        )
+
+    claim_id = repo.create_restaurant_claim(
+        user_id=user["id"], restaurant_id=req.restaurant_id, message=req.message,
+        proposed_name=req.proposed_name, proposed_address=req.proposed_address,
+        proposed_lat=req.proposed_lat, proposed_lng=req.proposed_lng,
+        proposed_cuisine=req.proposed_cuisine, proposed_phone=req.proposed_phone,
+    )
+    return {"id": claim_id, "message": "Demande envoyée, en attente de validation."}
+
+
+@app.get("/api/restaurateur/statut")
+def statut_restaurateur(user: dict = Depends(get_current_user)):
+    """État de la demande du compte connecté, et sa fiche si elle est validée."""
+    claim = repo.get_claim_active_for_user(user["id"])
+    if not claim:
+        return {"claim": None, "restaurant": None}
+    restaurant = repo.get_restaurant(claim["restaurant_id"]) if claim["status"] == "valide" else None
+    return {"claim": claim, "restaurant": restaurant}
+
+
+def _require_restaurateur(user: dict) -> dict:
+    """Fiche possédée par le compte connecté, ou 403 si aucune."""
+    restaurant = repo.get_restaurant_for_owner(user["id"])
+    if not restaurant:
+        raise HTTPException(status_code=403, detail="Aucune fiche restaurateur validée pour ce compte.")
+    return restaurant
+
+
+@app.get("/api/restaurateur/mon-restaurant")
+def mon_restaurant(user: dict = Depends(get_current_user)):
+    """Fiche du restaurant possédé par le compte connecté, avec ses avis."""
+    restaurant = _require_restaurateur(user)
+    restaurant["cuisine_label"] = cuisine_label(restaurant.get("cuisine"))
+    restaurant["menu"] = repo.get_latest_menu(restaurant["id"])
+    restaurant["avis"] = repo.get_user_reviews(restaurant["id"], limit=100)
+    return restaurant
+
+
+@app.patch("/api/restaurateur/mon-restaurant")
+def modifier_mon_restaurant(
+    req: RestaurateurContactRequest, user: dict = Depends(get_current_user),
+):
+    """
+    Corrige les champs de contact de la fiche possédée — téléphone, lien de
+    réservation, horaires. Le menu et les avis restent hors de portée (D-014).
+    """
+    restaurant = _require_restaurateur(user)
+    champs = {k: v for k, v in req.model_dump().items() if v is not None}
+    if not champs:
+        raise HTTPException(status_code=400, detail="Rien à modifier.")
+    repo.update_restaurant_contact(restaurant["id"], **champs)
+    return repo.get_restaurant(restaurant["id"])
+
+
+@app.get("/api/restaurateur/mon-restaurant/visites")
+def visites_mon_restaurant(user: dict = Depends(get_current_user)):
+    """
+    Fréquentation de la fiche possédée.
+
+    Palier gratuit (claim non abonné) : un total et quelques noms récents.
+    Palier abonné : le détail complet des visites connectées. La distinction
+    est portée par `restaurant_claims.abonne`, pas par `users.role` — c'est
+    un abonnement restaurateur, distinct de l'abonnement client.
+    """
+    restaurant = _require_restaurateur(user)
+    claim = repo.get_claim_active_for_user(user["id"])
+    total = repo.count_consultations(restaurant["id"])
+    if claim and claim.get("abonne"):
+        return {"total": total, "abonne": True, "visites": repo.get_visitor_details(restaurant["id"])}
+    return {"total": total, "abonne": False, "noms_recents": repo.get_recent_visitor_names(restaurant["id"])}
+
+
+# --- Abonnement restaurateur — DÉMONSTRATION, AUCUN PAIEMENT RÉEL ---
+#
+# Même logique que `/api/subscribe` côté client (LS-refonte) : bascule
+# `restaurant_claims.abonne`, ne fait payer personne. `PricingRestaurateur.jsx`
+# garde son bouton volontairement bloqué (même décision que `Pricing.jsx`,
+# D-049) — ces routes restent câblées pour le jour où un vrai paiement
+# existera, et pour les comptes de démonstration.
+
+@app.post("/api/restaurateur/abonnement", response_model=UserResponse)
+def restaurateur_subscribe(user: dict = Depends(get_current_user)):
+    if user.get("role") != "restaurateur":
+        raise HTTPException(status_code=403, detail="Réservé aux comptes restaurateur.")
+    claim = repo.get_claim_active_for_user(user["id"])
+    if not claim:
+        raise HTTPException(status_code=404, detail="Aucune demande restaurateur active.")
+    repo.set_claim_abonne(claim["id"], True)
+    return _to_user_response(user)
+
+
+@app.post("/api/restaurateur/abonnement/annuler", response_model=UserResponse)
+def restaurateur_unsubscribe(user: dict = Depends(get_current_user)):
+    if user.get("role") != "restaurateur":
+        raise HTTPException(status_code=403, detail="Réservé aux comptes restaurateur.")
+    claim = repo.get_claim_active_for_user(user["id"])
+    if not claim:
+        raise HTTPException(status_code=404, detail="Aucune demande restaurateur active.")
+    repo.set_claim_abonne(claim["id"], False)
+    return _to_user_response(user)
 
 
 # =============================================================================

@@ -18,12 +18,13 @@
 
 import { useEffect, useState } from "react";
 import {
-  ArrowLeft, CaretDown, CaretRight, MagnifyingGlass, ShieldWarning, Trash,
+  ArrowLeft, CaretDown, CaretRight, MagnifyingGlass, ShieldWarning, Storefront, Trash,
 } from "@phosphor-icons/react";
 
 import {
-  deleteAdminAvis, fetchAdminRestaurant, fetchAdminRestaurants, laisserAvis,
-  updateAdminRestaurant,
+  deleteAdminAvis, fetchAdminRestaurant, fetchAdminRestaurants,
+  fetchDemandesRestaurateur, laisserAvis, refuserDemandeRestaurateur,
+  updateAdminRestaurant, validerDemandeRestaurateur,
 } from "../api";
 import RestaurantCard from "../components/RestaurantCard";
 import DetailCalcul from "../components/DetailCalcul";
@@ -396,8 +397,96 @@ function FicheAdmin({ id, onBack }) {
   );
 }
 
+/** File d'attente des demandes restaurateur (D-055) — validation humaine uniquement. */
+function DemandesRestaurateur() {
+  const [demandes, setDemandes] = useState(null);
+  const [erreur, setErreur] = useState(null);
+  const [enCours, setEnCours] = useState(null);
+
+  function charger() {
+    fetchDemandesRestaurateur()
+      .then((d) => setDemandes(d.demandes))
+      .catch((e) => setErreur(e.message));
+  }
+
+  useEffect(() => { charger(); }, []);
+
+  async function trancher(claimId, action) {
+    setEnCours(claimId);
+    try {
+      if (action === "valider") await validerDemandeRestaurateur(claimId);
+      else await refuserDemandeRestaurateur(claimId);
+      charger();
+    } catch (e) {
+      setErreur(e.message);
+    } finally {
+      setEnCours(null);
+    }
+  }
+
+  if (erreur) return <ErrorState message={erreur} onRetry={charger} />;
+  if (!demandes) return <ResultsSkeleton count={1} />;
+
+  if (demandes.length === 0) {
+    return <p className="card__reason">Aucune demande en attente.</p>;
+  }
+
+  return (
+    <ul className="why__list">
+      {demandes.map((d) => (
+        <li key={d.id} style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", marginBottom: 12 }}>
+          <span>
+            <strong>{d.proposed_name || d.restaurant_id}</strong>
+            {d.restaurant_id && d.proposed_name === null && " (fiche existante)"}
+            {d.proposed_name && " (nouvelle fiche proposée)"}
+            {d.proposed_address && <> — {d.proposed_address}</>}
+            {d.message && (
+              <>
+                <br />
+                <span className="card__reason">« {d.message} »</span>
+              </>
+            )}
+            <br />
+            <span className="calcul__badge">
+              compte n°{d.user_id} · {new Date(d.created_at).toLocaleDateString("fr-FR")}
+            </span>
+          </span>
+          <span style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              disabled={enCours === d.id}
+              onClick={() => trancher(d.id, "refuser")}
+            >
+              Refuser
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              disabled={enCours === d.id}
+              onClick={() => trancher(d.id, "valider")}
+            >
+              Valider
+            </button>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const RESTAURATEUR_STATUT_LABEL = {
+  valide: "Restaurateur validé",
+  en_attente: "Demande en attente",
+  sans: "Sans restaurateur",
+};
+
 export default function Admin({ user, onBack }) {
+  const [vue, setVue] = useState("restaurants");
   const [q, setQ] = useState("");
+  // Filtre restaurateur (D-057) : undefined = pas de filtre, l'ordre place
+  // quand même les fiches validées puis en attente en tête (repository.py).
+  const [restaurateurStatut, setRestaurateurStatut] = useState(undefined);
   const [offset, setOffset] = useState(0);
   const [data, setData] = useState(null);
   const [erreur, setErreur] = useState(null);
@@ -411,11 +500,13 @@ export default function Admin({ user, onBack }) {
     // le chargement.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setData(null);
-    fetchAdminRestaurants({ limit: PAGE, offset, q: q.trim() || undefined })
+    fetchAdminRestaurants({
+      limit: PAGE, offset, q: q.trim() || undefined, restaurateurStatut,
+    })
       .then((d) => { if (!annule) setData(d); })
       .catch((e) => { if (!annule) setErreur(e.message); });
     return () => { annule = true; };
-  }, [user, offset, q]);
+  }, [user, offset, q, restaurateurStatut]);
 
   // Garde d'affichage — la vraie barrière est `require_admin` côté API.
   if (user?.role !== "admin") {
@@ -440,12 +531,34 @@ export default function Admin({ user, onBack }) {
         Retour
       </button>
 
+      <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        <button
+          type="button"
+          className={vue === "restaurants" ? "btn btn--primary" : "btn btn--ghost"}
+          onClick={() => setVue("restaurants")}
+        >
+          Restaurants
+        </button>
+        <button
+          type="button"
+          className={vue === "demandes" ? "btn btn--primary" : "btn btn--ghost"}
+          onClick={() => setVue("demandes")}
+        >
+          <Storefront size={16} weight="bold" />
+          Demandes restaurateur
+        </button>
+      </div>
+
+      {vue === "demandes" && <DemandesRestaurateur />}
+
+      {vue === "restaurants" && (
+        <>
       <h1 className="detail__title">Tous les restaurants</h1>
       <p className="detail__meta" style={{ marginBottom: 20 }}>
         {data ? `${data.total} restaurants en base` : "Chargement…"}
       </p>
 
-      <div className="field" style={{ maxWidth: 360, marginBottom: 20 }}>
+      <div className="field" style={{ maxWidth: 360, marginBottom: 16 }}>
         <label className="field__label" htmlFor="admin-q">Chercher par nom</label>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <MagnifyingGlass size={16} />
@@ -457,6 +570,27 @@ export default function Admin({ user, onBack }) {
             placeholder="Le nom d'un restaurant"
           />
         </div>
+      </div>
+
+      {/* Filtre restaurateur (D-057) : "Tous" garde le tri validé → en
+          attente → sans (repository.py) ; chaque autre bouton restreint la
+          liste à un seul statut. */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+        {[
+          [undefined, "Tous"],
+          ["valide", RESTAURATEUR_STATUT_LABEL.valide],
+          ["en_attente", RESTAURATEUR_STATUT_LABEL.en_attente],
+          ["sans", RESTAURATEUR_STATUT_LABEL.sans],
+        ].map(([valeur, libelle]) => (
+          <button
+            key={libelle}
+            type="button"
+            className={restaurateurStatut === valeur ? "btn btn--primary" : "btn btn--ghost"}
+            onClick={() => { setRestaurateurStatut(valeur); setOffset(0); }}
+          >
+            {libelle}
+          </button>
+        ))}
       </div>
 
       {erreur && <ErrorState message={erreur} onRetry={() => setOffset((o) => o)} />}
@@ -499,6 +633,8 @@ export default function Admin({ user, onBack }) {
               Suivant
             </button>
           </div>
+        </>
+      )}
         </>
       )}
     </>

@@ -9,7 +9,7 @@ import { API_BASE } from "../api";
 import GoogleG from "../components/GoogleG";
 
 export default function Signup({
-  onSignup, onGoToLogin, onBack, onGoToCGU, onGoToConfidentialite,
+  onSignup, onGoToLogin, onGoToSignupRestaurateur, onBack, onGoToCGU, onGoToConfidentialite,
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -154,6 +154,9 @@ export default function Signup({
 
           <button type="button" className="linkbtn" onClick={onGoToLogin} style={{ marginTop: 4 }}>
             Déjà un compte ? Se connecter
+          </button>
+          <button type="button" className="linkbtn" onClick={onGoToSignupRestaurateur} style={{ marginTop: 4 }}>
+            Vous êtes restaurateur ? Créer un compte restaurateur
           </button>
         </form>
       </div>
