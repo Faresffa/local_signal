@@ -50,8 +50,16 @@ function withTransition(update) {
   transition.finished.catch(() => {});
 }
 
+// Retour d'échec de /api/auth/google/callback (backend/main.py) : une vraie
+// redirection de page, donc une erreur qui n'a pas d'autre moyen d'arriver
+// jusqu'à React qu'un paramètre d'URL. Lu une seule fois, au chargement du
+// module — avant le premier rendu, donc `page` et `erreurGoogle` démarrent
+// déjà dans le bon état sans passer par un effet.
+const erreurGoogleInitiale =
+  new URLSearchParams(window.location.search).get("erreur") === "google";
+
 export default function App() {
-  const [page, setPage] = useState("discover");
+  const [page, setPage] = useState(erreurGoogleInitiale ? "login" : "discover");
   const [selected, setSelected] = useState(null);
   // L'écran Discover est démonté pendant la consultation d'une fiche. Cet état
   // vit donc ici afin que le retour retrouve exactement la recherche en cours.
@@ -71,16 +79,14 @@ export default function App() {
   // d'une fiche après avoir fait défiler une longue liste.
   useEffect(() => { window.scrollTo({ top: 0 }); }, [page]);
 
-  // Retour d'échec de /api/auth/google/callback (backend/main.py) : une vraie
-  // redirection de page, donc une erreur qui n'a pas d'autre moyen d'arriver
-  // jusqu'à React qu'un paramètre d'URL. Nettoyé immédiatement pour qu'un
-  // rechargement de page ne réaffiche pas l'erreur indéfiniment.
-  const [erreurGoogle, setErreurGoogle] = useState(false);
+  // Ne change plus après le montage (rien ne la remet à jour) : un `const`
+  // suffit, pas besoin d'un état React pour une valeur figée au chargement.
+  const erreurGoogle = erreurGoogleInitiale;
+  // Seul effet de bord restant : nettoyer l'URL pour qu'un rechargement de
+  // page ne réaffiche pas l'erreur indéfiniment. `page` et `erreurGoogle`
+  // sont déjà dans le bon état dès le premier rendu (voir ci-dessus).
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("erreur") === "google") {
-      setErreurGoogle(true);
-      setPage("login");
+    if (erreurGoogleInitiale) {
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);

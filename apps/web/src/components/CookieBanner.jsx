@@ -7,23 +7,26 @@
 // plus tard (analytics — voir Confidentialite.jsx §4) : ce code-là devra lire
 // `ls-cookies-consent` avant de s'activer, pas avant.
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Cookie } from "@phosphor-icons/react";
 
 const CLE_STOCKAGE = "ls-cookies-consent";
 
-export default function CookieBanner({ onOpenConfidentialite }) {
-  const [visible, setVisible] = useState(false);
+// Lu une seule fois, au premier rendu — pas via un effet : `localStorage` est
+// disponible dès le montage, inutile d'attendre un aller-retour de rendu pour
+// afficher (ou non) la bannière.
+function fautConsentement() {
+  try {
+    return !localStorage.getItem(CLE_STOCKAGE);
+  } catch {
+    // Stockage indisponible (navigation privée stricte) : on montre la
+    // bannière sans pouvoir mémoriser le choix, plutôt que de la cacher.
+    return true;
+  }
+}
 
-  useEffect(() => {
-    try {
-      if (!localStorage.getItem(CLE_STOCKAGE)) setVisible(true);
-    } catch {
-      // Stockage indisponible (navigation privée stricte) : on montre la
-      // bannière sans pouvoir mémoriser le choix, plutôt que de la cacher.
-      setVisible(true);
-    }
-  }, []);
+export default function CookieBanner({ onOpenConfidentialite }) {
+  const [visible, setVisible] = useState(fautConsentement);
 
   function choisir(valeur) {
     setVisible(false);

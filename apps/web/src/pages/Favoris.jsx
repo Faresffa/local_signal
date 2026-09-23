@@ -23,6 +23,10 @@ export default function Favoris({ user, onOpen, onUnlock }) {
   useEffect(() => {
     if (!abonne) return undefined;
     let cancelled = false;
+    // Passer par "loading" avant de lancer la requete : sinon `reloads` en
+    // dependance ne redeclencherait aucun rendu visible tant que la reponse
+    // n'est pas arrivee, et un rechargement manuel semblerait ne rien faire.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus("loading");
     fetchFavoris()
       .then((data) => {

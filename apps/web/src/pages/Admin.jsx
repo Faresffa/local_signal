@@ -236,6 +236,11 @@ function FicheAdmin({ id, onBack }) {
 
   useEffect(() => {
     let annule = false;
+    // Effacer la fiche precedente AVANT de lancer le fetch : sinon un
+    // changement de `id` laisserait affichee la fiche de l'ancien restaurant
+    // pendant tout le chargement, ce qu'un visiteur lit comme "c'est la bonne
+    // fiche" jusqu'a ce qu'elle change sous ses yeux.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setResto(null);
     setErreur(null);
     fetchAdminRestaurant(id)
@@ -401,6 +406,10 @@ export default function Admin({ user, onBack }) {
   useEffect(() => {
     if (user?.role !== "admin") return;
     let annule = false;
+    // Meme raison qu'au-dessus : effacer la page precedente avant de charger
+    // la suivante, plutot que de laisser une liste perimee affichee pendant
+    // le chargement.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setData(null);
     fetchAdminRestaurants({ limit: PAGE, offset, q: q.trim() || undefined })
       .then((d) => { if (!annule) setData(d); })

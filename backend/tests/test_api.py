@@ -34,6 +34,15 @@ from backend.core.auth import limitation
 from backend.core.stockage import stockage
 from backend.main import app
 
+# QUOTA DE RECHERCHES (LS-refonte) : un compte non abonne est limite a
+# `SEARCHES_PER_DAY_NON_ABONNE` recherches par jour (5 par defaut). Ce fichier
+# en fait davantage avec le meme compte de test pour verifier plusieurs
+# filtres a la suite — ce n'est pas le comportement que ce module teste, donc
+# on le neutralise ici plutot que de forcer chaque test a rester sous le
+# quota. Lu en direct a chaque requete (`config.SEARCHES_PER_DAY_NON_ABONNE`),
+# pas fige a l'import : la modifier ici suffit, aucun redemarrage requis.
+config.SEARCHES_PER_DAY_NON_ABONNE = 10_000
+
 # DEUX CLIENTS, ET C'EST ESSENTIEL.
 #
 # Un visiteur non connecte ne recoit que `ANON_RESULTS_LIMIT` resultats. Tester
@@ -80,7 +89,8 @@ limitation.reinitialiser()
 _email_lecture = email_neuf()
 _mdp_lecture = "motdepasse-de-lecture-123"
 connecte.post("/api/auth/signup", headers={"X-Forwarded-For": "203.0.113.1"},
-              json={"email": _email_lecture, "password": _mdp_lecture, "name": "Lecteur"})
+              json={"email": _email_lecture, "password": _mdp_lecture, "name": "Lecteur",
+                    "accepted_terms": True})
 limitation.reinitialiser()
 
 
@@ -270,13 +280,15 @@ motdepasse = "motdepasse-solide-123"
 inscriptions = TestClient(app)
 
 r = inscriptions.post("/api/auth/signup", headers=entete,
-                      json={"email": email, "password": motdepasse, "name": "Test"})
+                      json={"email": email, "password": motdepasse, "name": "Test",
+                            "accepted_terms": True})
 verifier(r.status_code == 200, "l'inscription cree un compte", r.text[:120])
 verifier("password" not in r.text.lower() and "hash" not in r.text.lower(),
          "la reponse ne renvoie ni mot de passe ni empreinte")
 
 r = inscriptions.post("/api/auth/signup", headers=entete,
-                      json={"email": email, "password": motdepasse, "name": "Test"})
+                      json={"email": email, "password": motdepasse, "name": "Test",
+                            "accepted_terms": True})
 verifier(r.status_code == 409, "un email deja pris est refuse")
 
 r = inscriptions.post("/api/auth/signup", headers={"X-Forwarded-For": "203.0.113.11"},
@@ -342,7 +354,8 @@ _email_mobile = email_neuf()
 navigateur = TestClient(app)
 r = navigateur.post("/api/auth/signup",
                     headers={"X-Forwarded-For": "203.0.113.55", "X-Jeton-Session": "oui"},
-                    json={"email": _email_mobile, "password": "motdepasse-mobile-123"})
+                    json={"email": _email_mobile, "password": "motdepasse-mobile-123",
+                          "name": "Mobile", "accepted_terms": True})
 verifier(r.status_code == 200, "l'inscription aboutit")
 _jeton = r.json().get("token")
 verifier(bool(_jeton), "le client qui demande le jeton le recoit")
