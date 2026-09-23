@@ -394,7 +394,6 @@ export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
           de chaque restaurant reste visible sur sa carte.
         </Text>
       )}
-      )}
     </View>
   );
 

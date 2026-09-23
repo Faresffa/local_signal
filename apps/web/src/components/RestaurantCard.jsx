@@ -86,6 +86,14 @@ export default function RestaurantCard({
         />
         {dist && <span className="card__distance">{dist}</span>}
         {premier && <span className="card__premier">Meilleur profil local</span>}
+        {/* N'existe que sur les réponses admin (D-057) — absent partout
+            ailleurs (Découvrir, favoris), donc invisible par défaut. */}
+        {restaurant.restaurateur_statut === "valide" && (
+          <span className="card__restaurateur card__restaurateur--valide">Restaurateur validé</span>
+        )}
+        {restaurant.restaurateur_statut === "en_attente" && (
+          <span className="card__restaurateur card__restaurateur--en_attente">Demande en attente</span>
+        )}
 
         {user && (
           <button

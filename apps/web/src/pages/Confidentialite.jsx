@@ -50,6 +50,15 @@ export default function Confidentialite({ onBack, onGoToCGU }) {
             e-mail, date).
           </li>
           <li>
+            <strong>Historique de consultation</strong> des fiches restaurant,
+            uniquement si vous êtes connecté — voir §2 pour ce qu'il devient.
+          </li>
+          <li>
+            <strong>Demande de compte restaurateur</strong>, le cas échéant :
+            le restaurant revendiqué ou proposé, et les informations que vous
+            transmettez pour le décrire.
+          </li>
+          <li>
             <strong>Un cookie de session</strong>, pour rester connecté — voir
             §4.
           </li>
@@ -69,6 +78,18 @@ export default function Confidentialite({ onBack, onGoToCGU }) {
           cette contribution, le score ne peut pas exister. Aucune donnée
           n'est vendue ni partagée avec un tiers à des fins commerciales.
         </p>
+        <p>
+          Quand vous consultez la fiche d'un restaurant en étant connecté,
+          cette consultation est associée à votre compte. Si ce restaurant a
+          un compte restaurateur validé, celui-ci peut voir qu'il a été
+          consulté et, selon sa formule, votre nom ou votre e-mail parmi ses
+          visiteurs récents — c'est ce qui permet à un restaurateur de savoir
+          qui s'intéresse à son établissement, au même titre que la
+          fréquentation qu'il observerait en salle. Un visiteur non connecté
+          n'est jamais identifiable de cette façon. En acceptant les
+          conditions générales d'utilisation à l'inscription, vous acceptez
+          ce fonctionnement.
+        </p>
       </section>
 
       <section className="legal__section">
@@ -76,7 +97,10 @@ export default function Confidentialite({ onBack, onGoToCGU }) {
         <p>
           Aussi longtemps que votre compte existe. La suppression du compte
           (§5) efface immédiatement et définitivement le compte, les avis et
-          les réservations qui lui sont rattachés.
+          les réservations qui lui sont rattachés. Comme pour les photos de
+          cartes (§1), votre historique de consultation n'est pas supprimé
+          mais « délié » : les restaurateurs concernés gardent un compte de
+          fréquentation correct, mais plus aucune ligne ne vous désigne.
         </p>
       </section>
 
@@ -123,7 +147,7 @@ export default function Confidentialite({ onBack, onGoToCGU }) {
         </ul>
         <p>
           Pour toute question ou demande que l'interface ne couvre pas :{" "}
-          <em>[à compléter — adresse de contact du projet]</em>.
+          <a href="mailto:fareshafianepro@gmail.com">fareshafianepro@gmail.com</a>.
         </p>
       </section>
 

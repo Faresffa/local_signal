@@ -8,6 +8,7 @@
 
 import json
 import math
+import uuid
 
 from backend.db.models import get_connection
 from datetime import datetime, timezone
@@ -26,11 +27,48 @@ def _row_to_restaurant(row) -> dict:
     return r
 
 
+# Un restaurant est, du point de vue restaurateur (D-055 à D-057), dans
+# exactement un de ces trois états — jamais calculé côté Python à partir de
+# deux tables séparées : répété tel quel dans le WHERE et le ORDER BY pour
+# que filtrage et tri restent cohérents entre eux.
+_RESTAURATEUR_VALIDE = "r.owner_user_id IS NOT NULL"
+_CLAIM_EN_ATTENTE_EXISTE = (
+    "EXISTS (SELECT 1 FROM restaurant_claims c "
+    "WHERE c.restaurant_id = r.id AND c.status = 'en_attente')"
+)
+_RESTAURATEUR_EN_ATTENTE = f"r.owner_user_id IS NULL AND {_CLAIM_EN_ATTENTE_EXISTE}"
+_RESTAURATEUR_SANS = f"r.owner_user_id IS NULL AND NOT {_CLAIM_EN_ATTENTE_EXISTE}"
+_RESTAURATEUR_RANG = f"CASE WHEN {_RESTAURATEUR_VALIDE} THEN 0 WHEN {_RESTAURATEUR_EN_ATTENTE} THEN 1 ELSE 2 END"
+
+_RESTAURATEUR_CLAUSES = {
+    "valide": _RESTAURATEUR_VALIDE,
+    "en_attente": _RESTAURATEUR_EN_ATTENTE,
+    "sans": _RESTAURATEUR_SANS,
+}
+
+
 def get_restaurants(
-    zone: str = None, limit: int = None, offset: int = 0, q: str = None
+    zone: str = None, limit: int = None, offset: int = 0, q: str = None,
+    restaurateur_statut: str = None, avec_statut_restaurateur: bool = False,
 ) -> list[dict]:
     """
-    Récupère les restaurants, optionnellement filtrés par zone ou par nom.
+    Récupère les restaurants, optionnellement filtrés par zone, nom, ou
+    statut restaurateur (LS-refonte, D-057 : vue d'ensemble admin).
+
+    `restaurateur_statut` : `"valide"` (fiche possédée), `"en_attente"`
+    (demande déposée, pas encore tranchée) ou `"sans"` (aucune des deux).
+    Sans filtre mais avec `avec_statut_restaurateur=True`, l'ordre place
+    quand même les fiches validées en tête, puis les demandes en attente,
+    puis le reste — pour que l'essentiel de ce qu'un admin doit traiter
+    (D-055 : validation humaine) soit visible sans qu'il ait à activer un
+    filtre pour le voir.
+
+    `avec_statut_restaurateur` PAR DÉFAUT À FAUX : la sous-requête `EXISTS`
+    qui calcule le statut coûte un aller-retour sur `restaurant_claims` PAR
+    LIGNE. Sur les deux autres appelants de cette fonction — la recherche
+    par nom (10 résultats) et `/api/cuisines` (TOUTE la base, sur chaque
+    chargement de Découvrir) — ce coût n'achèterait rien : seule la page
+    admin affiche ou filtre ce statut.
 
     `offset` : pagination pour la page d'administration (LS-refonte), qui
     parcourt TOUTE la base plutôt qu'un rayon autour d'un point — aucun autre
@@ -38,18 +76,24 @@ def get_restaurants(
     fonction presque identique.
     """
     conn = get_connection()
-    sql = "SELECT * FROM restaurants"
+    avec_statut = avec_statut_restaurateur or bool(restaurateur_statut)
+    if avec_statut:
+        sql = f"SELECT r.*, ({_RESTAURATEUR_RANG}) AS restaurateur_rang FROM restaurants r"
+    else:
+        sql = "SELECT r.* FROM restaurants r"
     clauses = []
     params = []
     if zone:
-        clauses.append("zone = ?")
+        clauses.append("r.zone = ?")
         params.append(zone)
     if q:
-        clauses.append("name LIKE ?")
+        clauses.append("r.name LIKE ?")
         params.append(f"%{q}%")
+    if restaurateur_statut:
+        clauses.append(_RESTAURATEUR_CLAUSES.get(restaurateur_statut, "1=1"))
     if clauses:
         sql += " WHERE " + " AND ".join(clauses)
-    sql += " ORDER BY local_signal DESC"
+    sql += " ORDER BY restaurateur_rang ASC, r.local_signal DESC" if avec_statut else " ORDER BY r.local_signal DESC"
     if limit:
         sql += " LIMIT ? OFFSET ?"
         params.append(limit)
@@ -57,21 +101,27 @@ def get_restaurants(
 
     rows = conn.execute(sql, params).fetchall()
     conn.close()
-    return [_row_to_restaurant(r) for r in rows]
+    restaurants = [_row_to_restaurant(r) for r in rows]
+    if avec_statut:
+        for r in restaurants:
+            r["restaurateur_statut"] = {0: "valide", 1: "en_attente", 2: "sans"}[r.pop("restaurateur_rang")]
+    return restaurants
 
 
-def count_restaurants(zone: str = None, q: str = None) -> int:
+def count_restaurants(zone: str = None, q: str = None, restaurateur_statut: str = None) -> int:
     """Nombre total de restaurants — pour la pagination de la page admin."""
     conn = get_connection()
-    sql = "SELECT COUNT(*) FROM restaurants"
+    sql = "SELECT COUNT(*) FROM restaurants r"
     clauses = []
     params = []
     if zone:
-        clauses.append("zone = ?")
+        clauses.append("r.zone = ?")
         params.append(zone)
     if q:
-        clauses.append("name LIKE ?")
+        clauses.append("r.name LIKE ?")
         params.append(f"%{q}%")
+    if restaurateur_statut:
+        clauses.append(_RESTAURATEUR_CLAUSES.get(restaurateur_statut, "1=1"))
     if clauses:
         sql += " WHERE " + " AND ".join(clauses)
     total = conn.execute(sql, params).fetchone()[0]
@@ -319,13 +369,24 @@ def get_reservations(user_email: str = None) -> list[dict]:
     return [dict(r) for r in rows]
 
 
-def log_consultation(restaurant_id: str, restaurant_name: str, score: float = None):
-    """Enregistre la consultation d'un restaurant."""
+def log_consultation(
+    restaurant_id: str, restaurant_name: str, score: float = None,
+    user_id: int | None = None,
+):
+    """
+    Enregistre la consultation d'un restaurant.
+
+    `user_id` : renseigné uniquement pour une personne connectée (D-055,
+    rôle restaurateur) — un visiteur non connecté n'a pas d'identifiant
+    stable, la colonne reste NULL. C'est ce qui permet à un restaurateur
+    abonné de voir qui a consulté sa fiche ; le consentement passe par la
+    case CGU à l'inscription, pas par un opt-in séparé.
+    """
     conn = get_connection()
     conn.execute("""
-        INSERT INTO consultations (restaurant_id, restaurant_name, score_final)
-        VALUES (?, ?, ?)
-    """, (restaurant_id, restaurant_name, score))
+        INSERT INTO consultations (restaurant_id, restaurant_name, score_final, user_id)
+        VALUES (?, ?, ?, ?)
+    """, (restaurant_id, restaurant_name, score, user_id))
     conn.commit()
     conn.close()
 
@@ -338,6 +399,272 @@ def get_consultations(limit: int = 20) -> list[dict]:
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+def count_consultations(restaurant_id: str) -> int:
+    """Nombre total de consultations d'un restaurant — vue restaurateur, palier gratuit."""
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT COUNT(*) AS n FROM consultations WHERE restaurant_id = ?",
+        (restaurant_id,),
+    ).fetchone()
+    conn.close()
+    return dict(row)["n"]
+
+
+def get_recent_visitor_names(restaurant_id: str, limit: int = 5) -> list[str]:
+    """
+    Quelques noms de visiteurs récents connectés — palier gratuit restaurateur.
+
+    Ne remonte que les consultations rattachées à un compte (`user_id` non
+    NULL) : un visiteur non connecté n'a pas de nom à montrer. Un même
+    utilisateur n'apparaît qu'une fois, dans l'ordre de sa visite la plus
+    récente.
+    """
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT u.name, u.email, MAX(c.consulted_at) AS derniere_visite
+        FROM consultations c
+        JOIN users u ON u.id = c.user_id
+        WHERE c.restaurant_id = ? AND c.user_id IS NOT NULL
+        GROUP BY c.user_id
+        ORDER BY derniere_visite DESC
+        LIMIT ?
+    """, (restaurant_id, limit)).fetchall()
+    conn.close()
+    return [dict(r)["name"] or dict(r)["email"] for r in rows]
+
+
+def get_visitor_details(restaurant_id: str, limit: int = 100) -> list[dict]:
+    """Détail des visites connectées — palier abonné restaurateur (analytics)."""
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT u.id AS user_id, u.name, u.email, c.consulted_at
+        FROM consultations c
+        JOIN users u ON u.id = c.user_id
+        WHERE c.restaurant_id = ? AND c.user_id IS NOT NULL
+        ORDER BY c.consulted_at DESC
+        LIMIT ?
+    """, (restaurant_id, limit)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# =============================================================================
+# RÔLE RESTAURATEUR — DEMANDES DE REVENDICATION / CRÉATION (D-055, D-056)
+# =============================================================================
+#
+# Un compte devient restaurateur en le demandant, jamais en se l'attribuant :
+# `create_restaurant_claim` ne touche à rien de public, seule `approve_claim`
+# pose `owner_user_id` sur la fiche (existante ou nouvellement créée).
+# Validation humaine uniquement pour l'instant — décision explicite de
+# l'utilisateur, pas d'auto-validation tant que le volume ne l'impose pas.
+#
+# La toute première demande d'un compte se crée avec le compte lui-même
+# (`create_restaurateur_account`, D-056) : un compte restaurateur est séparé
+# d'un compte client dès l'inscription, il n'existe plus de chemin où un
+# compte client se requalifie en restaurateur. `create_restaurant_claim`
+# reste utilisée pour une demande ultérieure d'un compte déjà restaurateur
+# (seconde adresse, nouvelle tentative après un refus).
+
+def create_restaurant_claim(
+    user_id: int, restaurant_id: str | None = None, message: str | None = None,
+    proposed_name: str | None = None, proposed_address: str | None = None,
+    proposed_lat: float | None = None, proposed_lng: float | None = None,
+    proposed_cuisine: str | None = None, proposed_phone: str | None = None,
+) -> int:
+    """Crée une demande restaurateur (revendication si `restaurant_id`, sinon proposition de fiche)."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO restaurant_claims (
+            user_id, restaurant_id, proposed_name, proposed_address,
+            proposed_lat, proposed_lng, proposed_cuisine, proposed_phone, message
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, restaurant_id, proposed_name, proposed_address,
+          proposed_lat, proposed_lng, proposed_cuisine, proposed_phone, message))
+    conn.commit()
+    claim_id = cursor.lastrowid
+    conn.close()
+    return claim_id
+
+
+def create_restaurateur_account(
+    email: str, password_hash: str, name: str | None, accepted_terms_at: str | None,
+    restaurant_id: str | None = None, message: str | None = None,
+    proposed_name: str | None = None, proposed_address: str | None = None,
+    proposed_lat: float | None = None, proposed_lng: float | None = None,
+    proposed_cuisine: str | None = None, proposed_phone: str | None = None,
+) -> dict:
+    """
+    Crée un compte restaurateur ET sa demande, dans le même geste (D-055 v2).
+
+    COMPTES SÉPARÉS, PAS UN COMPTE CLIENT QUI DEVIENT RESTAURATEUR (retour
+    utilisateur explicite : « il faut séparer les deux comptes [...] un
+    compte, quand il est créé, il est créé directement en tant que
+    restaurateur »). `role` est posé à `'restaurateur'` dès l'INSERT, jamais
+    par un `set_user_role` après coup — il n'existe aucun chemin qui fait
+    passer un compte client par ce rôle. La demande est créée dans la même
+    connexion, avant le commit : un compte restaurateur sans demande ne doit
+    jamais exister, ne serait-ce qu'un instant.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO users (email, password_hash, name, role, accepted_terms_at)
+        VALUES (?, ?, ?, 'restaurateur', ?)
+    """, (email.strip().lower(), password_hash, name, accepted_terms_at))
+    user_id = cursor.lastrowid
+
+    cursor.execute("""
+        INSERT INTO restaurant_claims (
+            user_id, restaurant_id, proposed_name, proposed_address,
+            proposed_lat, proposed_lng, proposed_cuisine, proposed_phone, message
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, restaurant_id, proposed_name, proposed_address,
+          proposed_lat, proposed_lng, proposed_cuisine, proposed_phone, message))
+    claim_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+    return {"user_id": user_id, "claim_id": claim_id}
+
+
+def get_claim_active_for_user(user_id: int) -> dict | None:
+    """
+    Demande en cours ou déjà validée pour ce compte, s'il y en a une.
+
+    Une seule demande active à la fois : le formulaire de demande se ferme
+    dès qu'il y en a une en attente ou validée, pour ne pas empiler les
+    candidatures sur le même compte.
+    """
+    conn = get_connection()
+    row = conn.execute("""
+        SELECT * FROM restaurant_claims
+        WHERE user_id = ? AND status IN ('en_attente', 'valide')
+        ORDER BY created_at DESC LIMIT 1
+    """, (user_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_pending_claims() -> list[dict]:
+    """File d'attente admin — demandes restaurateur non encore tranchées."""
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM restaurant_claims WHERE status = 'en_attente' ORDER BY created_at ASC"
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def approve_claim(claim_id: int, admin_user_id: int) -> dict:
+    """
+    Valide une demande restaurateur : pose `owner_user_id`, crée la fiche si besoin.
+
+    Si `restaurant_id` était déjà renseigné (revendication), on se contente
+    d'y poser le propriétaire. Sinon (proposition de nouveau restaurant), on
+    crée la fiche d'abord, avec un identifiant `manuel_<uuid>` pour ne jamais
+    entrer en collision avec les identifiants `osm_n...` de la collecte OSM.
+    Le score reste NULL (D-012 : un signal absent n'est jamais 0) — la fiche
+    apparaît comme "Non évalué" jusqu'au prochain calcul batch.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    claim = cursor.execute(
+        "SELECT * FROM restaurant_claims WHERE id = ?", (claim_id,)
+    ).fetchone()
+    if not claim:
+        conn.close()
+        return {}
+    claim = dict(claim)
+
+    restaurant_id = claim["restaurant_id"]
+    if not restaurant_id:
+        restaurant_id = f"manuel_{uuid.uuid4().hex[:12]}"
+        cursor.execute("""
+            INSERT INTO restaurants (id, name, lat, lng, cuisine, address, phone, owner_user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            restaurant_id, claim["proposed_name"], claim["proposed_lat"], claim["proposed_lng"],
+            claim["proposed_cuisine"], claim["proposed_address"], claim["proposed_phone"],
+            claim["user_id"],
+        ))
+    else:
+        cursor.execute(
+            "UPDATE restaurants SET owner_user_id = ? WHERE id = ?",
+            (claim["user_id"], restaurant_id),
+        )
+
+    cursor.execute("""
+        UPDATE restaurant_claims
+        SET status = 'valide', restaurant_id = ?, decided_at = CURRENT_TIMESTAMP, decided_by = ?
+        WHERE id = ?
+    """, (restaurant_id, admin_user_id, claim_id))
+
+    conn.commit()
+    conn.close()
+    return {"restaurant_id": restaurant_id}
+
+
+def reject_claim(claim_id: int, admin_user_id: int) -> None:
+    """Refuse une demande restaurateur — la fiche visée, si elle existe, n'est pas touchée."""
+    conn = get_connection()
+    conn.execute("""
+        UPDATE restaurant_claims
+        SET status = 'refuse', decided_at = CURRENT_TIMESTAMP, decided_by = ?
+        WHERE id = ?
+    """, (admin_user_id, claim_id))
+    conn.commit()
+    conn.close()
+
+
+def set_claim_abonne(claim_id: int, abonne: bool) -> None:
+    """
+    Bascule l'abonnement restaurateur d'une demande — DÉMONSTRATION, PAS UN
+    ENCAISSEMENT, même logique que `set_user_role` pour l'abonnement client
+    (LS-refonte) : aucun processeur de paiement n'est branché.
+    """
+    conn = get_connection()
+    conn.execute(
+        "UPDATE restaurant_claims SET abonne = ? WHERE id = ?", (1 if abonne else 0, claim_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_restaurant_for_owner(user_id: int) -> dict | None:
+    """Fiche possédée par ce compte restaurateur, s'il en a une."""
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT * FROM restaurants WHERE owner_user_id = ?", (user_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_restaurant_contact(restaurant_id: str, **champs) -> None:
+    """
+    Met à jour les champs de contact d'une fiche, réservés au restaurateur propriétaire.
+
+    Volontairement limité au contact (téléphone, lien de réservation,
+    horaires) : le menu et les avis restent hors de portée du restaurateur
+    pour l'instant — un menu auto-déclaré contredirait D-014 (le modèle
+    observe, il ne juge pas ; laisser la fiche s'auto-décrire romprait la
+    même garantie pour un humain).
+    """
+    colonnes_autorisees = {"phone", "reservation_url", "opening_hours"}
+    a_ecrire = {k: v for k, v in champs.items() if k in colonnes_autorisees}
+    if not a_ecrire:
+        return
+    conn = get_connection()
+    assignations = ", ".join(f"{col} = ?" for col in a_ecrire)
+    conn.execute(
+        f"UPDATE restaurants SET {assignations} WHERE id = ?",
+        (*a_ecrire.values(), restaurant_id),
+    )
+    conn.commit()
+    conn.close()
 
 
 # =============================================================================
@@ -599,9 +926,10 @@ def export_user_data(user_id: int) -> dict:
     strictement un mécanisme d'authentification, la rendre n'aide en rien la
     personne et faciliterait une attaque hors ligne si l'export fuitait.
 
-    Les consultations ne sont PAS rattachées à un compte — elles n'enregistrent
-    qu'un restaurant et une date, sans identifiant d'utilisateur. Il n'y a donc
-    rien à en extraire, et c'est délibéré.
+    Les consultations sont rattachées à un compte depuis D-055 (rôle
+    restaurateur) — un restaurant consulté en étant connecté est visible
+    du restaurateur propriétaire, donc c'est une donnée personnelle au même
+    titre que les avis, et elle entre dans le droit d'accès.
     """
     conn = get_connection()
     utilisateur = conn.execute(
@@ -641,12 +969,20 @@ def export_user_data(user_id: int) -> dict:
         ).fetchall()
     ]
 
+    consultations = [
+        dict(r) for r in conn.execute(
+            "SELECT restaurant_id, restaurant_name, consulted_at "
+            "FROM consultations WHERE user_id = ? ORDER BY consulted_at DESC", (user_id,)
+        ).fetchall()
+    ]
+
     conn.close()
     return {
         "compte": utilisateur,
         "sessions": sessions,
         "reservations": reservations,
         "avis": avis,
+        "consultations": consultations,
     }
 
 
@@ -697,13 +1033,22 @@ def delete_user(user_id: int) -> dict:
     )
     cartes_deliees = curseur.rowcount
 
+    # Les consultations, comme les cartes soumises, sont DELIEES et non
+    # supprimees : un restaurateur garde un compte de visites correct, mais
+    # plus aucune ligne ne designe la personne apres son depart (D-055).
+    curseur.execute(
+        "UPDATE consultations SET user_id = NULL WHERE user_id = ?", (user_id,)
+    )
+    consultations_deliees = curseur.rowcount
+
     curseur.execute("DELETE FROM users WHERE id = ?", (user_id,))
     compte = curseur.rowcount
 
     conn.commit()
     conn.close()
     return {"sessions": sessions, "reservations": reservations,
-            "avis": avis, "cartes_deliees": cartes_deliees, "compte": compte}
+            "avis": avis, "cartes_deliees": cartes_deliees,
+            "consultations_deliees": consultations_deliees, "compte": compte}
 
 
 def purge_expired_sessions() -> int:

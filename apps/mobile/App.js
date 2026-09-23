@@ -163,6 +163,9 @@ export default function App() {
         onGoToPricing={ouvrirPricing}
         onUnsubscribe={unsubscribe}
         onDeleteAccount={async () => { await supprimerCompte(); setStack(null); }}
+        onGoToAbout={() => ouvrirLegal("about")}
+        onGoToContact={() => ouvrirLegal("contact")}
+        onGoToDons={() => ouvrirLegal("dons")}
       />
     ) : stack.screen === "cgu" ? (
       <CGUScreen
@@ -176,6 +179,12 @@ export default function App() {
       />
     ) : stack.screen === "pricing" ? (
       <PricingScreen user={user} onBack={() => setStack({ screen: "compte" })} />
+    ) : stack.screen === "about" ? (
+      <AboutScreen onBack={() => setStack({ screen: "compte" })} />
+    ) : stack.screen === "contact" ? (
+      <ContactScreen onBack={() => setStack({ screen: "compte" })} />
+    ) : stack.screen === "dons" ? (
+      <DonsScreen onBack={() => setStack({ screen: "compte" })} />
     ) : stack.screen === "detail" ? (
       <DetailScreen
         restaurant={stack.restaurant}
@@ -202,7 +211,7 @@ export default function App() {
       onUnlock={demanderDeverrouillage}
     />
   ) : (
-    <ScanScreen />
+    <ScanScreen user={user} />
   );
 
   // Le mouvement dit ce qui vient de se passer : un écran empilé glisse depuis

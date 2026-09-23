@@ -16,6 +16,7 @@ const ROLE_LABEL = {
   admin: "Administrateur",
   subscriber: "Abonné",
   user: "Compte gratuit",
+  restaurateur: "Restaurateur",
 };
 
 // TARIF INDICATIF — même placeholder que Pricing.jsx, pas encore arrêté.
@@ -127,8 +128,10 @@ export default function Settings({
         </section>
 
         {/* Un admin n'a pas d'abonnement à gérer — l'accès complet lui vient
-            du rôle, pas d'une formule payante. */}
-        {user.role !== "admin" && (
+            du rôle, pas d'une formule payante. Un restaurateur non plus :
+            c'est un abonnement différent (D-055 v2), pas encore une
+            fonctionnalité de ce panneau. */}
+        {user.role !== "admin" && user.role !== "restaurateur" && (
           <section style={{ marginTop: 28 }}>
             <h2 className="settings__section">Abonnement</h2>
             <p className="card__reason" style={{ marginTop: 8 }}>

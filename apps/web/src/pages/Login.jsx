@@ -9,7 +9,7 @@ import { ArrowLeft, ForkKnife } from "@phosphor-icons/react";
 import { API_BASE } from "../api";
 import GoogleG from "../components/GoogleG";
 
-export default function Login({ onLogin, onGoToSignup, onBack, erreurInitiale }) {
+export default function Login({ onLogin, onGoToSignup, onGoToSignupRestaurateur, onBack, erreurInitiale }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState(
@@ -113,6 +113,9 @@ export default function Login({ onLogin, onGoToSignup, onBack, erreurInitiale })
 
           <button type="button" className="linkbtn" onClick={onGoToSignup} style={{ marginTop: 4 }}>
             Pas encore de compte ? Créer un compte
+          </button>
+          <button type="button" className="linkbtn" onClick={onGoToSignupRestaurateur} style={{ marginTop: 4 }}>
+            Vous êtes restaurateur ? Créer un compte restaurateur
           </button>
         </form>
       </div>

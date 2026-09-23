@@ -73,6 +73,12 @@ export async function fetchRestaurants({
   return request(`/api/restaurants?${query}`, { credentials: "include" });
 }
 
+/** Recherche par nom, pour rattacher une action (revendication, carte scannée) au bon restaurant. */
+export async function rechercherRestaurants(q) {
+  if (!q || q.trim().length < 2) return { restaurants: [] };
+  return request(`/api/restaurants/recherche?q=${encodeURIComponent(q.trim())}`);
+}
+
 export async function fetchRestaurant(id) {
   // `credentials: "include"` : sans le cookie, l'API ne peut pas savoir qu'un
   // compte admin regarde, et ne renverrait jamais `detail_calcul` pour lui.
@@ -86,9 +92,11 @@ export async function fetchRestaurant(id) {
 // (`require_admin`, backend/core/auth/dependencies.py), ces fonctions ne
 // font que relayer, jamais la décision elle-même.
 
-export async function fetchAdminRestaurants({ limit = 50, offset = 0, q } = {}) {
+/** `restaurateurStatut` : 'valide' | 'en_attente' | 'sans' (D-057). */
+export async function fetchAdminRestaurants({ limit = 50, offset = 0, q, restaurateurStatut } = {}) {
   const query = new URLSearchParams({ limit, offset });
   if (q) query.set("q", q);
+  if (restaurateurStatut) query.set("restaurateur_statut", restaurateurStatut);
   return request(`/api/admin/restaurants?${query}`, { credentials: "include" });
 }
 
@@ -170,6 +178,29 @@ export async function signup({ email, password, name, acceptedTerms }) {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify({ email, password, name, accepted_terms: acceptedTerms }),
+  });
+}
+
+/**
+ * Crée un compte restaurateur ET sa demande de revendication/création, dans
+ * le même geste (D-055 v2) — compte séparé du compte client, jamais un
+ * compte client requalifié.
+ */
+export async function signupRestaurateur({
+  email, password, name, acceptedTerms, restaurantId, message,
+  proposedName, proposedAddress, proposedLat, proposedLng, proposedCuisine, proposedPhone,
+}) {
+  return request("/api/auth/signup-restaurateur", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      email, password, name, accepted_terms: acceptedTerms,
+      restaurant_id: restaurantId, message,
+      proposed_name: proposedName, proposed_address: proposedAddress,
+      proposed_lat: proposedLat, proposed_lng: proposedLng,
+      proposed_cuisine: proposedCuisine, proposed_phone: proposedPhone,
+    }),
   });
 }
 
@@ -319,4 +350,74 @@ export async function envoyerCarte(restaurantId, file) {
 /** Combien de cartes ont été envoyées pour ce restaurant (métadonnées seules). */
 export async function fetchCartes(restaurantId) {
   return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/cartes`);
+}
+
+// --- Rôle restaurateur (D-055) ---
+//
+// Une demande (revendication ou proposition de fiche) n'accorde rien tant
+// qu'un admin ne l'a pas validée (backend/main.py::admin_valider_demande) :
+// ces fonctions ne font que déposer la demande ou lire son statut.
+
+/** Dépose une demande de revendication (`restaurantId`) ou de création de fiche. */
+export async function demanderRestaurateur(demande) {
+  return request("/api/restaurateur/demande", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(demande),
+  });
+}
+
+/** Statut de la demande du compte connecté, et sa fiche si elle est validée. */
+export async function fetchStatutRestaurateur() {
+  return request("/api/restaurateur/statut", { credentials: "include" });
+}
+
+/** Fiche possédée par le compte restaurateur connecté. */
+export async function fetchMonRestaurant() {
+  return request("/api/restaurateur/mon-restaurant", { credentials: "include" });
+}
+
+/** Corrige téléphone / lien de réservation / horaires de la fiche possédée. */
+export async function modifierMonRestaurant(champs) {
+  return request("/api/restaurateur/mon-restaurant", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(champs),
+  });
+}
+
+/** Fréquentation de la fiche possédée — détail complet si abonné, résumé sinon. */
+export async function fetchVisitesMonRestaurant() {
+  return request("/api/restaurateur/mon-restaurant/visites", { credentials: "include" });
+}
+
+/** Démonstration, pas un paiement réel (voir backend/main.py). */
+export async function subscribeRestaurateur() {
+  return request("/api/restaurateur/abonnement", { method: "POST", credentials: "include" });
+}
+
+export async function unsubscribeRestaurateur() {
+  return request("/api/restaurateur/abonnement/annuler", { method: "POST", credentials: "include" });
+}
+
+/* --- Administration : file d'attente des demandes restaurateur --- */
+
+export async function fetchDemandesRestaurateur() {
+  return request("/api/admin/demandes-restaurateur", { credentials: "include" });
+}
+
+export async function validerDemandeRestaurateur(claimId) {
+  return request(`/api/admin/demandes-restaurateur/${claimId}/valider`, {
+    method: "POST",
+    credentials: "include",
+  });
+}
+
+export async function refuserDemandeRestaurateur(claimId) {
+  return request(`/api/admin/demandes-restaurateur/${claimId}/refuser`, {
+    method: "POST",
+    credentials: "include",
+  });
 }
