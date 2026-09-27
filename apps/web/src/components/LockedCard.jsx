@@ -13,7 +13,7 @@ import { LockSimple } from "@phosphor-icons/react";
 
 export default function LockedCard({ onUnlock, connecte = false }) {
   // Un compte déjà connecté n'a plus besoin qu'on lui en redemande un — il
-  // ne lui manque que l'abonnement (LS-refonte).
+  // ne lui manque que le Pass Voyageur (D-063).
   return (
     <article className="card card--locked">
       <div className="card__media">
@@ -27,13 +27,13 @@ export default function LockedCard({ onUnlock, connecte = false }) {
           <h3 className="card__name">Restaurant verrouillé</h3>
         </div>
         <p className="card__meta">
-          {connecte ? "Réservé aux abonnés" : "Réservé aux membres"}
+          {connecte ? "Réservé au Pass Voyageur" : "Réservé aux membres"}
         </p>
       </div>
 
       <div className="card__foot">
         <button className="btn btn--primary btn--block" onClick={onUnlock}>
-          {connecte ? "S'abonner" : "Créer un compte"}
+          {connecte ? "Voir les Pass" : "Créer un compte"}
         </button>
       </div>
     </article>

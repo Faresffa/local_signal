@@ -36,7 +36,7 @@ const MAX_CARTES_VERROUILLEES = 6;
 // jamais l'écran sur un message d'erreur de permission.
 const ZONE_PAR_DEFAUT = { lat: 48.8462, lng: 2.3456 };
 
-function Carte({ item, onOpen, isDark, index }) {
+function Carte({ item, onOpen, isDark, index, plusProche }) {
   const colors = useColors();
   const v = verdict(item.local_signal, item.confidence);
   const dist = distance(item.distance_m);
@@ -113,11 +113,6 @@ function Carte({ item, onOpen, isDark, index }) {
             {index + 1}
           </Text>
         </View>
-        {dist && (
-          <View style={[s.distance, { backgroundColor: colors.surface }]}>
-            <Text style={[s.distanceText, { color: colors.text }]}>{dist}</Text>
-          </View>
-        )}
         {index === 0 && (
           <View style={[s.premier, { backgroundColor: colors.brand }]}>
             <Text style={[s.premierText, { color: colors.onBrand }]}>
@@ -130,7 +125,7 @@ function Carte({ item, onOpen, isDark, index }) {
       {/* Barre et verdict, juste sous la photo : c'est la premiere chose lue
           apres l'image, avant meme le nom. Identique au web (LS-14). */}
       <View style={s.signal}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, alignSelf: "stretch", justifyContent: "flex-start", paddingTop: 10 }}>
           <BarreSignal
             valeur={item.local_signal}
             ton={v.tone}
@@ -138,7 +133,24 @@ function Carte({ item, onOpen, isDark, index }) {
             label={`${v.label} — ${item.name}`}
           />
         </View>
-        <Verdict tone={v.tone} label={v.label} localSignal={item.local_signal} />
+        {/* Score, puis la distance juste en dessous (D-065), comme sur le web. */}
+        <View style={s.score}>
+          <Verdict tone={v.tone} label={v.label} localSignal={item.local_signal} style={{ alignSelf: "flex-end" }} />
+          {dist && (
+            <View style={s.dist}>
+              <Feather name="map-pin" size={11} color={plusProche ? colors.brand : colors.textFaint} />
+              <Text
+                style={[
+                  s.distText,
+                  { color: plusProche ? colors.brand : colors.textMuted },
+                  plusProche && { fontWeight: "700" },
+                ]}
+              >
+                {plusProche ? `Le plus proche · ${dist}` : dist}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
 
       <View style={s.cardBody}>
@@ -263,6 +275,9 @@ export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
   // limite ; on ne fait que la rendre lisible plutôt que de laisser croire
   // que le quartier ne compte que cinq restaurants.
   const masques = user ? 0 : Math.max(0, total - restaurants.length);
+  // Distance minimale des résultats : « Le plus proche » (D-065).
+  const distances = restaurants.map((r) => r.distance_m).filter((d) => d != null);
+  const distMin = distances.length ? Math.min(...distances) : null;
 
   const entete = (
     <View style={s.header}>
@@ -433,7 +448,7 @@ export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
       }
       ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
       renderItem={({ item, index }) => (
-        <Carte item={item} onOpen={onOpen} isDark={isDark} index={index} />
+        <Carte item={item} onOpen={onOpen} isDark={isDark} index={index} plusProche={distMin != null && distance(item.distance_m) === distance(distMin)} />
       )}
       ListFooterComponent={
         masques > 0 ? (
@@ -511,9 +526,11 @@ const s = StyleSheet.create({
   },
 
   // Barre et verdict sur une meme ligne, entre la photo et le corps.
+  // En haut, pas au centre : la distance sous le score (D-065) allonge la
+  // colonne de droite ; la barre est recentrée sur la pastille (marginTop).
   signal: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: spacing.sm,
     paddingHorizontal: spacing.md,
     paddingTop: spacing.sm,
@@ -529,15 +546,9 @@ const s = StyleSheet.create({
   },
   premierText: { fontSize: 11, fontWeight: "700" },
 
-  distance: {
-    position: "absolute",
-    left: 12,
-    bottom: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: radius.pill,
-  },
-  distanceText: { fontSize: 12, fontWeight: "600" },
+  score: { alignItems: "flex-end", gap: 4, flexShrink: 0 },
+  dist: { flexDirection: "row", alignItems: "center", gap: 3 },
+  distText: { fontSize: 12, fontWeight: "500" },
 
   rang: {
     position: "absolute",

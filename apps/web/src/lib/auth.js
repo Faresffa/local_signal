@@ -9,9 +9,8 @@ import { useCallback, useEffect, useState } from "react";
 import {
   fetchMe, login as apiLogin, logout as apiLogout, signup as apiSignup,
   signupRestaurateur as apiSignupRestaurateur,
-  subscribe as apiSubscribe, subscribeRestaurateur as apiSubscribeRestaurateur,
+  subscribe as apiSubscribe,
   supprimerCompte as apiSupprimerCompte, unsubscribe as apiUnsubscribe,
-  unsubscribeRestaurateur as apiUnsubscribeRestaurateur,
 } from "../api";
 
 export function useCurrentUser() {
@@ -61,20 +60,6 @@ export function useCurrentUser() {
     return u;
   }, []);
 
-  // Abonnement restaurateur (`restaurant_claims.abonne`) — démonstration,
-  // distinct de `subscribe`/`unsubscribe` qui portent sur le rôle client.
-  const subscribeRestaurateur = useCallback(async () => {
-    const u = await apiSubscribeRestaurateur();
-    setUser(u);
-    return u;
-  }, []);
-
-  const unsubscribeRestaurateur = useCallback(async () => {
-    const u = await apiUnsubscribeRestaurateur();
-    setUser(u);
-    return u;
-  }, []);
-
   // Droit à l'effacement (RGPD, LS-39) — le cookie est déjà retiré côté
   // serveur par la route de suppression, inutile d'appeler `logout` en plus.
   const supprimerCompte = useCallback(async () => {
@@ -84,6 +69,6 @@ export function useCurrentUser() {
 
   return {
     user, loading, login, signup, signupRestaurateur, logout, subscribe, unsubscribe,
-    subscribeRestaurateur, unsubscribeRestaurateur, supprimerCompte,
+    supprimerCompte,
   };
 }

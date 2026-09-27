@@ -13,13 +13,21 @@
 // laisser la fiche s'auto-décrire romprait la même garantie pour un humain).
 // Cette limite reste à rouvrir explicitement, pas à contourner ici.
 
-import { useEffect, useState } from "react";
-import { Eye, Storefront } from "@phosphor-icons/react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Camera, Clock, Eye, ForkKnife, Link as LinkIcon, MapPin, Phone, Storefront,
+} from "@phosphor-icons/react";
 
 import {
-  fetchMonRestaurant, fetchStatutRestaurateur, fetchVisitesMonRestaurant, modifierMonRestaurant,
+  deposerPhotoRestaurant, fetchMonRestaurant, fetchStatutRestaurateur,
+  fetchVisitesMonRestaurant, modifierMonRestaurant,
 } from "../api";
+import PhotoRestaurant from "../components/PhotoRestaurant";
 import { ErrorState, ResultsSkeleton } from "../components/States";
+
+const MO = 1024 * 1024;
+const TAILLE_MAX = 10 * MO;
+const TYPES_PHOTO = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/heic"];
 
 const STATUT_LABEL = {
   en_attente: "En attente de validation",
@@ -27,7 +35,7 @@ const STATUT_LABEL = {
   refuse: "Refusée",
 };
 
-/** Fréquentation de la fiche — total, et détail si le restaurateur est abonné. */
+/** Fréquentation de la fiche — total et détail des visites, gratuit pour tous (D-063). */
 function Frequentation() {
   const [donnees, setDonnees] = useState(null);
   const [erreur, setErreur] = useState(null);
@@ -50,33 +58,18 @@ function Frequentation() {
         <span className="fact__value">{donnees.total}</span>
       </div>
 
-      {donnees.abonne ? (
-        donnees.visites.length === 0 ? (
-          <p className="card__reason" style={{ marginTop: 10 }}>
-            Personne d'identifié n'a encore consulté cette fiche.
-          </p>
-        ) : (
-          <ul className="why__list" style={{ marginTop: 10 }}>
-            {donnees.visites.map((v, i) => (
-              <li key={`${v.user_id}-${i}`}>
-                {v.name || v.email} — {new Date(v.consulted_at).toLocaleString("fr-FR")}
-              </li>
-            ))}
-          </ul>
-        )
+      {donnees.visites.length === 0 ? (
+        <p className="card__reason" style={{ marginTop: 10 }}>
+          Personne d'identifié n'a encore consulté cette fiche.
+        </p>
       ) : (
-        <>
-          {donnees.noms_recents.length > 0 && (
-            <p className="card__reason" style={{ marginTop: 10 }}>
-              Récemment : {donnees.noms_recents.join(", ")}
-            </p>
-          )}
-          <p className="formfield__hint" style={{ marginTop: 10 }}>
-            L'abonnement restaurateur donne le détail complet des visites, et
-            permet d'envoyer des messages ciblés (promotions, nouveaux
-            plats) — <a className="linkbtn" href="#" onClick={(e) => e.preventDefault()}>bientôt disponible</a>.
-          </p>
-        </>
+        <ul className="why__list" style={{ marginTop: 10 }}>
+          {donnees.visites.map((v, i) => (
+            <li key={`${v.user_id}-${i}`}>
+              {v.name || v.email} — {new Date(v.consulted_at).toLocaleString("fr-FR")}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
@@ -132,6 +125,80 @@ function ContactEdit({ restaurant, onSauve }) {
   );
 }
 
+/** Photo de vitrine, seule image que le restaurateur peut déposer (D-059). */
+function PhotoEdit({ restaurant, onSauve }) {
+  const champ = useRef(null);
+  const [statut, setStatut] = useState("idle");
+  const [erreur, setErreur] = useState(null);
+
+  function choisir(fichier) {
+    setErreur(null);
+    if (!fichier) return;
+    // Même contrôle que AjouterCarte.jsx : évite d'envoyer un fichier que
+    // le serveur refuserait de toute façon, pas une mesure de sécurité.
+    if (!TYPES_PHOTO.includes(fichier.type)) {
+      setErreur("Format non accepté. Envoyez une photo JPEG, PNG, WebP ou HEIC.");
+      return;
+    }
+    if (fichier.size > TAILLE_MAX) {
+      setErreur(`Photo trop lourde (${(fichier.size / MO).toFixed(1)} Mo, maximum 10 Mo).`);
+      return;
+    }
+    envoyer(fichier);
+  }
+
+  async function envoyer(fichier) {
+    setStatut("sending");
+    setErreur(null);
+    try {
+      const maj = await deposerPhotoRestaurant(fichier);
+      onSauve(maj);
+      setStatut("idle");
+    } catch (e) {
+      setErreur(e.message);
+      setStatut("idle");
+    }
+  }
+
+  return (
+    <div className="restaurateur__media">
+      <div className="detail__media">
+        <PhotoRestaurant
+          id={restaurant.id}
+          cuisine={restaurant.cuisine}
+          photoUrl={restaurant.photo_url}
+          photoKey={restaurant.photo_key}
+          nom={restaurant.name}
+          size={92}
+        />
+      </div>
+
+      <input
+        ref={champ}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) => choisir(e.target.files?.[0])}
+      />
+      <button
+        type="button"
+        className="restaurateur__photoBtn"
+        onClick={() => champ.current?.click()}
+        disabled={statut === "sending"}
+      >
+        <Camera size={15} weight="bold" />
+        {statut === "sending"
+          ? "Envoi…"
+          : restaurant.photo_key ? "Changer la photo" : "Ajouter une photo"}
+      </button>
+
+      {erreur && <p className="formfield__error" style={{ marginTop: 8 }}>{erreur}</p>}
+    </div>
+  );
+}
+
+const FACT_ICON = { display: "inline", verticalAlign: "-2px", marginRight: 6 };
+
 function TableauDeBord({ restaurantId }) {
   const [restaurant, setRestaurant] = useState(null);
   const [erreur, setErreur] = useState(null);
@@ -147,15 +214,54 @@ function TableauDeBord({ restaurantId }) {
   if (erreur) return <ErrorState message={erreur} onRetry={() => {}} />;
   if (!restaurant) return <ResultsSkeleton count={1} />;
 
+  const puce = { size: 14, weight: "light", style: FACT_ICON };
+
+  // TOUS LES DÉTAILS, PAS SEULEMENT CEUX QUI SE MODIFIENT (retour
+  // utilisateur explicite) — l'adresse et la cuisine viennent de la
+  // demande d'origine et ne sont pas éditables ici (D-014), mais un
+  // restaurateur doit voir sa fiche telle qu'un client la voit, en entier,
+  // pas seulement le formulaire de ce qu'il peut changer.
+  const facts = [
+    restaurant.address && { icon: <MapPin {...puce} />, label: "Adresse", value: restaurant.address },
+    restaurant.opening_hours && { icon: <Clock {...puce} />, label: "Horaires", value: restaurant.opening_hours },
+    restaurant.phone && { icon: <Phone {...puce} />, label: "Téléphone", value: restaurant.phone },
+    restaurant.reservation_url && {
+      icon: <LinkIcon {...puce} />, label: "Réservation", value: restaurant.reservation_url,
+    },
+  ].filter(Boolean);
+
   return (
     <div>
-      <h1 className="detail__title">{restaurant.name}</h1>
-      <p className="detail__meta" style={{ marginBottom: 24 }}>
-        {restaurant.cuisine_label || "Restaurant"}
-        {restaurant.address && ` · ${restaurant.address}`}
-      </p>
+      <div className="detail">
+        <PhotoEdit restaurant={restaurant} onSauve={setRestaurant} />
 
-      <section className="calcul" style={{ marginTop: 0 }}>
+        <div>
+          <h1 className="detail__title">{restaurant.name}</h1>
+          <p className="detail__meta">
+            <ForkKnife size={15} weight="light" style={FACT_ICON} />
+            {restaurant.cuisine_label || "Restaurant"}
+          </p>
+
+          {facts.length > 0 && (
+            <div className="factlist">
+              {facts.map(({ icon, label, value }) => (
+                <div className="fact" key={label}>
+                  <span className="fact__label">{icon}{label}</span>
+                  <span className="fact__value">
+                    {label === "Réservation" ? (
+                      <a href={value} target="_blank" rel="noreferrer noopener">
+                        {value.replace(/^https?:\/\//, "")}
+                      </a>
+                    ) : value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <section className="calcul" style={{ marginTop: 24 }}>
         <div className="calcul__corps" style={{ display: "block" }}>
           <h2 className="why__title" style={{ marginBottom: 12 }}>
             <Eye size={16} weight="bold" style={{ verticalAlign: "-2px", marginRight: 6 }} />
@@ -167,7 +273,7 @@ function TableauDeBord({ restaurantId }) {
 
       <section className="calcul" style={{ marginTop: 16 }}>
         <div className="calcul__corps" style={{ display: "block" }}>
-          <h2 className="why__title" style={{ marginBottom: 12 }}>Informations de contact</h2>
+          <h2 className="why__title" style={{ marginBottom: 12 }}>Modifier les coordonnées</h2>
           <ContactEdit restaurant={restaurant} onSauve={setRestaurant} />
         </div>
       </section>

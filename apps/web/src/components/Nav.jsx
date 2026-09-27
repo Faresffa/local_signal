@@ -13,9 +13,10 @@ import { useTheme } from "../lib/hooks";
 
 // Le rôle s'affiche partout où le compte s'affiche (retour utilisateur :
 // "ça affiche s'il est abonné ou pas") — jamais un chiffre, jamais l'e-mail.
+// `subscriber` = Pass Voyageur actif (D-063).
 const ROLE_LABEL = {
   admin: "Admin",
-  subscriber: "Abonné",
+  subscriber: "Pass Voyageur",
   user: "Compte gratuit",
   restaurateur: "Restaurateur",
 };
@@ -26,7 +27,7 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const menuRef = useRef(null);
   // COMPTE SÉPARÉ, NAVIGATION SÉPARÉE (D-055 v2) : un restaurateur n'a
-  // aucune des fonctionnalités client (recherche, abonnement, favoris),
+  // aucune des fonctionnalités client (recherche, Pass Voyageur, favoris),
   // donc aucun des liens qui y mènent n'a de sens pour lui.
   const estRestaurateur = user?.role === "restaurateur";
 
@@ -112,28 +113,16 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
           </button>
         )}
 
-        {/* Connecté mais pas encore abonné : c'est précisément à cet
-            endroit-là qu'il manque quelque chose (LS-refonte). Invisible pour
-            un abonné ou un admin, qui n'ont rien à débloquer. */}
+        {/* Connecté mais sans Pass : c'est précisément à cet endroit-là
+            qu'il manque quelque chose (D-063). Invisible pour un détenteur
+            de Pass ou un admin, qui n'ont rien à débloquer. */}
         {user && user.role === "user" && (
           <button
             className="nav__link"
             aria-current={page === "pricing" ? "page" : undefined}
             onClick={() => onNavigate("pricing")}
           >
-            S'abonner
-          </button>
-        )}
-
-        {/* Même logique côté restaurateur, sur un abonnement différent
-            (`restaurant_claims.abonne`, D-056) — invisible une fois abonné. */}
-        {estRestaurateur && !user.restaurateur_abonne && (
-          <button
-            className="nav__link"
-            aria-current={page === "pricing-restaurateur" ? "page" : undefined}
-            onClick={() => onNavigate("pricing-restaurateur")}
-          >
-            S'abonner
+            Pass Voyageur
           </button>
         )}
 
@@ -158,9 +147,7 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
               <User size={16} weight="bold" />
               <span className="nav__profileName">{user.name || user.email}</span>
               <span className={`nav__role nav__role--${user.role}`}>
-                {estRestaurateur
-                  ? `Restaurateur · ${user.restaurateur_abonne ? "Abonné" : "Non abonné"}`
-                  : ROLE_LABEL[user.role] || ROLE_LABEL.user}
+                {ROLE_LABEL[user.role] || ROLE_LABEL.user}
               </span>
               <CaretDown size={11} weight="bold" className="nav__profileCaret" />
             </button>
@@ -194,10 +181,10 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
                     type="button"
                     role="menuitem"
                     className="nav__dropdownItem"
-                    onClick={() => aller("pricing-restaurateur")}
+                    onClick={() => aller("pour-restaurateurs")}
                   >
                     <Storefront size={16} weight="light" />
-                    Abonnement
+                    Ce que vous pouvez faire
                   </button>
                 )}
                 <button

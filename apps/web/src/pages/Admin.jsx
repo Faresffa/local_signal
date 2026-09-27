@@ -23,7 +23,7 @@ import {
 
 import {
   deleteAdminAvis, fetchAdminRestaurant, fetchAdminRestaurants,
-  fetchDemandesRestaurateur, laisserAvis, refuserDemandeRestaurateur,
+  fetchDemandesRestaurateur, refuserDemandeRestaurateur,
   updateAdminRestaurant, validerDemandeRestaurateur,
 } from "../api";
 import RestaurantCard from "../components/RestaurantCard";
@@ -132,27 +132,12 @@ function InformationsEdit({ resto, onSauve }) {
   );
 }
 
-/** Section avis : lecture, ajout (au nom du compte admin), suppression de n'importe lequel. */
-function AvisAdmin({ restaurantId, avis, onChange }) {
-  const [note, setNote] = useState(5);
-  const [texte, setTexte] = useState("");
-  const [statut, setStatut] = useState("idle");
+/**
+ * Section avis : lecture et suppression des avis déjà en base. Le dépôt
+ * d'avis a été retiré (D-063) — y compris au nom de l'admin.
+ */
+function AvisAdmin({ avis, onChange }) {
   const [erreur, setErreur] = useState(null);
-
-  async function ajouter(e) {
-    e.preventDefault();
-    setStatut("sending");
-    setErreur(null);
-    try {
-      await laisserAvis(restaurantId, { rating: note, text: texte.trim() || undefined });
-      setTexte("");
-      onChange();
-      setStatut("idle");
-    } catch (err) {
-      setErreur(err.message);
-      setStatut("idle");
-    }
-  }
 
   async function supprimer(avisId) {
     try {
@@ -168,7 +153,7 @@ function AvisAdmin({ restaurantId, avis, onChange }) {
       {avis.length === 0 && <p className="card__reason">Aucun avis pour ce restaurant.</p>}
 
       {avis.length > 0 && (
-        <ul className="why__list" style={{ marginBottom: 16 }}>
+        <ul className="why__list">
           {avis.map((a) => (
             <li key={a.id} style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}>
               <span>
@@ -192,35 +177,7 @@ function AvisAdmin({ restaurantId, avis, onChange }) {
           ))}
         </ul>
       )}
-
-      <form onSubmit={ajouter} style={{ display: "grid", gap: 10, maxWidth: 420 }}>
-        <div className="formfield">
-          <label htmlFor="admin-avis-note">Note (1 à 5)</label>
-          <input
-            id="admin-avis-note"
-            type="number"
-            min={1}
-            max={5}
-            value={note}
-            onChange={(e) => setNote(Number(e.target.value))}
-            style={{ maxWidth: 100 }}
-          />
-        </div>
-        <div className="formfield">
-          <label htmlFor="admin-avis-texte">Texte (facultatif)</label>
-          <textarea
-            id="admin-avis-texte"
-            className="avis__texte"
-            value={texte}
-            onChange={(e) => setTexte(e.target.value)}
-            rows={3}
-          />
-        </div>
-        {erreur && <p className="formfield__error">{erreur}</p>}
-        <button type="submit" className="btn btn--ghost" disabled={statut === "sending"} style={{ justifySelf: "start" }}>
-          {statut === "sending" ? "Envoi…" : "Ajouter un avis (au nom de ce compte)"}
-        </button>
-      </form>
+      {erreur && <p className="formfield__error">{erreur}</p>}
     </div>
   );
 }
@@ -283,6 +240,7 @@ function FicheAdmin({ id, onBack }) {
             id={resto.id}
             cuisine={resto.cuisine}
             photoUrl={resto.photo_url}
+            photoKey={resto.photo_key}
             nom={resto.name}
             size={92}
           />
@@ -375,9 +333,9 @@ function FicheAdmin({ id, onBack }) {
             <InformationsEdit resto={resto} onSauve={setResto} />
           </Depliant>
 
-          {/* --- Avis : lecture, ajout, modération --- */}
+          {/* --- Avis déjà en base : lecture, modération (dépôt retiré, D-063) --- */}
           <Depliant titre="Avis" badge={`${resto.avis?.length ?? 0}`}>
-            <AvisAdmin restaurantId={resto.id} avis={resto.avis || []} onChange={charger} />
+            <AvisAdmin avis={resto.avis || []} onChange={charger} />
           </Depliant>
 
           {/* --- Tous les autres champs bruts de la base --- */}

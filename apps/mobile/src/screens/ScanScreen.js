@@ -7,9 +7,9 @@
 // jusqu'ici une photo sans jamais savoir de quel restaurant elle venait :
 // l'analyse s'affichait puis se perdait, sans rejoindre le corpus structuré
 // qui est l'actif du projet (CLAUDE.md §3). Le parcours est maintenant :
-// chercher le restaurant → photographier sa carte → avis facultatif, même
-// mécanisme que `AjouterCarte.jsx` côté web (D-038, D-039), auquel cet écran
-// s'aligne.
+// chercher le restaurant → photographier sa carte, même mécanisme que
+// `AjouterCarte.jsx` côté web (D-038), auquel cet écran s'aligne. L'avis
+// facultatif qui suivait a été retiré avec les avis utilisateurs (D-063).
 //
 // LA RECHERCHE PAR NOM EST VOLONTAIRE, PAS PAR POSITION. L'utilisateur est
 // debout devant le restaurant, souvent avec un GPS imprécis en intérieur ; il
@@ -31,34 +31,12 @@ import {
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
-import { envoyerCarte, laisserAvis, rechercherRestaurants } from "../api";
+import { envoyerCarte, rechercherRestaurants } from "../api";
 import { Button } from "../components/ui";
 import { radius, spacing, useColors } from "../theme";
 
-function Etoiles({ note, onChange, colors }) {
-  return (
-    <View style={{ flexDirection: "row", gap: 4 }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <Pressable
-          key={n}
-          onPress={() => onChange(note === n ? null : n)}
-          accessibilityRole="button"
-          accessibilityLabel={`${n} sur 5`}
-          hitSlop={8}
-          style={{ padding: 3 }}
-        >
-          <Feather
-            name="star"
-            size={24}
-            color={n <= (note || 0) ? colors.mixed : colors.borderStrong}
-          />
-        </Pressable>
-      ))}
-    </View>
-  );
-}
 
-export default function ScanScreen({ user }) {
+export default function ScanScreen() {
   const colors = useColors();
 
   // --- Étape 1 : quel restaurant ---------------------------------------
@@ -89,22 +67,11 @@ export default function ScanScreen({ user }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // --- Étape 3 : avis facultatif -------------------------------------------
-  const [avisOuvert, setAvisOuvert] = useState(false);
-  const [note, setNote] = useState(null);
-  const [texteAvis, setTexteAvis] = useState("");
-  const [envoiAvis, setEnvoiAvis] = useState(false);
-  const [avisEnvoye, setAvisEnvoye] = useState(false);
-
   function changerRestaurant() {
     setRestaurant(null);
     setPhoto(null);
     setResult(null);
     setError(null);
-    setAvisOuvert(false);
-    setAvisEnvoye(false);
-    setNote(null);
-    setTexteAvis("");
   }
 
   async function lancer(depuisCamera) {
@@ -143,20 +110,6 @@ export default function ScanScreen({ user }) {
       setError(e.message);
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function publierAvis() {
-    if (!note && !texteAvis.trim()) return;
-    setEnvoiAvis(true);
-    try {
-      await laisserAvis(restaurant.id, { rating: note, text: texteAvis.trim() || null });
-      setAvisEnvoye(true);
-      setAvisOuvert(false);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setEnvoiAvis(false);
     }
   }
 
@@ -231,7 +184,7 @@ export default function ScanScreen({ user }) {
     );
   }
 
-  // --- Étapes 2 et 3 : restaurant choisi, photo puis avis ------------------
+  // --- Étape 2 : restaurant choisi, photo de la carte ----------------------
   return (
     <ScrollView contentContainerStyle={s.page}>
       <Pressable onPress={changerRestaurant} style={s.back} accessibilityRole="button">
@@ -241,8 +194,7 @@ export default function ScanScreen({ user }) {
 
       <Text style={[s.title, { color: colors.text }]}>{restaurant.name}</Text>
       <Text style={[s.lede, { color: colors.textMuted }]}>
-        Photographiez la carte affichée en vitrine. Aucun avis n'est
-        nécessaire pour contribuer.
+        Photographiez la carte affichée en vitrine.
       </Text>
 
       {!result && (
@@ -287,45 +239,6 @@ export default function ScanScreen({ user }) {
             <Text style={[s.body, { color: colors.textMuted, marginTop: 6 }]}>
               La lecture automatique n'a pas abouti cette fois. La photo est
               enregistrée et sera relue : rien n'est perdu.
-            </Text>
-          )}
-
-          {/* AVIS FACULTATIF, RÉSERVÉ À UN COMPTE CONNECTÉ — même règle que
-              Avis.js sur la fiche : un avis anonyme ne serait ni modifiable
-              ni supprimable par son auteur. */}
-          {user && !avisEnvoye && (
-            <View style={{ marginTop: spacing.lg, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: colors.border }}>
-              {!avisOuvert ? (
-                <Button
-                  title="Ajouter un avis (facultatif)"
-                  icon="star"
-                  variant="ghost"
-                  onPress={() => setAvisOuvert(true)}
-                />
-              ) : (
-                <View style={{ gap: spacing.sm }}>
-                  <Etoiles note={note} onChange={setNote} colors={colors} />
-                  <TextInput
-                    value={texteAvis}
-                    onChangeText={setTexteAvis}
-                    placeholder="Ce que vous avez mangé, l'accueil…"
-                    placeholderTextColor={colors.textFaint}
-                    multiline
-                    style={[s.avisInput, { color: colors.text, borderColor: colors.border }]}
-                  />
-                  <Button
-                    title={envoiAvis ? "Publication…" : "Publier l'avis"}
-                    onPress={publierAvis}
-                    disabled={envoiAvis || (!note && !texteAvis.trim())}
-                  />
-                </View>
-              )}
-            </View>
-          )}
-
-          {avisEnvoye && (
-            <Text style={[s.body, { color: colors.local, marginTop: spacing.md }]}>
-              Avis publié — merci.
             </Text>
           )}
 
@@ -378,8 +291,4 @@ const s = StyleSheet.create({
   body: { fontSize: 14, lineHeight: 19 },
   link: { fontSize: 14, fontWeight: "600" },
 
-  avisInput: {
-    borderWidth: 1, borderRadius: radius.sm, padding: spacing.sm,
-    minHeight: 70, fontSize: 14, textAlignVertical: "top",
-  },
 });

@@ -475,6 +475,17 @@ def _migrate(cursor) -> None:
             # d'alimentation différents, un restaurant réimporté depuis OSM
             # ne doit jamais échouer parce qu'un compte a disparu.
             "owner_user_id": "INTEGER",
+            # Photo deposee par le restaurateur proprietaire (D-059) —
+            # distincte de `photo_url` (lien externe OSM/Google, jamais
+            # heberge par nous). `photo_key` est l'empreinte sha256 dans
+            # `stockage()` (backend/core/stockage.py, deja utilise pour le
+            # corpus de cartes) ; `photo_type` son type MIME, necessaire pour
+            # la resservir. Contrairement au corpus de cartes (jamais servi,
+            # D-038), cette photo EST redistribuee : c'est le restaurateur
+            # verifie qui depose la photo de son propre etablissement, pas
+            # une oeuvre tierce.
+            "photo_key": "TEXT",
+            "photo_type": "TEXT",
         },
         "users": {
             # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Les

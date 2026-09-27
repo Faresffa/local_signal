@@ -14,19 +14,39 @@
 // socle, la photo vient par-dessus quand elle existe. Une grille où seuls
 // quelques éléments ont un visuel serait pire que pas de photo du tout.
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { photoUrlRestaurateur } from "../api";
 import CuisineVisual from "./CuisineVisual";
 
 export default function PhotoRestaurant({
-  id, cuisine, photoUrl, nom, size = 64, className = "",
+  id, cuisine, photoUrl, photoKey, nom, size = 64, className = "",
 }) {
   // `chargee` évite le clignotement : tant que l'image n'est pas arrivée,
   // l'illustration reste visible dessous plutôt qu'un rectangle vide.
   const [chargee, setChargee] = useState(false);
   const [cassee, setCassee] = useState(false);
+  const imgRef = useRef(null);
 
-  const url = (photoUrl || "").trim();
+  // `photoUrl` (lien externe OSM/Google) prime quand il existe. Sinon,
+  // `photoKey` signale qu'un restaurateur a déposé sa propre photo (D-059) —
+  // servie depuis notre API plutôt que depuis un hébergeur tiers.
+  const url = (photoUrl || (photoKey ? photoUrlRestaurateur(id, photoKey) : "") || "").trim();
+
+  useEffect(() => {
+    // Une image déjà en cache navigateur peut finir de charger de façon
+    // synchrone, avant que React n'ait attaché `onLoad` — l'évènement part
+    // alors dans le vide et `chargee` ne passe jamais à vrai. `.complete`
+    // dit la vérité indépendamment de l'évènement ; on la relit une fois
+    // l'élément monté pour ce cas précis (photo servie par notre propre API,
+    // D-059, où le remplacement d'une photo revisite souvent la même URL
+    // depuis le cache HTTP).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (imgRef.current?.complete) setChargee(true);
+    else setChargee(false);
+    setCassee(false);
+  }, [url]);
+
   const afficher = url && !cassee;
 
   return (
@@ -35,6 +55,8 @@ export default function PhotoRestaurant({
 
       {afficher && (
         <img
+          key={url}
+          ref={imgRef}
           src={url}
           // Vide et aria-hidden : le nom du restaurant est déjà annoncé juste à
           // côté. Le répéter ici ferait entendre deux fois la même chose à un

@@ -15,7 +15,6 @@ import {
 
 import { fetchRestaurant } from "../api";
 import AjouterCarte from "../components/AjouterCarte";
-import Avis from "../components/Avis";
 import CartePhotos from "../components/CartePhotos";
 import PhotoRestaurant from "../components/PhotoRestaurant";
 import DetailCalcul from "../components/DetailCalcul";
@@ -88,6 +87,7 @@ export default function Detail({
             id={full.id}
             cuisine={full.cuisine}
             photoUrl={full.photo_url}
+            photoKey={full.photo_key}
             nom={full.name}
             size={92}
           />
@@ -108,7 +108,7 @@ export default function Detail({
                   ? "Connectez-vous pour ajouter des favoris"
                   : abonne
                     ? (favori ? "Retirer des favoris" : "Ajouter aux favoris")
-                    : "S'abonner pour ajouter des favoris"
+                    : "Prendre un Pass pour ajouter des favoris"
               }
             >
               <Heart size={16} weight={favori ? "fill" : "regular"} />
@@ -161,17 +161,9 @@ export default function Detail({
             Réserver une table
           </button>
 
-          {/* LES DEUX GESTES DE CONTRIBUTION, DANS CET ORDRE.
-              L'avis vient en premier parce qu'il se lit autant qu'il s'écrit :
-              un visiteur qui descend la fiche cherche ce que les autres en ont
-              dit. L'ajout de carte vient ensuite — c'est un geste plus rare,
-              mais c'est celui qui construit l'actif du projet (§3). */}
-          <Avis
-            restaurantId={full.id}
-            user={user}
-            onSeConnecter={onSeConnecter}
-          />
-
+          {/* LE SEUL GESTE DE CONTRIBUTION : ajouter une carte, celui qui
+              construit l'actif du projet (§3). Les avis utilisateurs ont été
+              retirés (D-063). */}
           <AjouterCarte
             restaurantId={full.id}
             // Une carte lue change le signal menu : on recharge la fiche

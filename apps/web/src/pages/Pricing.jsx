@@ -1,66 +1,65 @@
 // apps/web/src/pages/Pricing.jsx
 //
-// Page d'abonnement (LS-refonte). Deux formules, comme demandé : gratuite et
-// abonnée — pas une troisième, la démonstration porte sur DEUX comportements
-// (`masques > 0` ou non dans Discover.jsx), un troisième niveau n'aurait
-// rien à distinguer visuellement de plus.
+// Page du Pass Voyageur (D-063, remplace l'abonnement mensuel de LS-refonte).
 //
-// LES PRIX SONT DES PLACEHOLDERS. Personne n'a encore décidé le vrai tarif
-// (retour utilisateur : "un euro l'autre je sais pas") — ils sont écrits en
-// dur ici, PAS dans `packages/shared` ni `config.py`, précisément pour qu'on
-// ne les confonde pas avec une valeur qui aurait déjà été arbitrée.
+// UN FORFAIT TEMPOREL, PAS UN ABONNEMENT (modèle eSIM / pass transport) : le
+// voyageur achète un accès pour la durée de son séjour, en une fois, sans
+// reconduction. Trois durées, tarifs arrêtés dans le business plan v2 — ils
+// vivent dans `PASS` ci-dessous, seul endroit de l'interface web qui les
+// porte (le mobile a sa propre copie, PricingScreen.js).
 //
-// LE BOUTON EST BLOQUÉ, VOLONTAIREMENT (retour utilisateur explicite après
-// avoir vu la bascule automatique : "bloque juste le bouton, ça marche pas").
-// `onAbonner` (App.jsx) reste câblé mais n'est plus appelé depuis ce
-// bouton — il resservira le jour où un vrai processeur de paiement (Stripe
-// ou équivalent) existera. D'ici là, aucun clic ne doit changer le rôle
-// d'un compte : les comptes de démonstration (voir conversation) sont créés
-// à la main, pas via cette page.
+// LE BOUTON EST BLOQUÉ, VOLONTAIREMENT (même décision que l'abonnement
+// d'avant, D-049) : aucun processeur de paiement n'est branché. `onAbonner`
+// (App.jsx) reste câblé pour le jour où un vrai paiement existera. Côté
+// base, un Pass actif se traduit par `role = "subscriber"` — l'expiration
+// à la fin de la durée achetée viendra avec le paiement.
 
 import { Check, CreditCard, X } from "@phosphor-icons/react";
 
 const AVANTAGES_GRATUIT = [
   "5 premiers restaurants de chaque recherche",
   "Score Local Signal et explication complète",
-  "Carte, filtres, tout le reste de l'application",
 ];
 
 const LIMITES_GRATUIT = [
   "Le reste des résultats reste verrouillé",
-  "Publicités affichées (à venir)",
+  "Filtres avancés verrouillés",
+  "Publicités affichées",
 ];
 
-const AVANTAGES_ABONNE = [
-  "Tous les restaurants de chaque recherche, sans limite",
-  "Recherches illimitées",
+const AVANTAGES_PASS = [
+  "Tous les restaurants de chaque recherche",
+  "Filtres avancés, dont la fourchette sur le score Local Signal",
+  "Scans de cartes illimités",
+  "Recherches illimitées et restaurants favoris",
   "Aucune publicité",
-  "Restaurants favoris",
-  // Filtre premium (D-050) : visible pour tout le monde dans la barre de
-  // filtres, mais son activation est réservée à l'abonnement — d'où sa
-  // description ici plutôt qu'une simple case de plus dans AVANTAGES_GRATUIT.
-  "Filtre à fourchette sur le score Local Signal",
 ];
 
-// `onAbonner` n'est plus utilisé ici (bouton bloqué), mais App.jsx continue
-// de le fournir : le rebrancher le jour d'un vrai paiement sera une ligne,
-// pas une nouvelle prop à faire remonter depuis la racine.
+const PASS = [
+  { id: "3j", nom: "Pass Week-end", duree: "3 jours", prix: "2,99" },
+  { id: "7j", nom: "Pass Semaine", duree: "7 jours", prix: "4,99", vedette: true },
+  { id: "1an", nom: "Pass Annuel", duree: "12 mois", prix: "14,99", note: "Pour les voyageurs fréquents" },
+];
+
 export default function Pricing({ user, onBack }) {
-  const dejaAbonne = user?.role === "subscriber" || user?.role === "admin";
+  const passActif = user?.role === "subscriber" || user?.role === "admin";
 
   return (
     <>
-      <h1 className="detail__title">S'abonner</h1>
+      <h1 className="detail__title">Pass Voyageur</h1>
       <p className="detail__meta" style={{ marginBottom: 28, maxWidth: 60 + "ch" }}>
         Local Signal reste gratuit pour découvrir les premiers restaurants de
-        chaque recherche. L'abonnement lève la limite.
+        chaque recherche. Pour tout débloquer, prenez un Pass à la durée de
+        votre séjour : un seul paiement, sans abonnement ni reconduction.
       </p>
 
-      <div className="pricing__grid">
+      {/* Les quatre formules côte à côte, gratuite en premier : on lit de
+          gauche à droite ce qu'on gagne en passant à un Pass. */}
+      <div className="pricing__grid pricing__grid--passes">
         <div className="pricing__carte">
           <h2 className="pricing__nom">Gratuit</h2>
           <p className="pricing__prix">
-            0&nbsp;€<span className="pricing__periode">/mois</span>
+            0&nbsp;€<span className="pricing__periode"> · sans limite de durée</span>
           </p>
 
           <ul className="pricing__liste">
@@ -79,31 +78,40 @@ export default function Pricing({ user, onBack }) {
           </ul>
 
           <button className="btn btn--ghost btn--block" disabled>
-            {user ? "Formule actuelle" : "Formule de base"}
+            {user && !passActif ? "Formule actuelle" : "Formule de base"}
           </button>
         </div>
 
-        <div className="pricing__carte pricing__carte--vedette">
-          <span className="pricing__badge">Recommandé</span>
-          <h2 className="pricing__nom">Abonné</h2>
-          <p className="pricing__prix">
-            3&nbsp;€<span className="pricing__periode">/mois</span>
-          </p>
+        {PASS.map((p) => (
+          <div
+            key={p.id}
+            className={`pricing__carte${p.vedette ? " pricing__carte--vedette" : ""}`}
+          >
+            {p.vedette && <span className="pricing__badge">Offre phare</span>}
+            <h2 className="pricing__nom">{p.nom}</h2>
+            <p className="pricing__prix">
+              {p.prix}&nbsp;€<span className="pricing__periode"> TTC · {p.duree}</span>
+            </p>
+            {p.note && <p className="pricing__note">{p.note}</p>}
 
-          <ul className="pricing__liste">
-            {AVANTAGES_ABONNE.map((a) => (
-              <li key={a}>
-                <Check size={16} weight="bold" className="pricing__coche" />
-                {a}
-              </li>
-            ))}
-          </ul>
+            <ul className="pricing__liste">
+              {AVANTAGES_PASS.map((a) => (
+                <li key={a}>
+                  <Check size={16} weight="bold" className="pricing__coche" />
+                  {a}
+                </li>
+              ))}
+            </ul>
 
-          <button className="btn btn--primary btn--block" disabled>
-            <CreditCard size={17} weight="bold" />
-            {dejaAbonne ? "Déjà abonné" : "Paiement bientôt disponible"}
-          </button>
-        </div>
+            <button
+              className={`btn ${p.vedette ? "btn--primary" : "btn--ghost"} btn--block`}
+              disabled
+            >
+              <CreditCard size={17} weight="bold" />
+              {passActif ? "Pass déjà actif" : "Paiement bientôt disponible"}
+            </button>
+          </div>
+        ))}
       </div>
 
       <button className="linkbtn" onClick={onBack} style={{ marginTop: 24 }}>

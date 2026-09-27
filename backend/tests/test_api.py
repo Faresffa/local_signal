@@ -383,7 +383,7 @@ limitation.reinitialiser()
 
 # =============================================================================
 print("\n" + "=" * 78)
-print("AVIS LAISSES PAR NOS UTILISATEURS — D-039")
+print("AVIS UTILISATEURS RETIRES — D-063")
 print("=" * 78)
 
 _cible = restos[0]["id"] if restos else None
@@ -391,64 +391,13 @@ _cible = restos[0]["id"] if restos else None
 if not _cible:
     ignorer("avis utilisateurs", "aucun restaurant en base")
 else:
-    # Garde-fou : si `client` a ete contamine par une session en amont, tous
-    # les tests d'anonymat qui suivent ne prouvent plus rien.
-    verifier(client.get("/api/auth/me").status_code == 401,
-             "le client de reference est bien reste anonyme")
-
-    r = client.get(f"/api/restaurant/{_cible}/avis")
-    verifier(r.status_code == 200, "les avis sont lisibles sans etre connecte")
-    verifier(r.json().get("connecte") is False,
-             "l'API dit au visiteur anonyme qu'il ne l'est pas")
-
-    r = client.post(f"/api/restaurant/{_cible}/avis", json={"rating": 5})
-    verifier(r.status_code == 401,
-             "un visiteur anonyme ne peut pas laisser d'avis")
-
+    # On ne peut plus deposer d'avis sur un restaurant, meme connecte.
     r = connecte.post(f"/api/restaurant/{_cible}/avis",
-                      json={"rating": 4, "text": "Tres bonne adresse de quartier."})
-    verifier(r.status_code == 200, "un utilisateur connecte depose son avis")
-
-    # UN SEUL AVIS PAR PERSONNE : le second remplace le premier, il ne
-    # s'empile pas. Sans cette regle, un double clic pese deux fois.
-    avant = len(connecte.get(f"/api/restaurant/{_cible}/avis").json()["avis"])
-    connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 2, "text": "Je corrige."})
-    apres = connecte.get(f"/api/restaurant/{_cible}/avis").json()
-    verifier(len(apres["avis"]) == avant,
-             "un second envoi modifie l'avis au lieu d'en creer un autre")
-    verifier(apres["le_mien"]["rating"] == 2, "c'est bien la nouvelle valeur qui est gardee")
-
-    r = connecte.post(f"/api/restaurant/{_cible}/avis", json={})
-    verifier(r.status_code == 400, "un avis sans note ni texte est refuse")
-
-    r = connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 9})
-    verifier(r.status_code == 400, "une note hors de 1-5 est refusee")
-
-    r = connecte.post(f"/api/restaurant/{_cible}/avis", json={"text": "x" * 2100})
-    verifier(r.status_code == 400, "un avis interminable est refuse")
-
-    r = connecte.post("/api/restaurant/inconnu-000/avis", json={"rating": 3})
-    verifier(r.status_code == 404, "un avis sur un restaurant inconnu est refuse")
-
-    # CE QUI COMPTE VRAIMENT : ces avis ne touchent pas au score (D-001).
-    avant_score = connecte.get(f"/api/restaurant/{_cible}").json().get("local_signal")
-    connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 5, "text": "Excellent !"})
-    apres_score = connecte.get(f"/api/restaurant/{_cible}").json().get("local_signal")
-    verifier(avant_score == apres_score,
-             "un avis utilisateur ne modifie PAS le score d'authenticite")
-
-    verifier(connecte.delete(f"/api/restaurant/{_cible}/avis").status_code == 200,
-             "l'auteur peut retirer son avis")
-    verifier(connecte.delete(f"/api/restaurant/{_cible}/avis").status_code == 404,
-             "retirer deux fois le meme avis ne fait rien")
-
-    # L'adresse e-mail n'a aucune raison d'apparaitre devant d'autres
-    # utilisateurs : on verifie que la reponse ne la porte pas.
-    connecte.post(f"/api/restaurant/{_cible}/avis", json={"rating": 4})
-    corps = connecte.get(f"/api/restaurant/{_cible}/avis").text
-    verifier(_email_lecture not in corps,
-             "l'adresse e-mail de l'auteur n'est jamais rendue")
-    connecte.delete(f"/api/restaurant/{_cible}/avis")
+                      json={"rating": 4, "text": "Tres bonne adresse."})
+    verifier(r.status_code in (404, 405),
+             "deposer un avis n'est plus possible, meme connecte")
+    r = client.get(f"/api/restaurant/{_cible}/avis")
+    verifier(r.status_code in (404, 405), "les avis ne sont plus exposes")
 
 
 # =============================================================================

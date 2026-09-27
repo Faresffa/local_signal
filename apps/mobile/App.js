@@ -131,8 +131,8 @@ export default function App() {
     setStack({ screen: "pricing" });
   }
 
-  // Filtre premium verrouillé (D-050) : un compte déjà connecté va direct à
-  // l'abonnement, un visiteur doit d'abord créer un compte — même logique
+  // Filtre premium verrouillé (D-050) : un compte déjà connecté va direct aux
+  // Pass Voyageur (D-063), un visiteur doit d'abord créer un compte — même logique
   // que `demanderDeverrouillage` côté web (App.jsx).
   function demanderDeverrouillage() {
     if (user) {
@@ -141,7 +141,7 @@ export default function App() {
       setStack({
         screen: "compte",
         modeDepart: "signup",
-        motif: "Un abonnement débloque le filtre de score et les restaurants favoris.",
+        motif: "Un Pass Voyageur débloque le filtre de score et les restaurants favoris.",
       });
     }
   }
@@ -190,11 +190,6 @@ export default function App() {
         restaurant={stack.restaurant}
         onBack={() => setStack(null)}
         onReserve={ouvrirReservation}
-        user={user}
-        onSeConnecter={() => ouvrirCompte(
-          stack.restaurant,
-          "Un compte permet de laisser un avis, et de le modifier ou le retirer quand vous voulez.",
-        )}
       />
     ) : (
       <ReserveScreen
@@ -211,7 +206,7 @@ export default function App() {
       onUnlock={demanderDeverrouillage}
     />
   ) : (
-    <ScanScreen user={user} />
+    <ScanScreen />
   );
 
   // Le mouvement dit ce qui vient de se passer : un écran empilé glisse depuis

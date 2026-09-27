@@ -85,7 +85,7 @@ export async function fetchRestaurants({
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");
-  // Filtre premium (D-050), reserve aux abonnes — le serveur l'ignore pour
+  // Filtre premium (D-050), reserve au Pass Voyageur — le serveur l'ignore pour
   // les autres. Echelle 0-10 cote interface, convertie en 0-100.
   if (scoreMin != null && scoreMin > 0) query.set("score_min", scoreMin * 10);
   if (scoreMax != null && scoreMax < 10) query.set("score_max", scoreMax * 10);
@@ -210,28 +210,7 @@ export async function fetchMe() {
   }
 }
 
-// --- Avis laissés par nos utilisateurs (D-039) ---
-//
-// CES AVIS N'ENTRENT DANS AUCUN CALCUL : ils sont stockés et affichés, rien de
-// plus (D-001).
-
-export async function fetchAvis(restaurantId) {
-  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/avis`);
-}
-
-export async function laisserAvis(restaurantId, { rating, text }) {
-  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/avis`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ rating, text }),
-  });
-}
-
-export async function retirerAvis(restaurantId) {
-  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/avis`, {
-    method: "DELETE",
-  });
-}
+// --- Avis laissés par nos utilisateurs — RETIRÉS (D-063) ---
 
 // --- Photo de carte envoyée depuis la fiche (D-038, D-039) ---
 
@@ -265,7 +244,7 @@ export async function fetchCartes(restaurantId) {
   return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/cartes`);
 }
 
-// --- Abonnement (démonstration, pas un paiement réel — voir backend/main.py) ---
+// --- Pass Voyageur (D-063) — démonstration, pas un paiement réel (voir backend/main.py) ---
 
 export async function subscribe() {
   return request("/api/subscribe", { method: "POST" });
@@ -299,7 +278,7 @@ export async function supprimerCompte() {
   return resultat;
 }
 
-// --- Favoris (réservés aux comptes abonnés, backend/main.py::_require_abonne) ---
+// --- Favoris (réservés au Pass Voyageur, backend/main.py::_require_abonne) ---
 
 export async function fetchFavoris() {
   return request("/api/favoris");

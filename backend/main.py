@@ -7,6 +7,7 @@
 # de rester instantané sur une base nationale.
 
 import logging
+import os
 import re
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -41,6 +42,29 @@ from backend.core.stockage import ErreurStockage, stockage
 # La journalisation d'abord : sans elle, une erreur pendant `init_db` ne
 # laisserait aucune trace (LS-25).
 configurer_journal()
+
+# Amorçage depuis une archive, pour un premier déploiement sur un volume
+# vide (Railway notamment — pas d'équivalent SQLite au `DATABASE_URL` de
+# Postgres, donc pas de base déjà peuplée à brancher).
+#
+# `SEED_DB_URL` (facultatif, vide partout ailleurs — aucun effet en local
+# ni en CI) pointe vers une copie de `local_signal.db` déjà peuplée
+# (restaurants importés, vérité terrain, comptes de démonstration…).
+# NE S'EXÉCUTE QUE SI LE FICHIER N'EXISTE PAS ENCORE à `DB_PATH` : un
+# redémarrage ne doit jamais écraser une base qui a depuis reçu de vraies
+# inscriptions ou de vrais comptes restaurateur.
+_seed_url = os.environ.get("SEED_DB_URL", "").strip()
+if _seed_url and not config.DATABASE_URL and not os.path.exists(config.DB_PATH):
+    logging.getLogger("api").info("Amorçage de la base depuis SEED_DB_URL…")
+    _reponse = requests.get(_seed_url, timeout=120)
+    _reponse.raise_for_status()
+    os.makedirs(os.path.dirname(config.DB_PATH) or ".", exist_ok=True)
+    with open(config.DB_PATH, "wb") as _f:
+        _f.write(_reponse.content)
+    logging.getLogger("api").info(
+        "Base amorcée (%d octets) depuis %s", len(_reponse.content), _seed_url,
+    )
+
 init_db()
 
 # Les sessions expirees sont des donnees personnelles conservees sans raison
@@ -65,6 +89,7 @@ app.add_middleware(JournalRequetes)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=config.ALLOWED_ORIGINS,
+    allow_origin_regex=config.ALLOWED_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -125,22 +150,11 @@ class UserResponse(BaseModel):
     # à ce que le client affirme : `require_admin` relit toujours le rôle en
     # base, jamais une valeur transmise par le front.
     role: str = "user"
-    # Abonnement RESTAURATEUR (`restaurant_claims.abonne`), distinct de
-    # `role` — un compte restaurateur non abonné a quand même `role =
-    # "restaurateur"`. `None` pour tout compte qui n'est pas restaurateur ;
-    # calculé dans `_to_user_response` pour être visible partout où le
-    # compte l'est (badge de `Nav.jsx`), sans appel réseau supplémentaire.
-    restaurateur_abonne: Optional[bool] = None
     # Rendu UNIQUEMENT aux clients qui le réclament par l'en-tête
     # `X-Jeton-Session` — le mobile. Un navigateur reçoit `None` et s'appuie
     # sur son cookie httpOnly, qu'aucun script de la page ne peut lire : lui
     # renvoyer le jeton en clair annulerait cette protection (LS-40).
     token: Optional[str] = None
-
-
-class AvisRequest(BaseModel):
-    rating: Optional[int] = None
-    text: Optional[str] = None
 
 
 class RestaurateurClaimRequest(BaseModel):
@@ -242,8 +256,8 @@ def list_restaurants(
                 status_code=429,
                 detail=(
                     f"Quota de {config.SEARCHES_PER_DAY_NON_ABONNE} recherches "
-                    "par jour atteint. Revenez demain, ou abonnez-vous pour "
-                    "des recherches illimitées."
+                    "par jour atteint. Revenez demain, ou prenez un Pass Voyageur "
+                    "pour des recherches illimitées."
                 ),
             )
         quota = {"restantes": restantes, "limite": config.SEARCHES_PER_DAY_NON_ABONNE}
@@ -725,6 +739,34 @@ def get_restaurant_photo(restaurant_id: str):
     )
 
 
+@app.get("/api/restaurant/{restaurant_id}/photo-restaurateur")
+def get_restaurant_photo_restaurateur(restaurant_id: str):
+    """
+    Photo déposée par le restaurateur propriétaire (D-059) — endpoint
+    distinct de `/photo` ci-dessus (D-025, photos Google Places) : la
+    provenance et le droit de redistribution ne sont pas les mêmes, mieux
+    vaut deux routes explicites qu'une seule qui mélangerait les deux sans
+    le dire.
+
+    404 si aucune photo — cas normal (la plupart des fiches n'en ont pas
+    encore), pas une anomalie : les interfaces retombent sur leur visuel
+    de repli (`CuisineVisual`, D-035).
+    """
+    resto = repo.get_restaurant(restaurant_id)
+    if not resto or not resto.get("photo_key"):
+        raise HTTPException(status_code=404, detail="Aucune photo pour ce restaurant.")
+
+    data = stockage().lire(resto["photo_key"])
+    if data is None:
+        raise HTTPException(status_code=404, detail="Aucune photo pour ce restaurant.")
+
+    return Response(
+        content=data,
+        media_type=resto.get("photo_type") or "image/jpeg",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
+
+
 @app.get("/api/cuisines")
 def list_cuisines(zone: Optional[str] = Query(None, description="Filtrer par zone")):
     """
@@ -783,16 +825,11 @@ def _jeton_demande(request: Request) -> bool:
 
 
 def _to_user_response(user: dict, token: Optional[str] = None) -> UserResponse:
-    abonne = None
-    if user.get("role") == "restaurateur":
-        claim = repo.get_claim_active_for_user(user["id"])
-        abonne = bool(claim["abonne"]) if claim else False
     return UserResponse(
         id=user["id"],
         email=user["email"],
         name=user.get("name"),
         role=user.get("role") or "user",
-        restaurateur_abonne=abonne,
         token=token,
     )
 
@@ -1121,7 +1158,7 @@ def changer_mot_de_passe(req: PasswordChangeRequest, user: dict = Depends(get_cu
 def _require_abonne(user: dict) -> None:
     if user.get("role") not in ("subscriber", "admin"):
         raise HTTPException(
-            status_code=403, detail="Réservé aux comptes abonnés."
+            status_code=403, detail="Réservé aux détenteurs d'un Pass Voyageur."
         )
 
 
@@ -1220,11 +1257,10 @@ def _require_restaurateur(user: dict) -> dict:
 
 @app.get("/api/restaurateur/mon-restaurant")
 def mon_restaurant(user: dict = Depends(get_current_user)):
-    """Fiche du restaurant possédé par le compte connecté, avec ses avis."""
+    """Fiche du restaurant possédé par le compte connecté."""
     restaurant = _require_restaurateur(user)
     restaurant["cuisine_label"] = cuisine_label(restaurant.get("cuisine"))
     restaurant["menu"] = repo.get_latest_menu(restaurant["id"])
-    restaurant["avis"] = repo.get_user_reviews(restaurant["id"], limit=100)
     return restaurant
 
 
@@ -1244,52 +1280,58 @@ def modifier_mon_restaurant(
     return repo.get_restaurant(restaurant["id"])
 
 
+@app.post("/api/restaurateur/mon-restaurant/photo")
+async def deposer_photo_restaurant(
+    image: UploadFile = File(...),
+    user: dict = Depends(get_current_user),
+):
+    """
+    Dépose la photo de vitrine de la fiche possédée (D-059). Remplace la
+    précédente si elle existe — une seule photo, pas une galerie.
+
+    STOCKÉE PUIS REDISTRIBUÉE, CONTRAIREMENT AU CORPUS DE CARTES (D-038).
+    Ce n'est pas une contradiction : le corpus de cartes contient des œuvres
+    tierces (menus photographiés en vitrine, jamais republiées) ; ici,
+    c'est le restaurateur déjà vérifié (D-055) qui dépose la photo de son
+    propre établissement — il a le droit de la voir affichée.
+    """
+    restaurant = _require_restaurateur(user)
+    contenu = await image.read()
+    if not contenu:
+        raise HTTPException(status_code=400, detail="Image vide.")
+
+    plafond = config.MENU_SCAN_MAX_IMAGE_MB * 1024 * 1024
+    if len(contenu) > plafond:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Image trop volumineuse (max {config.MENU_SCAN_MAX_IMAGE_MB} Mo).",
+        )
+
+    try:
+        cle = stockage().deposer(contenu, image.content_type)
+    except ErreurStockage as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    repo.set_restaurant_photo(restaurant["id"], cle, image.content_type)
+    return repo.get_restaurant(restaurant["id"])
+
+
 @app.get("/api/restaurateur/mon-restaurant/visites")
 def visites_mon_restaurant(user: dict = Depends(get_current_user)):
     """
-    Fréquentation de la fiche possédée.
+    Fréquentation de la fiche possédée : le total et le détail des visites
+    connectées.
 
-    Palier gratuit (claim non abonné) : un total et quelques noms récents.
-    Palier abonné : le détail complet des visites connectées. La distinction
-    est portée par `restaurant_claims.abonne`, pas par `users.role` — c'est
-    un abonnement restaurateur, distinct de l'abonnement client.
+    GRATUIT POUR TOUS LES RESTAURATEURS (D-063). Il n'y a plus de palier
+    abonné côté restaurateur : le modèle économique ne fait payer que la
+    demande (Pass Voyageur, publicité). La colonne `restaurant_claims.abonne`
+    reste en base, inerte — on ne supprime pas une donnée acquise.
     """
     restaurant = _require_restaurateur(user)
-    claim = repo.get_claim_active_for_user(user["id"])
-    total = repo.count_consultations(restaurant["id"])
-    if claim and claim.get("abonne"):
-        return {"total": total, "abonne": True, "visites": repo.get_visitor_details(restaurant["id"])}
-    return {"total": total, "abonne": False, "noms_recents": repo.get_recent_visitor_names(restaurant["id"])}
-
-
-# --- Abonnement restaurateur — DÉMONSTRATION, AUCUN PAIEMENT RÉEL ---
-#
-# Même logique que `/api/subscribe` côté client (LS-refonte) : bascule
-# `restaurant_claims.abonne`, ne fait payer personne. `PricingRestaurateur.jsx`
-# garde son bouton volontairement bloqué (même décision que `Pricing.jsx`,
-# D-049) — ces routes restent câblées pour le jour où un vrai paiement
-# existera, et pour les comptes de démonstration.
-
-@app.post("/api/restaurateur/abonnement", response_model=UserResponse)
-def restaurateur_subscribe(user: dict = Depends(get_current_user)):
-    if user.get("role") != "restaurateur":
-        raise HTTPException(status_code=403, detail="Réservé aux comptes restaurateur.")
-    claim = repo.get_claim_active_for_user(user["id"])
-    if not claim:
-        raise HTTPException(status_code=404, detail="Aucune demande restaurateur active.")
-    repo.set_claim_abonne(claim["id"], True)
-    return _to_user_response(user)
-
-
-@app.post("/api/restaurateur/abonnement/annuler", response_model=UserResponse)
-def restaurateur_unsubscribe(user: dict = Depends(get_current_user)):
-    if user.get("role") != "restaurateur":
-        raise HTTPException(status_code=403, detail="Réservé aux comptes restaurateur.")
-    claim = repo.get_claim_active_for_user(user["id"])
-    if not claim:
-        raise HTTPException(status_code=404, detail="Aucune demande restaurateur active.")
-    repo.set_claim_abonne(claim["id"], False)
-    return _to_user_response(user)
+    return {
+        "total": repo.count_consultations(restaurant["id"]),
+        "visites": repo.get_visitor_details(restaurant["id"]),
+    }
 
 
 # =============================================================================
@@ -1512,85 +1554,14 @@ async def scan_menu(
 
 
 # =============================================================================
-# AVIS LAISSÉS PAR NOS UTILISATEURS (LS-39)
+# AVIS LAISSÉS PAR NOS UTILISATEURS — RETIRÉS (D-063)
 # =============================================================================
 #
-# CE QU'ILS NE FONT PAS : entrer dans le calcul du score. Ils sont stockés et
-# affichés, rien de plus. Les faire compter avant d'avoir mesuré leur biais
-# reviendrait à réintroduire la popularité par la porte de service — le défaut
-# même que le projet existe pour corriger (D-001, D-007).
-#
-# Ils constituent en revanche un actif : une base d'avis dont NOUS connaissons
-# la provenance, contrairement à ceux d'un fournisseur tiers.
-
-
-@app.get("/api/restaurant/{restaurant_id}/avis")
-def lister_avis(restaurant_id: str,
-                user: Optional[dict] = Depends(get_current_user_optional)):
-    """
-    Avis laissés sur un restaurant, et celui de l'utilisateur s'il en a un.
-
-    Renvoyer son propre avis à part évite un second appel : l'interface doit
-    savoir s'il faut proposer « laisser un avis » ou « modifier le mien ».
-    """
-    if not repo.get_restaurant(restaurant_id):
-        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
-
-    return {
-        "avis": repo.get_user_reviews(restaurant_id),
-        "le_mien": repo.get_own_review(restaurant_id, user["id"]) if user else None,
-        "connecte": bool(user),
-    }
-
-
-@app.post("/api/restaurant/{restaurant_id}/avis")
-def laisser_avis(restaurant_id: str, req: AvisRequest,
-                 user: dict = Depends(get_current_user)):
-    """
-    Dépose ou met à jour l'avis de l'utilisateur connecté.
-
-    `get_current_user` impose la connexion : un visiteur reçoit 401, et
-    l'interface l'oriente alors vers l'écran de connexion. C'est délibéré — un
-    avis anonyme ne serait ni modifiable ni supprimable par son auteur, et ne
-    pourrait pas entrer dans son droit d'accès (D-029).
-    """
-    if not repo.get_restaurant(restaurant_id):
-        raise HTTPException(status_code=404, detail="Restaurant inconnu.")
-
-    texte = (req.text or "").strip()
-    if req.rating is None and not texte:
-        raise HTTPException(
-            status_code=400, detail="Un avis doit porter une note ou un texte."
-        )
-    if req.rating is not None and not 1 <= req.rating <= 5:
-        raise HTTPException(status_code=400, detail="La note va de 1 à 5.")
-    if len(texte) > 2000:
-        raise HTTPException(status_code=400, detail="Avis trop long (2000 caractères).")
-
-    # La langue est détectée à l'écriture et stockée : la recalculer plus tard
-    # sur des milliers d'avis coûterait cher, et le résultat serait le même.
-    langue = None
-    if len(texte) >= 12:
-        try:
-            from langdetect import detect, DetectorFactory
-            DetectorFactory.seed = 0
-            langue = detect(texte)
-        except Exception:
-            langue = None
-
-    repo.save_user_review(restaurant_id, user["id"], req.rating, texte or None, langue)
-    return {
-        "message": "Avis enregistré.",
-        "le_mien": repo.get_own_review(restaurant_id, user["id"]),
-    }
-
-
-@app.delete("/api/restaurant/{restaurant_id}/avis")
-def retirer_avis(restaurant_id: str, user: dict = Depends(get_current_user)):
-    """Retire son propre avis. L'auteur en reste maître."""
-    if not repo.delete_user_review(restaurant_id, user["id"]):
-        raise HTTPException(status_code=404, detail="Aucun avis à retirer.")
-    return {"message": "Avis retiré."}
+# Les routes publiques de lecture et d'écriture d'avis (LS-39, D-039) ont été
+# retirées : on ne peut plus laisser d'avis sur un restaurant. Les avis déjà
+# déposés restent en base (table des avis, droit d'accès RGPD, modération
+# admin via `DELETE /api/admin/avis/{id}`) — rien n'est effacé, seulement
+# plus exposé ni alimenté.
 
 
 # =============================================================================

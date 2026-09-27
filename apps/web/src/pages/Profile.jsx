@@ -1,14 +1,14 @@
 // apps/web/src/pages/Profile.jsx
 //
 // Fiche du compte connecté (LS-refonte, menu déroulant de Nav.jsx). Lecture
-// seule — toute modification (mot de passe, abonnement) se fait dans
+// seule — toute modification (mot de passe, Pass Voyageur) se fait dans
 // Settings.jsx, pas ici : deux pages, deux gestes différents.
 
 import { ArrowLeft, EnvelopeSimple, User } from "@phosphor-icons/react";
 
 const ROLE_LABEL = {
   admin: "Administrateur",
-  subscriber: "Abonné",
+  subscriber: "Pass Voyageur actif",
   user: "Compte gratuit",
 };
 

@@ -619,20 +619,6 @@ def reject_claim(claim_id: int, admin_user_id: int) -> None:
     conn.close()
 
 
-def set_claim_abonne(claim_id: int, abonne: bool) -> None:
-    """
-    Bascule l'abonnement restaurateur d'une demande — DÉMONSTRATION, PAS UN
-    ENCAISSEMENT, même logique que `set_user_role` pour l'abonnement client
-    (LS-refonte) : aucun processeur de paiement n'est branché.
-    """
-    conn = get_connection()
-    conn.execute(
-        "UPDATE restaurant_claims SET abonne = ? WHERE id = ?", (1 if abonne else 0, claim_id)
-    )
-    conn.commit()
-    conn.close()
-
-
 def get_restaurant_for_owner(user_id: int) -> dict | None:
     """Fiche possédée par ce compte restaurateur, s'il en a une."""
     conn = get_connection()
@@ -662,6 +648,23 @@ def update_restaurant_contact(restaurant_id: str, **champs) -> None:
     conn.execute(
         f"UPDATE restaurants SET {assignations} WHERE id = ?",
         (*a_ecrire.values(), restaurant_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def set_restaurant_photo(restaurant_id: str, photo_key: str, photo_type: str) -> None:
+    """
+    Enregistre la photo déposée par le restaurateur propriétaire (D-059).
+
+    Remplace toujours l'entrée précédente plutôt que d'en garder l'historique :
+    une seule photo de vitrine par fiche, comme les coordonnées de contact —
+    pas une galerie.
+    """
+    conn = get_connection()
+    conn.execute(
+        "UPDATE restaurants SET photo_key = ?, photo_type = ? WHERE id = ?",
+        (photo_key, photo_type, restaurant_id),
     )
     conn.commit()
     conn.close()

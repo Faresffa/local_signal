@@ -14,7 +14,6 @@ import { Feather } from "@expo/vector-icons";
 
 import { fetchRestaurant } from "../api";
 import AjouterCarte from "../components/AjouterCarte";
-import Avis from "../components/Avis";
 import CartePhotos from "../components/CartePhotos";
 import DetailCalcul from "../components/DetailCalcul";
 import { Button, ErrorState, Verdict } from "../components/ui";
@@ -46,7 +45,7 @@ function Fait({ icon, label, value, onPress }) {
   );
 }
 
-export default function DetailScreen({ restaurant, onBack, onReserve, user, onSeConnecter }) {
+export default function DetailScreen({ restaurant, onBack, onReserve }) {
   const colors = useColors();
   const isDark = useColorScheme() === "dark";
 
@@ -204,15 +203,9 @@ export default function DetailScreen({ restaurant, onBack, onReserve, user, onSe
         />
       </View>
 
-      {/* LES DEUX GESTES DE CONTRIBUTION, DANS LE MÊME ORDRE QUE SUR LE WEB.
-          L'avis vient en premier parce qu'il se lit autant qu'il s'écrit ;
-          l'ajout de carte ensuite — geste plus rare, mais c'est lui qui
-          construit l'actif du projet (CLAUDE.md §3). */}
-      <Avis
-        restaurantId={full.id}
-        user={user}
-        onSeConnecter={onSeConnecter}
-      />
+      {/* LE SEUL GESTE DE CONTRIBUTION, COMME SUR LE WEB : ajouter une carte,
+          celui qui construit l'actif du projet (CLAUDE.md §3). Les avis
+          utilisateurs ont été retirés (D-063). */}
 
       <AjouterCarte
         restaurantId={full.id}

@@ -4,12 +4,12 @@
 //
 // PREMIER JET, PAS UN DOCUMENT JURIDIQUE VALIDÉ. Rédigé pour refléter
 // honnêtement ce que fait réellement le produit aujourd'hui (démo
-// d'abonnement sans paiement réel, données réellement collectées) — à faire
+// de Pass Voyageur sans paiement réel, données réellement collectées) — à faire
 // relire avant tout usage en production avec de vrais utilisateurs payants.
 
 import { ArrowLeft } from "@phosphor-icons/react";
 
-const DERNIERE_MISE_A_JOUR = "22 septembre 2026";
+const DERNIERE_MISE_A_JOUR = "27 septembre 2026";
 
 export default function CGU({ onBack, onGoToConfidentialite }) {
   return (
@@ -53,27 +53,29 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
       <section className="legal__section">
         <h2>3. Contenu que vous publiez</h2>
         <p>
-          Les avis et les photos de cartes de restaurant que vous envoyez
-          restent votre contenu, mais vous nous accordez le droit de les
-          afficher sur le service et, pour les photos de cartes, d'en extraire
+          Les photos de cartes de restaurant que vous envoyez restent votre
+          contenu, mais vous nous accordez le droit d'en extraire
           automatiquement des informations (plats, langues, prix) qui
           alimentent le score d'authenticité du restaurant concerné — jamais
           votre nom, jamais publiées telles quelles. Vous ne devez publier que
           du contenu que vous avez le droit de publier, et rien d'illicite,
-          diffamatoire ou trompeur. Un avis peut être retiré par son auteur à
-          tout moment, ou par un administrateur en cas de modération.
+          diffamatoire ou trompeur. Le service ne permet pas de publier
+          d'avis sur les restaurants.
         </p>
       </section>
 
       <section className="legal__section">
-        <h2>4. Abonnement</h2>
+        <h2>4. Pass Voyageur</h2>
         <p>
-          Le service propose une formule gratuite et une formule « Abonné »
-          présentées sur la page <em>S'abonner</em>. <strong>À ce stade, aucun
-          paiement réel n'est traité</strong> : le bouton de paiement est
-          volontairement désactivé, et le passage au statut abonné se fait
-          par un mécanisme de démonstration, pas par une transaction
-          financière. Cette page sera mise à jour le jour où un moyen de
+          Le service propose un accès gratuit et trois Pass Voyageur à durée
+          limitée, présentés sur la page <em>Pass Voyageur</em> : Pass
+          Week-end (3 jours, 2,99 € TTC), Pass Semaine (7 jours, 4,99 € TTC)
+          et Pass Annuel (12 mois, 14,99 € TTC). Un Pass se paie une seule
+          fois et n'est pas reconduit automatiquement.{" "}
+          <strong>À ce stade, aucun paiement réel n'est traité</strong> : le
+          bouton de paiement est volontairement désactivé, et l'activation
+          d'un Pass se fait par un mécanisme de démonstration, pas par une
+          transaction financière. Cette page sera mise à jour le jour où un moyen de
           paiement réel sera intégré.
         </p>
       </section>
@@ -87,14 +89,14 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
           l'équipe avant tout accès — il n'y a pas de validation automatique
           à ce stade. Une fois la fiche obtenue, le compte restaurateur peut
           en modifier les coordonnées (téléphone, lien de réservation,
-          horaires) et consulter sa fréquentation.
+          horaires), déposer une photo de sa devanture et consulter sa
+          fréquentation. Le compte restaurateur est entièrement gratuit.
         </p>
         <p>
           <strong>En créant un compte, vous acceptez que la consultation
           d'une fiche restaurant en étant connecté soit visible du
           restaurateur propriétaire de cette fiche</strong> (nombre de
-          visites et, selon sa formule d'abonnement, votre identité parmi ses
-          visiteurs récents) — voir la politique de confidentialité pour le
+          visites et votre identité parmi ses visiteurs) — voir la politique de confidentialité pour le
           détail de ce que cela recouvre et comment y renoncer en supprimant
           votre compte.
         </p>

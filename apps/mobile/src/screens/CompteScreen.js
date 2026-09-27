@@ -1,7 +1,7 @@
 // apps/mobile/src/screens/CompteScreen.js
 //
 // Connexion, inscription, déconnexion (LS-40) — et depuis ce chantier,
-// paramètres du compte : rôle, abonnement, mot de passe, droits RGPD. Miroir
+// paramètres du compte : rôle, Pass Voyageur, mot de passe, droits RGPD. Miroir
 // fonctionnel de Profile.jsx + Settings.jsx côté web, réunis sur un seul
 // écran mobile (même raison qu'avant : chaque écran empilé de plus coûte un
 // retour sur téléphone, là où le web peut se permettre plusieurs pages).
@@ -30,14 +30,14 @@ import { useEntree } from "../lib/motion";
 import { radius, spacing, useColors } from "../theme";
 
 // Défaut affiché quand l'écran n'a pas été ouvert avec un motif contextuel
-// (ex. « laisser un avis »). Sans ça, un utilisateur qui ouvre l'onglet
+// (ex. « ajouter aux favoris »). Sans ça, un utilisateur qui ouvre l'onglet
 // compte directement n'a aucune raison affichée de créer un compte.
 const MOTIF_DEFAUT =
-  "Laissez un avis, contribuez une carte, et retrouvez tout ça sur le site comme ici — c'est le même compte.";
+  "Contribuez une carte, gardez vos favoris, et retrouvez tout ça sur le site comme ici — c'est le même compte.";
 
 const ROLE_LABEL = {
   admin: "Administrateur",
-  subscriber: "Abonné",
+  subscriber: "Pass Voyageur actif",
   user: "Compte gratuit",
 };
 
@@ -241,7 +241,7 @@ export default function CompteScreen({
           </View>
 
           {user.role !== "admin" && (
-            <Section titre="Abonnement" colors={colors}>
+            <Section titre="Pass Voyageur" colors={colors}>
               <Text style={[s.sectionAide, { color: colors.textMuted }]}>
                 Formule actuelle : {ROLE_LABEL[user.role] || ROLE_LABEL.user}.
               </Text>
@@ -249,8 +249,8 @@ export default function CompteScreen({
                 <Button
                   title={
                     statutAbonnement === "sending"
-                      ? "Résiliation…"
-                      : abonne ? "Résilier mon abonnement" : "Voir les formules"
+                      ? "Désactivation…"
+                      : abonne ? "Désactiver mon Pass" : "Voir les Pass"
                   }
                   variant={abonne ? "ghost" : "primary"}
                   icon="credit-card"
@@ -271,7 +271,7 @@ export default function CompteScreen({
                 disabled={statutExport === "sending"}
               />
               <Text style={[s.sectionAide, { color: colors.textFaint }]}>
-                Compte, sessions, réservations et avis laissés — au format JSON.
+                Compte, sessions, réservations et avis laissés par le passé — au format JSON.
               </Text>
               <Button
                 title="Supprimer mon compte"

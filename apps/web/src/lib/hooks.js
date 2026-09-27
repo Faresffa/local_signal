@@ -129,9 +129,9 @@ export function useGeolocation() {
 }
 
 /**
- * Bascule un restaurant en favori — réservé aux comptes abonnés
+ * Bascule un restaurant en favori — réservé au Pass Voyageur (D-063)
  * (backend/main.py::_require_abonne). Un compte connecté mais non abonné qui
- * clique est redirigé vers l'abonnement (`onUnlock`), jamais vers une erreur
+ * clique est redirigé vers les Pass (`onUnlock`), jamais vers une erreur
  * 403 brute.
  *
  * Mise à jour optimiste : l'état visuel change avant la réponse serveur, et

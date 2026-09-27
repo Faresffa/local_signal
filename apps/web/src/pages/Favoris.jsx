@@ -1,9 +1,9 @@
 // apps/web/src/pages/Favoris.jsx
 //
 // Restaurants favoris (LS-refonte, menu déroulant de Nav.jsx). Réservé aux
-// comptes abonnés — l'API applique la même règle (`_require_abonne`,
+// détenteurs d'un Pass Voyageur (D-063) — l'API applique la même règle (`_require_abonne`,
 // backend/main.py), cette page ne fait que la refléter : un compte connecté
-// mais non abonné voit une proposition d'abonnement, pas une erreur 403 brute
+// mais sans Pass voit une proposition de Pass, pas une erreur 403 brute
 // (retour utilisateur : "s'abonner pour ajouter des favoris").
 
 import { useEffect, useState } from "react";
@@ -51,7 +51,7 @@ export default function Favoris({ user, onOpen, onUnlock }) {
           </div>
           <h1 className="authcard__title">Restaurants favoris</h1>
           <p className="authcard__lede">
-            Réservé aux comptes abonnés : enregistrez vos restaurants préférés
+            Réservé au Pass Voyageur : enregistrez vos restaurants préférés
             depuis leur fiche et retrouvez-les ici d'un coup d'œil.
           </p>
           <button
@@ -60,7 +60,7 @@ export default function Favoris({ user, onOpen, onUnlock }) {
             style={{ marginTop: 24 }}
             onClick={onUnlock}
           >
-            S'abonner pour ajouter des favoris
+            Prendre un Pass pour ajouter des favoris
           </button>
         </div>
       </div>

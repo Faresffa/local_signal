@@ -22,7 +22,7 @@ import Profile from "./pages/Profile";
 import Favoris from "./pages/Favoris";
 import Restaurateur from "./pages/Restaurateur";
 import SignupRestaurateur from "./pages/SignupRestaurateur";
-import PricingRestaurateur from "./pages/PricingRestaurateur";
+import PourLesRestaurateurs from "./pages/PourLesRestaurateurs";
 import Settings from "./pages/Settings";
 import CGU from "./pages/CGU";
 import Confidentialite from "./pages/Confidentialite";
@@ -69,14 +69,14 @@ export default function App() {
   const [filtres, setFiltres] = useState(() => ({ ...FILTRES_VIDES }));
   const [radius, setRadius] = useState(RAYON_DEFAUT);
   const [lieu, setLieu] = useState(null);
-  // OÙ REVENIR APRÈS S'ÊTRE CONNECTÉ. Quelqu'un qui clique « laisser un avis »
-  // depuis une fiche veut revenir à cette fiche, pas être renvoyé à la liste :
+  // OÙ REVENIR APRÈS S'ÊTRE CONNECTÉ. Quelqu'un qui clique « ajouter aux
+  // favoris » depuis une fiche veut revenir à cette fiche, pas être renvoyé à la liste :
   // sinon il doit refaire sa recherche, retrouver le restaurant, et le geste
   // qu'il voulait faire est oublié en chemin.
   const [retour, setRetour] = useState("discover");
   const {
     user, login, signup, signupRestaurateur, logout, subscribe, unsubscribe,
-    subscribeRestaurateur, supprimerCompte,
+    supprimerCompte,
   } = useCurrentUser();
 
   // Chaque changement d'écran repart du haut : sans cela on arrive au milieu
@@ -144,9 +144,9 @@ export default function App() {
   }
 
   // Un visiteur non connecté doit d'abord créer un compte ; un compte déjà
-  // connecté mais non abonné n'a plus besoin que de ça — inutile de lui
-  // redemander un compte qu'il a déjà (LS-refonte : la limite se lève à
-  // l'abonnement, plus à la simple connexion).
+  // connecté sans Pass n'a plus besoin que de ça — inutile de lui
+  // redemander un compte qu'il a déjà (la limite se lève avec un Pass
+  // Voyageur, D-063, plus à la simple connexion).
   function demanderDeverrouillage() {
     setRetour(page);
     naviguer(user ? "pricing" : "signup");
@@ -241,10 +241,11 @@ export default function App() {
             />
           )}
 
-          {page === "pricing-restaurateur" && (
-            <PricingRestaurateur
+          {page === "pour-restaurateurs" && (
+            <PourLesRestaurateurs
               user={user}
-              onAbonner={async () => { await subscribeRestaurateur(); naviguer(retour); }}
+              onGoToSignupRestaurateur={() => naviguer("signup-restaurateur")}
+              onGoToEspace={() => naviguer("restaurateur")}
               onBack={() => naviguer(retour)}
             />
           )}
@@ -303,6 +304,9 @@ export default function App() {
         <span className="foot__liens">
           <button type="button" className="linkbtn" onClick={() => ouvrirLegal("about")}>
             À propos
+          </button>
+          <button type="button" className="linkbtn" onClick={() => ouvrirLegal("pour-restaurateurs")}>
+            Restaurateurs
           </button>
           <button type="button" className="linkbtn" onClick={() => ouvrirLegal("contact")}>
             Contact

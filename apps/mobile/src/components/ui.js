@@ -23,7 +23,7 @@ import {
 // que si l'appelant le transmet. Tous les écrans le font désormais — voir
 // DiscoverScreen.js et DetailScreen.js — mais le composant reste utilisable
 // sans, plutôt que de forcer une prop partout d'un coup.
-export function Verdict({ tone, label, localSignal, size = "md" }) {
+export function Verdict({ tone, label, localSignal, size = "md", style }) {
   const colors = useColors();
   const { background, text } = verdictColors(tone, colors);
   const score = scoreSur10(localSignal);
@@ -34,6 +34,7 @@ export function Verdict({ tone, label, localSignal, size = "md" }) {
         s.verdict,
         { backgroundColor: background },
         size === "lg" && s.verdictLg,
+        style,
       ]}
     >
       <Text style={[s.verdictText, { color: text }, size === "lg" && s.verdictTextLg]}>

@@ -230,7 +230,7 @@ export default function Filtres({
               <div className="fbar__groupe">
                 <h4>
                   {abonne ? <ChartBar size={14} weight="light" /> : <Lock size={14} weight="bold" />}
-                  Réservé aux abonnés
+                  Réservé au Pass Voyageur
                 </h4>
                 {abonne ? (
                   <>
@@ -242,7 +242,7 @@ export default function Filtres({
                 ) : (
                   <p className="fbar__aide">
                     <button type="button" className="linkbtn" onClick={onUnlock}>
-                      S'abonner
+                      Voir les Pass
                     </button>
                     {" "}pour filtrer directement sur le score.
                   </p>
@@ -386,11 +386,11 @@ export default function Filtres({
         </button>
 
         {/* Filtre directement assis sur le Local Signal (retour
-            utilisateur) — toujours AFFICHÉ, mais réservé aux abonnés : c'est
+            utilisateur) — toujours AFFICHÉ, mais réservé au Pass Voyageur (D-063) : c'est
             l'activation qui est verrouillée, pas la visibilité (§5, jamais
             un mur). Une couleur distincte (voir index.css) le distingue des
-            filtres ordinaires, abonné ou non ; pour qui n'est pas abonné, le
-            mot « Abonnement » est écrit sur la pastille — pas seulement
+            filtres ordinaires, avec ou sans Pass ; pour qui n'en a pas, le
+            mot « Pass » est écrit sur la pastille — pas seulement
             dans l'infobulle au survol, invisible au tactile (retour
             utilisateur).
             Un second filtre premium (éloignement des zones touristiques,
@@ -429,11 +429,11 @@ export default function Filtres({
             type="button"
             className="fbar__pastille fbar__pastille--abonne fbar__pastille--verrouille"
             onClick={onUnlock}
-            title="Réservé aux abonnés — cliquez pour vous abonner"
+            title="Réservé au Pass Voyageur — cliquez pour voir les Pass"
           >
             <Lock size={13} weight="bold" />
             Score Local Signal
-            <span className="fbar__badgeAbonnement">Abonnement</span>
+            <span className="fbar__badgeAbonnement">Pass</span>
           </button>
         )}
 

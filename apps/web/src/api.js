@@ -165,6 +165,33 @@ export function photoUrl(restaurantId) {
   return `${API_BASE}/api/restaurant/${encodeURIComponent(restaurantId)}/photo`;
 }
 
+/**
+ * URL de la photo déposée par le restaurateur propriétaire (D-059) —
+ * endpoint distinct de `photoUrl`.
+ *
+ * `photoKey` en paramètre de requête : la réponse est cachée 24h
+ * (`Cache-Control`, backend/main.py), et l'URL elle-même ne change jamais
+ * quand une photo est remplacée — sans ce paramètre, le navigateur
+ * continuerait de servir l'ancienne photo depuis son cache après un
+ * remplacement. `photo_key` étant une empreinte du contenu, il change
+ * exactement quand la photo change, ni plus ni moins.
+ */
+export function photoUrlRestaurateur(restaurantId, photoKey) {
+  const base = `${API_BASE}/api/restaurant/${encodeURIComponent(restaurantId)}/photo-restaurateur`;
+  return photoKey ? `${base}?v=${encodeURIComponent(photoKey)}` : base;
+}
+
+/** Dépose (ou remplace) la photo de vitrine de la fiche possédée par le compte restaurateur connecté. */
+export async function deposerPhotoRestaurant(file) {
+  const form = new FormData();
+  form.append("image", file);
+  return request("/api/restaurateur/mon-restaurant/photo", {
+    method: "POST",
+    credentials: "include",
+    body: form,
+  });
+}
+
 // --- Comptes utilisateurs ---
 //
 // La session vit dans un cookie httpOnly posé par l'API : `credentials:
@@ -231,7 +258,10 @@ export async function fetchMe() {
   }
 }
 
-/** Démonstration, pas un paiement réel (voir backend/main.py). */
+/**
+ * Active un Pass Voyageur (D-063). Démonstration, pas un paiement réel
+ * (voir backend/main.py) : le rôle `subscriber` représente « Pass actif ».
+ */
 export async function subscribe() {
   return request("/api/subscribe", { method: "POST", credentials: "include" });
 }
@@ -268,7 +298,7 @@ export async function changerMotDePasse(motDePasseActuel, nouveauMotDePasse) {
   });
 }
 
-// --- Favoris (réservés aux comptes abonnés, backend/main.py::_require_abonne) ---
+// --- Favoris (réservés aux détenteurs d'un Pass, backend/main.py::_require_abonne) ---
 
 export async function fetchFavoris() {
   return request("/api/favoris", { credentials: "include" });
@@ -288,41 +318,10 @@ export async function removeFavori(restaurantId) {
   });
 }
 
-// --- Avis laissés par nos utilisateurs (D-039) ---
+// --- Avis laissés par nos utilisateurs — RETIRÉS (D-063) ---
 //
-// CES AVIS N'ENTRENT DANS AUCUN CALCUL. Ils sont stockés et affichés, rien de
-// plus : les faire compter reviendrait à réintroduire la popularité dans un
-// score construit pour s'en passer (D-001).
-
-/** Avis d'un restaurant, et le sien s'il est connecté. */
-export async function fetchAvis(restaurantId) {
-  return request(
-    `/api/restaurant/${encodeURIComponent(restaurantId)}/avis`,
-    { credentials: "include" },
-  );
-}
-
-/**
- * Dépose ou remplace son avis. Lève une erreur `status === 401` si la session
- * n'est pas valide — c'est le signal que l'interface doit proposer de se
- * connecter, pas afficher une panne.
- */
-export async function laisserAvis(restaurantId, { rating, text }) {
-  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/avis`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ rating, text }),
-  });
-}
-
-/** Retire son propre avis. */
-export async function retirerAvis(restaurantId) {
-  return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/avis`, {
-    method: "DELETE",
-    credentials: "include",
-  });
-}
+// On ne peut plus laisser d'avis sur un restaurant. Seule la modération
+// admin des avis déjà en base subsiste (`deleteAdminAvis`).
 
 // --- Photo de carte envoyée depuis la fiche (D-038, D-039) ---
 
@@ -388,18 +387,9 @@ export async function modifierMonRestaurant(champs) {
   });
 }
 
-/** Fréquentation de la fiche possédée — détail complet si abonné, résumé sinon. */
+/** Fréquentation de la fiche possédée — détail complet, gratuit pour tous (D-063). */
 export async function fetchVisitesMonRestaurant() {
   return request("/api/restaurateur/mon-restaurant/visites", { credentials: "include" });
-}
-
-/** Démonstration, pas un paiement réel (voir backend/main.py). */
-export async function subscribeRestaurateur() {
-  return request("/api/restaurateur/abonnement", { method: "POST", credentials: "include" });
-}
-
-export async function unsubscribeRestaurateur() {
-  return request("/api/restaurateur/abonnement/annuler", { method: "POST", credentials: "include" });
 }
 
 /* --- Administration : file d'attente des demandes restaurateur --- */

@@ -65,11 +65,11 @@ function Pastille({ label, icone, actif, onPress, hint }) {
   );
 }
 
-// Filtre réservé aux abonnés (D-050) — toujours AFFICHÉ, seule l'activation
+// Filtre réservé au Pass Voyageur (D-050, D-063) — toujours AFFICHÉ, seule l'activation
 // est verrouillée (§5 web, même principe). Couleur distincte (le ton
 // « mixte » du verdict, déjà dans la palette) plutôt que le contour de
 // marque des pastilles ordinaires, pour qu'on la reconnaisse avant de lire
-// le mot « Abonnement ».
+// le mot « Pass ».
 function PastilleAbonne({ label, actif, abonne, onPress }) {
   const colors = useColors();
   return (
@@ -90,7 +90,7 @@ function PastilleAbonne({ label, actif, abonne, onPress }) {
       </Text>
       {!abonne && (
         <View style={[s.badgeAbonnement, { backgroundColor: colors.mixed }]}>
-          <Text style={[s.badgeAbonnementText, { color: colors.onBrand }]}>ABONNEMENT</Text>
+          <Text style={[s.badgeAbonnementText, { color: colors.onBrand }]}>PASS</Text>
         </View>
       )}
     </Pressable>
@@ -149,8 +149,8 @@ export default function Filtres({
   const changerScore = (bas, haut) =>
     onChange({ ...valeurs, scoreMin: bas, scoreMax: haut });
 
-  // Non abonné : un appui n'ouvre jamais la feuille, il redirige vers
-  // l'abonnement — même geste que la pastille verrouillée du web.
+  // Sans Pass : un appui n'ouvre jamais la feuille, il redirige vers
+  // les Pass — même geste que la pastille verrouillée du web.
   const ouvrirScore = () => (abonne ? setFeuille("score") : onUnlock?.());
 
   const cuisineLabel = cuisines.find((c) => c.value === cuisine)?.label;
@@ -389,7 +389,7 @@ export default function Filtres({
                   aide="C'est le seul filtre où l'absence d'information écarte — parce qu'il porte justement sur cette présence."
                 />
 
-                <Text style={[s.groupe, { color: colors.textFaint }]}>RÉSERVÉ AUX ABONNÉS</Text>
+                <Text style={[s.groupe, { color: colors.textFaint }]}>RÉSERVÉ AU PASS VOYAGEUR</Text>
                 {abonne ? (
                   <>
                     <Text style={[s.aide, { color: colors.textMuted, marginBottom: 6 }]}>
@@ -400,7 +400,7 @@ export default function Filtres({
                 ) : (
                   <Pressable onPress={onUnlock} style={{ paddingVertical: 8 }}>
                     <Text style={[s.aide, { color: colors.brand, fontWeight: "600" }]}>
-                      S'abonner pour filtrer directement sur le score.
+                      Prendre un Pass pour filtrer directement sur le score.
                     </Text>
                   </Pressable>
                 )}

@@ -58,6 +58,17 @@ ALLOWED_ORIGINS = [
     if origin.strip()
 ]
 
+# En développement seulement (ALLOWED_ORIGINS absent de l'environnement) :
+# localhost et 127.0.0.1 sur N'IMPORTE QUEL port. Vite passe tout seul sur
+# 5174, 5175… quand 5173 est déjà pris (deux fronts lancés), et la liste
+# fixe ci-dessus rejetait alors silencieusement toutes les requêtes
+# (« Failed to fetch » côté navigateur, 200 côté serveur). En production,
+# ALLOWED_ORIGINS est posé et ce motif est désactivé.
+ALLOWED_ORIGIN_REGEX = (
+    None if os.environ.get("ALLOWED_ORIGINS")
+    else r"http://(localhost|127\.0\.0\.1)(:\d+)?"
+)
+
 # =============================================================================
 # Scan de carte — fournisseur de vision (D-004, D-017)
 # =============================================================================

@@ -28,7 +28,7 @@
 // note — la distinction reste entière. Voir `BarreSignal` pour le
 // raisonnement complet.
 
-import { ForkKnife, Heart } from "@phosphor-icons/react";
+import { ForkKnife, Heart, MapPin } from "@phosphor-icons/react";
 
 import BarreSignal from "./BarreSignal";
 import PhotoRestaurant from "./PhotoRestaurant";
@@ -43,7 +43,8 @@ const PAS_MS = 60;
 const DECALAGE_MAX_MS = 400;
 
 export default function RestaurantCard({
-  restaurant, onOpen, index = 0, user, onUnlock, onFavoriChange,
+  restaurant, onOpen, index = 0, user, onUnlock, onFavoriChange, plusProche = false,
+  selectionne = false, onSurvol,
 }) {
   const delai = Math.min(index * PAS_MS, DECALAGE_MAX_MS);
   const ref = useReveal(delai);
@@ -71,7 +72,14 @@ export default function RestaurantCard({
   const premier = index === 0;
 
   return (
-    <article className={`card${premier ? " card--premier" : ""} reveal`} ref={ref}>
+    <article
+      className={`card${premier ? " card--premier" : ""}${selectionne ? " card--selection" : ""} reveal`}
+      ref={ref}
+      data-restaurant-id={restaurant.id}
+      // Survol → le repère correspondant grossit sur la carte (D-066).
+      onMouseEnter={onSurvol && (() => onSurvol(restaurant.id))}
+      onMouseLeave={onSurvol && (() => onSurvol(null))}
+    >
       <div className="card__media">
         {/* Le rang porte le classement : on est en liste unique, verticale,
             « le premier, puis juste en dessous le deuxième » — le chiffre le
@@ -81,10 +89,10 @@ export default function RestaurantCard({
           id={restaurant.id}
           cuisine={restaurant.cuisine}
           photoUrl={restaurant.photo_url}
+          photoKey={restaurant.photo_key}
           nom={restaurant.name}
           size={64}
         />
-        {dist && <span className="card__distance">{dist}</span>}
         {premier && <span className="card__premier">Meilleur profil local</span>}
         {/* N'existe que sur les réponses admin (D-057) — absent partout
             ailleurs (Découvrir, favoris), donc invisible par défaut. */}
@@ -105,7 +113,7 @@ export default function RestaurantCard({
             title={
               abonne
                 ? (favori ? "Retirer des favoris" : "Ajouter aux favoris")
-                : "S'abonner pour ajouter des favoris"
+                : "Prendre un Pass pour ajouter des favoris"
             }
           >
             <Heart size={16} weight={favori ? "fill" : "regular"} />
@@ -123,11 +131,22 @@ export default function RestaurantCard({
           delai={delai + 180}
           label={`${v.label} — ${restaurant.name}`}
         />
-        <Verdict
-          localSignal={restaurant.local_signal}
-          confidence={restaurant.confidence}
-          className="card__verdict"
-        />
+        {/* Distance juste sous le score (D-065) : le classement mêle score
+            et proximité, la distance lue avec le score explique qu'un 7,9
+            passe devant un 8,4 — sans pousser la barre. */}
+        <div className="card__score">
+          <Verdict
+            localSignal={restaurant.local_signal}
+            confidence={restaurant.confidence}
+            className="card__verdict"
+          />
+          {dist && (
+            <span className={`card__dist${plusProche ? " card__dist--proche" : ""}`}>
+              <MapPin size={12} weight="fill" aria-hidden="true" />
+              {plusProche ? `Le plus proche · ${dist}` : dist}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="card__body">

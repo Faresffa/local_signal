@@ -6,8 +6,8 @@
 // Elle porte les trois décisions que prend un voyageur qui a faim : où, quel
 // type de cuisine, jusqu'où marcher.
 
-import { useEffect, useRef, useState } from "react";
-import { Info, MagnifyingGlass, MapTrifold, Trophy, X } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
+import { Info, MagnifyingGlass, MapTrifold } from "@phosphor-icons/react";
 
 import { fetchCuisines, fetchRestaurants } from "../api";
 import Filtres from "../components/Filtres";
@@ -22,9 +22,9 @@ import {
   LocationNotice,
   ResultsSkeleton,
 } from "../components/States";
-import Verdict from "../components/Verdict";
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 import { useGeolocation } from "../lib/hooks";
+import { distance } from "../lib/display";
 
 // Cartes verrouillées affichées au-delà de la limite — plafond purement
 // visuel pour ne pas allonger indéfiniment la grille quand `total` est grand.
@@ -59,19 +59,28 @@ export default function Discover({
   // combien de restaurants sont masqués sans jamais recevoir leurs données
   // (voir backend/main.py::list_restaurants).
   const [total, setTotal] = useState(0);
-  // Quota de recherches d'un compte non abonné (LS-refonte) — `null` pour
-  // tout le monde d'autre (anonyme, abonné, admin), qui n'en a pas.
+  // Quota de recherches d'un compte sans Pass (LS-refonte) — `null` pour
+  // tout le monde d'autre (anonyme, Pass actif, admin), qui n'en a pas.
   const [quota, setQuota] = useState(null);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
   const [reloads, setReloads] = useState(0);
   const [versionResultats, setVersionResultats] = useState(0);
-  const [classementOuvert, setClassementOuvert] = useState(false);
-  const [podium, setPodium] = useState([]);
-  const ouvrirClassement = useRef(false);
   // Carte et répartition : toujours visibles en colonne à partir de 1100px,
   // repliées derrière un bouton en dessous (voir .discover__railBody en CSS).
   const [railOuvert, setRailOuvert] = useState(false);
+  // Synchronisation liste ↔ carte (D-066) : restaurant survolé dans la liste,
+  // restaurant choisi sur la carte (ou dans la liste).
+  const [survol, setSurvol] = useState(null);
+  const [selection, setSelection] = useState(null);
+
+  // Un repère cliqué fait défiler la liste jusqu'à son restaurant.
+  function selectionnerDepuisCarte(id) {
+    setSelection(id);
+    document
+      .querySelector(`[data-restaurant-id="${CSS.escape(id)}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
   // Explique pourquoi le premier résultat n'a pas forcément le meilleur
   // Local Signal (retour utilisateur) — le classement mêle authenticité et
   // proximité (D-008), « Triés par score » seul le laissait croire.
@@ -119,19 +128,14 @@ export default function Discover({
         setRestaurants(resultats);
         setTotal(data.count ?? resultats.length);
         setQuota(data.quota ?? null);
-        // Relance l'animation du podium après chaque recherche ou filtre.
+        // Relance l'animation d'entrée des trois premières cartes après
+        // chaque recherche ou filtre (voir la `key` plus bas).
         setVersionResultats((version) => version + 1);
-        if (ouvrirClassement.current) {
-          ouvrirClassement.current = false;
-          setPodium(resultats.slice(0, 3));
-          setClassementOuvert(resultats.length > 0);
-        }
         setError(null);
         setStatus("ready");
       })
       .catch((e) => {
         if (cancelled) return;
-        ouvrirClassement.current = false;
         setError(e.message);
         setStatus("error");
       });
@@ -142,7 +146,6 @@ export default function Discover({
   }, [origine, radius, filtres, reloads]);
 
   const relancer = () => {
-    ouvrirClassement.current = true;
     setStatus("loading");
     setReloads((n) => n + 1);
   };
@@ -152,11 +155,16 @@ export default function Discover({
     onRadiusChange(RAYON_DEFAUT);
   };
 
-  // Restaurants masqués faute d'abonnement (LS-refonte) — 0 seulement pour un
-  // compte abonné ou admin. Se connecter ne suffit plus à tout débloquer :
+  // Restaurants masqués faute de Pass Voyageur (D-063) — 0 seulement pour un
+  // compte avec Pass ou admin. Se connecter ne suffit plus à tout débloquer :
   // c'était l'ancienne règle, et elle ne laissait aucune raison de payer.
   const abonne = user?.role === "subscriber" || user?.role === "admin";
   const masques = abonne ? 0 : Math.max(0, total - restaurants.length);
+  // Distance minimale des résultats affichés : le ou les restaurants qui
+  // l'atteignent portent « Le plus proche » (D-065). Comparaison sur la
+  // distance AFFICHÉE : deux « 270 m » doivent porter la mention tous deux.
+  const distances = restaurants.map((r) => r.distance_m).filter((d) => d != null);
+  const distMin = distances.length ? Math.min(...distances) : null;
 
   return (
     <>
@@ -302,7 +310,7 @@ export default function Discover({
             </p>
           )}
 
-          {/* Quota de recherches d'un compte non abonné (LS-refonte) —
+          {/* Quota de recherches d'un compte sans Pass (LS-refonte) —
               affiché AVANT d'être atteint, pas seulement au moment où il
               bloque (retour utilisateur : "doit être claire, affichée"). */}
           {quota && (
@@ -311,7 +319,7 @@ export default function Discover({
                 ? `${quota.restantes} recherche${quota.restantes > 1 ? "s" : ""} restante${quota.restantes > 1 ? "s" : ""} aujourd'hui.`
                 : "Dernière recherche du jour."}{" "}
               <button type="button" className="linkbtn" onClick={onUnlock}>
-                S'abonner pour un accès illimité
+                Prendre un Pass Voyageur pour un accès illimité
               </button>
             </p>
           )}
@@ -336,6 +344,9 @@ export default function Discover({
                   key={i < 3 ? `${r.id}-${versionResultats}` : r.id}
                   restaurant={r}
                   index={i}
+                  plusProche={distMin != null && distance(r.distance_m) === distance(distMin)}
+                  selectionne={selection === r.id}
+                  onSurvol={setSurvol}
                   onOpen={onOpen}
                   user={user}
                   onUnlock={onUnlock}
@@ -346,11 +357,16 @@ export default function Discover({
               ))}
             </div>
           )}
+          {/* Répartition des verdicts, sous la liste depuis que la carte
+              occupe toute la colonne de droite (D-066). */}
+          {status === "ready" && restaurants.length > 0 && (
+            <StatsPanel restaurants={restaurants} />
+          )}
         </section>
 
-        {/* Carte + répartition : redisent ce que la liste dit déjà, en un
-            coup d'oeil. Repliées sous 1100px pour ne pas passer avant les
-            résultats qu'elles commentent. */}
+        {/* Grande carte interactive (D-066), collée à droite pendant qu'on
+            fait défiler la liste. Repliée sous 1100px pour ne pas passer
+            avant les résultats qu'elle commente. */}
         <aside className="discover__rail">
           <button
             type="button"
@@ -359,73 +375,24 @@ export default function Discover({
             aria-expanded={railOuvert}
           >
             <MapTrifold size={16} weight="bold" />
-            {railOuvert ? "Masquer la carte" : "Voir la carte et la répartition"}
+            {railOuvert ? "Masquer la carte" : "Voir la carte"}
           </button>
 
           <div className={`discover__railBody${railOuvert ? " is-open" : ""}`}>
-            {origine && <ResultsMap restaurants={restaurants} origine={origine} />}
-            <StatsPanel restaurants={restaurants} />
+            {origine && (
+              <ResultsMap
+                restaurants={restaurants}
+                origine={origine}
+                survol={survol}
+                selection={selection}
+                onSelect={selectionnerDepuisCarte}
+                onOpen={onOpen}
+              />
+            )}
           </div>
         </aside>
       </div>
 
-      {classementOuvert && (
-        <div
-          className="modal classement-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="classement-titre"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setClassementOuvert(false);
-          }}
-        >
-          <section className="classement-modal__contenu">
-            <div className="classement-modal__entete">
-              <div>
-                <span className="classement-modal__sur-titre">
-                  <Trophy size={16} weight="fill" /> Classement de votre
-                  recherche
-                </span>
-                <h2 id="classement-titre">Les 3 meilleures adresses</h2>
-              </div>
-              <button
-                type="button"
-                className="modal__close"
-                onClick={() => setClassementOuvert(false)}
-                aria-label="Fermer le classement"
-              >
-                <X size={18} weight="bold" />
-              </button>
-            </div>
-
-            <ol className="classement-modal__liste">
-              {podium.map((restaurant, index) => (
-                <li
-                  className={`classement-modal__ligne classement-modal__ligne--${index + 1}`}
-                  key={restaurant.id}
-                >
-                  <span className="classement-modal__rang">{index + 1}</span>
-                  <span className="classement-modal__nom">
-                    {restaurant.name}
-                  </span>
-                  <Verdict
-                    localSignal={restaurant.local_signal}
-                    confidence={restaurant.confidence}
-                  />
-                </li>
-              ))}
-            </ol>
-
-            <button
-              type="button"
-              className="btn btn--primary btn--block"
-              onClick={() => setClassementOuvert(false)}
-            >
-              Voir les résultats
-            </button>
-          </section>
-        </div>
-      )}
     </>
   );
 }

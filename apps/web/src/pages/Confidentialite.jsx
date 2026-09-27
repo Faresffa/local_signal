@@ -9,7 +9,7 @@
 
 import { ArrowLeft } from "@phosphor-icons/react";
 
-const DERNIERE_MISE_A_JOUR = "22 septembre 2026";
+const DERNIERE_MISE_A_JOUR = "27 septembre 2026";
 
 export default function Confidentialite({ onBack, onGoToCGU }) {
   return (
@@ -72,8 +72,8 @@ export default function Confidentialite({ onBack, onGoToCGU }) {
       <section className="legal__section">
         <h2>2. Pourquoi ces données</h2>
         <p>
-          Le compte sert à retrouver vos avis et vos favoris d'une visite à
-          l'autre. Les avis et les photos de cartes alimentent le score
+          Le compte sert à retrouver vos favoris d'une visite à l'autre.
+          Les photos de cartes alimentent le score
           d'authenticité des restaurants — c'est le cœur du service : sans
           cette contribution, le score ne peut pas exister. Aucune donnée
           n'est vendue ni partagée avec un tiers à des fins commerciales.

@@ -725,21 +725,6 @@ img {
   transform: scale(1.04);
 }
 
-.card__distance {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  z-index: 1;
-  padding: 6px 13px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--color-surface) 86%, transparent);
-  backdrop-filter: blur(14px) saturate(180%);
-  box-shadow: var(--shadow-card);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-}
-
 /* Rang dans le classement, en haut à gauche du visuel — la carte reste lisible
    comme un ELEMENT DE LISTE avant d'être une fiche, cohérent avec la mise en
    page à colonne unique (LS-refonte). */
@@ -801,8 +786,7 @@ img {
   box-shadow: var(--shadow-card);
 }
 
-/* Favori (LS-refonte) — coin bas-droit du visuel, symétrique à
-   .card__distance en bas-gauche. Visible pour tout compte connecté ; un
+/* Favori (LS-refonte) — coin bas-droit du visuel. Visible pour tout compte connecté ; un
    compte non abonné qui clique est redirigé vers l'abonnement plutôt que de
    voir le bouton disparaître (retour utilisateur : "s'abonner pour ajouter
    des favoris" — une invitation, pas un mur). */
@@ -1200,6 +1184,21 @@ img {
 @media (min-width: 640px) {
   .pricing__grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Quatre formules côte à côte (D-063) : gratuite, puis les trois Pass. */
+.pricing__grid--passes {
+  max-width: none;
+}
+@media (min-width: 640px) {
+  .pricing__grid--passes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1100px) {
+  .pricing__grid--passes {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -1895,81 +1894,6 @@ img {
   font-variant-numeric: tabular-nums;
 }
 
-/* Podium affiché après une recherche volontaire. */
-.classement-modal__contenu {
-  width: min(480px, 100%);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-float);
-}
-.classement-modal__entete {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-}
-.classement-modal__sur-titre {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
-.classement-modal__entete h2 {
-  font-size: var(--font-size-xl);
-}
-.classement-modal__liste {
-  display: grid;
-  gap: var(--spacing-sm);
-  margin: var(--spacing-lg) 0;
-  list-style: none;
-}
-.classement-modal__ligne {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: 11px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-alt);
-}
-.classement-modal__rang {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-sunken);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-}
-.classement-modal__nom {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: var(--font-weight-semibold);
-}
-.classement-modal__score {
-  display: inline-flex;
-  gap: 1px;
-  color: var(--color-text-muted);
-}
-.classement-modal__ligne--1 {
-  border-color: var(--color-rank-local);
-}
-.classement-modal__ligne--1 .classement-modal__rang {
-  background: var(--color-local-soft);
-  color: var(--color-rank-local);
-}
-.classement-modal__ligne--1 .classement-modal__score {
-  color: var(--color-rank-local);
-}
-
 /* Les tuiles OpenStreetMap sont claires ; en thème sombre on les assombrit
    plutôt que de charger un second jeu de tuiles. */
 :root[data-theme="dark"] .leaflet-tile,
@@ -2074,11 +1998,35 @@ img {
    chose lue apres l'image, avant meme le nom. */
 .card__signal {
   display: flex;
-  align-items: center;
+  /* En haut, pas au centre : la distance sous le score (D-065) allonge la
+     colonne de droite, et la barre doit rester face à la pastille. */
+  align-items: flex-start;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-md) 0;
 }
-.card__signal .barresignal { flex: 1; }
+.card__signal .barresignal { flex: 1; margin-top: 11px; } /* (28 px de pastille − 6 px de barre) / 2 */
+
+/* Score, puis la distance juste en dessous (D-065). */
+.card__score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.card__score .card__dist {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.card__score .card__dist svg { color: var(--color-text-faint); }
+.card__score .card__dist--proche { color: var(--color-brand); font-weight: var(--font-weight-semibold); }
+.card__score .card__dist--proche svg { color: var(--color-brand); }
 .card__signal .card__verdict { position: static; flex-shrink: 0; }
 
 /* ==========================================================================
@@ -2608,6 +2556,14 @@ img {
 .photorestau__img {
   position: absolute;
   inset: 0;
+  /* Au-dessus de `.visual > svg` (z-index: 1) : sans ceci, l'icône de
+     repli — positionnée et donc dans le même contexte d'empilement —
+     peint PAR-DESSUS une photo pourtant chargée avec succès (z-index
+     auto perd toujours face à un z-index explicite, quel que soit
+     l'ordre dans le DOM). Resté invisible tant que les photos réelles
+     étaient assez chargées visuellement pour masquer le problème — un
+     test avec une image de couleur unie l'a rendu évident. */
+  z-index: 2;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2622,6 +2578,45 @@ img {
   .photorestau__img {
     transition: none;
   }
+}
+
+/* ==========================================================================
+   Photo de vitrine restaurateur (D-059)
+   ========================================================================== */
+
+/* Même gabarit que `.detail__media` (Detail.jsx) : la fiche que gère un
+   restaurateur mérite le même traitement visuel que celle qu'un client
+   voit, pas une vignette reléguée à côté d'un formulaire. */
+.restaurateur__media {
+  position: relative;
+}
+
+.restaurateur__photoBtn {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.restaurateur__photoBtn:hover {
+  transform: scale(1.03);
+}
+.restaurateur__photoBtn:disabled {
+  cursor: default;
+  opacity: 0.7;
 }
 
 /* Texte réservé aux lecteurs d'écran. */
@@ -2824,13 +2819,12 @@ img {
 }
 
 /* ==========================================================================
-   Avis des voyageurs, et ajout de carte (D-038, D-039)
+   Ajout de carte (D-038) — les avis ont été retirés (D-063)
    ==========================================================================
-   Deux blocs de contribution en bas de fiche. Ils partagent la même carte
-   creusée : ce sont des gestes de l'utilisateur, visuellement distincts de ce
-   que l'application affirme au-dessus. */
+   Le bloc de contribution en bas de fiche : une carte creusée, geste de
+   l'utilisateur visuellement distinct de ce que l'application affirme
+   au-dessus. */
 
-.avis,
 .ajoutcarte {
   margin-top: var(--spacing-lg);
   padding: var(--spacing-md);
@@ -2839,7 +2833,6 @@ img {
   border-radius: var(--radius-md);
 }
 
-.avis__tete,
 .ajoutcarte__tete {
   display: flex;
   align-items: center;
@@ -2848,7 +2841,6 @@ img {
   flex-wrap: wrap;
 }
 
-.avis__titre,
 .ajoutcarte__titre {
   display: flex;
   align-items: center;
@@ -2857,189 +2849,6 @@ img {
   font-weight: var(--font-weight-semibold);
 }
 
-.avis__compte {
-  display: inline-grid;
-  place-items: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
-  border-radius: 11px;
-  background: var(--color-surface-sunken);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.avis__action {
-  padding: 8px 13px;
-  font-size: var(--font-size-sm);
-}
-
-.avis__invite {
-  margin-top: var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-snug);
-  color: var(--color-text-muted);
-}
-
-/* --- Étoiles ------------------------------------------------------------- */
-
-.etoiles {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.etoiles__etoile {
-  display: grid;
-  place-items: center;
-  padding: 2px;
-  border: 0;
-  background: none;
-  color: var(--color-border-strong);
-  cursor: pointer;
-  transition: transform 120ms ease, color 120ms ease;
-}
-.etoiles__etoile:disabled { cursor: default; }
-.etoiles__etoile:not(:disabled):hover { transform: scale(1.18); }
-.etoiles__etoile:active { transform: scale(0.94); }
-.etoiles__etoile .est-pleine { color: var(--color-mixed); }
-
-.etoiles--lecture .etoiles__etoile { padding: 0; }
-
-.etoiles__effacer {
-  margin-left: 8px;
-  font-size: var(--font-size-xs);
-}
-
-/* --- Formulaire ---------------------------------------------------------- */
-
-.avis__form {
-  margin-top: var(--spacing-md);
-  display: grid;
-  gap: var(--spacing-sm);
-  /* Le formulaire arrive d'un clic : une apparition franche évite qu'on se
-     demande si le bouton a marché. */
-  animation: avis-ouvre 180ms ease both;
-}
-
-@keyframes avis-ouvre {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .avis__form { animation: none; }
-  .etoiles__etoile { transition: none; }
-}
-
-.avis__texte {
-  resize: vertical;
-  min-height: 92px;
-  font-family: inherit;
-  line-height: var(--line-height-snug);
-}
-
-.avis__pied {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
-}
-
-.avis__reste {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-faint);
-}
-
-.avis__boutons {
-  display: flex;
-  gap: 8px;
-  margin-left: auto;
-}
-.avis__boutons .btn {
-  padding: 9px 15px;
-  font-size: var(--font-size-sm);
-}
-
-.avis__aide,
-.avis__erreur {
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-snug);
-}
-.avis__aide { color: var(--color-text-faint); }
-.avis__erreur { color: var(--color-brand); }
-
-/* --- Avis affichés ------------------------------------------------------- */
-
-.avis__carte {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
-  display: grid;
-  gap: 7px;
-}
-
-.avis__carte--mien {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-brand);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-alt);
-}
-
-.avis__auteur {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--color-text-muted);
-}
-.avis__auteur strong {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-text);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
-
-/* Badge abonné devant un avis (retour utilisateur : "avoir un badge devant
-   l'avis") — purement d'affichage, voir .avis__mention plus bas : ces avis
-   ne pèsent jamais sur le score (D-001). */
-.avis__badgeAbonne {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
-  background: var(--color-local-soft);
-  color: var(--color-local);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.avis__date {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-faint);
-}
-
-.avis__corps {
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-  white-space: pre-wrap;
-  /* Un avis est du texte écrit par quelqu'un d'autre : il ne doit jamais
-     pouvoir sortir de son cadre, quelle que soit la longueur d'un mot. */
-  overflow-wrap: anywhere;
-}
-
-.avis__vide {
-  margin-top: var(--spacing-md);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
-
-.avis__mention,
 .ajoutcarte__mention {
   margin-top: var(--spacing-md);
   padding-top: var(--spacing-sm);
@@ -3163,7 +2972,10 @@ img {
 
 @media (min-width: 1100px) {
   .discover__layout {
-    grid-template-columns: 220px minmax(0, 1fr) 280px;
+    /* Même gabarit que le reste du site (1180 px) : les restaurants gardent
+       la colonne principale, la carte reste étroite mais prend toute la
+       hauteur visible (D-066). */
+    grid-template-columns: 220px minmax(0, 1fr) 320px;
     gap: var(--spacing-lg);
   }
 }
@@ -3230,12 +3042,102 @@ img {
   }
 }
 
-.discover__mapbox {
-  height: 220px;
-  border-radius: var(--radius-md);
+/* Grande carte interactive (D-066) : toute la hauteur visible sous la barre
+   de navigation, collée pendant le défilement de la liste. */
+.resultsmap {
+  height: 380px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   overflow: hidden;
   background: var(--color-surface-sunken);
+  box-shadow: var(--shadow-card);
+}
+@media (min-width: 1100px) {
+  .resultsmap {
+    height: calc(100vh - 68px - 2 * var(--spacing-lg));
+    min-height: 420px;
+  }
+}
+
+.resultsmap__repere {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font: 800 12px/1 var(--font-body, system-ui);
+  color: #1c1917;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.resultsmap__repere.is-survol,
+.resultsmap__repere.is-selection {
+  transform: scale(1.35);
+  z-index: 2;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brand) 45%, transparent),
+    0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.resultsmap__moi {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.28);
+}
+
+.resultsmap .maplibregl-popup-content {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  padding: 10px 28px 10px 12px;
+  box-shadow: var(--shadow-raised);
+}
+.resultsmap .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.resultsmap .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.resultsmap .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: var(--color-surface);
+}
+.resultsmap .maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.resultsmap .maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.resultsmap .maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: var(--color-surface);
+}
+.resultsmap .maplibregl-popup-close-button {
+  color: var(--color-text-muted);
+  font-size: 18px;
+  padding: 2px 8px;
+}
+.resultsmap__bulle {
+  display: grid;
+  gap: 3px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.resultsmap__bulle strong {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+.resultsmap__voir {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-brand);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+/* Restaurant choisi depuis la carte (D-066). */
+.card--selection {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px var(--color-brand);
 }
 
 .discover__stats {

@@ -4003,3 +4003,443 @@ sinon, puisque le premier restaurant listé est désormais souvent validé.
   utilisateur final) ni `/api/cuisines` : ce chantier est strictement
   admin.
 
+---
+
+## D-059 — Photo de vitrine déposée par le restaurateur, et trois bugs d'affichage des photos corrigés au passage
+
+**Date :** 2026-09-24 · **Statut :** actif
+
+### Contexte
+
+Retour utilisateur : *« la Table de Nour, la photo ne marche pas. »*
+`La Table de Nour` est une fiche `manuel_...` créée par D-055/D-056 —
+sans import OSM/Google, elle n'a jamais eu de `photo_url`, et rien ne
+permettait à son restaurateur d'en déposer une. Le vrai manque n'était pas
+un bug de données, c'était une fonctionnalité absente.
+
+### Décision
+
+**Nouvelle colonne, nouveau canal — pas de réutilisation du corpus de
+cartes.** `restaurants.photo_key`/`photo_type` (empreinte sha256 dans
+`stockage()`, déjà utilisé pour le corpus de cartes — D-038 — et son type
+MIME). Un nouvel endpoint, `GET /api/restaurant/{id}/photo-restaurateur`,
+sert cette photo ; il reste distinct de `GET /api/restaurant/{id}/photo`
+(D-025, photos Google Places) parce que la provenance et le droit de
+redistribution diffèrent : le corpus de cartes n'est **jamais** servi
+(D-038, ce sont des œuvres tierces photographiées en vitrine), alors
+qu'ici c'est le restaurateur déjà vérifié (D-055) qui dépose la photo de
+son propre établissement — la distinction mérite deux routes plutôt
+qu'une seule ambiguë. `POST /api/restaurateur/mon-restaurant/photo`
+dépose et remplace ; une seule photo par fiche, pas une galerie.
+
+**`PhotoRestaurant.jsx` apprend un second type de source.** `photoUrl`
+(lien externe OSM/Google) prime quand il existe ; sinon `photoKey`
+(nouveau prop) déclenche `photoUrlRestaurateur(id, photoKey)`. Les trois
+appelants existants (`RestaurantCard`, `Detail.jsx`, `Admin.jsx`) passent
+désormais aussi `photoKey` — le composant partagé absorbe la distinction,
+aucun appelant n'a à savoir d'où vient la photo.
+
+**Trois bugs d'affichage trouvés et corrigés en vérifiant la fonctionnalité,
+tous dans du code préexistant :**
+
+1. **`.visual > svg` (l'icône de repli, `CuisineVisual.jsx`) a un
+   `z-index: 1` explicite ; `.photorestau__img` n'en avait aucun.** Un
+   z-index explicite gagne toujours face à `auto`, quel que soit l'ordre
+   dans le DOM — l'icône peignait donc PAR-DESSUS une photo pourtant
+   chargée avec succès, sur toute l'application (Découvrir, fiches,
+   admin), depuis toujours. Resté invisible parce qu'une photo réelle,
+   suffisamment chargée visuellement, masque un fin contour translucide à
+   90 % d'opacité — un test avec une image de couleur unie l'a rendu
+   flagrant. **Corrigé** : `z-index: 2` sur `.photorestau__img`.
+2. **`chargee`/`cassee` (état de `PhotoRestaurant`) ne se réinitialisaient
+   jamais quand `photoUrl`/`photoKey` changeaient.** Remplacer une photo
+   cassée par une valide (ou l'inverse) laissait l'ancien état figé.
+   **Corrigé** : un `useEffect` sur `url` remet les deux à faux, et
+   `key={url}` sur l'`<img>` force un remontage propre de l'élément.
+3. **Une image déjà en cache navigateur peut finir de charger de façon
+   synchrone, avant que React n'ait attaché `onLoad`.** L'évènement part
+   dans le vide, `chargee` ne passe jamais à vrai, l'image reste à
+   `opacity: 0` indéfiniment — reproductible à chaque replacement de photo
+   revisitant la même URL depuis le cache HTTP. **Corrigé** : un effet lit
+   `imgRef.current.complete` une fois l'élément monté, indépendamment de
+   l'évènement.
+
+**Cache-busting par empreinte de contenu, pas par date.** La réponse de
+`/photo-restaurateur` est cachée 24h (`Cache-Control`) ; sans un
+paramètre qui change, le navigateur aurait continué de servir l'ancienne
+photo après un remplacement. `photoUrlRestaurateur(id, photoKey)` ajoute
+`?v=<photo_key>` — stable tant que la photo ne change pas (le cache reste
+utile), et automatiquement invalidé exactement quand elle change (la clé
+est une empreinte du contenu).
+
+### Conséquences
+
+- Vérifié de bout en bout dans le navigateur : dépôt d'une photo par
+  `nour.restaurateur.demo@example.com`, apparition immédiate sans
+  rechargement forcé, remplacement par une seconde photo visuellement
+  distincte confirmant le cache-busting, et absence de régression sur
+  une fiche à `photo_url` externe déjà en place (« L'île de Crête »,
+  Découvrir).
+- Photo de test retirée de `La Table de Nour` après vérification — la
+  fiche de démonstration reste sans photo, prête pour un dépôt réel.
+- Mobile non touché — comme D-055/D-056, cette fonctionnalité n'a pas été
+  demandée pour mobile dans ce message.
+
+---
+
+## D-060 — Tableau de bord restaurateur : même gabarit que la fiche client
+
+**Date :** 2026-09-24 · **Statut :** actif
+
+### Contexte
+
+Retour utilisateur direct, après avoir vu le tableau de bord en conditions
+réelles : *« il a eu deux pages et elle est trop nulle [...] il voit pas
+les images [...] il faut l'image de son restaurant, il faut tous les
+détails [...] ce sera quand même notre meilleur, 10 euros d'abonnement
+donc il faut vraiment présenter un truc qui soit bien, pas nul comme
+ça. »* Le tableau de bord empilait trois petites sections (`Fréquentation`,
+une vignette 120×90 pour la photo, un formulaire de contact) sans hiérarchie
+visuelle — rien à voir avec la fiche que voit un client (`Detail.jsx`), déjà
+soignée. Un produit facturé plus cher que l'abonnement client ne peut pas
+avoir l'air moins fini que la version gratuite.
+
+### Décision
+
+**Même gabarit que `Detail.jsx`, pas un gabarit inventé pour l'occasion.**
+`TableauDeBord` (Restaurateur.jsx) adopte la grille `.detail` (photo à
+gauche, informations à droite dès 900px) déjà éprouvée côté client :
+photo en grand format (`.detail__media`, plus la vignette 120×90 d'avant),
+nom, cuisine, puis un `factlist` qui montre TOUS les champs de la fiche —
+adresse, horaires, téléphone, réservation — pas seulement ceux qui se
+modifient. Un restaurateur doit voir sa fiche telle qu'un client la voit,
+en entier, avant de savoir ce qu'il a le droit de changer.
+
+**Le bouton d'ajout de photo devient un geste sur l'image, pas une ligne
+de formulaire à côté.** `.restaurateur__photoBtn` se superpose en bas à
+gauche de la photo (même famille visuelle que `.card__favori`/
+`.card__distance`) plutôt que d'être un bouton `<Camera>` séparé dans une
+colonne de texte — le geste « changer la photo » doit partir de la photo
+elle-même.
+
+**Le formulaire de contact reste, mais en second temps.** Renommé
+« Modifier les coordonnées » et placé après le factlist en lecture : on
+montre d'abord ce qui EST, puis ce qui se change — jamais les deux
+mélangés dans la même section.
+
+### Conséquences
+
+- Vérifié dans le navigateur avec le compte `marco.restaurateur.demo`
+  (abonné, photo réelle déjà déposée par l'utilisateur lui-même via la
+  fonctionnalité D-059) : rendu correct en colonne unique (<900px) et en
+  grille à deux colonnes (≥900px, 1300px testé).
+- Aucun changement de route ni de donnée — uniquement la mise en page de
+  `TableauDeBord`/`PhotoEdit` et deux classes CSS nouvelles
+  (`.restaurateur__media`, `.restaurateur__photoBtn`).
+- Adresse de « La Table de Nour », communiquée à l'utilisateur en réponse
+  à sa question : 18 Rue de la Roquette, 75011 Paris.
+
+---
+
+## D-061 — Retrait du podium modal après une recherche (Discover.jsx)
+
+**Date :** 2026-09-24 · **Statut :** actif — retire une fonctionnalité de
+LS-12/LS-13 (14 sept. 2026), sans lien avec D-055 à D-060.
+
+### Contexte
+
+Retour utilisateur, en voyant le modal « Classement de votre recherche —
+Les 3 meilleures adresses » s'ouvrir après un clic sur « Chercher » :
+*« depuis quand ça s'affiche ça ??? »*, puis, la fonctionnalité identifiée
+et expliquée (présente depuis LS-12/LS-13, le 14 septembre, avant ce
+chantier) : *« remove it, en plus ça apparaît pas tout le temps donc
+bon. »* Le second point compte autant que le premier : le déclenchement
+dépendait d'une ref (`ouvrirClassement.current`) armée uniquement par le
+bouton « Chercher » et désarmée dans certains chemins d'erreur — une
+fonctionnalité qui ne se déclenche pas de façon fiable ne rend pas le
+service qu'elle promettait, indépendamment de la question du goût.
+
+### Décision
+
+**Retrait complet, pas un masquage.** `Discover.jsx` perd l'état
+(`classementOuvert`, `podium`, la ref `ouvrirClassement`), le calcul du
+podium dans le `.then()` de la recherche, et le bloc JSX du modal. La
+recherche va directement aux résultats, comme le reste de l'application
+(favoris, admin, restaurateur) l'a toujours fait. Le CSS dédié
+(`.classement-modal__*`) est retiré avec le composant — un module CSS mort
+n'aide personne à comprendre l'application.
+
+**Ce qui reste, délibérément.** `versionResultats` (state) sert AUSSI à
+rejouer l'animation d'entrée des trois premières cartes de la vraie liste
+de résultats — une fonctionnalité distincte, pas le podium. Le
+commentaire qui la documentait mentionnait les deux usages ensemble ; il
+est corrigé pour ne plus décrire que celui qui subsiste.
+
+### Conséquences
+
+- Vérifié dans le navigateur : plusieurs clics consécutifs sur
+  « Chercher » vont directement aux résultats, sans jamais rouvrir un
+  modal.
+- Mobile non concerné — `DiscoverScreen.js` n'a jamais eu ce modal, sa
+  seule fonctionnalité de classement est le texte explicatif de D-054.
+
+---
+
+## D-062 — Amorçage de `local_signal.db` sur Railway par `SEED_DB_URL`
+
+**Date :** 2026-09-24 · **Statut :** actif
+
+### Contexte
+
+Question directe : *« si je dois envoyer la bdd pour la mettre sur
+Railway, j'envoie quelle dossier ou fichier ? »* Contrairement à
+`DATABASE_URL` côté Postgres (que Railway/Supabase fournissent déjà
+peuplé de rien à brancher), SQLite n'a pas d'équivalent : un volume
+Railway démarre vide, et `local_signal.db` (18 Mo, 10 000+ restaurants,
+vérité terrain, comptes de démonstration) n'a aucun moyen d'y arriver
+tout seul. Deux options existaient : migrer vers Postgres (déjà prévu par
+`config.DATABASE_URL`/`IS_POSTGRES`, ROADMAP.md §4), ou garder SQLite pour
+ce déploiement. **Choix explicite de l'utilisateur : garder SQLite**,
+rapide, suffisant pour une démonstration/soutenance.
+
+### Décision
+
+**`SEED_DB_URL`, variable d'environnement facultative, vide partout
+ailleurs.** Au démarrage (`backend/main.py`, avant `init_db()`) : si elle
+est définie, si `DATABASE_URL` ne l'est PAS (n'a aucun sens sous
+Postgres), et si le fichier à `DB_PATH` n'existe pas encore, l'API
+télécharge le contenu de `SEED_DB_URL` et l'écrit à `DB_PATH`. Sans
+condition remplie, ce bloc ne fait strictement rien — aucun effet pour un
+contributeur local ni pour la CI.
+
+**Ne se déclenche qu'une fois, jamais en écrasant.** La garde
+`not os.path.exists(config.DB_PATH)` est ce qui rend l'opération sûre à
+laisser en place : un redémarrage ou un redéploiement qui retrouve déjà
+un fichier ne le retélécharge jamais — sinon un redémarrage effacerait de
+vraies inscriptions ou de vrais comptes restaurateur créés depuis la mise
+en ligne.
+
+**Mise en œuvre concrète, communiquée à l'utilisateur :**
+1. Attacher un Volume au service Railway (ex. monté sur `/data`).
+2. Poser `DB_PATH=/data/local_signal.db` sur ce service (déjà lu par
+   `config.py`, LS-21).
+3. Héberger `local_signal.db` à une URL accessible — le plus simple sans
+   nouvelle dépendance : l'attacher comme fichier binaire à une Release
+   GitHub du dépôt. **En PRIVÉ si le dépôt ou la release peut l'être** :
+   le fichier porte de vraies adresses e-mail et des empreintes de mot de
+   passe (jamais en clair, D-016/D-018, mais une empreinte reste une
+   donnée personnelle) — pas un fichier à exposer publiquement.
+4. Poser `SEED_DB_URL` sur cette URL, déployer : le premier démarrage
+   amorce le volume, les suivants ne retouchent plus rien.
+
+### Conséquences
+
+- Aucun changement pour qui ne pose pas `SEED_DB_URL` — vérifié :
+  `backend.main` s'importe sans erreur avec la variable absente.
+- Si le projet migre un jour vers Postgres (ROADMAP.md §4), ce mécanisme
+  devient inutile de lui-même (`DATABASE_URL` définie désactive la
+  condition) — pas besoin de le retirer à ce moment-là.
+
+
+---
+
+## D-063 — Business plan v2 : Pass Voyageur temporel, restaurateurs gratuits, avis utilisateurs retirés
+
+**Date :** 2026-09-27 · **Statut :** actif · **Supersède :** D-056 et D-057
+(abonnement restaurateur), la partie « abonnement mensuel » de LS-refonte/D-049,
+et D-039 (avis laissés par nos utilisateurs)
+
+### Contexte
+
+Le business plan v2, rédigé par un membre de l'équipe, change le modèle
+économique. Il ne fait plus payer que la demande (les voyageurs), sans
+commission, et remplace l'abonnement mensuel par un **Pass Voyageur
+temporel** payé une seule fois, sur le modèle d'une eSIM ou d'un pass
+transport. La publicité (AdMob sur mobile, AdSense sur le web) valorise
+l'audience gratuite. Demande explicite de l'utilisateur : appliquer ce modèle
+dans le web et le mobile, rendre tout gratuit pour les restaurateurs en
+gardant une page qui leur montre ce qu'ils peuvent faire, et retirer les
+avis utilisateurs.
+
+### Problème
+
+L'interface affichait un abonnement client à 3 €/mois et un abonnement
+restaurateur à 10 €/mois, qui débloquait le détail des visites. Ces deux
+offres contredisaient le nouveau modèle. Les avis déposés par les
+utilisateurs n'entraient déjà pas dans le score (D-001), mais ils
+réintroduisaient visuellement la popularité dans un produit construit pour
+s'en passer. Ils exposaient aussi le produit à la modération et au
+contentieux, et ne servaient plus aucun objectif.
+
+### Décision
+
+1. **Trois Pass Voyageur remplacent l'abonnement** : Pass Week-end
+   (3 jours, 2,99 € TTC), Pass Semaine (7 jours, 4,99 € TTC, offre phare),
+   Pass Annuel (12 mois, 14,99 € TTC). Les trois donnent les mêmes avantages
+   (tous les résultats, filtres avancés dont la fourchette de score, scans
+   illimités, recherches illimitées, favoris, pas de publicité). Seule la
+   durée change. L'offre gratuite garde les 5 premiers résultats, le score
+   et son explication. Les tarifs sont écrits dans `Pricing.jsx` (web) et
+   `PricingScreen.js` (mobile).
+2. **Aucun changement de modèle de données pour le Pass** : un Pass actif
+   reste représenté par `role = "subscriber"`, tout le contrôle d'accès
+   existant (`_require_abonne`, limite de résultats, filtre premium)
+   s'applique tel quel. Le bouton de paiement reste bloqué (D-049).
+   **L'expiration à la fin de la durée achetée n'est pas implémentée** :
+   elle viendra avec le vrai paiement (colonne d'expiration posée par le
+   webhook), sans quoi elle n'aurait rien à mesurer.
+3. **Restaurateurs gratuits** : `GET /api/restaurateur/mon-restaurant/visites`
+   rend le détail des visites à tout restaurateur validé. Les routes
+   `/api/restaurateur/abonnement[/annuler]`, le champ
+   `restaurateur_abonne` de `UserResponse` et `set_claim_abonne` sont
+   retirés. La colonne `restaurant_claims.abonne` reste en base, inerte :
+   on ne supprime pas une donnée acquise.
+   `PricingRestaurateur.jsx` devient `PourLesRestaurateurs.jsx`, une page
+   qui présente ce qu'un restaurateur **peut** faire (revendiquer ou créer
+   sa fiche, coordonnées, photo, fréquentation) et ce qui **ne s'achète
+   pas** (le classement, le score, la carte). On y accède par le pied de
+   page (« Restaurateurs ») et par le menu d'un compte restaurateur.
+4. **Avis utilisateurs retirés** : les routes publiques
+   `GET/POST/DELETE /api/restaurant/{id}/avis` et les composants `Avis`
+   (web et mobile) sont supprimés, ainsi que l'étape « avis facultatif »
+   du scan mobile et l'ajout d'avis par l'admin. **Les avis déjà en base
+   sont conservés** : l'admin peut toujours les lire et les supprimer
+   (modération), et ils restent dans l'export RGPD.
+5. CGU et politique de confidentialité mises à jour (web et mobile).
+
+### Conséquences
+
+- Le test d'API des avis devient un test d'invariant : déposer ou lire un
+  avis renvoie 404/405, même connecté.
+- Plus aucun chemin de revenu ne passe par le restaurateur. C'est cohérent
+  avec la contrainte n°1 (CLAUDE.md §2) : un restaurant qui paierait
+  pourrait laisser croire qu'il est mieux classé.
+- Le détail des visites nomme désormais les visiteurs connectés auprès de
+  **tout** restaurateur validé, plus seulement des abonnés. Les CGU le
+  disent (§5). À réexaminer avec la question RGPD plus large de
+  l'exposition des identités (nom plutôt qu'e-mail).
+- La publicité (AdMob, AdSense) figure dans les limites de l'offre
+  gratuite mais **n'est pas intégrée** : c'est un chantier distinct.
+- Le business plan v2 contient encore une incohérence que l'équipe doit
+  trancher. Le résumé annonce un équilibre en année 3 (+5 900 €, et
+  +2 400 € dans le tableau 24), alors que le compte de résultat (tableau 23)
+  donne −26 350 € la même année. Ce n'est pas une question de code.
+
+---
+
+## D-064 — Dire sur la carte pourquoi un restaurant moins bien noté passe devant
+
+**Date :** 2026-09-27 · **Statut :** SUPERSÉDÉE par D-065
+
+### Contexte
+
+Le classement combine le Local Signal (0,70) et la proximité (0,30), comme
+le prévoit D-008. Un restaurant à 7,9/10 situé à 310 m passe donc devant un
+8,4/10 situé à 440 m. L'explication n'existait que derrière le bouton
+« Classement : authenticité et proximité » (ⓘ). Retour utilisateur : on ne
+comprend pas l'ordre sans cliquer, et il ne faut pas que l'explication prenne
+beaucoup de place.
+
+### Décision
+
+Une ligne apparaît **sur les seules cartes qui devancent un restaurant mieux
+noté et plus éloigné** : « Classé avant *X* (8,4/10, 440 m) car plus
+proche ». Parmi les restaurants devancés, on retient celui qui a le meilleur
+score, c'est-à-dire le cas le plus surprenant. La comparaison se fait sur le
+score arrondi tel qu'il est affiché, pour ne jamais écrire « plus proche
+qu'un 7,8 » à côté d'un autre 7,8. Le calcul se fait côté client
+(`devancesParProximite`, `lib/display.js` sur le web et le mobile) à partir
+des seuls résultats affichés : il n'y a rien de nouveau dans l'API, et on ne
+mélange pas le statique et le dynamique (D-008).
+
+### Conséquences
+
+- Aucune ligne quand l'ordre suit déjà le score : l'explication n'apparaît
+  que là où l'ordre surprend.
+- L'infobulle du classement reste en place pour l'explication générale.
+
+---
+
+## D-065 — La distance devant le score, et « Le plus proche » sur le restaurant le plus proche
+
+**Date :** 2026-09-27 · **Statut :** actif · **Supersède :** D-064
+
+### Contexte
+
+La phrase introduite par D-064 (« Classé avant X (8,4/10, 440 m) car plus
+proche ») ajoutait une ligne à la carte et s'alignait mal. Retour
+utilisateur : c'est trop de texte, il suffit d'écrire la distance.
+
+### Décision
+
+Sur chaque carte, la distance à l'utilisateur est affichée **juste devant le
+score**, sur la ligne de la barre et du verdict. Le ou les restaurants les
+plus proches parmi les résultats affichés portent « Le plus proche · 270 m »,
+mis en couleur. La pastille de distance posée sur la photo disparaît : la
+distance ne s'affiche plus qu'à un seul endroit. La fonction
+`devancesParProximite` est retirée.
+
+### Conséquences
+
+- La distance lue à côté du score suffit à comprendre qu'un 7,9 à 310 m
+  passe devant un 8,4 à 440 m, sans phrase supplémentaire.
+- Le calcul reste côté client, à partir des résultats affichés. Rien ne
+  change dans l'API.
+
+---
+
+## D-066 — Carte interactive : MapLibre + OpenFreeMap « Bright »
+
+**Date :** 2026-09-27 · **Statut :** actif
+
+### Contexte
+
+La carte de Discover était une vignette Leaflet de 220 px, avec des tuiles
+OpenStreetMap en images. Elle était jugée « nulle » : petite, datée, et non
+interactive, puisqu'elle n'affichait qu'une infobulle avec le nom. On l'a
+comparée aux cartes d'Uber, TheFork et TripAdvisor, toutes vectorielles.
+Une tentative précédente avec CARTO Voyager avait échoué, parce que ces
+tuiles exigent désormais une clé.
+
+### Options comparées (tarifs relevés le 2026-09-27 sur les sites officiels)
+
+| Option | Gratuit par mois | Ensuite | Compte et clé |
+|---|---|---|---|
+| OpenFreeMap (vectoriel, données OSM) | illimité, usage commercial autorisé | 0 | aucun |
+| Mapbox GL JS | 50 000 chargements | 5 $ les 1 000 | oui |
+| Google Maps JS (Dynamic Maps) | 10 000 chargements | 7 $ les 1 000 | oui, facturation activée |
+
+Un aperçu interactif présentant quatre styles OpenFreeMap sur les vrais
+restaurants du Quartier latin a été montré à l'utilisateur, qui a choisi
+« Bright ».
+
+### Décision
+
+- **MapLibre GL JS + style OpenFreeMap « Bright »**
+  (`https://tiles.openfreemap.org/styles/bright`), dans
+  `components/ResultsMap.jsx`. Leaflet reste utilisé pour `LocationPicker`.
+- **Carte étroite mais haute** : une première version élargissait la
+  page jusqu'à 1520 px pour une carte très large. L'utilisateur l'a refusée,
+  parce que les restaurants doivent rester l'élément principal et que tout
+  doit rester aligné sur le gabarit du site. La version retenue garde le
+  gabarit de 1180 px, avec les colonnes 220 px | liste | 320 px. La carte
+  occupe toute la hauteur visible et reste collée pendant le défilement. La
+  répartition des verdicts (`StatsPanel`) passe sous la liste.
+- **Interactive et synchronisée avec la liste** :
+  - les repères portent le rang du restaurant et la couleur de son verdict ;
+  - un clic sur un repère ouvre une bulle (nom, verdict, score, distance,
+    « Voir la fiche ») et fait défiler la liste jusqu'au restaurant, qui est
+    mis en évidence ;
+  - survoler un restaurant dans la liste grossit son repère.
+- La bulle est construite avec des nœuds DOM et `textContent` : le nom d'un
+  restaurant n'est jamais interprété comme du HTML.
+
+### Conséquences
+
+- Pas de clé, pas de coût, pas de quota. La page dépend d'un service tiers
+  gratuit (tiles.openfreemap.org). Si ce service disparaît, il suffit de
+  changer l'URL du style, et OpenFreeMap peut aussi être auto-hébergé.
+- Nouvelle dépendance web : `maplibre-gl`, chargée à la demande dans son
+  propre fichier.
+- Le mobile garde sa carte actuelle : le portage vers Expo est un chantier
+  distinct.

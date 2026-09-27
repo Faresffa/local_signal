@@ -14,12 +14,12 @@ const SECTIONS = [
   {
     titre: "1. Quelles données sont collectées",
     texte:
-      "Compte (nom d'utilisateur, adresse électronique, mot de passe — jamais stocké en clair), avis publiés, photos de cartes de restaurant envoyées (déliées de votre identité une fois traitées), réservations effectuées. Aucune donnée bancaire n'est collectée : aucun paiement réel n'est traité à ce stade.",
+      "Compte (nom d'utilisateur, adresse électronique, mot de passe — jamais stocké en clair), photos de cartes de restaurant envoyées (déliées de votre identité une fois traitées), réservations effectuées. Aucune donnée bancaire n'est collectée : aucun paiement réel n'est traité à ce stade.",
   },
   {
     titre: "2. Pourquoi ces données",
     texte:
-      "Le compte sert à retrouver vos avis et vos favoris d'une visite à l'autre. Les avis et les photos de cartes alimentent le score d'authenticité des restaurants — c'est le cœur du service. Aucune donnée n'est vendue à un tiers.",
+      "Le compte sert à retrouver vos favoris d'une visite à l'autre. Les photos de cartes alimentent le score d'authenticité des restaurants — c'est le cœur du service. Aucune donnée n'est vendue à un tiers.",
   },
   {
     titre: "3. Durée de conservation",

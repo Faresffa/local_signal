@@ -24,12 +24,12 @@ const SECTIONS = [
   {
     titre: "3. Contenu que vous publiez",
     texte:
-      "Les avis et les photos de cartes que vous envoyez restent votre contenu, mais vous nous accordez le droit de les afficher et, pour les photos de cartes, d'en extraire automatiquement des informations qui alimentent le score du restaurant — jamais votre nom, jamais publiées telles quelles. Un avis peut être retiré par son auteur à tout moment.",
+      "Les photos de cartes que vous envoyez restent votre contenu, mais vous nous accordez le droit d'en extraire automatiquement des informations qui alimentent le score du restaurant — jamais votre nom, jamais publiées telles quelles. Le service ne permet pas de publier d'avis sur les restaurants.",
   },
   {
-    titre: "4. Abonnement",
+    titre: "4. Pass Voyageur",
     texte:
-      "La formule « Abonné » est présentée dans l'application. À ce stade, aucun paiement réel n'est traité : le passage au statut abonné se fait par un mécanisme de démonstration, pas par une transaction financière.",
+      "Le service propose un accès gratuit et trois Pass Voyageur à durée limitée : Pass Week-end (3 jours, 2,99 € TTC), Pass Semaine (7 jours, 4,99 € TTC) et Pass Annuel (12 mois, 14,99 € TTC). Un Pass se paie une seule fois et n'est pas reconduit automatiquement. À ce stade, aucun paiement réel n'est traité : l'activation d'un Pass se fait par un mécanisme de démonstration, pas par une transaction financière.",
   },
   {
     titre: "5. Fiabilité des informations",

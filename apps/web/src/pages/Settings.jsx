@@ -1,7 +1,7 @@
 // apps/web/src/pages/Settings.jsx
 //
 // Paramètres du compte (LS-refonte, menu déroulant de Nav.jsx) : apparence,
-// abonnement, mot de passe. Trois blocs indépendants plutôt que trois pages —
+// Pass Voyageur, mot de passe. Trois blocs indépendants plutôt que trois pages —
 // aucun n'a assez de contenu pour justifier son propre écran.
 
 import { useState } from "react";
@@ -14,13 +14,12 @@ import { useTheme } from "../lib/hooks";
 
 const ROLE_LABEL = {
   admin: "Administrateur",
-  subscriber: "Abonné",
+  subscriber: "Pass Voyageur actif",
   user: "Compte gratuit",
   restaurateur: "Restaurateur",
 };
 
 // TARIF INDICATIF — même placeholder que Pricing.jsx, pas encore arrêté.
-const MENSUALITE = "3,00 €";
 
 export default function Settings({
   user, onBack, onGoToPricing, onUnsubscribe, onDeleteAccount,
@@ -127,41 +126,25 @@ export default function Settings({
           </button>
         </section>
 
-        {/* Un admin n'a pas d'abonnement à gérer — l'accès complet lui vient
-            du rôle, pas d'une formule payante. Un restaurateur non plus :
-            c'est un abonnement différent (D-055 v2), pas encore une
-            fonctionnalité de ce panneau. */}
+        {/* Un admin n'a pas de Pass à gérer — l'accès complet lui vient du
+            rôle. Un restaurateur non plus : tout est gratuit pour lui
+            (D-063). */}
         {user.role !== "admin" && user.role !== "restaurateur" && (
           <section style={{ marginTop: 28 }}>
-            <h2 className="settings__section">Abonnement</h2>
+            <h2 className="settings__section">Pass Voyageur</h2>
             <p className="card__reason" style={{ marginTop: 8 }}>
               Formule actuelle : {ROLE_LABEL[user.role] || ROLE_LABEL.user}.
             </p>
 
-            {/* FACTURATION — MAQUETTE, VOLONTAIREMENT BLOQUÉE. Même décision
-                que le bouton de Pricing.jsx : tant qu'aucun processeur de
-                paiement réel n'est branché, rien ici ne doit avoir l'air de
-                fonctionner. La résiliation en dessous, elle, reste réelle —
-                c'est le mécanisme de démonstration du rôle, pas un paiement. */}
+            {/* PAS DE FACTURATION RÉCURRENTE : un Pass se paie une fois,
+                sans reconduction (D-063). La désactivation en dessous reste
+                réelle — c'est le mécanisme de démonstration du rôle, pas un
+                remboursement. */}
             {abonne && (
-              <div className="settings__facturation">
-                <div className="settings__ligne">
-                  <span>Mensualité</span>
-                  <span>{MENSUALITE} / mois</span>
-                </div>
-                <div className="settings__ligne">
-                  <span>Moyen de paiement</span>
-                  <span>Aucun enregistré</span>
-                </div>
-                <button type="button" className="btn btn--ghost btn--block" disabled>
-                  <CreditCard size={16} weight="bold" />
-                  Changer de carte
-                </button>
-                <p className="formfield__hint">
-                  Paiement pas encore activé (voir « S'abonner ») — ces
-                  informations sont indicatives.
-                </p>
-              </div>
+              <p className="formfield__hint" style={{ marginTop: 6 }}>
+                Paiement unique, sans reconduction automatique. Paiement pas
+                encore activé — ces informations sont indicatives.
+              </p>
             )}
 
             {abonne ? (
@@ -172,7 +155,7 @@ export default function Settings({
                 onClick={annulerAbonnement}
                 disabled={statutAbonnement === "sending"}
               >
-                {statutAbonnement === "sending" ? "Résiliation…" : "Résilier mon abonnement"}
+                {statutAbonnement === "sending" ? "Désactivation…" : "Désactiver mon Pass"}
               </button>
             ) : (
               <button
@@ -182,7 +165,7 @@ export default function Settings({
                 onClick={onGoToPricing}
               >
                 <CreditCard size={16} weight="bold" />
-                Voir les formules
+                Voir les Pass
               </button>
             )}
           </section>
@@ -205,7 +188,7 @@ export default function Settings({
             {statutExport === "sending" ? "Préparation…" : "Télécharger mes données"}
           </button>
           <p className="formfield__hint" style={{ marginTop: 6 }}>
-            Compte, sessions, réservations et avis laissés — au format JSON,
+            Compte, sessions, réservations et avis laissés par le passé — au format JSON,
             pour les consulter ou les transporter ailleurs.
           </p>
 
