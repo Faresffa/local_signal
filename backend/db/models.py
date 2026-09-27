@@ -57,6 +57,10 @@ class _PgCursorWrapper:
     def lastrowid(self):
         return self._lastrowid
 
+    @property
+    def rowcount(self):
+        return self._cursor.rowcount
+
 
 class _PgConnWrapper:
     """Même rôle que `_PgCursorWrapper`, côté connexion (`conn.execute(...)`)."""
