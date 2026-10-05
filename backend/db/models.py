@@ -402,6 +402,67 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_claims_user ON restaurant_claims(user_id)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_claims_status ON restaurant_claims(status)")
 
+    # --- Abonnements professionnels (D-067) ---
+    # Le voyageur ne paie rien ; seuls paient les restaurateurs (offres
+    # Visibilité 29 €, Visibilité+ 59 €) et les hôtels (49 €). Une ligne par
+    # souscription — on n'efface jamais une ligne résiliée (historique de
+    # facturation, et « ce qui est obtenu se garde »). L'abonnement en cours
+    # d'un compte est la dernière ligne non résiliée.
+    # RÈGLE DE NEUTRALITÉ : rien dans cette table n'est lu par le scoring.
+    # `backend/tests/test_api.py` le vérifie (même score et même rang avant
+    # et après souscription).
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS abonnements (
+            id {_AUTOINCREMENT_PK},
+            user_id INTEGER NOT NULL,
+            offre TEXT NOT NULL,
+            statut TEXT NOT NULL DEFAULT 'essai',
+            restaurant_id TEXT,
+            hotel_id INTEGER,
+            debut TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            fin_essai TIMESTAMP,
+            resilie_at TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_abonnements_user ON abonnements(user_id)")
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_abonnements_restaurant ON abonnements(restaurant_id)"
+    )
+
+    # --- Hôtels partenaires (D-067) ---
+    # Un hôtel n'est PAS noté et n'apparaît dans aucun classement : il achète
+    # une page « Où manger autour de l'hôtel » à ses couleurs, et un QR code.
+    # `slug` est l'adresse publique de cette page (/hotel/<slug>).
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS hotels (
+            id {_AUTOINCREMENT_PK},
+            user_id INTEGER NOT NULL UNIQUE,
+            nom TEXT NOT NULL,
+            adresse TEXT,
+            lat REAL NOT NULL,
+            lng REAL NOT NULL,
+            slug TEXT NOT NULL UNIQUE,
+            couleur TEXT,
+            message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+
+    # Une ligne par ouverture de la page publique d'un hôtel — ce que l'hôtel
+    # voit dans son espace (« combien de clients ont scanné le QR code »).
+    # Aucune donnée sur la personne : seulement l'instant.
+    cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS hotel_visites (
+            id {_AUTOINCREMENT_PK},
+            hotel_id INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(hotel_id) REFERENCES hotels(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_hotel_visites ON hotel_visites(hotel_id)")
+
     _migrate(cursor)
 
     conn.commit()
@@ -490,6 +551,16 @@ def _migrate(cursor) -> None:
             # une oeuvre tierce.
             "photo_key": "TEXT",
             "photo_type": "TEXT",
+            # Provenance et auteur de `photo_url` (D-067). Une photo de rue
+            # Panoramax est sous CC-BY-SA : son auteur DOIT être cité là où
+            # elle s'affiche. "site" (og:image du restaurant), "panoramax", ou
+            # NULL pour les URL plus anciennes dont la source n'a pas été notée.
+            # 1 = photo masquée à la main (photo hors sujet, ex. Yokorama :
+            # la première photo Google était une photo de football). Ni
+            # l'affichage ni `seed_photos` ne la reprennent.
+            "photo_masquee": "INTEGER DEFAULT 0",
+            "photo_source": "TEXT",
+            "photo_credit": "TEXT",
         },
         "users": {
             # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Les
@@ -557,3 +628,8 @@ def _migrate(cursor) -> None:
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_oauth_google_id "
         "ON users(oauth_google_id) WHERE oauth_google_id IS NOT NULL"
     )
+
+    # D-067 : le Pass Voyageur disparaît, le voyageur ne paie plus rien. Les
+    # comptes « subscriber » redeviennent des comptes voyageur ordinaires —
+    # ils ne perdent rien, tout ce que le Pass débloquait est désormais ouvert.
+    cursor.execute("UPDATE users SET role = 'user' WHERE role = 'subscriber'")

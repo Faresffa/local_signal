@@ -27,9 +27,9 @@ const SECTIONS = [
       "Les photos de cartes que vous envoyez restent votre contenu, mais vous nous accordez le droit d'en extraire automatiquement des informations qui alimentent le score du restaurant — jamais votre nom, jamais publiées telles quelles. Le service ne permet pas de publier d'avis sur les restaurants.",
   },
   {
-    titre: "4. Pass Voyageur",
+    titre: "4. Gratuité, offres professionnelles et neutralité",
     texte:
-      "Le service propose un accès gratuit et trois Pass Voyageur à durée limitée : Pass Week-end (3 jours, 2,99 € TTC), Pass Semaine (7 jours, 4,99 € TTC) et Pass Annuel (12 mois, 14,99 € TTC). Un Pass se paie une seule fois et n'est pas reconduit automatiquement. À ce stade, aucun paiement réel n'est traité : l'activation d'un Pass se fait par un mécanisme de démonstration, pas par une transaction financière.",
+      "Le service est gratuit pour le voyageur, sans abonnement. Il est financé par des offres facultatives destinées aux professionnels : Visibilité (29 € HT/mois) et Visibilité+ (59 € HT/mois) pour les restaurateurs, offre Hôtel (49 € HT/mois) pour les hôtels et conciergeries. Règle de neutralité : un paiement ne modifie jamais le score d'un restaurant ni sa position dans le classement ; les offres n'achètent que de la présentation et un encart distinct, toujours étiqueté « Partenaires ». À ce stade, aucun paiement réel n'est traité.",
   },
   {
     titre: "5. Fiabilité des informations",

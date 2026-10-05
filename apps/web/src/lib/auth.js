@@ -8,9 +8,8 @@ import { useCallback, useEffect, useState } from "react";
 
 import {
   fetchMe, login as apiLogin, logout as apiLogout, signup as apiSignup,
-  signupRestaurateur as apiSignupRestaurateur,
-  subscribe as apiSubscribe,
-  supprimerCompte as apiSupprimerCompte, unsubscribe as apiUnsubscribe,
+  signupHotel as apiSignupHotel, signupRestaurateur as apiSignupRestaurateur,
+  supprimerCompte as apiSupprimerCompte,
 } from "../api";
 
 export function useCurrentUser() {
@@ -46,16 +45,9 @@ export function useCurrentUser() {
     setUser(null);
   }, []);
 
-  // Démonstration, pas un paiement (voir backend/main.py) : bascule le rôle,
-  // rien de plus.
-  const subscribe = useCallback(async () => {
-    const u = await apiSubscribe();
-    setUser(u);
-    return u;
-  }, []);
-
-  const unsubscribe = useCallback(async () => {
-    const u = await apiUnsubscribe();
+  // Compte hôtel (D-067) : créé avec sa fiche, session ouverte.
+  const signupHotel = useCallback(async (fields) => {
+    const u = await apiSignupHotel(fields);
     setUser(u);
     return u;
   }, []);
@@ -68,7 +60,7 @@ export function useCurrentUser() {
   }, []);
 
   return {
-    user, loading, login, signup, signupRestaurateur, logout, subscribe, unsubscribe,
+    user, loading, login, signup, signupRestaurateur, signupHotel, logout,
     supprimerCompte,
   };
 }

@@ -1239,3 +1239,278 @@ def get_menu_submissions(restaurant_id: str) -> list[dict]:
     """, (restaurant_id,)).fetchall()
     conn.close()
     return [dict(r) for r in lignes]
+
+
+# =============================================================================
+# ABONNEMENTS PROFESSIONNELS ET HÔTELS (D-067)
+# =============================================================================
+#
+# Le voyageur ne paie rien. Paient : les restaurateurs (Visibilité 29 €,
+# Visibilité+ 59 €) et les hôtels (49 €). RIEN ICI n'est lu par le scoring :
+# un abonnement achète de la présentation, jamais un score ni un rang.
+
+OFFRES_RESTAURATEUR = ("visibilite", "visibilite_plus")
+OFFRE_HOTEL = "hotel"
+
+# Mois d'essai gratuit (mémoire, §4.4.1 : « la preuve avant l'abonnement »).
+DUREE_ESSAI_JOURS = 30
+
+
+def get_abonnement_actif(user_id: int) -> dict | None:
+    """Dernière souscription non résiliée du compte, ou None."""
+    conn = get_connection()
+    row = conn.execute("""
+        SELECT * FROM abonnements
+        WHERE user_id = ? AND statut IN ('essai', 'actif')
+        ORDER BY id DESC LIMIT 1
+    """, (user_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def souscrire(user_id: int, offre: str, restaurant_id: str | None = None,
+              hotel_id: int | None = None) -> dict:
+    """
+    Ouvre (ou change) l'abonnement d'un compte pro. Démonstration : aucun
+    paiement réel n'est encaissé. Changer d'offre résilie la précédente plutôt
+    que de la réécrire, pour garder l'historique.
+
+    Le mois d'essai n'est accordé qu'à la PREMIÈRE souscription du compte.
+    """
+    from datetime import datetime, timedelta
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    deja = cursor.execute(
+        "SELECT COUNT(*) AS n FROM abonnements WHERE user_id = ?", (user_id,)
+    ).fetchone()
+    premier = (dict(deja)["n"] if deja else 0) == 0
+
+    maintenant = datetime.now()
+    cursor.execute("""
+        UPDATE abonnements SET statut = 'resilie', resilie_at = ?
+        WHERE user_id = ? AND statut IN ('essai', 'actif')
+    """, (maintenant.isoformat(timespec="seconds"), user_id))
+
+    fin_essai = (maintenant + timedelta(days=DUREE_ESSAI_JOURS)).isoformat(timespec="seconds")
+    cursor.execute("""
+        INSERT INTO abonnements (user_id, offre, statut, restaurant_id, hotel_id, debut, fin_essai)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, offre, "essai" if premier else "actif", restaurant_id, hotel_id,
+          maintenant.isoformat(timespec="seconds"), fin_essai if premier else None))
+    conn.commit()
+    conn.close()
+    return get_abonnement_actif(user_id)
+
+
+def resilier(user_id: int) -> None:
+    """Résilie l'abonnement en cours. La ligne reste (historique)."""
+    from datetime import datetime
+
+    conn = get_connection()
+    conn.execute("""
+        UPDATE abonnements SET statut = 'resilie', resilie_at = ?
+        WHERE user_id = ? AND statut IN ('essai', 'actif')
+    """, (datetime.now().isoformat(timespec="seconds"), user_id))
+    conn.commit()
+    conn.close()
+
+
+def offres_partenaires(restaurant_ids: list[str]) -> dict[str, str]:
+    """
+    Offre en cours ({id_restaurant: offre}) des restaurants abonnés parmi
+    `restaurant_ids`. Sert UNIQUEMENT à l'affichage (badge « partenaire »,
+    encart Visibilité+), après le classement — jamais avant.
+    """
+    if not restaurant_ids:
+        return {}
+    conn = get_connection()
+    marques = ",".join("?" for _ in restaurant_ids)
+    rows = conn.execute(f"""
+        SELECT restaurant_id, offre FROM abonnements
+        WHERE statut IN ('essai', 'actif') AND restaurant_id IN ({marques})
+    """, tuple(restaurant_ids)).fetchall()
+    conn.close()
+    return {dict(r)["restaurant_id"]: dict(r)["offre"] for r in rows}
+
+
+def create_hotel_account(
+    email: str, password_hash: str, name: str | None, accepted_terms_at: str | None,
+    nom: str, adresse: str | None, lat: float, lng: float, slug: str,
+) -> dict:
+    """
+    Crée un compte hôtel ET sa fiche, dans le même geste — même principe que
+    `create_restaurateur_account` : un compte hôtel sans fiche n'existe jamais.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO users (email, password_hash, name, role, accepted_terms_at)
+        VALUES (?, ?, ?, 'hotel', ?)
+    """, (email.strip().lower(), password_hash, name, accepted_terms_at))
+    user_id = cursor.lastrowid
+    cursor.execute("""
+        INSERT INTO hotels (user_id, nom, adresse, lat, lng, slug)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (user_id, nom, adresse, lat, lng, slug))
+    hotel_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return {"user_id": user_id, "hotel_id": hotel_id}
+
+
+def get_hotel_by_user(user_id: int) -> dict | None:
+    conn = get_connection()
+    row = conn.execute("SELECT * FROM hotels WHERE user_id = ?", (user_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_hotel_by_slug(slug: str) -> dict | None:
+    conn = get_connection()
+    row = conn.execute("SELECT * FROM hotels WHERE slug = ?", (slug,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def slug_hotel_disponible(slug: str) -> bool:
+    return get_hotel_by_slug(slug) is None
+
+
+def update_hotel(hotel_id: int, champs: dict) -> None:
+    """Met à jour les champs modifiables d'une fiche hôtel (liste blanche)."""
+    autorises = {k: v for k, v in champs.items() if k in ("nom", "adresse", "couleur", "message")}
+    if not autorises:
+        return
+    conn = get_connection()
+    affectations = ", ".join(f"{k} = ?" for k in autorises)
+    conn.execute(f"UPDATE hotels SET {affectations} WHERE id = ?",
+                 (*autorises.values(), hotel_id))
+    conn.commit()
+    conn.close()
+
+
+def log_hotel_visite(hotel_id: int) -> None:
+    conn = get_connection()
+    conn.execute("INSERT INTO hotel_visites (hotel_id) VALUES (?)", (hotel_id,))
+    conn.commit()
+    conn.close()
+
+
+def count_hotel_visites(hotel_id: int) -> int:
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT COUNT(*) AS n FROM hotel_visites WHERE hotel_id = ?", (hotel_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row)["n"] if row else 0
+
+
+def set_photo_ref(restaurant_id: str, photo_ref: str) -> None:
+    """Remplace la référence de photo Google d'un restaurant (D-067)."""
+    conn = get_connection()
+    conn.execute("UPDATE restaurants SET photo_ref = ? WHERE id = ?", (photo_ref, restaurant_id))
+    conn.commit()
+    conn.close()
+
+
+# =============================================================================
+# TABLEAU DE BORD RESTAURATEUR (D-068)
+# =============================================================================
+
+def stats_restaurant(restaurant_id: str, jours: int = 30) -> dict:
+    """
+    Fréquentation d'une fiche pour le tableau de bord : série quotidienne sur
+    `jours` jours, total de la période précédente (pour l'évolution), et
+    répartition par heure. Calcul en Python plutôt qu'en SQL de dates : la
+    base est SQLite en local et Postgres en ligne, et leurs fonctions de date
+    diffèrent.
+    """
+    from datetime import date, datetime, timedelta
+
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT consulted_at, user_id FROM consultations WHERE restaurant_id = ?",
+        (restaurant_id,),
+    ).fetchall()
+    conn.close()
+
+    aujourdhui = date.today()
+    debut = aujourdhui - timedelta(days=jours - 1)
+    debut_prec = debut - timedelta(days=jours)
+    par_jour = {debut + timedelta(days=i): 0 for i in range(jours)}
+    heures = [0] * 24
+    periode = precedente = connectes = 0
+    for r in rows:
+        r = dict(r)
+        brut = r["consulted_at"]
+        quand = brut if isinstance(brut, datetime) else datetime.fromisoformat(str(brut)[:19])
+        jour = quand.date()
+        if debut <= jour <= aujourdhui:
+            periode += 1
+            par_jour[jour] += 1
+            heures[quand.hour] += 1
+            if r["user_id"] is not None:
+                connectes += 1
+        elif debut_prec <= jour < debut:
+            precedente += 1
+    return {
+        "periode_jours": jours,
+        "consultations": periode,
+        "consultations_precedentes": precedente,
+        "consultations_connectees": connectes,
+        "serie": [{"jour": j.isoformat(), "n": n} for j, n in sorted(par_jour.items())],
+        "heures": heures,
+    }
+
+
+def clients_restaurant(restaurant_id: str) -> list[dict]:
+    """Voyageurs connectés qui ont consulté la fiche, regroupés par personne."""
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT u.id AS user_id, u.name, u.email,
+               COUNT(*) AS visites, MAX(c.consulted_at) AS derniere_visite
+        FROM consultations c JOIN users u ON u.id = c.user_id
+        WHERE c.restaurant_id = ? AND c.user_id IS NOT NULL
+        GROUP BY u.id, u.name, u.email
+        ORDER BY visites DESC, derniere_visite DESC
+    """, (restaurant_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def reservations_restaurant(restaurant_id: str) -> list[dict]:
+    """Demandes de table reçues par la fiche, les plus proches d'abord."""
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM reservations WHERE restaurant_id = ? ORDER BY date, time_slot",
+        (restaurant_id,),
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def rang_dans_zone(restaurant: dict) -> dict | None:
+    """Place du restaurant par Local Signal parmi ceux de sa zone."""
+    if restaurant.get("local_signal") is None or not restaurant.get("zone"):
+        return None
+    conn = get_connection()
+    devant = dict(conn.execute(
+        "SELECT COUNT(*) AS n FROM restaurants WHERE zone = ? AND local_signal > ?",
+        (restaurant["zone"], restaurant["local_signal"]),
+    ).fetchone())["n"]
+    total = dict(conn.execute(
+        "SELECT COUNT(*) AS n FROM restaurants WHERE zone = ? AND local_signal IS NOT NULL",
+        (restaurant["zone"],),
+    ).fetchone())["n"]
+    conn.close()
+    return {"rang": devant + 1, "total": total, "zone": restaurant["zone"]}
+
+
+def historique_abonnements(user_id: int) -> list[dict]:
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM abonnements WHERE user_id = ? ORDER BY id DESC", (user_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]

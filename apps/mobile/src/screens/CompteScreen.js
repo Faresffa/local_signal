@@ -1,7 +1,7 @@
 // apps/mobile/src/screens/CompteScreen.js
 //
 // Connexion, inscription, déconnexion (LS-40) — et depuis ce chantier,
-// paramètres du compte : rôle, Pass Voyageur, mot de passe, droits RGPD. Miroir
+// paramètres du compte : rôle, formule, mot de passe, droits RGPD. Miroir
 // fonctionnel de Profile.jsx + Settings.jsx côté web, réunis sur un seul
 // écran mobile (même raison qu'avant : chaque écran empilé de plus coûte un
 // retour sur téléphone, là où le web peut se permettre plusieurs pages).
@@ -37,8 +37,9 @@ const MOTIF_DEFAUT =
 
 const ROLE_LABEL = {
   admin: "Administrateur",
-  subscriber: "Pass Voyageur actif",
-  user: "Compte gratuit",
+  user: "Compte voyageur gratuit",
+  restaurateur: "Restaurateur",
+  hotel: "Hôtel partenaire",
 };
 
 function Champ({ label, aide, erreur, ...props }) {
@@ -95,7 +96,7 @@ function LiensBasDePage({ onGoToAbout, onGoToContact, onGoToDons, colors }) {
 
 export default function CompteScreen({
   user, onLogin, onSignup, onLogout, onBack, motif, modeDepart,
-  onGoToCGU, onGoToConfidentialite, onGoToPricing, onUnsubscribe, onDeleteAccount,
+  onGoToCGU, onGoToConfidentialite, onDeleteAccount,
   onGoToAbout, onGoToContact, onGoToDons,
 }) {
   const colors = useColors();
@@ -116,7 +117,6 @@ export default function CompteScreen({
   const [statutMdp, setStatutMdp] = useState("idle");
 
   const [statutExport, setStatutExport] = useState("idle");
-  const [statutAbonnement, setStatutAbonnement] = useState("idle");
 
   const inscription = mode === "signup";
 
@@ -207,19 +207,8 @@ export default function CompteScreen({
     );
   }
 
-  async function toggleAbonnement() {
-    setStatutAbonnement("sending");
-    try {
-      await onUnsubscribe();
-    } finally {
-      setStatutAbonnement("idle");
-    }
-  }
-
   // --- Déjà connecté : l'écran devient celui du compte ---------------------
   if (user) {
-    const abonne = user.role === "subscriber";
-
     return (
       <ScrollView contentContainerStyle={s.page}>
         <Pressable onPress={onBack} style={s.back} accessibilityRole="button">
@@ -240,24 +229,12 @@ export default function CompteScreen({
             </View>
           </View>
 
-          {user.role !== "admin" && (
-            <Section titre="Pass Voyageur" colors={colors}>
+          {user.role === "user" && (
+            <Section titre="Formule" colors={colors}>
               <Text style={[s.sectionAide, { color: colors.textMuted }]}>
-                Formule actuelle : {ROLE_LABEL[user.role] || ROLE_LABEL.user}.
+                Compte voyageur gratuit : toutes les fonctionnalités sont
+                incluses, sans abonnement (D-067).
               </Text>
-              <View style={{ marginTop: spacing.sm }}>
-                <Button
-                  title={
-                    statutAbonnement === "sending"
-                      ? "Désactivation…"
-                      : abonne ? "Désactiver mon Pass" : "Voir les Pass"
-                  }
-                  variant={abonne ? "ghost" : "primary"}
-                  icon="credit-card"
-                  onPress={abonne ? toggleAbonnement : onGoToPricing}
-                  disabled={statutAbonnement === "sending"}
-                />
-              </View>
             </Section>
           )}
 

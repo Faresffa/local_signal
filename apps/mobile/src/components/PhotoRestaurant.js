@@ -14,20 +14,33 @@
 // pas de photo du tout, et une URL expirée laisserait un trou.
 
 import { useState } from "react";
-import { Animated, StyleSheet } from "react-native";
+import { Animated, StyleSheet, Text } from "react-native";
 
+import { photoUrl as photoUrlGoogle } from "../api";
 import { CuisineVisual } from "./ui";
 
+// URL Google signées et expirées (403, 5 octobre 2026) : voir le composant web.
+const URL_EXPIREE = /googleusercontent\.com/;
+
 export default function PhotoRestaurant({
-  id, cuisine, photoUrl, isDark, height = 150, iconSize = 40,
+  id, cuisine, photoUrl, credit, photoGoogle = false, isDark, height = 150, iconSize = 40,
 }) {
   // Opacité animée plutôt qu'un simple booléen : sans transition, la photo
   // remplace l'illustration d'un coup sec au milieu d'une liste qui défile.
   const [opacite] = useState(() => new Animated.Value(0));
-  const [cassee, setCassee] = useState(false);
+  // Rang de la source en cours : une image qui échoue passe à la suivante
+  // (Google, puis site ou Panoramax, puis l'illustration) — voir le web.
+  const [rang, setRang] = useState(0);
 
-  const url = (photoUrl || "").trim();
-  const afficher = Boolean(url) && !cassee;
+  const [chargee, setChargee] = useState(false);
+  const externe = photoUrl && !URL_EXPIREE.test(photoUrl) ? photoUrl.trim() : "";
+  const sources = [
+    photoGoogle && { url: photoUrlGoogle(id), credit: "Google Maps" },
+    externe && { url: externe, credit },
+  ].filter(Boolean);
+  const source = sources[rang];
+  const url = source?.url || "";
+  const afficher = Boolean(url);
 
   return (
     <>
@@ -43,6 +56,7 @@ export default function PhotoRestaurant({
           importantForAccessibility="no-hide-descendants"
           style={[StyleSheet.absoluteFill, { height, opacity: opacite }]}
           onLoad={() => {
+            setChargee(true);
             Animated.timing(opacite, {
               toValue: 1,
               duration: 320,
@@ -51,9 +65,27 @@ export default function PhotoRestaurant({
           }}
           // Une URL d'hébergeur peut expirer : on retire la photo et
           // l'illustration reprend sa place, sans cadre vide.
-          onError={() => setCassee(true)}
+          onError={() => { setChargee(false); setRang((r) => r + 1); }}
         />
       )}
+      {/* Crédit obligatoire des photos sous licence libre (Panoramax, D-067). */}
+      {afficher && chargee && source?.credit ? (
+        <Text numberOfLines={1} style={styles.credit}>© {source.credit}</Text>
+      ) : null}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  credit: {
+    position: "absolute",
+    right: 4,
+    bottom: 4,
+    maxWidth: "90%",
+    paddingHorizontal: 6,
+    borderRadius: 6,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    color: "#fff",
+    fontSize: 10,
+  },
+});

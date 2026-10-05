@@ -1,0 +1,8 @@
+node_modules/
+out/
+# Images de tiers (photos Google/OSM des restaurants, captures) : régénérables
+# par les scripts de capture/, jamais versionnées (D-038).
+public/shots/
+public/photos/
+public/cards/
+public/logo-frames/

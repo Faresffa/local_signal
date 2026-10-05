@@ -197,14 +197,22 @@ def traiter(ligne: dict) -> dict:
     return {**ligne, "url": url if valable else None, "motif": motif}
 
 
+# Les URL `lh3.googleusercontent.com` venues du collecteur payant sont signées
+# et expirent : mesuré le 5 octobre 2026, elles répondent toutes 403. Elles ne
+# sont de toute façon pas un socle (CLAUDE.md §9, pas de données Google
+# durables). Un restaurant qui n'a qu'une de ces URL est donc traité comme
+# « sans photo » ; l'ancienne URL n'est remplacée que si le site en fournit une.
+PHOTO_EXPIREE = "%googleusercontent.com%"
+
+
 def candidats(conn: sqlite3.Connection, zone: str | None, limite: int | None) -> list[dict]:
-    """Restaurants qui ont un site web mais pas encore de photo."""
+    """Restaurants qui ont un site web mais pas de photo affichable."""
     sql = """
         SELECT id, name, website FROM restaurants
          WHERE website IS NOT NULL AND trim(website) <> ''
-           AND (photo_url IS NULL OR trim(photo_url) = '')
+           AND (photo_url IS NULL OR trim(photo_url) = '' OR photo_url LIKE ?)
     """
-    params: list = []
+    params: list = [PHOTO_EXPIREE]
     if zone:
         sql += " AND zone = ?"
         params.append(zone)
@@ -229,9 +237,11 @@ def main() -> None:
                            help="montre ce qui serait ecrit sans rien ecrire")
     args = analyseur.parse_args()
 
+    from backend.db.models import init_db
+    init_db()  # garantit les colonnes photo_source / photo_credit
     conn = sqlite3.connect(config.DB_PATH)
     lignes = candidats(conn, args.zone, args.limite)
-    print(f"[og:image] {len(lignes)} restaurants avec un site et sans photo")
+    print(f"[og:image] {len(lignes)} restaurants avec un site et sans photo affichable")
     if not lignes:
         return
 
@@ -249,7 +259,8 @@ def main() -> None:
                 trouvees += 1
                 if not args.a_blanc:
                     conn.execute(
-                        "UPDATE restaurants SET photo_url = ? WHERE id = ?",
+                        "UPDATE restaurants SET photo_url = ?, photo_source = 'site',"
+                        " photo_credit = NULL WHERE id = ?",
                         (r["url"], r["id"]),
                     )
                 if trouvees <= 8:

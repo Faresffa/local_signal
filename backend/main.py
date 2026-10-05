@@ -144,7 +144,8 @@ class UserResponse(BaseModel):
     id: int
     email: str
     name: Optional[str] = None
-    # "user" (défaut), "subscriber" ou "admin" (LS-refonte). Renvoyé au
+    # "user" (défaut), "admin", "restaurateur" ou "hotel" (D-067 ; l'ancien
+    # "subscriber" du Pass Voyageur est migré en "user"). Renvoyé au
     # client pour qu'il puisse, par exemple, afficher un lien vers un futur
     # panneau d'administration — mais AUCUNE route protégée ne doit se fier
     # à ce que le client affirme : `require_admin` relit toujours le rôle en
@@ -179,6 +180,31 @@ class RestaurateurContactRequest(BaseModel):
     opening_hours: Optional[str] = None
 
 
+class SignupHotelRequest(BaseModel):
+    """Inscription d'un hôtel ou d'une conciergerie (D-067)."""
+    email: str
+    password: str
+    name: Optional[str] = None
+    accepted_terms: bool = False
+    nom: str
+    adresse: Optional[str] = None
+    lat: float
+    lng: float
+
+
+class AbonnementRequest(BaseModel):
+    # "visibilite" (29 €), "visibilite_plus" (59 €) pour un restaurateur,
+    # "hotel" (49 €) pour un hôtel — voir repository.OFFRES_RESTAURATEUR.
+    offre: str
+
+
+class HotelUpdateRequest(BaseModel):
+    nom: Optional[str] = None
+    adresse: Optional[str] = None
+    couleur: Optional[str] = None
+    message: Optional[str] = None
+
+
 class SignupRestaurateurRequest(BaseModel):
     # Champs de compte, mêmes règles que `SignupRequest` (D-055 v2 : un
     # compte restaurateur n'est jamais un compte client requalifié, il a
@@ -201,6 +227,11 @@ class SignupRestaurateurRequest(BaseModel):
     proposed_phone: Optional[str] = None
 
 
+# Rôles qui ont les fonctionnalités voyageur (favoris…). "subscriber" reste
+# accepté le temps que la migration D-067 passe sur toutes les bases.
+ROLES_VOYAGEUR = ("user", "subscriber", "admin")
+
+
 # =============================================================================
 # ENDPOINTS
 # =============================================================================
@@ -219,11 +250,9 @@ def list_restaurants(
     ouvert: bool = Query(False, description="Uniquement ceux ouverts maintenant"),
     reservation: bool = Query(False, description="Uniquement ceux qui acceptent les reservations"),
     avec_carte: bool = Query(False, description="Uniquement ceux dont la carte a ete lue"),
-    # Réservé aux abonnés (retour utilisateur) — silencieusement ignoré
-    # pour les autres, voir plus bas. Le filtre reste affiché à tout le
-    # monde côté interface, seule son activation est verrouillée (D-050).
-    score_min: Optional[float] = Query(None, description="Local Signal minimum, 0-100 (reserve aux abonnes)"),
-    score_max: Optional[float] = Query(None, description="Local Signal maximum, 0-100 (reserve aux abonnes)"),
+    # Ouvert à tous depuis D-067 (le voyageur ne paie plus rien).
+    score_min: Optional[float] = Query(None, description="Local Signal minimum, 0-100"),
+    score_max: Optional[float] = Query(None, description="Local Signal maximum, 0-100"),
     limit: int = Query(50, description="Nombre maximum de résultats"),
     user: Optional[dict] = Depends(get_current_user_optional),
 ):
@@ -236,37 +265,6 @@ def list_restaurants(
     `lat` et `lng` sont OBLIGATOIRES : pas de coordonnées par défaut, le projet
     doit fonctionner dans n'importe quelle ville (CLAUDE.md §8).
     """
-    # QUOTA DE RECHERCHES (LS-refonte) : un compte connecté non abonné a un
-    # nombre de recherches limité par jour, pas seulement un nombre de
-    # résultats limité par recherche — les deux limites sont distinctes et
-    # se cumulent. Un visiteur anonyme ou un abonné/admin n'est jamais
-    # concerné : le premier n'a pas de compteur auquel se rattacher, les
-    # deux autres n'ont pas de quota.
-    # Renvoyé dans la réponse (voir `return` en bas) pour que le front
-    # affiche le quota AVANT que la limite ne soit atteinte, pas seulement
-    # au moment où elle bloque (retour utilisateur : "doit être claire,
-    # affichée").
-    quota = None
-    if user and user.get("role") == "user":
-        autorisee, restantes = repo.check_and_count_search(
-            user["id"], config.SEARCHES_PER_DAY_NON_ABONNE
-        )
-        if not autorisee:
-            raise HTTPException(
-                status_code=429,
-                detail=(
-                    f"Quota de {config.SEARCHES_PER_DAY_NON_ABONNE} recherches "
-                    "par jour atteint. Revenez demain, ou prenez un Pass Voyageur "
-                    "pour des recherches illimitées."
-                ),
-            )
-        quota = {"restantes": restantes, "limite": config.SEARCHES_PER_DAY_NON_ABONNE}
-
-    # Calculé ici, réutilisé plus bas pour la limite de résultats, les
-    # filtres premium et le marquage des favoris — un seul calcul plutôt que
-    # plusieurs définitions divergentes du même rôle.
-    abonne = bool(user) and user.get("role") in ("subscriber", "admin")
-
     restaurants = repo.get_restaurants_near(lat, lng, radius_m=radius, limit=500)
 
     # --- Filtres (pertinence, dynamique) ---
@@ -295,11 +293,8 @@ def list_restaurants(
         ouvert_maintenant=ouvert,
         avec_reservation=reservation,
         avec_carte=avec_carte,
-        # Un compte non abonné qui forge la requête ne doit pas pouvoir
-        # activer ces filtres depuis l'URL — c'est un avantage de
-        # l'abonnement, pas une donnée à protéger (voir criteres.py::appliquer).
-        score_min=score_min if abonne else None,
-        score_max=score_max if abonne else None,
+        score_min=score_min,
+        score_max=score_max,
     )
 
     # --- Classement : Local Signal modulé par la proximité (D-008) ---
@@ -316,18 +311,19 @@ def list_restaurants(
 
     restaurants.sort(key=lambda r: r["scoring"]["score_final"], reverse=True)
 
-    # SEUL L'ABONNEMENT LÈVE LA LIMITE (LS-refonte) — pas la simple connexion.
-    # Avant, tout compte connecté voyait tout ; ça enlevait la seule raison de
-    # payer, puisque créer un compte suffisait déjà à tout débloquer. Le
-    # tri a déjà eu lieu au-dessus — la limite retire des résultats, elle ne
-    # dégrade jamais leur ordre. (`abonne` calculé plus haut.)
-    effective_limit = limit if abonne else min(limit, config.ANON_RESULTS_LIMIT)
-    resultats = restaurants[:effective_limit]
+    # GRATUIT POUR LE VOYAGEUR (D-067) : plus de quota de recherches ni de
+    # limite de résultats réservée à un Pass. Le tri a eu lieu au-dessus.
+    resultats = restaurants[:limit]
 
-    # Marque les favoris (LS-refonte) — un seul aller-retour base plutôt
-    # qu'un par carte : `get_favorite_ids` renvoie un ensemble, le marquage
-    # est local.
-    if abonne:
+    # Étiquette « partenaire » (D-067), posée APRÈS le tri : elle ne change ni
+    # le score ni l'ordre. L'encart « À découvrir dans le quartier » (offre
+    # Visibilité+) est une liste SÉPARÉE, jamais mêlée au classement.
+    _marquer_partenaires(restaurants)
+    _marquer_photo_google(resultats)
+    a_decouvrir = [r for r in restaurants if r.get("partenaire") == "visibilite_plus"][:3]
+
+    # Marque les favoris de tout compte connecté — un seul aller-retour base.
+    if user:
         favoris = repo.get_favorite_ids(user["id"])
         for r in resultats:
             r["favori"] = r["id"] in favoris
@@ -335,9 +331,7 @@ def list_restaurants(
     return {
         "count": len(restaurants),
         "restaurants": resultats,
-        # `None` pour tout le monde sauf un compte non abonné — c'est
-        # justement le seul cas où un quota de recherches existe.
-        "quota": quota,
+        "a_decouvrir": a_decouvrir,
     }
 
 
@@ -450,7 +444,9 @@ def get_restaurant(
     resto["cuisine_label"] = cuisine_label(resto.get("cuisine"))
     resto["menu"] = repo.get_latest_menu(restaurant_id)
     resto["ouvert_maintenant"] = est_ouvert(resto.get("opening_hours"))
-    if user and user.get("role") in ("subscriber", "admin"):
+    _marquer_partenaires([resto])
+    _marquer_photo_google([resto])
+    if user and user.get("role") in ROLES_VOYAGEUR:
         resto["favori"] = restaurant_id in repo.get_favorite_ids(user["id"])
 
     # --- Detail du calcul, pour inspection (D-034) ---
@@ -695,6 +691,35 @@ def admin_refuser_demande(claim_id: int, admin: dict = Depends(require_admin)):
     return {"message": "Demande refusée."}
 
 
+def _rafraichir_photo_google(resto: dict) -> str | None:
+    """Nouvelle référence de photo Google pour ce restaurant, ou None."""
+    from backend.ingestion.google.places_photos import PlacesError, list_photos
+
+    place_id = (resto.get("google_place_id") or "").strip()
+    if not place_id:
+        return None
+    try:
+        photos = list_photos(place_id, limit=1)
+    except PlacesError:
+        return None
+    if not photos:
+        return None
+    repo.set_photo_ref(resto["id"], photos[0]["name"])
+    return photos[0]["name"]
+
+
+def _marquer_photo_google(restaurants: list[dict]) -> None:
+    """
+    `photo_google` = une photo Google peut être servie par /photo (clé
+    configurée et référence connue). Sans ce drapeau, l'interface demanderait
+    une vignette pour chaque restaurant et recevrait des milliers de 404.
+    """
+    actif = bool(config.GOOGLE_API_KEY)
+    for r in restaurants:
+        r["photo_google"] = (actif and bool((r.get("photo_ref") or "").strip())
+                             and not r.get("photo_masquee"))
+
+
 @app.get("/api/restaurant/{restaurant_id}/photo")
 def get_restaurant_photo(restaurant_id: str):
     """
@@ -722,9 +747,17 @@ def get_restaurant_photo(restaurant_id: str):
     try:
         data = photo_cache.read(restaurant_id, photo_ref)
     except PlacesError as e:
-        # Quota atteint ou clé invalide : l'interface doit afficher son repli,
-        # pas une erreur serveur. On ne casse jamais une page pour une vignette.
-        raise HTTPException(status_code=404, detail=str(e)) from e
+        # Les références de photo Google finissent par expirer : on en
+        # redemande une à partir du place_id (conservable sans limite), une
+        # seule fois. Quota atteint ou clé invalide : l'interface affiche son
+        # repli, on ne casse jamais une page pour une vignette.
+        nouvelle = _rafraichir_photo_google(resto)
+        if not nouvelle:
+            raise HTTPException(status_code=404, detail=str(e)) from e
+        try:
+            data = photo_cache.read(restaurant_id, nouvelle)
+        except PlacesError as e2:
+            raise HTTPException(status_code=404, detail=str(e2)) from e2
 
     return Response(
         content=data,
@@ -734,6 +767,8 @@ def get_restaurant_photo(restaurant_id: str):
             # ne la remplace pas — les interfaces doivent l'afficher — mais il
             # garde la trace de la provenance au plus près de la donnée.
             "X-Photo-Source": "Google Places",
+            # Photo relayée, jamais stockée par nous (CGU Google) : le
+            # navigateur peut la garder un jour, pas davantage.
             "Cache-Control": "public, max-age=86400",
         },
     )
@@ -1100,35 +1135,6 @@ def me(user: dict = Depends(get_current_user)):
     return _to_user_response(user)
 
 
-# =============================================================================
-# ABONNEMENT — DÉMONSTRATION, AUCUN PAIEMENT RÉEL (LS-refonte)
-# =============================================================================
-#
-# CE QUE CES DEUX ROUTES NE SONT PAS : un encaissement. Rien ici ne parle à un
-# processeur de paiement — elles ne font que basculer `role` entre "user" et
-# "subscriber" pour que l'expérience abonné (Pricing.jsx, la limite levée sur
-# /api/restaurants) soit testable avant qu'une vraie intégration (Stripe ou
-# équivalent) existe. Le jour où elle existera, ces routes seront le point
-# qu'un webhook de paiement confirmé appellera — pas remplacées, complétées.
-
-@app.post("/api/subscribe", response_model=UserResponse)
-def subscribe(user: dict = Depends(get_current_user)):
-    """Passe le compte connecté en `role = "subscriber"`. Démonstration."""
-    if user.get("role") == "admin":
-        return _to_user_response(user)
-    repo.set_user_role(user["id"], "subscriber")
-    return _to_user_response(repo.get_user_by_id(user["id"]))
-
-
-@app.post("/api/subscribe/annuler", response_model=UserResponse)
-def unsubscribe(user: dict = Depends(get_current_user)):
-    """Repasse le compte connecté en `role = "user"`. Démonstration."""
-    if user.get("role") == "admin":
-        return _to_user_response(user)
-    repo.set_user_role(user["id"], "user")
-    return _to_user_response(repo.get_user_by_id(user["id"]))
-
-
 @app.post("/api/auth/mot-de-passe")
 def changer_mot_de_passe(req: PasswordChangeRequest, user: dict = Depends(get_current_user)):
     """
@@ -1152,20 +1158,23 @@ def changer_mot_de_passe(req: PasswordChangeRequest, user: dict = Depends(get_cu
 
 
 # =============================================================================
-# FAVORIS — réservés aux abonnés (LS-refonte)
+# FAVORIS — ouverts à tout compte voyageur (D-067)
 # =============================================================================
+#
+# Le Pass Voyageur a disparu : un compte suffit. Les comptes professionnels
+# (restaurateur, hôtel) n'ont pas les fonctionnalités voyageur (D-055 v2).
 
-def _require_abonne(user: dict) -> None:
-    if user.get("role") not in ("subscriber", "admin"):
+def _require_voyageur(user: dict) -> None:
+    if user.get("role") not in ROLES_VOYAGEUR:
         raise HTTPException(
-            status_code=403, detail="Réservé aux détenteurs d'un Pass Voyageur."
+            status_code=403, detail="Réservé aux comptes voyageurs."
         )
 
 
 @app.get("/api/favoris")
 def lister_favoris(user: dict = Depends(get_current_user)):
     """Restaurants favoris du compte connecté, même forme qu'une recherche."""
-    _require_abonne(user)
+    _require_voyageur(user)
     favoris = repo.get_favorite_restaurants(user["id"])
     for r in favoris:
         r["scoring"] = _scoring_sans_position(r)
@@ -1177,7 +1186,7 @@ def lister_favoris(user: dict = Depends(get_current_user)):
 
 @app.post("/api/favoris/{restaurant_id}")
 def ajouter_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
-    _require_abonne(user)
+    _require_voyageur(user)
     if not repo.get_restaurant(restaurant_id):
         raise HTTPException(status_code=404, detail="Restaurant non trouvé.")
     repo.add_favorite(user["id"], restaurant_id)
@@ -1186,7 +1195,7 @@ def ajouter_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
 
 @app.delete("/api/favoris/{restaurant_id}")
 def retirer_favori(restaurant_id: str, user: dict = Depends(get_current_user)):
-    _require_abonne(user)
+    _require_voyageur(user)
     repo.remove_favorite(user["id"], restaurant_id)
     return {"message": "Retiré des favoris."}
 
@@ -1316,33 +1325,227 @@ async def deposer_photo_restaurant(
     return repo.get_restaurant(restaurant["id"])
 
 
+@app.get("/api/restaurateur/tableau-de-bord")
+def tableau_de_bord_restaurateur(user: dict = Depends(get_current_user)):
+    """
+    Tableau de bord du restaurateur (D-068).
+
+    CE QUI EST GRATUIT, CE QUI EST RÉSERVÉ (mémoire §4.3, tableau 27) :
+    - gratuit pour toute fiche : score et rang, total des consultations du
+      mois, demandes de table ;
+    - offre Visibilité ou Visibilité+ : statistiques de vues — courbe sur
+      30 jours, évolution, heures de visite — et la liste des clients
+      (voyageurs connectés qui ont consulté la fiche).
+    Les blocs réservés valent `None` sans offre : l'interface affiche alors
+    ce qu'ils contiendraient, verrouillé, avec le bouton d'essai.
+    """
+    restaurant = _require_restaurateur(user)
+    abonnement = repo.get_abonnement_actif(user["id"])
+    stats = repo.stats_restaurant(restaurant["id"])
+    reserve = abonnement is None
+    return {
+        "restaurant": {
+            "id": restaurant["id"], "name": restaurant["name"],
+            "local_signal": restaurant.get("local_signal"),
+            "confidence": restaurant.get("confidence"),
+            "cuisine_label": cuisine_label(restaurant.get("cuisine")),
+        },
+        "rang": repo.rang_dans_zone(restaurant),
+        "abonnement": abonnement,
+        "consultations": stats["consultations"],
+        "periode_jours": stats["periode_jours"],
+        "reservations": repo.reservations_restaurant(restaurant["id"]),
+        # --- Réservé à l'offre Visibilité ---
+        "statistiques": None if reserve else {
+            "consultations_precedentes": stats["consultations_precedentes"],
+            "consultations_connectees": stats["consultations_connectees"],
+            "serie": stats["serie"],
+            "heures": stats["heures"],
+        },
+        "clients": None if reserve else repo.clients_restaurant(restaurant["id"]),
+    }
+
+
+@app.get("/api/pro/abonnement/historique")
+def historique_abonnement(user: dict = Depends(get_current_user)):
+    """Toutes les souscriptions du compte pro, la plus récente d'abord."""
+    if user.get("role") not in ("restaurateur", "hotel"):
+        raise HTTPException(status_code=403, detail="Réservé aux comptes professionnels.")
+    return {"historique": repo.historique_abonnements(user["id"])}
+
+
 @app.get("/api/restaurateur/mon-restaurant/visites")
 def visites_mon_restaurant(user: dict = Depends(get_current_user)):
     """
-    Fréquentation de la fiche possédée : le total et le détail des visites
-    connectées.
+    Fréquentation de la fiche possédée.
 
-    GRATUIT POUR TOUS LES RESTAURATEURS (D-063). Il n'y a plus de palier
-    abonné côté restaurateur : le modèle économique ne fait payer que la
-    demande (Pass Voyageur, publicité). La colonne `restaurant_claims.abonne`
-    reste en base, inerte — on ne supprime pas une donnée acquise.
+    Le TOTAL des consultations reste gratuit pour tout restaurateur ; le
+    DÉTAIL des visites fait partie de l'offre Visibilité (statistiques de
+    vues, mémoire §4.3, D-067). Sans offre, `visites` est None et
+    `detail_reserve` le signale à l'interface.
     """
     restaurant = _require_restaurateur(user)
+    abonne = repo.get_abonnement_actif(user["id"]) is not None
     return {
         "total": repo.count_consultations(restaurant["id"]),
-        "visites": repo.get_visitor_details(restaurant["id"]),
+        "visites": repo.get_visitor_details(restaurant["id"]) if abonne else None,
+        "detail_reserve": not abonne,
     }
 
 
 # =============================================================================
-# DROITS DE LA PERSONNE — RGPD (LS-29)
+# OFFRES PROFESSIONNELLES ET HÔTELS (D-067)
 # =============================================================================
 #
-# Le produit collecte une adresse e-mail et un mot de passe. Le droit d'acces,
-# le droit a l'effacement et le droit a la portabilite en decoulent. Ce ne sont
-# pas des fonctionnalites de confort : ce sont des obligations, et l'absence de
-# formulaire de suppression est ce qu'un jury reperera en premier devant un
-# ecran d'inscription.
+# DÉMONSTRATION, AUCUN PAIEMENT RÉEL : souscrire ouvre l'offre sans encaisser.
+# Le jour où Stripe (ou équivalent) sera branché, son webhook de paiement
+# confirmé appellera `repo.souscrire` — ces routes seront complétées, pas
+# remplacées.
+#
+# RÈGLE DE NEUTRALITÉ : aucune de ces routes ne touche au score ni à l'ordre
+# du classement. Voir `_marquer_partenaires`, appelé APRÈS le tri.
+
+_COULEUR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
+
+
+def _slug(texte: str) -> str:
+    import unicodedata
+    base = unicodedata.normalize("NFKD", texte).encode("ascii", "ignore").decode()
+    base = re.sub(r"[^a-z0-9]+", "-", base.lower()).strip("-")[:48] or "hotel"
+    candidat, n = base, 2
+    while not repo.slug_hotel_disponible(candidat):
+        candidat, n = f"{base}-{n}", n + 1
+    return candidat
+
+
+def _require_hotel(user: dict) -> dict:
+    hotel = repo.get_hotel_by_user(user["id"])
+    if user.get("role") != "hotel" or not hotel:
+        raise HTTPException(status_code=403, detail="Réservé aux comptes hôtel.")
+    return hotel
+
+
+def _marquer_partenaires(restaurants: list[dict]) -> None:
+    """
+    Pose `partenaire` (offre en cours, ou None) sur chaque restaurant.
+    Appelé APRÈS le classement : c'est une étiquette d'affichage, elle ne
+    change ni le score ni l'ordre (règle de neutralité, D-067).
+    """
+    offres = repo.offres_partenaires([r["id"] for r in restaurants])
+    for r in restaurants:
+        r["partenaire"] = offres.get(r["id"])
+
+
+@app.post("/api/auth/signup-hotel", response_model=UserResponse)
+def signup_hotel(req: SignupHotelRequest, request: Request, response: Response):
+    """Crée un compte hôtel et sa fiche, puis ouvre la session (D-067)."""
+    limitation.garder_inscription(request)
+
+    email = req.email.strip().lower()
+    if not _EMAIL_RE.match(email):
+        raise HTTPException(status_code=400, detail="Adresse email invalide.")
+    if not (req.nom or "").strip():
+        raise HTTPException(status_code=400, detail="Le nom de l'hôtel est requis.")
+    if len(req.password) < 8:
+        raise HTTPException(
+            status_code=400, detail="Le mot de passe doit contenir au moins 8 caractères."
+        )
+    if not req.accepted_terms:
+        raise HTTPException(
+            status_code=400,
+            detail="Vous devez accepter les CGU et la politique de confidentialité.",
+        )
+    if not (-90 <= req.lat <= 90 and -180 <= req.lng <= 180):
+        raise HTTPException(status_code=400, detail="Position de l'hôtel invalide.")
+    if repo.get_user_by_email(email):
+        raise HTTPException(status_code=409, detail="Cet email est déjà utilisé.")
+
+    resultat = repo.create_hotel_account(
+        email=email, password_hash=security.hash_password(req.password),
+        name=(req.name or req.nom).strip(),
+        accepted_terms_at=datetime.now(timezone.utc).isoformat(),
+        nom=req.nom.strip(), adresse=(req.adresse or "").strip() or None,
+        lat=req.lat, lng=req.lng, slug=_slug(req.nom),
+    )
+    jeton = _issue_session(response, resultat["user_id"])
+    return _to_user_response(
+        repo.get_user_by_id(resultat["user_id"]), jeton if _jeton_demande(request) else None
+    )
+
+
+@app.get("/api/pro/abonnement")
+def mon_abonnement(user: dict = Depends(get_current_user)):
+    """Offre en cours du compte pro connecté (None s'il n'en a pas)."""
+    if user.get("role") not in ("restaurateur", "hotel"):
+        raise HTTPException(status_code=403, detail="Réservé aux comptes professionnels.")
+    return {"abonnement": repo.get_abonnement_actif(user["id"])}
+
+
+@app.post("/api/pro/abonnement")
+def souscrire_offre(req: AbonnementRequest, user: dict = Depends(get_current_user)):
+    """
+    Souscrit (ou change) l'offre du compte pro. Démonstration, sans paiement.
+    Un restaurateur doit avoir une fiche validée : on ne vend pas de la
+    visibilité pour un restaurant qu'il n'a pas encore prouvé tenir.
+    """
+    role = user.get("role")
+    if role == "restaurateur":
+        if req.offre not in repo.OFFRES_RESTAURATEUR:
+            raise HTTPException(status_code=400, detail="Offre inconnue.")
+        restaurant = _require_restaurateur(user)
+        return {"abonnement": repo.souscrire(user["id"], req.offre, restaurant_id=restaurant["id"])}
+    if role == "hotel":
+        if req.offre != repo.OFFRE_HOTEL:
+            raise HTTPException(status_code=400, detail="Offre inconnue.")
+        hotel = _require_hotel(user)
+        return {"abonnement": repo.souscrire(user["id"], req.offre, hotel_id=hotel["id"])}
+    raise HTTPException(status_code=403, detail="Réservé aux comptes professionnels.")
+
+
+@app.post("/api/pro/abonnement/resilier")
+def resilier_offre(user: dict = Depends(get_current_user)):
+    if user.get("role") not in ("restaurateur", "hotel"):
+        raise HTTPException(status_code=403, detail="Réservé aux comptes professionnels.")
+    repo.resilier(user["id"])
+    return {"abonnement": None}
+
+
+@app.get("/api/hotel/mon-hotel")
+def mon_hotel(user: dict = Depends(get_current_user)):
+    """Fiche, abonnement et nombre de visites de la page de l'hôtel connecté."""
+    hotel = _require_hotel(user)
+    return {
+        **hotel,
+        "abonnement": repo.get_abonnement_actif(user["id"]),
+        "visites": repo.count_hotel_visites(hotel["id"]),
+    }
+
+
+@app.patch("/api/hotel/mon-hotel")
+def modifier_mon_hotel(req: HotelUpdateRequest, user: dict = Depends(get_current_user)):
+    hotel = _require_hotel(user)
+    champs = {k: v.strip() for k, v in req.model_dump(exclude_none=True).items()}
+    if "couleur" in champs and not _COULEUR_RE.match(champs["couleur"]):
+        raise HTTPException(status_code=400, detail="Couleur invalide (format #RRGGBB).")
+    if "nom" in champs and not champs["nom"]:
+        raise HTTPException(status_code=400, detail="Le nom de l'hôtel est requis.")
+    repo.update_hotel(hotel["id"], champs)
+    return mon_hotel(user)
+
+
+@app.get("/api/hotels/{slug}")
+def page_hotel(slug: str):
+    """
+    Données publiques de la page « Où manger autour de l'hôtel ». La page
+    affiche ensuite le classement NORMAL autour de l'hôtel (même appel que
+    la recherche) : l'hôtel ne choisit pas ses restaurants, il les prescrit.
+    Une page n'est servie que si l'abonnement de l'hôtel est en cours.
+    """
+    hotel = repo.get_hotel_by_slug(slug)
+    if not hotel or not repo.get_abonnement_actif(hotel["user_id"]):
+        raise HTTPException(status_code=404, detail="Page introuvable.")
+    repo.log_hotel_visite(hotel["id"])
+    return {k: hotel[k] for k in ("nom", "adresse", "lat", "lng", "slug", "couleur", "message")}
 
 
 @app.get("/api/auth/mes-donnees")

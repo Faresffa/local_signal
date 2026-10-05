@@ -766,6 +766,24 @@ img {
   font-weight: var(--font-weight-semibold);
   backdrop-filter: blur(14px) saturate(180%);
 }
+/* Étiquette « Partenaire » (offre Visibilité, D-067) — en bas à gauche, pour
+   ne couvrir ni le rang, ni le cœur, ni le crédit photo (en bas à droite). */
+.card__partenaire {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 3;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #1f1b16);
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.12));
+}
+.card__partenaire--detail {
+  position: static;
+}
 .card__restaurateur--valide {
   background: var(--color-local-soft);
   color: var(--color-local);
@@ -1187,7 +1205,8 @@ img {
   }
 }
 
-/* Quatre formules côte à côte (D-063) : gratuite, puis les trois Pass. */
+/* Trois offres restaurateur côte à côte (D-067) : fiche gratuite, Visibilité,
+   Visibilité+. */
 .pricing__grid--passes {
   max-width: none;
 }
@@ -1198,8 +1217,44 @@ img {
 }
 @media (min-width: 1100px) {
   .pricing__grid--passes {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
+}
+.pricing__grid--hotel {
+  grid-template-columns: 1fr;
+  max-width: 420px;
+}
+
+/* Titre de section (Restaurateurs, Hôtels) de la page Offres pro. */
+.pricing__section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 32px 0 14px;
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+}
+
+/* Règle de neutralité, affichée à côté des prix (D-067). */
+.pricing__neutralite {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: 720px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-local-soft);
+  color: var(--color-text);
+}
+.pricing__neutralite p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+.pricing__neutralite svg {
+  flex: none;
+  color: var(--color-local);
+  margin-top: 2px;
 }
 
 .pricing__carte {
@@ -2574,6 +2629,27 @@ img {
   opacity: 1;
 }
 
+/* Crédit d'une photo sous licence libre (Panoramax, CC-BY-SA, D-067) : la
+   licence exige de citer l'auteur là où la photo s'affiche. Discret, mais
+   lisible sur n'importe quelle photo grâce au fond sombre. */
+.photorestau__credit {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  z-index: 3;
+  max-width: calc(100% - 8px);
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+  font-size: 10px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .photorestau__img {
     transition: none;
@@ -3212,3 +3288,324 @@ img {
     animation: none !important;
   }
 }
+
+
+/* ==========================================================================
+   Encart « À découvrir dans le quartier » (offre Visibilité+, D-067)
+   Séparé de la liste classée et étiqueté : il ne remplace jamais le rang.
+   ========================================================================== */
+.decouvrir {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 14px;
+  background: var(--color-surface-alt);
+}
+.decouvrir__titre {
+  margin: 0 0 10px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+.decouvrir__etiquette {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+.decouvrir__liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.decouvrir__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.decouvrir__item span {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.decouvrir__item:hover {
+  border-color: var(--color-brand);
+}
+
+/* ==========================================================================
+   Page publique d'un hôtel partenaire (D-067) — aux couleurs de l'hôtel,
+   passée en variable `--hotel-couleur` sur l'en-tête.
+   ========================================================================== */
+.hotelpage__entete {
+  margin-bottom: 24px;
+  padding: 24px 22px;
+  border-radius: 18px;
+  border-top: 6px solid var(--hotel-couleur);
+  background: var(--color-surface-alt);
+}
+.hotelpage__surtitre {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+.hotelpage__nom {
+  margin: 4px 0 8px;
+  font-size: var(--font-size-2xl, 2rem);
+  color: var(--hotel-couleur);
+}
+.hotelpage__message {
+  margin: 0 0 10px;
+  font-size: var(--font-size-md, 1rem);
+  color: var(--color-text);
+}
+.hotelpage__note {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+}
+
+/* ==========================================================================
+   Tableau de bord restaurateur et page Mon abonnement (D-068)
+   ========================================================================== */
+.dash__onglets {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+.dash__onglet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+.dash__onglet.is-actif {
+  color: var(--color-text);
+  border-bottom-color: var(--color-brand);
+}
+.dash__entete {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.dash__offre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dash__badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+}
+.dash__badge.is-abonne {
+  background: var(--color-local-soft);
+  color: var(--color-local);
+}
+.dash__kpis {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  margin-bottom: 20px;
+}
+.dash__kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.dash__kpi.is-verrouille {
+  opacity: 0.7;
+}
+.dash__kpiLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.dash__kpiValeur {
+  font-size: 1.6rem;
+  color: var(--color-text);
+}
+.dash__kpiDetail {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+}
+.dash__bloc {
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.dash__duo {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .dash__duo { grid-template-columns: 1fr 1fr; }
+}
+.dash__duo .dash__bloc { margin-bottom: 0; }
+.dash__duo { margin-bottom: 16px; }
+.dash__titre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: var(--font-size-md, 1rem);
+  color: var(--color-text);
+}
+.dash__barres {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+.dash__barreCol {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.dash__barre {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+  background: var(--color-brand);
+}
+.dash__barreCol:hover .dash__barre { opacity: 0.75; }
+.dash__legende {
+  margin: 8px 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+}
+.dash__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+.dash__table th,
+.dash__table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  color: var(--color-text);
+}
+.dash__table th {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-semibold);
+}
+.dash__muted { color: var(--color-text-faint); font-size: var(--font-size-xs); }
+.dash__reserve {
+  position: relative;
+  min-height: 140px;
+}
+.dash__reserveFond {
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.55;
+}
+.dash__reserveVoile {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  color: var(--color-text);
+}
+.dash__reserveVoile p { margin: 0; }
+.dash__reserveTexte {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-bottom: 8px !important;
+}
+
+.abo__actuel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.abo__surtitre {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.abo__formule {
+  margin: 2px 0 6px;
+  font-size: 1.4rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+.abo__tableau {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+.abo__comparatif {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+.abo__comparatif th,
+.abo__comparatif td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  text-align: left;
+}
+.abo__comparatif th.is-vedette {
+  border-top: 3px solid var(--color-brand);
+}
+.abo__case { text-align: center !important; }
+.abo__nom {
+  display: block;
+  font-size: var(--font-size-md, 1rem);
+}
+.abo__prix {
+  display: block;
+  font-size: 1.2rem;
+}
+.abo__prix small {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.abo__comparatif thead th { text-align: center; }

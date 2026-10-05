@@ -49,11 +49,12 @@ export default function RestaurantCard({
   const delai = Math.min(index * PAS_MS, DECALAGE_MAX_MS);
   const ref = useReveal(delai);
 
-  // Le cœur n'apparaît que pour un compte connecté : un visiteur anonyme n'a
-  // pas encore de quoi enregistrer quoi que ce soit (LS-refonte, favoris).
-  const abonne = user?.role === "subscriber" || user?.role === "admin";
+  // Le cœur n'apparaît que pour un compte voyageur connecté — tous les
+  // comptes voyageur depuis D-067 (plus de Pass). Les comptes pro n'ont pas
+  // de favoris (D-055 v2).
+  const voyageur = Boolean(user) && !["restaurateur", "hotel"].includes(user.role);
   const { favori, toggle: toggleFavori } = useFavori(
-    restaurant.id, restaurant.favori, abonne, onUnlock,
+    restaurant.id, restaurant.favori, voyageur, onUnlock,
     onFavoriChange && ((v) => onFavoriChange(restaurant.id, v)),
   );
 
@@ -90,6 +91,8 @@ export default function RestaurantCard({
           cuisine={restaurant.cuisine}
           photoUrl={restaurant.photo_url}
           photoKey={restaurant.photo_key}
+          credit={restaurant.photo_credit}
+          photoGoogle={restaurant.photo_google}
           nom={restaurant.name}
           size={64}
         />
@@ -103,18 +106,23 @@ export default function RestaurantCard({
           <span className="card__restaurateur card__restaurateur--en_attente">Demande en attente</span>
         )}
 
-        {user && (
+        {/* Restaurant abonné à une offre Visibilité (D-067). Étiquette
+            d'affichage seulement : posée APRÈS le classement, elle ne change
+            ni le score ni le rang (règle de neutralité). */}
+        {restaurant.partenaire && (
+          <span className="card__partenaire" title="Restaurant abonné à une offre Local Signal. Son score et son rang n'en dépendent pas.">
+            Partenaire
+          </span>
+        )}
+
+        {voyageur && (
           <button
             type="button"
             className={`card__favori${favori ? " is-favori" : ""}`}
             onClick={(e) => { e.stopPropagation(); toggleFavori(); }}
             aria-pressed={favori}
             aria-label={favori ? "Retirer des favoris" : "Ajouter aux favoris"}
-            title={
-              abonne
-                ? (favori ? "Retirer des favoris" : "Ajouter aux favoris")
-                : "Prendre un Pass pour ajouter des favoris"
-            }
+            title={favori ? "Retirer des favoris" : "Ajouter aux favoris"}
           >
             <Heart size={16} weight={favori ? "fill" : "regular"} />
           </button>
