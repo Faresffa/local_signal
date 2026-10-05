@@ -152,7 +152,8 @@ export default function SignupRestaurateur({ onSignup, onGoToLogin, onBack, onGo
         <h1 className="authcard__title">Créer un compte restaurateur</h1>
         <p className="authcard__lede">
           Un compte à part, pour gérer votre restaurant : coordonnées,
-          fréquentation, réponses aux avis. Différent d'un compte client.
+          fréquentation, offres de visibilité. La fiche est gratuite ;
+          Visibilité (29 €) et Visibilité+ (59 €) sont facultatives.
         </p>
 
         <form className="form" onSubmit={soumettre} noValidate style={{ marginTop: 20 }}>

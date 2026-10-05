@@ -22,7 +22,6 @@ import ContactScreen from "./src/screens/ContactScreen";
 import DonsScreen from "./src/screens/DonsScreen";
 import DetailScreen from "./src/screens/DetailScreen";
 import DiscoverScreen from "./src/screens/DiscoverScreen";
-import PricingScreen from "./src/screens/PricingScreen";
 import ReserveScreen from "./src/screens/ReserveScreen";
 import ScanScreen from "./src/screens/ScanScreen";
 import MotifCouverts from "./src/components/MotifCouverts";
@@ -93,7 +92,7 @@ export default function App() {
 
   const [tab, setTab] = useState("discover");
   const [stack, setStack] = useState(null); // { screen, restaurant }
-  const { user, login, signup, logout, unsubscribe, supprimerCompte } = useCurrentUser();
+  const { user, login, signup, logout, supprimerCompte } = useCurrentUser();
 
   function ouvrirFiche(restaurant) {
     setStack({ screen: "detail", restaurant });
@@ -127,25 +126,6 @@ export default function App() {
     setStack({ screen: page });
   }
 
-  function ouvrirPricing() {
-    setStack({ screen: "pricing" });
-  }
-
-  // Filtre premium verrouillé (D-050) : un compte déjà connecté va direct aux
-  // Pass Voyageur (D-063), un visiteur doit d'abord créer un compte — même logique
-  // que `demanderDeverrouillage` côté web (App.jsx).
-  function demanderDeverrouillage() {
-    if (user) {
-      ouvrirPricing();
-    } else {
-      setStack({
-        screen: "compte",
-        modeDepart: "signup",
-        motif: "Un Pass Voyageur débloque le filtre de score et les restaurants favoris.",
-      });
-    }
-  }
-
   // Un écran empilé recouvre les onglets : on ne mélange pas une fiche et une
   // barre de navigation qui suggère qu'on est ailleurs.
   const contenu = stack ? (
@@ -160,8 +140,6 @@ export default function App() {
         onBack={fermerCompte}
         onGoToCGU={() => ouvrirLegal("cgu")}
         onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
-        onGoToPricing={ouvrirPricing}
-        onUnsubscribe={unsubscribe}
         onDeleteAccount={async () => { await supprimerCompte(); setStack(null); }}
         onGoToAbout={() => ouvrirLegal("about")}
         onGoToContact={() => ouvrirLegal("contact")}
@@ -177,8 +155,6 @@ export default function App() {
         onBack={() => setStack({ screen: "compte", modeDepart: "signup" })}
         onGoToCGU={() => ouvrirLegal("cgu")}
       />
-    ) : stack.screen === "pricing" ? (
-      <PricingScreen user={user} onBack={() => setStack({ screen: "compte" })} />
     ) : stack.screen === "about" ? (
       <AboutScreen onBack={() => setStack({ screen: "compte" })} />
     ) : stack.screen === "contact" ? (
@@ -203,7 +179,6 @@ export default function App() {
       onOpen={ouvrirFiche}
       user={user}
       onCompte={() => ouvrirCompte()}
-      onUnlock={demanderDeverrouillage}
     />
   ) : (
     <ScanScreen />

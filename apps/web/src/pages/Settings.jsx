@@ -1,7 +1,7 @@
 // apps/web/src/pages/Settings.jsx
 //
 // Paramètres du compte (LS-refonte, menu déroulant de Nav.jsx) : apparence,
-// Pass Voyageur, mot de passe. Trois blocs indépendants plutôt que trois pages —
+// formule, données, mot de passe. Des blocs indépendants plutôt que des pages —
 // aucun n'a assez de contenu pour justifier son propre écran.
 
 import { useState } from "react";
@@ -12,17 +12,8 @@ import {
 import { changerMotDePasse, fetchMesDonnees } from "../api";
 import { useTheme } from "../lib/hooks";
 
-const ROLE_LABEL = {
-  admin: "Administrateur",
-  subscriber: "Pass Voyageur actif",
-  user: "Compte gratuit",
-  restaurateur: "Restaurateur",
-};
-
-// TARIF INDICATIF — même placeholder que Pricing.jsx, pas encore arrêté.
-
 export default function Settings({
-  user, onBack, onGoToPricing, onUnsubscribe, onDeleteAccount,
+  user, onBack, onGoToEspacePro, onDeleteAccount,
 }) {
   const { isDark, toggle } = useTheme();
 
@@ -30,7 +21,6 @@ export default function Settings({
   const [nouveau, setNouveau] = useState("");
   const [erreurMdp, setErreurMdp] = useState(null);
   const [statutMdp, setStatutMdp] = useState("idle");
-  const [statutAbonnement, setStatutAbonnement] = useState("idle");
   const [statutExport, setStatutExport] = useState("idle");
   const [confirmerSuppression, setConfirmerSuppression] = useState(false);
   const [statutSuppression, setStatutSuppression] = useState("idle");
@@ -89,16 +79,7 @@ export default function Settings({
     }
   }
 
-  async function annulerAbonnement() {
-    setStatutAbonnement("sending");
-    try {
-      await onUnsubscribe();
-    } finally {
-      setStatutAbonnement("idle");
-    }
-  }
-
-  const abonne = user.role === "subscriber";
+  const estPro = user.role === "restaurateur" || user.role === "hotel";
 
   return (
     <div className="authpage">
@@ -126,47 +107,32 @@ export default function Settings({
           </button>
         </section>
 
-        {/* Un admin n'a pas de Pass à gérer — l'accès complet lui vient du
-            rôle. Un restaurateur non plus : tout est gratuit pour lui
-            (D-063). */}
-        {user.role !== "admin" && user.role !== "restaurateur" && (
+        {/* FORMULE (D-067) : le voyageur ne paie rien. Seuls les comptes
+            pro ont une offre, gérée depuis leur espace. */}
+        {user.role !== "admin" && (
           <section style={{ marginTop: 28 }}>
-            <h2 className="settings__section">Pass Voyageur</h2>
-            <p className="card__reason" style={{ marginTop: 8 }}>
-              Formule actuelle : {ROLE_LABEL[user.role] || ROLE_LABEL.user}.
-            </p>
-
-            {/* PAS DE FACTURATION RÉCURRENTE : un Pass se paie une fois,
-                sans reconduction (D-063). La désactivation en dessous reste
-                réelle — c'est le mécanisme de démonstration du rôle, pas un
-                remboursement. */}
-            {abonne && (
-              <p className="formfield__hint" style={{ marginTop: 6 }}>
-                Paiement unique, sans reconduction automatique. Paiement pas
-                encore activé — ces informations sont indicatives.
-              </p>
-            )}
-
-            {abonne ? (
-              <button
-                type="button"
-                className="btn btn--ghost btn--block"
-                style={{ marginTop: 12 }}
-                onClick={annulerAbonnement}
-                disabled={statutAbonnement === "sending"}
-              >
-                {statutAbonnement === "sending" ? "Désactivation…" : "Désactiver mon Pass"}
-              </button>
+            <h2 className="settings__section">Formule</h2>
+            {estPro ? (
+              <>
+                <p className="card__reason" style={{ marginTop: 8 }}>
+                  Votre offre (essai, souscription, résiliation) se gère depuis
+                  votre espace professionnel.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn--primary btn--block"
+                  style={{ marginTop: 8 }}
+                  onClick={onGoToEspacePro}
+                >
+                  <CreditCard size={16} weight="bold" />
+                  Gérer mon offre
+                </button>
+              </>
             ) : (
-              <button
-                type="button"
-                className="btn btn--primary btn--block"
-                style={{ marginTop: 8 }}
-                onClick={onGoToPricing}
-              >
-                <CreditCard size={16} weight="bold" />
-                Voir les Pass
-              </button>
+              <p className="card__reason" style={{ marginTop: 8 }}>
+                Compte voyageur gratuit : toutes les fonctionnalités sont
+                incluses, sans abonnement.
+              </p>
             )}
           </section>
         )}

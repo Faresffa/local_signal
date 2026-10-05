@@ -27,14 +27,15 @@ import { distance, hours } from "../lib/display";
 const FACT_ICON = { display: "inline", verticalAlign: "-2px", marginRight: 6 };
 
 export default function Detail({
-  restaurant, onBack, onReserve, user, onSeConnecter, onUnlock,
+  restaurant, onBack, onReserve, user, onSeConnecter,
 }) {
   const [full, setFull] = useState(restaurant);
   const [error, setError] = useState(null);
 
-  const abonne = user?.role === "subscriber" || user?.role === "admin";
+  // Favoris ouverts à tout compte voyageur (D-067) ; les comptes pro n'en ont pas.
+  const voyageur = Boolean(user) && !["restaurateur", "hotel"].includes(user.role);
   const { favori, toggle: toggleFavori } = useFavori(
-    full?.id, full?.favori, abonne, user ? onUnlock : onSeConnecter,
+    full?.id, full?.favori, voyageur, onSeConnecter,
   );
 
   // La liste ne porte pas tout : la fiche recharge les champs complets,
@@ -66,6 +67,9 @@ export default function Detail({
   } catch {
     photosCarte = [];
   }
+  // Mêmes URL Google expirées que pour la photo principale (voir
+  // PhotoRestaurant.jsx) : les afficher donnerait une galerie d'images cassées.
+  photosCarte = photosCarte.filter((u) => typeof u === "string" && !/googleusercontent\.com/.test(u));
 
   const facts = [
     full.address && { icon: <MapPin {...puce} />, label: "Adresse", value: full.address },
@@ -88,6 +92,8 @@ export default function Detail({
             cuisine={full.cuisine}
             photoUrl={full.photo_url}
             photoKey={full.photo_key}
+            credit={full.photo_credit}
+          photoGoogle={full.photo_google}
             nom={full.name}
             size={92}
           />
@@ -96,6 +102,14 @@ export default function Detail({
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Verdict localSignal={full.local_signal} confidence={full.confidence} />
+            {full.partenaire && (
+              <span
+                className="card__partenaire card__partenaire--detail"
+                title="Restaurant abonné à une offre Local Signal. Son score et son rang n'en dépendent pas."
+              >
+                Partenaire
+              </span>
+            )}
 
             <button
               type="button"
@@ -106,9 +120,7 @@ export default function Detail({
               title={
                 !user
                   ? "Connectez-vous pour ajouter des favoris"
-                  : abonne
-                    ? (favori ? "Retirer des favoris" : "Ajouter aux favoris")
-                    : "Prendre un Pass pour ajouter des favoris"
+                  : (favori ? "Retirer des favoris" : "Ajouter aux favoris")
               }
             >
               <Heart size={16} weight={favori ? "fill" : "regular"} />

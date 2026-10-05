@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <!-- Trame de fourchette+couteau en filigrane (LS-refonte v3).
+       v1 : forme dessinée à la main, couteau pas reconnaissable.
+       v2 : bon tracé (Phosphor ForkKnife, graisse "thin") mais icônes trop
+       petites (12-20px) — à l'échelle d'un écran de bureau réel et après
+       compression d'une capture d'écran, elles se noyaient dans le bruit et
+       devenaient invisibles malgré une opacité correcte (retour utilisateur,
+       deux fois). v3 : même tracé fin, mais des icônes nettement plus
+       grandes (24-38px) — le trait reste fin (c'est la nature du tracé
+       "thin"), seule l'échelle grandit, donc ça reste discret de près tout
+       en se voyant à distance normale. -->
+  <defs>
+    <symbol id="fk" viewBox="0 0 256 256">
+      <path d="M76,88V40a4,4,0,0,1,8,0V88a4,4,0,0,1-8,0ZM212,40V224a4,4,0,0,1-8,0V172H152a4,4,0,0,1-4-4,264.27,264.27,0,0,1,7.11-55.94c9.47-39.22,27.21-65.41,51.31-75.74A4,4,0,0,1,212,40Zm-8,6.46C162.25,70.33,156.81,145.75,156.1,164H204Zm-88-7.12a4,4,0,0,0-7.9,1.32l8,47.66a36,36,0,0,1-72,0l8-47.66a4,4,0,0,0-7.9-1.32l-8,48A4.89,4.89,0,0,0,36,88a44.06,44.06,0,0,0,40,43.81V224a4,4,0,0,0,8,0V131.81A44.06,44.06,0,0,0,124,88a4.89,4.89,0,0,0,0-.66Z" />
+    </symbol>
+  </defs>
+
+  <use href="#fk" width="34" height="34" transform="translate(20,16) rotate(-22)" />
+  <use href="#fk" width="26" height="26" transform="translate(160,4) rotate(35)" />
+  <use href="#fk" width="24" height="24" transform="translate(100,74) rotate(-55)" />
+  <use href="#fk" width="30" height="30" transform="translate(226,96) rotate(12)" />
+  <use href="#fk" width="26" height="26" transform="translate(16,140) rotate(50)" />
+  <use href="#fk" width="32" height="32" transform="translate(132,164) rotate(-18)" />
+  <use href="#fk" width="22" height="22" transform="translate(244,200) rotate(-60)" />
+  <use href="#fk" width="28" height="28" transform="translate(52,210) rotate(25)" />
+  <use href="#fk" width="24" height="24" transform="translate(176,244) rotate(70)" />
+  <use href="#fk" width="30" height="30" transform="translate(-10,256) rotate(-30)" />
+  <use href="#fk" width="24" height="24" transform="translate(258,20) rotate(-40)" />
+  <use href="#fk" width="26" height="26" transform="translate(90,268) rotate(15)" />
+</svg>

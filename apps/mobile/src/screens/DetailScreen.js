@@ -80,6 +80,8 @@ export default function DetailScreen({ restaurant, onBack, onReserve }) {
   } catch {
     photosCarte = [];
   }
+  // URL Google expirées : voir PhotoRestaurant.js.
+  photosCarte = photosCarte.filter((u) => typeof u === "string" && !/googleusercontent\.com/.test(u));
 
   return (
     <ScrollView contentContainerStyle={s.page}>
@@ -93,6 +95,8 @@ export default function DetailScreen({ restaurant, onBack, onReserve }) {
           id={full.id}
           cuisine={full.cuisine}
           photoUrl={full.photo_url}
+          credit={full.photo_credit}
+          photoGoogle={full.photo_google}
           height={200}
           iconSize={54}
           isDark={isDark}

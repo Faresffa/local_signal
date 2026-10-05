@@ -60,8 +60,7 @@ export async function fetchRestaurants({
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");
-  // Réservés aux abonnés — le serveur les ignore pour les autres
-  // (backend/main.py), les envoyer sans effet n'expose rien.
+  // Filtre de score : ouvert à tous depuis D-067 (le voyageur ne paie rien).
   // Score : converti de l'échelle d'affichage (0–10) vers celle du Local
   // Signal stocké en base (0–100) — voir packages/shared/filtres.js.
   if (scoreMin != null && scoreMin > 0) query.set("score_min", scoreMin * 10);
@@ -258,14 +257,6 @@ export async function fetchMe() {
   }
 }
 
-/**
- * Active un Pass Voyageur (D-063). Démonstration, pas un paiement réel
- * (voir backend/main.py) : le rôle `subscriber` représente « Pass actif ».
- */
-export async function subscribe() {
-  return request("/api/subscribe", { method: "POST", credentials: "include" });
-}
-
 // --- Droits RGPD (LS-29, LS-39) — accès, portabilité, effacement ---
 //
 // L'endpoint existait déjà côté API, jamais relié à l'interface : les droits
@@ -281,10 +272,6 @@ export async function supprimerCompte() {
   return request("/api/auth/compte", { method: "DELETE", credentials: "include" });
 }
 
-export async function unsubscribe() {
-  return request("/api/subscribe/annuler", { method: "POST", credentials: "include" });
-}
-
 /** Lève une erreur `status === 401` si le mot de passe actuel est incorrect. */
 export async function changerMotDePasse(motDePasseActuel, nouveauMotDePasse) {
   return request("/api/auth/mot-de-passe", {
@@ -298,7 +285,7 @@ export async function changerMotDePasse(motDePasseActuel, nouveauMotDePasse) {
   });
 }
 
-// --- Favoris (réservés aux détenteurs d'un Pass, backend/main.py::_require_abonne) ---
+// --- Favoris (tout compte voyageur, D-067 — backend/main.py::_require_voyageur) ---
 
 export async function fetchFavoris() {
   return request("/api/favoris", { credentials: "include" });
@@ -410,4 +397,68 @@ export async function refuserDemandeRestaurateur(claimId) {
     method: "POST",
     credentials: "include",
   });
+}
+
+
+// --- Offres professionnelles et hôtels (D-067) ---
+//
+// Le voyageur ne paie rien. Paient les restaurateurs (Visibilité 29 €,
+// Visibilité+ 59 €) et les hôtels (49 €). Démonstration : aucun paiement
+// réel n'est encaissé (voir backend/main.py, section OFFRES PROFESSIONNELLES).
+
+export async function signupHotel(fields) {
+  return request("/api/auth/signup-hotel", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(fields),
+  });
+}
+
+/** Offre en cours du compte pro connecté : `{ abonnement: {...} | null }`. */
+export async function fetchAbonnement() {
+  return request("/api/pro/abonnement", { credentials: "include" });
+}
+
+/** `offre` : "visibilite", "visibilite_plus" (restaurateur) ou "hotel". */
+export async function souscrireOffre(offre) {
+  return request("/api/pro/abonnement", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ offre }),
+  });
+}
+
+export async function resilierOffre() {
+  return request("/api/pro/abonnement/resilier", { method: "POST", credentials: "include" });
+}
+
+export async function fetchMonHotel() {
+  return request("/api/hotel/mon-hotel", { credentials: "include" });
+}
+
+export async function updateMonHotel(champs) {
+  return request("/api/hotel/mon-hotel", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(champs),
+  });
+}
+
+/** Données publiques de la page d'un hôtel (404 sans abonnement en cours). */
+export async function fetchPageHotel(slug) {
+  return request(`/api/hotels/${encodeURIComponent(slug)}`);
+}
+
+// --- Tableau de bord restaurateur (D-068) ---
+
+/** Statistiques, rang, demandes de table ; blocs réservés à `null` sans offre. */
+export async function fetchTableauDeBord() {
+  return request("/api/restaurateur/tableau-de-bord", { credentials: "include" });
+}
+
+export async function fetchHistoriqueAbonnement() {
+  return request("/api/pro/abonnement/historique", { credentials: "include" });
 }

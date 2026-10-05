@@ -34,22 +34,9 @@ from backend.core.auth import limitation
 from backend.core.stockage import stockage
 from backend.main import app
 
-# QUOTA DE RECHERCHES (LS-refonte) : un compte non abonne est limite a
-# `SEARCHES_PER_DAY_NON_ABONNE` recherches par jour (5 par defaut). Ce fichier
-# en fait davantage avec le meme compte de test pour verifier plusieurs
-# filtres a la suite — ce n'est pas le comportement que ce module teste, donc
-# on le neutralise ici plutot que de forcer chaque test a rester sous le
-# quota. Lu en direct a chaque requete (`config.SEARCHES_PER_DAY_NON_ABONNE`),
-# pas fige a l'import : la modifier ici suffit, aucun redemarrage requis.
-config.SEARCHES_PER_DAY_NON_ABONNE = 10_000
-
-# DEUX CLIENTS, ET C'EST ESSENTIEL.
-#
-# Un visiteur non connecte ne recoit que `ANON_RESULTS_LIMIT` resultats. Tester
-# les invariants de classement sur une page de cinq lignes ne prouve rien : les
-# cinq premiers ont tous une carte et un prix, donc aucun cas limite n'apparait.
-# Les tests de donnees passent donc par un client CONNECTE, et la limite
-# anonyme est testee separement, pour elle-meme.
+# DEUX CLIENTS. Depuis D-067 il n'y a plus de limite de resultats ni de quota
+# pour personne ; le client CONNECTE sert aux tests de donnees, `client` doit
+# rester ANONYME pour les tests d'authentification plus bas.
 client = TestClient(app)
 connecte = TestClient(app)
 
@@ -119,6 +106,14 @@ else:
              "le bloc `scoring` porte `reasons` — l'explication (D-009)")
 
 # --- lat et lng sont obligatoires : pas de coordonnees par defaut (CLAUDE.md 8)
+# D-067 : le voyageur ne paie plus rien — plus de limite de resultats ni de
+# filtre reserve, y compris pour un visiteur anonyme.
+_anon = client.get("/api/restaurants", params={**ZONE, "limit": 20, "score_min": 60}).json()
+verifier(len(_anon["restaurants"]) > 5,
+         "un visiteur anonyme recoit plus de 5 resultats (D-067)")
+verifier(all((r.get("local_signal") or 0) >= 60 for r in _anon["restaurants"]),
+         "le filtre de score s'applique sans abonnement (D-067)")
+
 verifier(connecte.get("/api/restaurants").status_code == 422,
          "lat et lng sont obligatoires — aucune ville n'est supposee")
 

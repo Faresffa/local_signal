@@ -13,7 +13,6 @@ import { fetchCuisines, fetchRestaurants } from "../api";
 import Filtres from "../components/Filtres";
 import LocationPicker from "../components/LocationPicker";
 import RestaurantCard from "../components/RestaurantCard";
-import LockedCard from "../components/LockedCard";
 import ResultsMap from "../components/ResultsMap";
 import StatsPanel from "../components/StatsPanel";
 import {
@@ -26,9 +25,9 @@ import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 import { useGeolocation } from "../lib/hooks";
 import { distance } from "../lib/display";
 
-// Cartes verrouillées affichées au-delà de la limite — plafond purement
-// visuel pour ne pas allonger indéfiniment la grille quand `total` est grand.
-const MAX_CARTES_VERROUILLEES = 6;
+// Nombre de restaurants chargés à chaque page de résultats.
+const PAGE = 24;
+
 
 export default function Discover({
   onOpen,
@@ -59,9 +58,12 @@ export default function Discover({
   // combien de restaurants sont masqués sans jamais recevoir leurs données
   // (voir backend/main.py::list_restaurants).
   const [total, setTotal] = useState(0);
-  // Quota de recherches d'un compte sans Pass (LS-refonte) — `null` pour
-  // tout le monde d'autre (anonyme, Pass actif, admin), qui n'en a pas.
-  const [quota, setQuota] = useState(null);
+  // Encart « À découvrir dans le quartier » (offre Visibilité+, D-067) :
+  // liste SÉPARÉE du classement, jamais mêlée à lui.
+  const [aDecouvrir, setADecouvrir] = useState([]);
+  // Pagination simple : plus de résultats masqués (D-067), on charge
+  // simplement les suivants à la demande.
+  const [limite, setLimite] = useState(PAGE);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
   const [reloads, setReloads] = useState(0);
@@ -120,14 +122,14 @@ export default function Discover({
       avecCarte: filtres.avecCarte,
       scoreMin: filtres.scoreMin,
       scoreMax: filtres.scoreMax,
-      limit: 24,
+      limit: limite,
     })
       .then((data) => {
         if (cancelled) return;
         const resultats = data.restaurants ?? [];
         setRestaurants(resultats);
         setTotal(data.count ?? resultats.length);
-        setQuota(data.quota ?? null);
+        setADecouvrir(data.a_decouvrir ?? []);
         // Relance l'animation d'entrée des trois premières cartes après
         // chaque recherche ou filtre (voir la `key` plus bas).
         setVersionResultats((version) => version + 1);
@@ -143,7 +145,7 @@ export default function Discover({
     return () => {
       cancelled = true;
     };
-  }, [origine, radius, filtres, reloads]);
+  }, [origine, radius, filtres, reloads, limite]);
 
   const relancer = () => {
     setStatus("loading");
@@ -155,11 +157,9 @@ export default function Discover({
     onRadiusChange(RAYON_DEFAUT);
   };
 
-  // Restaurants masqués faute de Pass Voyageur (D-063) — 0 seulement pour un
-  // compte avec Pass ou admin. Se connecter ne suffit plus à tout débloquer :
-  // c'était l'ancienne règle, et elle ne laissait aucune raison de payer.
-  const abonne = user?.role === "subscriber" || user?.role === "admin";
-  const masques = abonne ? 0 : Math.max(0, total - restaurants.length);
+  // Plus de résultats masqués (D-067 : le voyageur ne paie rien). Seule
+  // reste la pagination ordinaire : on affiche les premiers sur le total.
+  const enPlus = Math.max(0, total - restaurants.length);
   // Distance minimale des résultats affichés : le ou les restaurants qui
   // l'atteignent portent « Le plus proche » (D-065). Comparaison sur la
   // distance AFFICHÉE : deux « 270 m » doivent porter la mention tous deux.
@@ -262,8 +262,6 @@ export default function Discover({
             cuisines={cuisineOptions}
             nbResultats={status === "ready" ? restaurants.length : null}
             chargement={status === "loading"}
-            abonne={abonne}
-            onUnlock={onUnlock}
           />
         </aside>
 
@@ -285,13 +283,13 @@ export default function Discover({
                 Classement : authenticité et proximité
                 <Info size={13} weight="bold" />
               </button>
-              {status === "ready" && masques > 0 && (
+              {status === "ready" && enPlus > 0 && (
                 <span className="results__count">
                   {restaurants.length} restaurant{restaurants.length > 1 ? "s" : ""} affiché
                   {restaurants.length > 1 ? "s" : ""} sur {total}
                 </span>
               )}
-              {status === "ready" && masques === 0 && (
+              {status === "ready" && enPlus === 0 && (
                 <span className="results__count">
                   {restaurants.length} restaurant
                   {restaurants.length > 1 ? "s" : ""}
@@ -310,18 +308,23 @@ export default function Discover({
             </p>
           )}
 
-          {/* Quota de recherches d'un compte sans Pass (LS-refonte) —
-              affiché AVANT d'être atteint, pas seulement au moment où il
-              bloque (retour utilisateur : "doit être claire, affichée"). */}
-          {quota && (
-            <p className="card__reason" style={{ marginBottom: 16 }}>
-              {quota.restantes > 0
-                ? `${quota.restantes} recherche${quota.restantes > 1 ? "s" : ""} restante${quota.restantes > 1 ? "s" : ""} aujourd'hui.`
-                : "Dernière recherche du jour."}{" "}
-              <button type="button" className="linkbtn" onClick={onUnlock}>
-                Prendre un Pass Voyageur pour un accès illimité
-              </button>
-            </p>
+          {/* Encart partenaires (Visibilité+, D-067) — au-dessus de la liste
+              mais SÉPARÉ d'elle et étiqueté : les restaurants qui y figurent
+              gardent leur rang dans le classement, ils ne le sautent pas. */}
+          {status === "ready" && aDecouvrir.length > 0 && (
+            <section className="decouvrir" aria-label="À découvrir dans le quartier">
+              <p className="decouvrir__titre">
+                À découvrir dans le quartier <span className="decouvrir__etiquette">Partenaires</span>
+              </p>
+              <div className="decouvrir__liste">
+                {aDecouvrir.map((r) => (
+                  <button key={r.id} type="button" className="decouvrir__item" onClick={() => onOpen(r)}>
+                    <strong>{r.name}</strong>
+                    <span>{r.cuisine_label || "Restaurant"}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
           )}
 
           {status === "loading" && <ResultsSkeleton />}
@@ -352,10 +355,17 @@ export default function Discover({
                   onUnlock={onUnlock}
                 />
               ))}
-              {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) }).map((_, i) => (
-                <LockedCard key={`locked-${i}`} onUnlock={onUnlock} connecte={Boolean(user)} />
-              ))}
             </div>
+          )}
+          {status === "ready" && enPlus > 0 && (
+            <button
+              type="button"
+              className="btn btn--ghost btn--block"
+              style={{ marginTop: 16 }}
+              onClick={() => setLimite((l) => l + PAGE)}
+            >
+              Afficher {Math.min(PAGE, enPlus)} restaurants de plus
+            </button>
           )}
           {/* Répartition des verdicts, sous la liste depuis que la carte
               occupe toute la colonne de droite (D-066). */}

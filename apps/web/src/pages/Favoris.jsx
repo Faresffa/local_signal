@@ -1,10 +1,8 @@
 // apps/web/src/pages/Favoris.jsx
 //
-// Restaurants favoris (LS-refonte, menu déroulant de Nav.jsx). Réservé aux
-// détenteurs d'un Pass Voyageur (D-063) — l'API applique la même règle (`_require_abonne`,
-// backend/main.py), cette page ne fait que la refléter : un compte connecté
-// mais sans Pass voit une proposition de Pass, pas une erreur 403 brute
-// (retour utilisateur : "s'abonner pour ajouter des favoris").
+// Restaurants favoris (LS-refonte, menu déroulant de Nav.jsx). Ouverts à tout
+// compte voyageur depuis D-067 — plus de Pass. Un visiteur non connecté voit
+// une invitation à créer un compte, pas une erreur 401 brute.
 
 import { useEffect, useState } from "react";
 import { Heart } from "@phosphor-icons/react";
@@ -14,14 +12,14 @@ import RestaurantCard from "../components/RestaurantCard";
 import { ErrorState, ResultsSkeleton } from "../components/States";
 
 export default function Favoris({ user, onOpen, onUnlock }) {
-  const abonne = user?.role === "subscriber" || user?.role === "admin";
-  const [status, setStatus] = useState(abonne ? "loading" : "idle");
+  const connecte = Boolean(user);
+  const [status, setStatus] = useState(connecte ? "loading" : "idle");
   const [restaurants, setRestaurants] = useState([]);
   const [error, setError] = useState(null);
   const [reloads, setReloads] = useState(0);
 
   useEffect(() => {
-    if (!abonne) return undefined;
+    if (!connecte) return undefined;
     let cancelled = false;
     // Passer par "loading" avant de lancer la requete : sinon `reloads` en
     // dependance ne redeclencherait aucun rendu visible tant que la reponse
@@ -40,9 +38,9 @@ export default function Favoris({ user, onOpen, onUnlock }) {
         setStatus("error");
       });
     return () => { cancelled = true; };
-  }, [abonne, reloads]);
+  }, [connecte, reloads]);
 
-  if (!abonne) {
+  if (!connecte) {
     return (
       <div className="authpage">
         <div className="authcard enter" style={{ "--enter-delay": "0ms" }}>
@@ -51,8 +49,8 @@ export default function Favoris({ user, onOpen, onUnlock }) {
           </div>
           <h1 className="authcard__title">Restaurants favoris</h1>
           <p className="authcard__lede">
-            Réservé au Pass Voyageur : enregistrez vos restaurants préférés
-            depuis leur fiche et retrouvez-les ici d'un coup d'œil.
+            Gratuit : créez un compte pour enregistrer vos restaurants
+            préférés et les retrouver ici d'un coup d'œil.
           </p>
           <button
             type="button"
@@ -60,7 +58,7 @@ export default function Favoris({ user, onOpen, onUnlock }) {
             style={{ marginTop: 24 }}
             onClick={onUnlock}
           >
-            Prendre un Pass pour ajouter des favoris
+            Créer un compte gratuit
           </button>
         </div>
       </div>

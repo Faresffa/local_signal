@@ -129,23 +129,23 @@ export function useGeolocation() {
 }
 
 /**
- * Bascule un restaurant en favori — réservé au Pass Voyageur (D-063)
- * (backend/main.py::_require_abonne). Un compte connecté mais non abonné qui
- * clique est redirigé vers les Pass (`onUnlock`), jamais vers une erreur
- * 403 brute.
+ * Bascule un restaurant en favori — ouvert à tout compte voyageur depuis
+ * D-067 (backend/main.py::_require_voyageur). Un visiteur non connecté qui
+ * clique est envoyé vers la création de compte (`onDemanderCompte`), jamais
+ * vers une erreur 401 brute.
  *
  * Mise à jour optimiste : l'état visuel change avant la réponse serveur, et
  * revient en arrière si l'appel échoue — un cœur qui met une seconde à
  * réagir donne l'impression que le clic n'a pas marché.
  */
-export function useFavori(restaurantId, initial, abonne, onUnlock, onChange) {
+export function useFavori(restaurantId, initial, connecte, onDemanderCompte, onChange) {
   const [favori, setFavori] = useState(Boolean(initial));
   useEffect(() => { setFavori(Boolean(initial)); }, [restaurantId, initial]);
 
   const [enCours, setEnCours] = useState(false);
 
   const toggle = useCallback(async () => {
-    if (!abonne) { onUnlock?.(); return; }
+    if (!connecte) { onDemanderCompte?.(); return; }
     const precedent = favori;
     setFavori(!precedent);
     setEnCours(true);
@@ -158,7 +158,7 @@ export function useFavori(restaurantId, initial, abonne, onUnlock, onChange) {
     } finally {
       setEnCours(false);
     }
-  }, [abonne, favori, restaurantId, onUnlock, onChange]);
+  }, [connecte, favori, restaurantId, onDemanderCompte, onChange]);
 
   return { favori, toggle, enCours };
 }

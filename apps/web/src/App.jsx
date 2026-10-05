@@ -17,12 +17,15 @@ import { FILTRES_VIDES, RAYON_DEFAUT } from "./lib/filtres";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Admin from "./pages/Admin";
-import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
 import Favoris from "./pages/Favoris";
 import Restaurateur from "./pages/Restaurateur";
+import AbonnementRestaurateur from "./pages/AbonnementRestaurateur";
 import SignupRestaurateur from "./pages/SignupRestaurateur";
-import PourLesRestaurateurs from "./pages/PourLesRestaurateurs";
+import OffresPro from "./pages/OffresPro";
+import SignupHotel from "./pages/SignupHotel";
+import EspaceHotel from "./pages/EspaceHotel";
+import HotelPublic from "./pages/HotelPublic";
 import Settings from "./pages/Settings";
 import CGU from "./pages/CGU";
 import Confidentialite from "./pages/Confidentialite";
@@ -61,8 +64,23 @@ function withTransition(update) {
 const erreurGoogleInitiale =
   new URLSearchParams(window.location.search).get("erreur") === "google";
 
+// PAGE D'UN HÔTEL PARTENAIRE (D-067) : le QR code posé en chambre ouvre
+// /hotel/<slug>. Seule adresse profonde de l'application — lue une fois au
+// chargement, comme `erreurGoogleInitiale`.
+const slugHotelInitial = (() => {
+  const m = window.location.pathname.match(/^\/hotel\/([a-z0-9-]+)\/?$/);
+  return m ? m[1] : null;
+})();
+
+// Comptes professionnels : ni recherche ni favoris, leur accueil est leur
+// espace (D-055 v2, D-067).
+const ACCUEIL_PRO = { restaurateur: "restaurateur", hotel: "hotel" };
+
 export default function App() {
-  const [page, setPage] = useState(erreurGoogleInitiale ? "login" : "discover");
+  const [page, setPage] = useState(
+    slugHotelInitial ? "hotel-public" : erreurGoogleInitiale ? "login" : "discover",
+  );
+  const [slugHotel, setSlugHotel] = useState(slugHotelInitial);
   const [selected, setSelected] = useState(null);
   // L'écran Discover est démonté pendant la consultation d'une fiche. Cet état
   // vit donc ici afin que le retour retrouve exactement la recherche en cours.
@@ -75,8 +93,7 @@ export default function App() {
   // qu'il voulait faire est oublié en chemin.
   const [retour, setRetour] = useState("discover");
   const {
-    user, login, signup, signupRestaurateur, logout, subscribe, unsubscribe,
-    supprimerCompte,
+    user, login, signup, signupRestaurateur, signupHotel, logout, supprimerCompte,
   } = useCurrentUser();
 
   // Chaque changement d'écran repart du haut : sans cela on arrive au milieu
@@ -90,8 +107,8 @@ export default function App() {
   // est resté sur la valeur par défaut, pour ne jamais écraser une
   // navigation volontaire (settings, CGU…) déjà en cours.
   useEffect(() => {
-    if (user?.role === "restaurateur" && page === "discover") {
-      setPage("restaurateur");
+    if (ACCUEIL_PRO[user?.role] && page === "discover") {
+      setPage(ACCUEIL_PRO[user.role]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -143,13 +160,17 @@ export default function App() {
     withTransition(() => setPage(nextPage));
   }
 
-  // Un visiteur non connecté doit d'abord créer un compte ; un compte déjà
-  // connecté sans Pass n'a plus besoin que de ça — inutile de lui
-  // redemander un compte qu'il a déjà (la limite se lève avec un Pass
-  // Voyageur, D-063, plus à la simple connexion).
-  function demanderDeverrouillage() {
+  // Un visiteur non connecté qui veut un favori crée d'abord un compte —
+  // gratuit, et suffisant depuis D-067 (plus de Pass Voyageur).
+  function demanderCompte() {
     setRetour(page);
-    naviguer(user ? "pricing" : "signup");
+    naviguer("signup");
+  }
+
+  function ouvrirPageHotel(slug) {
+    setSlugHotel(slug);
+    window.history.pushState({}, "", `/hotel/${slug}`);
+    naviguer("hotel-public");
   }
 
   return (
@@ -168,7 +189,7 @@ export default function App() {
               lieu={lieu}
               onLieuChange={setLieu}
               user={user}
-              onUnlock={demanderDeverrouillage}
+              onUnlock={demanderCompte}
             />
           )}
 
@@ -179,7 +200,7 @@ export default function App() {
               onReserve={openReserve}
               user={user}
               onSeConnecter={demanderConnexion}
-              onUnlock={demanderDeverrouillage}
+              onUnlock={demanderCompte}
             />
           )}
 
@@ -195,7 +216,7 @@ export default function App() {
             <Login
               onLogin={async (credentials) => {
                 const u = await login(credentials);
-                naviguer(u.role === "restaurateur" ? "restaurateur" : retour);
+                naviguer(ACCUEIL_PRO[u.role] || retour);
               }}
               onGoToSignup={() => naviguer("signup")}
               onGoToSignupRestaurateur={() => naviguer("signup-restaurateur")}
@@ -233,21 +254,37 @@ export default function App() {
             <Admin user={user} onBack={() => naviguer("discover")} />
           )}
 
-          {page === "pricing" && (
-            <Pricing
+          {page === "pour-restaurateurs" && (
+            <OffresPro
               user={user}
-              onAbonner={async () => { await subscribe(); naviguer(retour); }}
+              onGoToSignupRestaurateur={() => naviguer("signup-restaurateur")}
+              onGoToSignupHotel={() => naviguer("signup-hotel")}
+              onGoToEspaceRestaurateur={() => naviguer("restaurateur-abonnement")}
+              onGoToEspaceHotel={() => naviguer("hotel")}
               onBack={() => naviguer(retour)}
             />
           )}
 
-          {page === "pour-restaurateurs" && (
-            <PourLesRestaurateurs
-              user={user}
-              onGoToSignupRestaurateur={() => naviguer("signup-restaurateur")}
-              onGoToEspace={() => naviguer("restaurateur")}
+          {page === "restaurateur-abonnement" && user?.role === "restaurateur" && (
+            <AbonnementRestaurateur onBack={() => naviguer("restaurateur")} />
+          )}
+
+          {page === "signup-hotel" && (
+            <SignupHotel
+              onSignup={async (fields) => { await signupHotel(fields); naviguer("hotel"); }}
+              onGoToLogin={() => naviguer("login")}
               onBack={() => naviguer(retour)}
+              onGoToCGU={() => ouvrirLegal("cgu")}
+              onGoToConfidentialite={() => ouvrirLegal("confidentialite")}
             />
+          )}
+
+          {page === "hotel" && user?.role === "hotel" && (
+            <EspaceHotel onOuvrirPage={ouvrirPageHotel} />
+          )}
+
+          {page === "hotel-public" && slugHotel && (
+            <HotelPublic slug={slugHotel} onOpen={openDetail} />
           )}
 
           {page === "profil" && user && (
@@ -259,19 +296,23 @@ export default function App() {
           )}
 
           {page === "favoris" && (
-            <Favoris user={user} onOpen={openDetail} onUnlock={demanderDeverrouillage} />
+            <Favoris user={user} onOpen={openDetail} onUnlock={demanderCompte} />
           )}
 
           {page === "restaurateur" && (
-            <Restaurateur onSeConnecter={demanderConnexion} />
+            <Restaurateur
+              onSeConnecter={demanderConnexion}
+              onGoToAbonnement={() => naviguer("restaurateur-abonnement")}
+            />
           )}
 
           {page === "settings" && user && (
             <Settings
               user={user}
-              onBack={() => naviguer(user.role === "restaurateur" ? "restaurateur" : "discover")}
-              onGoToPricing={() => naviguer("pricing")}
-              onUnsubscribe={unsubscribe}
+              onBack={() => naviguer(ACCUEIL_PRO[user.role] || "discover")}
+              onGoToEspacePro={() => naviguer(
+                user.role === "restaurateur" ? "restaurateur-abonnement" : ACCUEIL_PRO[user.role] || "discover",
+              )}
               onDeleteAccount={async () => {
                 await supprimerCompte();
                 naviguer("discover");
@@ -306,7 +347,7 @@ export default function App() {
             À propos
           </button>
           <button type="button" className="linkbtn" onClick={() => ouvrirLegal("pour-restaurateurs")}>
-            Restaurateurs
+            Restaurateurs et hôtels
           </button>
           <button type="button" className="linkbtn" onClick={() => ouvrirLegal("contact")}>
             Contact

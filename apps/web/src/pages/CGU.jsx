@@ -3,13 +3,13 @@
 // Conditions générales d'utilisation.
 //
 // PREMIER JET, PAS UN DOCUMENT JURIDIQUE VALIDÉ. Rédigé pour refléter
-// honnêtement ce que fait réellement le produit aujourd'hui (démo
-// de Pass Voyageur sans paiement réel, données réellement collectées) — à faire
+// honnêtement ce que fait réellement le produit aujourd'hui (offres pro en
+// démonstration sans paiement réel, données réellement collectées) — à faire
 // relire avant tout usage en production avec de vrais utilisateurs payants.
 
 import { ArrowLeft } from "@phosphor-icons/react";
 
-const DERNIERE_MISE_A_JOUR = "27 septembre 2026";
+const DERNIERE_MISE_A_JOUR = "5 octobre 2026";
 
 export default function CGU({ onBack, onGoToConfidentialite }) {
   return (
@@ -65,18 +65,29 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
       </section>
 
       <section className="legal__section">
-        <h2>4. Pass Voyageur</h2>
+        <h2>4. Gratuité pour le voyageur, offres professionnelles et neutralité</h2>
         <p>
-          Le service propose un accès gratuit et trois Pass Voyageur à durée
-          limitée, présentés sur la page <em>Pass Voyageur</em> : Pass
-          Week-end (3 jours, 2,99 € TTC), Pass Semaine (7 jours, 4,99 € TTC)
-          et Pass Annuel (12 mois, 14,99 € TTC). Un Pass se paie une seule
-          fois et n'est pas reconduit automatiquement.{" "}
-          <strong>À ce stade, aucun paiement réel n'est traité</strong> : le
-          bouton de paiement est volontairement désactivé, et l'activation
-          d'un Pass se fait par un mécanisme de démonstration, pas par une
-          transaction financière. Cette page sera mise à jour le jour où un moyen de
-          paiement réel sera intégré.
+          Le service est <strong>gratuit pour le voyageur</strong>, sans
+          abonnement. Il est financé par des offres facultatives destinées aux
+          professionnels : pour les restaurateurs, l'offre Visibilité (29 € HT
+          par mois) et l'offre Visibilité+ (59 € HT par mois) ; pour les hôtels
+          et conciergeries, l'offre Hôtel (49 € HT par mois). Le premier mois
+          est offert.
+        </p>
+        <p>
+          <strong>Règle de neutralité.</strong> Un paiement ne modifie jamais
+          le score d'un restaurant ni sa position dans la liste classée. Les
+          offres payantes n'achètent que de la présentation (fiche enrichie,
+          mention « Partenaire ») et une présence dans un encart distinct,
+          toujours étiqueté « Partenaires ». Un hôtel n'est pas noté et ne
+          choisit pas les restaurants affichés sur sa page : il présente le
+          classement Local Signal tel quel.
+        </p>
+        <p>
+          <strong>À ce stade, aucun paiement réel n'est traité</strong> : la
+          souscription d'une offre se fait par un mécanisme de démonstration,
+          pas par une transaction financière. Cette page sera mise à jour le
+          jour où un moyen de paiement réel sera intégré.
         </p>
       </section>
 
@@ -90,7 +101,8 @@ export default function CGU({ onBack, onGoToConfidentialite }) {
           à ce stade. Une fois la fiche obtenue, le compte restaurateur peut
           en modifier les coordonnées (téléphone, lien de réservation,
           horaires), déposer une photo de sa devanture et consulter sa
-          fréquentation. Le compte restaurateur est entièrement gratuit.
+          fréquentation. La fiche et le compte restaurateur sont gratuits ;
+          les offres Visibilité sont facultatives (voir l'article 4).
         </p>
         <p>
           <strong>En créant un compte, vous acceptez que la consultation

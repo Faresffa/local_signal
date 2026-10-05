@@ -85,8 +85,8 @@ export async function fetchRestaurants({
   if (ouvert) query.set("ouvert", "true");
   if (reservation) query.set("reservation", "true");
   if (avecCarte) query.set("avec_carte", "true");
-  // Filtre premium (D-050), reserve au Pass Voyageur — le serveur l'ignore pour
-  // les autres. Echelle 0-10 cote interface, convertie en 0-100.
+  // Filtre de score : ouvert a tous depuis D-067 (le voyageur ne paie rien).
+  // Echelle 0-10 cote interface, convertie en 0-100.
   if (scoreMin != null && scoreMin > 0) query.set("score_min", scoreMin * 10);
   if (scoreMax != null && scoreMax < 10) query.set("score_max", scoreMax * 10);
 
@@ -244,16 +244,6 @@ export async function fetchCartes(restaurantId) {
   return request(`/api/restaurant/${encodeURIComponent(restaurantId)}/cartes`);
 }
 
-// --- Pass Voyageur (D-063) — démonstration, pas un paiement réel (voir backend/main.py) ---
-
-export async function subscribe() {
-  return request("/api/subscribe", { method: "POST" });
-}
-
-export async function unsubscribe() {
-  return request("/api/subscribe/annuler", { method: "POST" });
-}
-
 export async function changerMotDePasse(motDePasseActuel, nouveauMotDePasse) {
   return request("/api/auth/mot-de-passe", {
     method: "POST",
@@ -278,7 +268,7 @@ export async function supprimerCompte() {
   return resultat;
 }
 
-// --- Favoris (réservés au Pass Voyageur, backend/main.py::_require_abonne) ---
+// --- Favoris (tout compte voyageur, D-067 — backend/main.py::_require_voyageur) ---
 
 export async function fetchFavoris() {
   return request("/api/favoris");

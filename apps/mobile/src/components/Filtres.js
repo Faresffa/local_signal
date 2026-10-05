@@ -65,12 +65,11 @@ function Pastille({ label, icone, actif, onPress, hint }) {
   );
 }
 
-// Filtre réservé au Pass Voyageur (D-050, D-063) — toujours AFFICHÉ, seule l'activation
-// est verrouillée (§5 web, même principe). Couleur distincte (le ton
-// « mixte » du verdict, déjà dans la palette) plutôt que le contour de
-// marque des pastilles ordinaires, pour qu'on la reconnaisse avant de lire
-// le mot « Pass ».
-function PastilleAbonne({ label, actif, abonne, onPress }) {
+// Filtre sur le Local Signal — ouvert à tous depuis D-067 (le voyageur ne paie
+// rien). Couleur distincte (le ton « mixte » du verdict, déjà dans la palette)
+// plutôt que le contour de marque des pastilles ordinaires : c'est l'actif
+// du projet, on le reconnaît d'un coup d'œil.
+function PastilleScore({ label, actif, onPress }) {
   const colors = useColors();
   return (
     <Pressable
@@ -81,18 +80,11 @@ function PastilleAbonne({ label, actif, abonne, onPress }) {
         s.pastille,
         { borderColor: colors.mixed, backgroundColor: colors.mixedSoft },
         actif && { backgroundColor: colors.brandSoft, borderColor: colors.brand },
-        !abonne && { opacity: 0.85 },
       ]}
     >
-      {!abonne && <Feather name="lock" size={12} color={colors.mixed} />}
       <Text style={[s.pastilleText, { color: actif ? colors.brand : colors.mixed }]}>
         {label}
       </Text>
-      {!abonne && (
-        <View style={[s.badgeAbonnement, { backgroundColor: colors.mixed }]}>
-          <Text style={[s.badgeAbonnementText, { color: colors.onBrand }]}>PASS</Text>
-        </View>
-      )}
     </Pressable>
   );
 }
@@ -125,7 +117,6 @@ function Case({ coche, onChange, label, aide }) {
 
 export default function Filtres({
   valeurs, onChange, cuisines = [], nbResultats = null, chargement = false,
-  abonne = false, onUnlock,
 }) {
   const colors = useColors();
   const {
@@ -149,9 +140,7 @@ export default function Filtres({
   const changerScore = (bas, haut) =>
     onChange({ ...valeurs, scoreMin: bas, scoreMax: haut });
 
-  // Sans Pass : un appui n'ouvre jamais la feuille, il redirige vers
-  // les Pass — même geste que la pastille verrouillée du web.
-  const ouvrirScore = () => (abonne ? setFeuille("score") : onUnlock?.());
+  const ouvrirScore = () => setFeuille("score");
 
   const cuisineLabel = cuisines.find((c) => c.value === cuisine)?.label;
 
@@ -223,10 +212,9 @@ export default function Filtres({
           hint="Restaurants dont la carte a été lue et analysée"
           onPress={() => modifier("avecCarte", !avecCarte)}
         />
-        <PastilleAbonne
+        <PastilleScore
           label={libelleScore(scoreMin, scoreMax)}
-          actif={abonne && scoreActif(valeurs)}
-          abonne={abonne}
+          actif={scoreActif(valeurs)}
           onPress={ouvrirScore}
         />
       </ScrollView>
@@ -389,21 +377,8 @@ export default function Filtres({
                   aide="C'est le seul filtre où l'absence d'information écarte — parce qu'il porte justement sur cette présence."
                 />
 
-                <Text style={[s.groupe, { color: colors.textFaint }]}>RÉSERVÉ AU PASS VOYAGEUR</Text>
-                {abonne ? (
-                  <>
-                    <Text style={[s.aide, { color: colors.textMuted, marginBottom: 6 }]}>
-                      Score Local Signal
-                    </Text>
-                    <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
-                  </>
-                ) : (
-                  <Pressable onPress={onUnlock} style={{ paddingVertical: 8 }}>
-                    <Text style={[s.aide, { color: colors.brand, fontWeight: "600" }]}>
-                      Prendre un Pass pour filtrer directement sur le score.
-                    </Text>
-                  </Pressable>
-                )}
+                <Text style={[s.groupe, { color: colors.textFaint }]}>SCORE LOCAL SIGNAL</Text>
+                <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
 
                 <Text style={[s.note, { color: colors.textFaint }]}>
                   Pas de filtre sur la note ni le nombre d'avis : ce serait
@@ -461,12 +436,6 @@ const s = StyleSheet.create({
     borderRadius: radius.pill,
   },
   pastilleText: { fontSize: 13, fontWeight: "500" },
-  badgeAbonnement: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: radius.sm,
-  },
-  badgeAbonnementText: { fontSize: 9, fontWeight: "800", letterSpacing: 0.3 },
 
   tous: {
     flexDirection: "row",

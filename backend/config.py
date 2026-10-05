@@ -302,20 +302,10 @@ GOOGLE_OAUTH_REDIRECT_URI = os.environ.get(
 # Où renvoyer le navigateur une fois la session ouverte.
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
-# Nombre de restaurants visibles par recherche pour un visiteur non connecté
-# OU un compte connecté non abonné (LS-refonte — la limite suit l'abonnement,
-# pas la connexion). Le classement reste inchangé (tri avant troncature) :
-# moins de résultats, jamais de moins bons résultats.
-ANON_RESULTS_LIMIT = int(os.environ.get("ANON_RESULTS_LIMIT", "5"))
-
-# Nombre de RECHERCHES par jour pour un compte connecté non abonné
-# (LS-refonte, retour utilisateur : "limiter vraiment les recherches").
-# Distinct de ANON_RESULTS_LIMIT, qui borne les résultats D'UNE recherche —
-# celui-ci borne le nombre de recherches elles-mêmes. Ne s'applique qu'aux
-# comptes connectés : un visiteur anonyme n'a pas d'identifiant auquel
-# rattacher un compteur qui survivrait à la fermeture du navigateur.
-# À CALIBRER : 5/jour est un point de départ, pas une valeur mesurée.
-SEARCHES_PER_DAY_NON_ABONNE = int(os.environ.get("SEARCHES_PER_DAY_NON_ABONNE", "5"))
+# Plus de limite de résultats ni de quota de recherches (D-067) : le voyageur
+# ne paie plus rien, l'application est complète pour tout le monde. Les
+# anciennes constantes ANON_RESULTS_LIMIT et SEARCHES_PER_DAY_NON_ABONNE sont
+# retirées ; la colonne `users.search_count_*` reste en base, inerte.
 
 # Vue technique du calcul — exposition du detail par indicateur (LS-16).
 #
@@ -375,7 +365,9 @@ ASSETS_DIR = ROOT_DIR / "backend" / "data" / "assets"
 # Le reste du code est identique dans les deux cas : basculer se fait ici,
 # et nulle part ailleurs. C'est la condition pour que « on verra plus tard »
 # reste une décision d'une ligne plutôt qu'une réécriture.
-PHOTO_CACHE_ENABLED = os.environ.get("PHOTO_CACHE_ENABLED", "true").lower() == "true"
+# Défaut passé à "false" le 5 octobre 2026 (D-067) : les photos Google sont
+# désormais affichées en production, donc relayées sans jamais être stockées.
+PHOTO_CACHE_ENABLED = os.environ.get("PHOTO_CACHE_ENABLED", "false").lower() == "true"
 
 # Hors du dépôt et gitignoré : le cache ne doit jamais être versionné ni
 # redistribué — c'est ce qui le maintient dans le registre « copie locale de

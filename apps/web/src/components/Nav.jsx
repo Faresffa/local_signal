@@ -6,19 +6,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  CaretDown, ForkKnife, Gear, Heart, Moon, SignOut, Storefront, Sun, User,
+  Bed, CaretDown, ForkKnife, Gear, Heart, Moon, SignOut, Sparkle, Storefront, Sun, User,
 } from "@phosphor-icons/react";
 
 import { useTheme } from "../lib/hooks";
 
-// Le rôle s'affiche partout où le compte s'affiche (retour utilisateur :
-// "ça affiche s'il est abonné ou pas") — jamais un chiffre, jamais l'e-mail.
-// `subscriber` = Pass Voyageur actif (D-063).
+// Le rôle s'affiche partout où le compte s'affiche — jamais un chiffre,
+// jamais l'e-mail. Plus de Pass Voyageur depuis D-067 : tout compte voyageur
+// est gratuit et complet.
 const ROLE_LABEL = {
   admin: "Admin",
-  subscriber: "Pass Voyageur",
-  user: "Compte gratuit",
+  user: "Voyageur",
   restaurateur: "Restaurateur",
+  hotel: "Hôtel partenaire",
 };
 
 export default function Nav({ page, onNavigate, user, onLogout }) {
@@ -26,10 +26,13 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
   const [stuck, setStuck] = useState(false);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const menuRef = useRef(null);
-  // COMPTE SÉPARÉ, NAVIGATION SÉPARÉE (D-055 v2) : un restaurateur n'a
-  // aucune des fonctionnalités client (recherche, Pass Voyageur, favoris),
-  // donc aucun des liens qui y mènent n'a de sens pour lui.
+  // COMPTE SÉPARÉ, NAVIGATION SÉPARÉE (D-055 v2) : un compte pro
+  // (restaurateur, hôtel — D-067) n'a aucune des fonctionnalités voyageur
+  // (recherche, favoris), donc aucun des liens qui y mènent n'a de sens pour lui.
   const estRestaurateur = user?.role === "restaurateur";
+  const estHotel = user?.role === "hotel";
+  const estPro = estRestaurateur || estHotel;
+  const accueil = estRestaurateur ? "restaurateur" : estHotel ? "hotel" : "discover";
 
   // La bordure de la barre n'apparaît qu'une fois la page défilée. Un
   // IntersectionObserver sur une sentinelle plutôt qu'un écouteur de scroll,
@@ -71,7 +74,7 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
       <nav className="shell nav__inner" aria-label="Navigation principale">
         <button
           className="nav__brand"
-          onClick={() => onNavigate(estRestaurateur ? "restaurateur" : "discover")}
+          onClick={() => onNavigate(accueil)}
           aria-label="Local Signal, retour à l'accueil"
         >
           <span className="nav__mark" aria-hidden="true">
@@ -80,7 +83,7 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
           Local Signal
         </button>
 
-        {!estRestaurateur && (
+        {!estPro && (
           <button
             className="nav__link"
             aria-current={page === "discover" ? "page" : undefined}
@@ -101,6 +104,28 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
           </button>
         )}
 
+        {estRestaurateur && (
+          <button
+            className="nav__link"
+            aria-current={page === "restaurateur-abonnement" ? "page" : undefined}
+            onClick={() => onNavigate("restaurateur-abonnement")}
+          >
+            <Sparkle size={15} weight="bold" style={{ verticalAlign: "-2px", marginRight: 4 }} />
+            Mon abonnement
+          </button>
+        )}
+
+        {estHotel && (
+          <button
+            className="nav__link"
+            aria-current={page === "hotel" ? "page" : undefined}
+            onClick={() => onNavigate("hotel")}
+          >
+            <Bed size={15} weight="bold" style={{ verticalAlign: "-2px", marginRight: 4 }} />
+            Mon hôtel
+          </button>
+        )}
+
         {/* Réservé aux comptes admin — l'API refuse de toute façon (403) à
             quiconque d'autre, ce lien n'est que du confort de navigation. */}
         {user?.role === "admin" && (
@@ -110,19 +135,6 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
             onClick={() => onNavigate("admin")}
           >
             Administration
-          </button>
-        )}
-
-        {/* Connecté mais sans Pass : c'est précisément à cet endroit-là
-            qu'il manque quelque chose (D-063). Invisible pour un détenteur
-            de Pass ou un admin, qui n'ont rien à débloquer. */}
-        {user && user.role === "user" && (
-          <button
-            className="nav__link"
-            aria-current={page === "pricing" ? "page" : undefined}
-            onClick={() => onNavigate("pricing")}
-          >
-            Pass Voyageur
           </button>
         )}
 
@@ -154,7 +166,7 @@ export default function Nav({ page, onNavigate, user, onLogout }) {
 
             {menuOuvert && (
               <div className="nav__dropdown" role="menu">
-                {!estRestaurateur && (
+                {!estPro && (
                   <>
                     <button
                       type="button"

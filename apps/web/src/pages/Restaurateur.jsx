@@ -15,13 +15,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  Camera, Clock, Eye, ForkKnife, Link as LinkIcon, MapPin, Phone, Storefront,
+  BookOpen, Camera, ChartLineUp, Clock, ForkKnife, Link as LinkIcon, MapPin, Phone, Storefront,
 } from "@phosphor-icons/react";
 
 import {
-  deposerPhotoRestaurant, fetchMonRestaurant, fetchStatutRestaurateur,
-  fetchVisitesMonRestaurant, modifierMonRestaurant,
+  deposerPhotoRestaurant, envoyerCarte, fetchCartes, fetchMonRestaurant, fetchStatutRestaurateur,
+  modifierMonRestaurant,
 } from "../api";
+import DashboardRestaurateur from "../components/DashboardRestaurateur";
 import PhotoRestaurant from "../components/PhotoRestaurant";
 import { ErrorState, ResultsSkeleton } from "../components/States";
 
@@ -34,46 +35,6 @@ const STATUT_LABEL = {
   valide: "Validée",
   refuse: "Refusée",
 };
-
-/** Fréquentation de la fiche — total et détail des visites, gratuit pour tous (D-063). */
-function Frequentation() {
-  const [donnees, setDonnees] = useState(null);
-  const [erreur, setErreur] = useState(null);
-
-  useEffect(() => {
-    let annule = false;
-    fetchVisitesMonRestaurant()
-      .then((d) => { if (!annule) setDonnees(d); })
-      .catch((e) => { if (!annule) setErreur(e.message); });
-    return () => { annule = true; };
-  }, []);
-
-  if (erreur) return <p className="formfield__error">{erreur}</p>;
-  if (!donnees) return <p className="formfield__hint">Chargement…</p>;
-
-  return (
-    <div>
-      <div className="fact">
-        <span className="fact__label">Consultations totales</span>
-        <span className="fact__value">{donnees.total}</span>
-      </div>
-
-      {donnees.visites.length === 0 ? (
-        <p className="card__reason" style={{ marginTop: 10 }}>
-          Personne d'identifié n'a encore consulté cette fiche.
-        </p>
-      ) : (
-        <ul className="why__list" style={{ marginTop: 10 }}>
-          {donnees.visites.map((v, i) => (
-            <li key={`${v.user_id}-${i}`}>
-              {v.name || v.email} — {new Date(v.consulted_at).toLocaleString("fr-FR")}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 /** Champs de contact, seuls modifiables par le restaurateur (D-014). */
 function ContactEdit({ restaurant, onSauve }) {
@@ -199,7 +160,116 @@ function PhotoEdit({ restaurant, onSauve }) {
 
 const FACT_ICON = { display: "inline", verticalAlign: "-2px", marginRight: 6 };
 
-function TableauDeBord({ restaurantId }) {
+/**
+ * Photo de la carte (D-068). Le restaurateur envoie la photo de SA carte ; elle
+ * passe par la même lecture que les cartes envoyées par les voyageurs : le
+ * modèle de vision OBSERVE (plats, langues, prix), le score est calculé par
+ * du code (D-014). Ce n'est donc pas un menu auto-déclaré.
+ *
+ * GRATUIT POUR TOUS, VOLONTAIREMENT : la carte alimente le score. La réserver
+ * aux abonnés donnerait un meilleur accès au score à ceux qui paient — c'est
+ * exactement ce que la règle de neutralité interdit (D-067).
+ *
+ * L'image rejoint le corpus interne, jamais republié (D-038).
+ */
+function MaCarte({ restaurantId, menu }) {
+  const [cartes, setCartes] = useState(null);
+  const [envoi, setEnvoi] = useState(false);
+  const [resultat, setResultat] = useState(null);
+  const [erreur, setErreur] = useState(null);
+  const champ = useRef(null);
+
+  function charger() {
+    fetchCartes(restaurantId).then(setCartes).catch(() => setCartes({ nombre: 0, cartes: [] }));
+  }
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    charger();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restaurantId]);
+
+  async function envoyer(fichier) {
+    if (!fichier) return;
+    if (fichier.size > TAILLE_MAX) {
+      setErreur("Image trop lourde (10 Mo maximum).");
+      return;
+    }
+    setEnvoi(true);
+    setErreur(null);
+    setResultat(null);
+    try {
+      const r = await envoyerCarte(restaurantId, fichier);
+      setResultat(r);
+      charger();
+    } catch (e) {
+      setErreur(e.message);
+    } finally {
+      setEnvoi(false);
+      if (champ.current) champ.current.value = "";
+    }
+  }
+
+  const plats = menu?.dishes?.length ?? menu?.observations?.dishes?.length;
+
+  return (
+    <div>
+      <p className="card__reason">
+        Envoyez une photo de votre carte, lisible, en entier. Elle est lue
+        automatiquement : plats, langues et prix. Gratuit pour tous les
+        restaurants.
+      </p>
+      {menu && (
+        <p className="card__reason" style={{ marginTop: 8 }}>
+          Dernière carte lue{plats ? ` : ${plats} plats relevés` : ""}.
+        </p>
+      )}
+      <input
+        ref={champ}
+        type="file"
+        accept={TYPES_PHOTO.join(",")}
+        style={{ display: "none" }}
+        onChange={(e) => envoyer(e.target.files?.[0])}
+      />
+      <button
+        type="button"
+        className="btn btn--primary"
+        style={{ marginTop: 12 }}
+        disabled={envoi}
+        onClick={() => champ.current?.click()}
+      >
+        <BookOpen size={15} weight="bold" />
+        {envoi ? "Lecture de la carte…" : "Ajouter la photo de ma carte"}
+      </button>
+
+      {resultat && (
+        <p className="card__reason" style={{ marginTop: 10 }}>
+          {resultat.analysee
+            ? resultat.analyse?.readable === false
+              ? "Carte reçue, mais difficile à lire : essayez une photo plus nette, prise de face."
+              : "Carte reçue et lue. Le score sera mis à jour au prochain recalcul."
+            : "Carte reçue et conservée. La lecture automatique n'a pas pu se faire tout de suite : elle sera refaite plus tard."}
+        </p>
+      )}
+      {erreur && <p className="formfield__error" style={{ marginTop: 8 }}>{erreur}</p>}
+
+      {cartes && cartes.nombre > 0 && (
+        <table className="dash__table" style={{ marginTop: 14 }}>
+          <thead><tr><th>Carte envoyée le</th><th>Lecture</th></tr></thead>
+          <tbody>
+            {cartes.cartes.slice(0, 5).map((c) => (
+              <tr key={c.id}>
+                <td>{new Date(String(c.soumise_le).replace(" ", "T")).toLocaleDateString("fr-FR")}</td>
+                <td>{c.lue ? "Lue" : "En attente"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+function MaFiche({ restaurantId }) {
   const [restaurant, setRestaurant] = useState(null);
   const [erreur, setErreur] = useState(null);
 
@@ -261,13 +331,13 @@ function TableauDeBord({ restaurantId }) {
         </div>
       </div>
 
-      <section className="calcul" style={{ marginTop: 24 }}>
+      <section className="calcul" style={{ marginTop: 16 }}>
         <div className="calcul__corps" style={{ display: "block" }}>
           <h2 className="why__title" style={{ marginBottom: 12 }}>
-            <Eye size={16} weight="bold" style={{ verticalAlign: "-2px", marginRight: 6 }} />
-            Fréquentation
+            <BookOpen size={16} weight="bold" style={{ verticalAlign: "-2px", marginRight: 6 }} />
+            Ma carte
           </h2>
-          <Frequentation />
+          <MaCarte restaurantId={restaurant.id} menu={restaurant.menu} />
         </div>
       </section>
 
@@ -281,7 +351,39 @@ function TableauDeBord({ restaurantId }) {
   );
 }
 
-export default function Restaurateur({ onSeConnecter }) {
+/**
+ * Espace d'une fiche validée (D-068) : deux onglets. Le tableau de bord
+ * d'abord — c'est ce qu'un restaurateur ouvre chaque jour — puis la fiche.
+ * L'abonnement a sa propre page (AbonnementRestaurateur.jsx).
+ */
+function Espace({ restaurantId, onGoToAbonnement }) {
+  const [onglet, setOnglet] = useState("dashboard");
+  return (
+    <div>
+      <div className="dash__onglets" role="tablist">
+        <button
+          type="button" role="tab" aria-selected={onglet === "dashboard"}
+          className={`dash__onglet${onglet === "dashboard" ? " is-actif" : ""}`}
+          onClick={() => setOnglet("dashboard")}
+        >
+          <ChartLineUp size={16} weight="bold" /> Tableau de bord
+        </button>
+        <button
+          type="button" role="tab" aria-selected={onglet === "fiche"}
+          className={`dash__onglet${onglet === "fiche" ? " is-actif" : ""}`}
+          onClick={() => setOnglet("fiche")}
+        >
+          <Storefront size={16} weight="bold" /> Ma fiche
+        </button>
+      </div>
+      {onglet === "dashboard"
+        ? <DashboardRestaurateur onGoToAbonnement={onGoToAbonnement} />
+        : <MaFiche restaurantId={restaurantId} />}
+    </div>
+  );
+}
+
+export default function Restaurateur({ onSeConnecter, onGoToAbonnement }) {
   const [statut, setStatut] = useState("loading");
   const [claim, setClaim] = useState(null);
 
@@ -349,5 +451,5 @@ export default function Restaurateur({ onSeConnecter }) {
     );
   }
 
-  return <TableauDeBord restaurantId={claim.restaurant_id} />;
+  return <Espace restaurantId={claim.restaurant_id} onGoToAbonnement={onGoToAbonnement} />;
 }

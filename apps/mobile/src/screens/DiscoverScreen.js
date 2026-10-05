@@ -19,7 +19,6 @@ import {
   CardSkeleton, EmptyState, ErrorState, Loading, Verdict,
 } from "../components/ui";
 import BarreSignal from "../components/BarreSignal";
-import CarteVerrouillee from "../components/CarteVerrouillee";
 import PhotoRestaurant from "../components/PhotoRestaurant";
 import ChoixLieu from "../components/ChoixLieu";
 import Filtres from "../components/Filtres";
@@ -27,10 +26,6 @@ import { radius, spacing, useColors } from "../theme";
 import { distance, verdict } from "../lib/display";
 import { FILTRES_VIDES, RAYON_DEFAUT, RAYONS } from "../lib/filtres";
 
-// Cartes verrouillées affichées au-delà de la limite (LS-19) — plafond
-// purement visuel, pour ne pas dérouler quarante cadenas quand la zone en
-// compte 423. Même valeur que sur le web : c'est le même produit (D-037).
-const MAX_CARTES_VERROUILLEES = 6;
 
 // Zone d'évaluation, utilisée si la géolocalisation est refusée. On ne bloque
 // jamais l'écran sur un message d'erreur de permission.
@@ -91,6 +86,8 @@ function Carte({ item, onOpen, isDark, index, plusProche }) {
           id={item.id}
           cuisine={item.cuisine}
           photoUrl={item.photo_url}
+          credit={item.photo_credit}
+          photoGoogle={item.photo_google}
           isDark={isDark}
         />
         {/* Rang dans le classement : la liste est déjà verticale, un par un,
@@ -178,8 +175,7 @@ function Carte({ item, onOpen, isDark, index, plusProche }) {
   );
 }
 
-export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
-  const abonne = user?.role === "subscriber" || user?.role === "admin";
+export default function DiscoverScreen({ onOpen, user, onCompte }) {
   const colors = useColors();
   const isDark = useColorScheme() === "dark";
 
@@ -271,10 +267,9 @@ export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
 
   useEffect(() => { load(); }, [load]);
 
-  // UN UTILISATEUR CONNECTÉ NE MASQUE RIEN. Le serveur applique déjà la
-  // limite ; on ne fait que la rendre lisible plutôt que de laisser croire
-  // que le quartier ne compte que cinq restaurants.
-  const masques = user ? 0 : Math.max(0, total - restaurants.length);
+  // Plus de résultats masqués (D-067, voyageur gratuit) : seulement les
+  // premiers d'une zone qui en compte davantage.
+  const masques = Math.max(0, total - restaurants.length);
   // Distance minimale des résultats : « Le plus proche » (D-065).
   const distances = restaurants.map((r) => r.distance_m).filter((d) => d != null);
   const distMin = distances.length ? Math.min(...distances) : null;
@@ -376,8 +371,6 @@ export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
         cuisines={options}
         nbResultats={status === "ready" ? restaurants.length : null}
         chargement={status === "loading"}
-        abonne={abonne}
-        onUnlock={onUnlock}
       />
 
       {status === "ready" && (
@@ -450,16 +443,6 @@ export default function DiscoverScreen({ onOpen, user, onCompte, onUnlock }) {
       renderItem={({ item, index }) => (
         <Carte item={item} onOpen={onOpen} isDark={isDark} index={index} plusProche={distMin != null && distance(item.distance_m) === distance(distMin)} />
       )}
-      ListFooterComponent={
-        masques > 0 ? (
-          <View style={{ gap: spacing.md, marginTop: spacing.md }}>
-            {Array.from({ length: Math.min(masques, MAX_CARTES_VERROUILLEES) })
-              .map((_, i) => (
-                <CarteVerrouillee key={`verrou-${i}`} onInscription={onCompte} />
-              ))}
-          </View>
-        ) : null
-      }
     />
   );
 }

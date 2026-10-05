@@ -51,9 +51,10 @@ def pending(zone: str, limit: int | None, refresh: bool) -> list[dict]:
     inutile consomme deux appels facturés pour un résultat déjà connu.
     """
     clause = "" if refresh else "AND (photo_ref IS NULL OR photo_ref = '')"
+    clause += " AND COALESCE(photo_masquee, 0) = 0"
     conn = get_connection()
     rows = conn.execute(
-        f"SELECT id, name, lat, lng FROM restaurants WHERE zone = ? {clause} ORDER BY local_signal DESC",
+        f"SELECT id, name, lat, lng, google_place_id FROM restaurants WHERE zone = ? {clause} ORDER BY local_signal DESC",
         (zone,),
     ).fetchall()
     conn.close()
@@ -71,8 +72,10 @@ def resolve_one(resto: dict, download: bool) -> dict:
     """
     name = resto["name"]
 
+    # Un place_id déjà connu (collecte précédente) évite une recherche
+    # facturée : Google autorise à conserver les place_id sans limite.
     try:
-        place_id = find_place_id(name, resto["lat"], resto["lng"])
+        place_id = resto.get("google_place_id") or find_place_id(name, resto["lat"], resto["lng"])
     except PlacesError as e:
         _log(f"  ✗  {name[:32]:34} {str(e)[:70]}")
         return {"status": "error", "name": name}

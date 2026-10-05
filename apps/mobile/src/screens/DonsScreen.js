@@ -1,7 +1,7 @@
 // apps/mobile/src/screens/DonsScreen.js
 //
 // Don. BOUTON VOLONTAIREMENT BLOQUÉ — miroir de apps/web/src/pages/Dons.jsx,
-// même décision que PricingScreen.js : aucun moyen de paiement n'est
+// même décision que pour les offres pro : aucun moyen de paiement n'est
 // intégré, rien ici ne doit avoir l'air de fonctionner.
 
 import { ScrollView, StyleSheet, Text, Pressable, View } from "react-native";

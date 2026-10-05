@@ -4245,7 +4245,9 @@ en ligne.
 
 ## D-063 — Business plan v2 : Pass Voyageur temporel, restaurateurs gratuits, avis utilisateurs retirés
 
-**Date :** 2026-09-27 · **Statut :** actif · **Supersède :** D-056 et D-057
+**Date :** 2026-09-27 · **Statut :** SUPERSÉDÉE par D-067 (2026-10-05) pour le
+modèle économique (Pass Voyageur, gratuité restaurateur) ; le retrait des avis
+utilisateurs reste en vigueur · **Supersède :** D-056 et D-057
 (abonnement restaurateur), la partie « abonnement mensuel » de LS-refonte/D-049,
 et D-039 (avis laissés par nos utilisateurs)
 
@@ -4443,3 +4445,171 @@ restaurants du Quartier latin a été montré à l'utilisateur, qui a choisi
   propre fichier.
 - Le mobile garde sa carte actuelle : le portage vers Expo est un chantier
   distinct.
+
+---
+
+## D-067 — Modèle économique du mémoire : voyageur gratuit, offres restaurateurs et hôtels, règle de neutralité ; photos de façade Panoramax
+
+**Date :** 2026-10-05 · **Statut :** actif · **Supersède :** D-063 (sauf le
+retrait des avis utilisateurs, qui reste en vigueur)
+
+### Contexte
+
+Après la soutenance blanche, le jury a montré la faiblesse du modèle D-063 :
+avec TheFork le voyageur obtient des remises, avec Local Signal il aurait payé
+pour accéder à des restaurants, et le chiffre d'affaires projeté ne rémunérait
+personne. Le mémoire (§4.3, tableau 27) a reconstruit le modèle : le voyageur
+ne paie rien ; paient ceux qui ont un intérêt direct à ce qu'il trouve un bon
+restaurant indépendant. Demande explicite de l'utilisateur : aligner le code
+sur ce business plan (« tous les comptes utilisateurs seront gratuits », refaire
+l'abonnement des restos, un compte par abonné, faire quelque chose pour les
+hôtels).
+
+Dans le même temps, la photo des cartes de résultats ne s'affichait plus.
+
+### Problème
+
+1. L'application faisait encore payer le voyageur (Pass Voyageur, 5 résultats
+   puis cartes verrouillées, quota de 5 recherches par jour, filtre de score et
+   favoris réservés) et ne vendait rien aux professionnels.
+2. Un abonnement de visibilité risque de faire du Local Signal une mesure de
+   l'abonnement plutôt que de l'authenticité. C'est la promesse centrale du
+   mémoire (« le paiement ne modifie jamais le score ni la position ») : elle
+   doit être garantie par le code, pas seulement écrite.
+3. Photos : les 462 URL `lh3.googleusercontent.com` stockées par le collecteur
+   payant sont signées et ont expiré (403, mesuré sur un échantillon le
+   5 octobre). Elles ne sont de toute façon pas un socle (CLAUDE.md §9). Sur
+   10 644 restaurants, ~1 400 seulement avaient une photo affichable, et aucune
+   source ne couvrait les restaurants sans site web — précisément les
+   invisibles que le projet veut montrer (§2).
+
+### Décision
+
+1. **Voyageur gratuit.** Plus de limite de résultats, de quota de recherches
+   ni de fonctionnalité réservée. Les favoris sont ouverts à tout compte
+   voyageur. Les routes `/api/subscribe*` sont retirées ; une migration
+   repasse les comptes `subscriber` en `user` (ils ne perdent rien).
+2. **Offres professionnelles** (démonstration, aucun paiement encaissé) :
+   - restaurateur : fiche gratuite ; **Visibilité 29 € HT/mois** (mention
+     « Partenaire », fiche enrichie, détail des visites) ; **Visibilité+
+     59 € HT/mois** (en plus : encart « À découvrir dans le quartier ») ;
+   - **hôtel ou conciergerie, 49 € HT/mois** : compte `hotel` créé avec sa
+     fiche, page publique `/hotel/<slug>` à ses couleurs, QR code généré dans
+     le navigateur, compteur d'ouvertures de la page ;
+   - premier mois offert à la première souscription ; une table
+     `abonnements` porte l'historique (une ligne résiliée n'est jamais
+     effacée). Le total des consultations reste gratuit pour tout
+     restaurateur.
+3. **Règle de neutralité, garantie par un test.** Rien dans `abonnements` n'est
+   lu par le scoring. L'étiquette `partenaire` est posée APRÈS le tri
+   (`_marquer_partenaires`) ; l'encart Visibilité+ est une liste séparée
+   (`a_decouvrir`), jamais mêlée au classement. La page d'un hôtel affiche le
+   classement normal centré sur l'hôtel : l'hôtel ne choisit ni n'ordonne.
+   `backend/tests/test_offres_pro.py` vérifie que les scores et l'ordre de
+   tout le classement sont identiques avant et après chaque souscription (sur
+   une copie de la base).
+4. **Photos.** Ordre de priorité : photo déposée par le restaurateur (D-059),
+   puis photo publiée par le site du restaurant (`og:image`, collecteur
+   étendu aux URL Google expirées), puis **photo de rue Panoramax** orientée
+   vers la façade (nouveau collecteur `backend/ingestion/web/panoramax.py`),
+   puis l'illustration générée. Panoramax est la base libre de photos de rue
+   d'OpenStreetMap France et de l'IGN ; ses photos sont sous CC-BY-SA ou
+   Etalab, d'où les colonnes `photo_source` / `photo_credit` et le crédit
+   affiché sur la photo. Les URL Google restent en base mais ne sont plus
+   affichées.
+
+### Conséquences
+
+- Couverture photo : 9 466 restaurants sur 10 644 (89 %) ont une photo
+  affichable, contre ~1 400 avant (1 407 via le site du restaurant, 8 059 via
+  Panoramax). Les 1 178 restants n'ont aucune photo de rue à moins de 40 m.
+  Une photo de rue n'est pas toujours cadrée sur la façade (le dernier palier
+  de recherche accepte toute photo de la rue) : c'est assumé, « au mieux une
+  photo » (retour utilisateur).
+- Les photos de carte (`menu_photo_urls`) sont aussi des URL Google expirées :
+  elles sont filtrées à l'affichage ; aucune source de remplacement pour
+  l'instant.
+- Nouvelles tables : `abonnements`, `hotels`, `hotel_visites`. Nouveau rôle :
+  `hotel`. Nouvelle dépendance web : `qrcode` (MIT).
+- Pages retirées : `Pricing.jsx`, `PourLesRestaurateurs.jsx`, `LockedCard.jsx`
+  (web), `PricingScreen.js`, `CarteVerrouillee.js` (mobile). Nouvelles pages
+  web : `OffresPro.jsx`, `SignupHotel.jsx`, `EspaceHotel.jsx`,
+  `HotelPublic.jsx`. Les espaces pro (restaurateur, hôtel) restent sur le web.
+- `/hotel/<slug>` est la seule adresse profonde de l'application : un
+  hébergement de production doit renvoyer `index.html` pour ce chemin.
+- Reste à faire : paiement réel (Stripe), rapport mensuel et garantie de vues
+  de Visibilité+, publicité discrète non alimentaire (5 % du CA prévu), fiche
+  enrichie (plusieurs photos, traductions).
+
+### Révision du 2026-10-05 (même jour) — photos
+
+Les photos de rue Panoramax et les `og:image` récoltées dans la journée ont été
+**retirées** après retour de l'utilisateur, captures à l'appui : panoramas 360°
+déformés, chaussée plutôt que façade, images de site sans rapport (un site
+affichait une photo de football). « Avant c'était beaucoup mieux » :
+l'illustration générée vaut mieux qu'une photo hors sujet. Les colonnes
+`photo_url` ont été restaurées à l'identique depuis la sauvegarde du matin
+(zéro différence vérifiée).
+
+À la place, choix de l'utilisateur : l'**API officielle Google Places**, pour
+le **Quartier latin seulement** (tout Paris coûterait ~150-300 USD) :
+462 restaurants sur 467 ont une photo Google. La photo est relayée à chaque
+affichage par `/api/restaurant/{id}/photo`, **jamais stockée**
+(`PHOTO_CACHE_ENABLED` passe à `false` par défaut) ; une référence périmée est
+rafraîchie depuis le `place_id`. Ordre d'affichage : photo du restaurateur,
+Google, `photo_url` d'origine, illustration. Chaque photo affichée est un
+appel facturé au-delà du quota gratuit mensuel : poser un plafond de budget
+dans la console Google Cloud.
+
+Les collecteurs `og_image.py` (étendu) et `panoramax.py` (filtre anti-360°)
+restent dans le dépôt mais ne doivent pas être relancés sans nouvelle décision.
+
+---
+
+## D-068 — Tableau de bord restaurateur et page « Mon abonnement »
+
+**Date :** 2026-10-05 · **Statut :** actif
+
+### Contexte
+
+Demande de l'utilisateur : « un vrai dashboard avec de vraies fonctionnalités
+abonnées — il peut voir ses clients, l'autre non », et une page dédiée aux
+abonnements, séparée, « comme avant ». L'espace restaurateur de D-067 mêlait
+fiche, offre et fréquentation sur une seule page.
+
+### Problème
+
+Pour que l'offre Visibilité se vende, ce qu'elle débloque doit se voir — sans
+pour autant retirer au restaurateur gratuit ce que le mémoire lui promet
+(§4.3, tableau 27 : fiche, score, demandes de table).
+
+### Décision
+
+1. **Espace en deux onglets** : « Tableau de bord » (par défaut) et « Ma
+   fiche » (photo, coordonnées). **Page « Mon abonnement » à part**, avec son
+   lien dans la barre : formule actuelle, comparatif ligne par ligne des trois
+   formules, souscription, résiliation, historique.
+2. **Gratuit pour toute fiche** : Local Signal et verdict, rang dans le
+   quartier, total des consultations du mois, demandes de table.
+3. **Réservé à l'offre Visibilité (et Visibilité+)** : courbe des
+   consultations sur 30 jours, évolution par rapport au mois précédent,
+   heures de visite, liste des clients (voyageurs connectés qui ont consulté
+   la fiche). Sans offre, ces blocs sont **montrés floutés** avec des données
+   d'exemple et le bouton d'essai — jamais avec les données d'un autre
+   restaurant. La règle est appliquée par le serveur
+   (`/api/restaurateur/tableau-de-bord` renvoie `null`), pas seulement par
+   l'interface ; `test_offres_pro.py` le vérifie.
+4. Neutralité inchangée : rien dans le tableau de bord n'agit sur le score ou
+   le rang, et la page le rappelle.
+
+### Conséquences
+
+- Nouvelles routes : `GET /api/restaurateur/tableau-de-bord`,
+  `GET /api/pro/abonnement/historique`. L'ancienne route
+  `/api/restaurateur/mon-restaurant/visites` reste (compatibilité).
+- Les séries sont calculées en Python, pas en SQL de dates, pour rester
+  identiques sous SQLite et Postgres.
+- Le mobile n'a pas d'espace restaurateur : les comptes pros restent sur le web.
+- Photo de Yokorama masquée (`photo_masquee`) : sa première photo Google était
+  une photo de football.
+

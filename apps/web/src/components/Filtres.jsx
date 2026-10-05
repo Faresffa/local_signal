@@ -31,7 +31,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  CaretDown, ChartBar, Clock, ForkKnife, Lock, MagnifyingGlass, Money,
+  CaretDown, ChartBar, Clock, ForkKnife, MagnifyingGlass, Money,
   Notebook, SlidersHorizontal, X,
 } from "@phosphor-icons/react";
 
@@ -143,7 +143,6 @@ function Case({ coche, onChange, children }) {
 
 export default function Filtres({
   valeurs, onChange, cuisines = [], nbResultats = null, chargement = false,
-  abonne = false, onUnlock,
 }) {
   const {
     budgetMin, budgetMax, ouvert, reservation, avecCarte, cuisine,
@@ -228,25 +227,8 @@ export default function Filtres({
               </div>
 
               <div className="fbar__groupe">
-                <h4>
-                  {abonne ? <ChartBar size={14} weight="light" /> : <Lock size={14} weight="bold" />}
-                  Réservé au Pass Voyageur
-                </h4>
-                {abonne ? (
-                  <>
-                    <p className="fbar__aide" style={{ marginTop: 0, marginBottom: 8 }}>
-                      Score Local Signal
-                    </p>
-                    <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
-                  </>
-                ) : (
-                  <p className="fbar__aide">
-                    <button type="button" className="linkbtn" onClick={onUnlock}>
-                      Voir les Pass
-                    </button>
-                    {" "}pour filtrer directement sur le score.
-                  </p>
-                )}
+                <h4><ChartBar size={14} weight="light" /> Score Local Signal</h4>
+                <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
               </div>
 
               <p className="fbar__note">
@@ -386,56 +368,34 @@ export default function Filtres({
         </button>
 
         {/* Filtre directement assis sur le Local Signal (retour
-            utilisateur) — toujours AFFICHÉ, mais réservé au Pass Voyageur (D-063) : c'est
-            l'activation qui est verrouillée, pas la visibilité (§5, jamais
-            un mur). Une couleur distincte (voir index.css) le distingue des
-            filtres ordinaires, avec ou sans Pass ; pour qui n'en a pas, le
-            mot « Pass » est écrit sur la pastille — pas seulement
-            dans l'infobulle au survol, invisible au tactile (retour
-            utilisateur).
-            Un second filtre premium (éloignement des zones touristiques,
-            D-050bis) a existé brièvement puis a été retiré (D-050ter) —
-            l'utilisateur n'était pas convaincu qu'il fonctionnerait. Pas de
-            remplacement proposé cette fois : un seul filtre premium, solide,
-            plutôt que deux pour respecter un compte. */}
-        {abonne ? (
-          <Menu
-            icone={<ChartBar size={15} weight="light" />}
-            label={libelleScore(scoreMin, scoreMax)}
-            actif={scoreActif(valeurs)}
-            largeur={260}
-          >
-            {(fermer) => (
-              <div className="fbar__budget">
-                <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
-                <div className="fbar__budgetPied">
-                  <button
-                    type="button"
-                    className="fbar__effacer"
-                    onClick={() => changerScore(SCORE_MIN, SCORE_MAX)}
-                    disabled={!scoreActif(valeurs)}
-                  >
-                    Tout le classement
-                  </button>
-                  <button type="button" className="btn btn--primary" onClick={fermer}>
-                    {libelleValidation}
-                  </button>
-                </div>
+            utilisateur). Ouvert à tous depuis D-067 : le voyageur ne paie
+            plus rien. Une couleur distincte (voir index.css) le distingue
+            toujours des filtres ordinaires — c'est l'actif du projet. */}
+        <Menu
+          icone={<ChartBar size={15} weight="light" />}
+          label={libelleScore(scoreMin, scoreMax)}
+          actif={scoreActif(valeurs)}
+          largeur={260}
+        >
+          {(fermer) => (
+            <div className="fbar__budget">
+              <ScoreRange min={scoreMin} max={scoreMax} onChange={changerScore} />
+              <div className="fbar__budgetPied">
+                <button
+                  type="button"
+                  className="fbar__effacer"
+                  onClick={() => changerScore(SCORE_MIN, SCORE_MAX)}
+                  disabled={!scoreActif(valeurs)}
+                >
+                  Tout le classement
+                </button>
+                <button type="button" className="btn btn--primary" onClick={fermer}>
+                  {libelleValidation}
+                </button>
               </div>
-            )}
-          </Menu>
-        ) : (
-          <button
-            type="button"
-            className="fbar__pastille fbar__pastille--abonne fbar__pastille--verrouille"
-            onClick={onUnlock}
-            title="Réservé au Pass Voyageur — cliquez pour voir les Pass"
-          >
-            <Lock size={13} weight="bold" />
-            Score Local Signal
-            <span className="fbar__badgeAbonnement">Pass</span>
-          </button>
-        )}
+            </div>
+          )}
+        </Menu>
 
         {actifs > 0 && (
           <button
